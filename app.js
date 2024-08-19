@@ -22,7 +22,6 @@ app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "./client/html/index.html"));
 });
 
-// C:\Users\Danish\Desktop\University\3rdYear\Semester2\SDP\campus-safety-app\client\html
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);

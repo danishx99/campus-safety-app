@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up</title>
+    <link href="../../styles/styles.css" rel="stylesheet">
+    <link href="../../styles/output.css" rel="stylesheet">
+</head>
+
+<body>
+<style>:root{--background:0 0% 100%;--foreground:240 10% 3.9%;--card:0 0% 100%;--card-foreground:240 10% 3.9%;--popover:0 0% 100%;--popover-foreground:240 10% 3.9%;--primary:240 5.9% 10%;--primary-foreground:0 0% 98%;--secondary:240 4.8% 95.9%;--secondary-foreground:240 5.9% 10%;--muted:240 4.8% 95.9%;--muted-foreground:240 3.8% 45%;--accent:240 4.8% 95.9%;--accent-foreground:240 5.9% 10%;--destructive:0 72% 51%;--destructive-foreground:0 0% 98%;--border:240 5.9% 90%;--input:240 5.9% 90%;--ring:240 5.9% 10%;--chart-1:173 58% 39%;--chart-2:12 76% 61%;--chart-3:197 37% 24%;--chart-4:43 74% 66%;--chart-5:27 87% 67%;--radius:0.5rem;}img[src="/placeholder.svg"],img[src="/placeholder-user.jpg"]{filter:sepia(.3) hue-rotate(-60deg) saturate(.5) opacity(0.8) }</style>
+<style>h1, h2, h3, h4, h5, h6 { font-family: 'Inter', sans-serif; --font-sans-serif: 'Inter'; }
+</style>
+<style>body { font-family: 'Inter', sans-serif; --font-sans-serif: 'Inter'; }
+</style>
+<div class="flex flex-col items-center justify-center min-h-screen bg-gradient-to-b from-blue-50 to-[#015EB8]">
+  <header class="w-full py-4 bg-[#015EB8]">
+    <div class="container mx-auto flex items-center justify-between px-4">
+      <div class="flex items-center space-x-2">
+        <img src="../../assets/logo.png" class="h-8" alt="logo">
+        <span class="text-lg font-semibold text-white">Campus Safety</span>
+      </div>
+    </div>
+  </header>
+  <main class="flex items-center justify-center flex-1 w-full px-4 py-8">
+    <div
+      class="border text-card-foreground w-full max-w-md p-6 space-y-4 bg-white rounded-lg shadow-md"
+      data-v0-t="card"
+    >
+      <div class="flex flex-col space-y-1.5 p-6">
+        <h3 class="whitespace-nowrap text-3xl font-semibold leading-none tracking-tight text-center">Sign Up</h3>
+      </div>
+      <div class="p-2 space-y-7">
+        <div class="space-y-2">
+          <label
+            class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+            for="email"
+          >
+            Email
+          </label>
+          <input
+            class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+            id="email"
+            placeholder="Enter your Wits email"
+            type="email"
+          />
+        </div>
+        <div class="space-y-2">
+          <label
+            class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+            for="password"
+          >
+            Password
+          </label>
+          <div class="relative">
+            <input
+              class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+              id="password"
+              placeholder="Enter your password"
+              type="password"
+            />
+            <img src="../../assets/eye-close.png" alt="Show Password" id="eyeicon"
+                        class="absolute top-1/3 right-3 w-5 h-4 cursor-pointer hover:opacity-75">
+          </div>
+          <script>
+            let eyeicon = document.getElementById('eyeicon');
+            let psw = document.getElementById('password');
+
+            eyeicon.addEventListener('click', () => {
+                if (psw.type === 'password') {
+                    psw.type = 'text';
+                    eyeicon.src = '../../assets/eye-open.png';
+                } else {
+                    psw.type = 'password';
+                    eyeicon.src = '../../assets/eye-close.png';
+                }
+            });
+
+        </script>
+        </div>
+        <div class="flex items-center justify-between">
+          <div class="flex items-center space-x-2">
+            <button
+              type="button"
+              role="checkbox"
+              aria-checked="true"
+              data-state="unchecked"
+              value="on"
+              class="peer h-4 w-4 shrink-0 rounded-sm border border-primary ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground"
+              id="remember"
+            ></button>
+            <label
+              class="font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-sm"
+              for="remember"
+            >
+              Remember Me
+            </label>
+          </div>
+          <a class="text-sm text-blue-600" href="../auth/forgotPassword.html">
+            Forgot password?
+          </a>
+        </div>
+        <button class="inline-flex items-center justify-center whitespace-nowrap rounded-lg hover:bg-blue-500 text-sm text-white font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 w-full bg-[#015EB8]">
+          Sign Up
+        </button>
+        <div class="flex items-center justify-center space-x-2">
+          <span class="text-sm text-muted-foreground">or</span>
+        </div>
+        <div class="flex justify-center">
+        <button class="inline-flex items-center justify-center whitespace-nowrap rounded-3xl hover:bg-blue-500 text-sm text-white font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 w-72 bg-[#015EB8]">
+          <div class="flex items-center justify-between">
+            <img src="../../assets/googleLogo.png" class="h-5" alt="logo">
+            <div class="px-2">
+              Continue with Google
+            </div>
+            
+          </div>
+        </button>
+      </div>
+      <div>
+        <div class="flex items-center justify-center space-x-2">
+          <span class="text-sm file:text-sm file:font-medium placeholder:text-muted-foreground">Don't have an account?</span>
+          <a class="text-sm text-blue-600" href="../auth/register.html">
+            Sign Up
+          </a>
+        </div>
+      </div>
+      </div>
+    </div>
+  </main>
+</div>
+</body>
+
+</html>

@@ -4,17 +4,31 @@ const app = express()
 const PORT = 3000
 
 app.use(express.json())         // automatically passes body as json object
-app.use(express.static(path.join(__dirname, 'client/html')))     // server static files from 'public' directory 
-app.use(express.static(path.join(__dirname, 'client/styles')));     // serve static files from 'styles' directory
+//Serve frontend from two folders above the current directory
+app.use(express.static("client"));
 app.use(express.urlencoded({extended: true}));
+
+// console.log(__dirname);
 
 
 app.get('/', (req, res) => {
-  res.send(path.join(__dirname,'client/html','index.html'));
+  res.sendFile(path.join(__dirname,'client/html/auth','login.html'));
 })
 
-app.get('/login', (req, res) => {
-    res.send(path.join(__dirname,'client/html/auth','login.html'));
+app.get('/register', (req, res) => {
+    res.sendFile(path.join(__dirname,'client/html/auth','register.html'));
+  })
+
+  app.get('/forgotPassword', (req, res) => {
+    res.sendFile(path.join(__dirname,'client/html/auth','forgotPassword.html'));
+  })
+
+  app.get('/resetPassword', (req, res) => {
+    res.sendFile(path.join(__dirname,'client/html/auth','resetPassword.html'));
+  })
+
+  app.get('/verifyEmail', (req, res) => {
+    res.sendFile(path.join(__dirname,'client/html/auth','verifyEmail.html'));
   })
 
 app.listen(PORT, () => {

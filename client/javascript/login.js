@@ -31,5 +31,12 @@ loginBtn.addEventListener("click", function(event){
      }
 
     console.log(email);
+    var alert = document.getElementById("alert");
+    alert.style.display = "block";
+    alert.style.color = 'green';
+    alert.style.backgroundColor = '#ddffdd';
+    alert.style.border='green';
+    alert.innerText = "Login Successfull";
+
     
 })

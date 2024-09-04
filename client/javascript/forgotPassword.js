@@ -26,4 +26,23 @@ resetBtn.addEventListener('click', function (event) {
     alert.style.backgroundColor = '#ddffdd';
     alert.style.border='green';
     alert.innerText = "Reset Email Sent Successfully";
+
+    //TIME TO POST
+    fetch('/auth/forgotPassword', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            email: email,
+        }),
+    })
+    .then((res) => res.json())
+    .then((data) => {
+        console.log('Success:', data);
+    })
+    .catch((error) => {
+        console.error('Error:', error);
+    });
+
 })

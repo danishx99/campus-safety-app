@@ -6,3 +6,19 @@ const dotenv = require("dotenv"); // For accessing environment variables
 exports.register = async (req,res) =>{
 
 };
+
+exports.login = async (req,res) =>{
+
+};
+
+exports.resetPassword = async (req,res) =>{
+
+};
+
+exports.forgotPassword = async (req,res) =>{
+
+};
+
+exports.verifyEmail = async (req,res) =>{
+
+};

@@ -40,7 +40,7 @@ loginBtn.addEventListener("click", function(event){
     alert.innerText = "Login Successfull";
 
     //POST to server
-    /*fetch("/auth/login", {
+    fetch("/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -61,7 +61,5 @@ loginBtn.addEventListener("click", function(event){
         })
         .catch((error) => {
           console.error("Error:", error);
-        });*/
-
-    
+        });
 })

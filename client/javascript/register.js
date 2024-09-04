@@ -119,10 +119,7 @@ document.addEventListener("DOMContentLoaded", function (){
             .catch(error => {
                 // Handle any errors here
                 console.error(error);
-            });
-        
-        
-        
+            }); 
     })
 
     

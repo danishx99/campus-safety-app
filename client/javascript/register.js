@@ -2,6 +2,7 @@ document.addEventListener("DOMContentLoaded", function (){
 
     var signupBtn= document.getElementById("signup-btn");
     var googleBtn= document.getElementById("continue-google-btn");
+    var alert = document.getElementById("alert");
 
     let email;
     let phone;
@@ -35,7 +36,8 @@ document.addEventListener("DOMContentLoaded", function (){
             psw === "" ||
             conf_psw === ""
           ) {
-            alert("Not all fields filled in");
+            alert.style.display = "block";
+            alert.innerText = "Please fill in all fields";
             return;
           }
 
@@ -43,14 +45,16 @@ document.addEventListener("DOMContentLoaded", function (){
         
         //check format of email- must be wits email
         if (!email.endsWith(".wits.ac.za")) {
-            alert("Invalid email format. Please use a Wits email address.");
+            alert.style.display = "block";
+            alert.innerText = "Invalid email format. Please use a Wits email address.";
             return;
         }
 
         // make sure phone number is valid 10 digit thing
         const phonePattern = /^[0-9]{10}$/; 
         if (!phonePattern.test(phone)) {
-        alert("Invalid phone number. Please enter a valid 10-digit phone number.");
+            alert.style.display = "block";
+            alert.innerText = "Invalid phone number. Please enter a valid 10-digit phone number.";
         return;
         }
 
@@ -61,25 +65,36 @@ document.addEventListener("DOMContentLoaded", function (){
         
         if (!passwordPattern.test(password)) {
             if (!/(?=.*\d)/.test(password)) {
-              alert("Password must contain at least one digit.");
+                alert.style.display = "block";
+                alert.innerText = "Password must contain at least one digit.";
             } else if (!/(?=.*[a-z])/.test(password)) {
-              alert("Password must contain at least one lowercase letter.");
+                alert.style.display = "block";
+                alert.innerText = "Password must contain at least one lowercase letter.";
             } else if (!/(?=.*[A-Z])/.test(password)) {
-              alert("Password must contain at least one uppercase letter.");
+                alert.style.display = "block";
+                alert.innerText = "Password must contain at least one uppercase letter.";
             } else if (!/(?=.*[!@#$%^&*])/.test(password)) {
-              alert("Password must contain at least one special character from the set [!@#$%^&*].");
+                alert.style.display = "block";
+                alert.innerText = "Password must contain at least one special character from the set [!@#$%^&*].";
             } else if (!/.{8,}/.test(password)) {
-              alert("Password must be at least 8 characters long.");
+                alert.style.display = "block";
+                alert.innerText = "Password must be at least 8 characters long.";
             }
             return;
           }
           
-          // make sure password == confirmed password
-          if (psw !== conf_psw) {
-            alert("Passwords do not match.");
-            return;
-          }
-
+        // make sure password == confirmed password
+        if (psw !== conf_psw) {
+        alert.style.display = "block";
+        alert.innerText = "Passwords do not match.";
+        return;
+        }
+        
+        alert.style.display = "block";
+        alert.style.color = 'green';
+        alert.style.backgroundColor = '#ddffdd';
+        alert.style.border='green';
+        alert.innerText = "Details succesfully captured, time to post!";
         console.log("Details succesfully captured, time to post!");
         
         

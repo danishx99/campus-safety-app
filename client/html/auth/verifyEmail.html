@@ -44,7 +44,9 @@
         <div class="flex justify-center">
             <img class="w-40 h-40" src="../../assets/email.png" alt="email-icon">
         </div>
-        <button class="inline-flex items-center justify-center whitespace-nowrap rounded-lg hover:bg-blue-500 text-sm text-white font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 w-full bg-[#015EB8]">
+        <button class="inline-flex items-center justify-center whitespace-nowrap rounded-lg hover:bg-blue-500 text-sm text-white font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 w-full bg-[#015EB8]"
+        id="resend-btn"
+        >
             Resend Email
           </button>
     </div>
@@ -52,35 +54,6 @@
 </div>
 </body>
 
-<script>
-  let eyeicon = document.getElementById('eyeicon-psw');
-  let psw = document.getElementById('psw');
-
-  eyeicon.addEventListener('click', () => {
-      if (psw.type === 'password') {
-          psw.type = 'text';
-          eyeicon.src = '../../assets/eye-open.png';
-      } else {
-          psw.type = 'password';
-          eyeicon.src = '../../assets/eye-close.png';
-      }
-  });
-
-</script>
-<script>
-let confeyeicon = document.getElementById('eyeicon-confirm-psw');
-let confpsw = document.getElementById('conf-psw');
-
-confeyeicon.addEventListener('click', () => {
-    if (confpsw.type === 'password') {
-      confpsw.type = 'text';
-      confeyeicon.src = '../../assets/eye-open.png';
-    } else {
-        confpsw.type = 'password';
-        confeyeicon.src = '../../assets/eye-close.png';
-    }
-});
-
-</script>
+<script src="../../javascript/verifyEmail.js"></script>
 
 </html>

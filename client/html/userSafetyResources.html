@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Safety Resources</title>
+    <link href="../styles/styles.css" rel="stylesheet">
+    <link href="../styles/output.css" rel="stylesheet">
+</head>
+
+<body>
+    <style>:root {
+        --background: 0 0% 100%;
+        --foreground: 240 10% 3.9%;
+        --card: 0 0% 100%;
+        --card-foreground: 240 10% 3.9%;
+        --popover: 0 0% 100%;
+        --popover-foreground: 240 10% 3.9%;
+        --primary: 240 5.9% 10%;
+        --primary-foreground: 0 0% 98%;
+        --secondary: 240 4.8% 95.9%;
+        --secondary-foreground: 240 5.9% 10%;
+        --muted: 240 4.8% 95.9%;
+        --muted-foreground: 240 3.8% 45%;
+        --accent: 240 4.8% 95.9%;
+        --accent-foreground: 240 5.9% 10%;
+        --destructive: 0 72% 51%;
+        --destructive-foreground: 0 0% 98%;
+        --border: 240 5.9% 90%;
+        --input: 240 5.9% 90%;
+        --ring: 240 5.9% 10%;
+        --chart-1: 173 58% 39%;
+        --chart-2: 12 76% 61%;
+        --chart-3: 197 37% 24%;
+        --chart-4: 43 74% 66%;
+        --chart-5: 27 87% 67%;
+        --radius: 0.5rem;
+    }
+
+    img[src="/placeholder.svg"],
+    img[src="/placeholder-user.jpg"] {
+        filter: sepia(.3) hue-rotate(-60deg) saturate(.5) opacity(0.8)
+    }</style>
+
+    <style>
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            font-family: 'Inter', sans-serif;
+            --font-sans-serif: 'Inter';
+        }
+    </style>
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            --font-sans-serif: 'Inter';
+        }
+    </style>
+
+    <div class="flex flex-col min-h-screen">
+        <header class="bg-[#015EB8] p-4 flex justify-between items-center">
+            <div class="flex items-center">
+                <img src="../assets/logo.png" class="h-8">
+                <span class="text-white text-lg font-semibold ml-2">Campus Safety</span>
+            </div>
+            <div class="flex items-center space-x-4">
+                <button class="bg-yellow-500 text-white py-1 px-4 rounded">Notifications</button>
+                <div class="bg-white p-2 rounded-full">
+                    <img src="../assets/logo.png" alt="User Icon" class="h-8 w-8">
+                </div>
+            </div>
+        </header>
+
+        <div class="flex flex-1">
+            <aside class="bg-gray-100 w-1/4 p-4">
+                <nav class="space-y-4">
+                    <a href="#" class="block text-lg font-semibold text-[#015EB8]">Dashboard</a>
+                    <a href="#" class="block text-lg text-gray-700">Reported Incidents</a>
+                    <a href="#" class="block text-lg text-gray-700">Send Notifications</a>
+                    <a href="#" class="block text-lg text-gray-700">Safety Resources</a>
+                    <a href="#" class="block text-lg text-gray-700">Location Services</a>
+                </nav>
+                <div class="mt-8">
+                    <a href="#" class="text-red-500 font-semibold">Logout</a>
+                </div>
+            </aside>
+
+            <main class="flex-1 p-8 bg-white">
+                <div class="text-center my-8">
+                    <h2 class="text-3xl font-semibold text-gray-800">Safety Resources</h2>
+                    <p class="text-gray-400 mt-2">Access important safety information and resources.</p>
+                </div>
+                
+                <div class="flex flex-col items-center justify-center mt-6 space-y-4">
+                    <div class="flex items-center justify-between bg-blue-100 rounded-full px-6 py-4 max-w-3xl w-full">
+                        <img src="../assets/phone.png" alt="Phone Icon" class="h-5 w-5 text-blue-900 mr-4 bg-blue-100">
+                        <div class="text-center flex-1">
+                            <p class="font-semibold text-blue-900">Campus Control</p>
+                            <p class="text-sm text-blue-900">Call +27 11 717 4444/6666 for emergency assistance</p>
+                        </div>
+                    </div>
+                    <a href="#" class="flex justify-end px-4 py-2 text-blue-400 hover:text-blue-600 text-sm font-medium">View more resources</a>
+                </div>
+            </main>
+        </div>
+
+        <footer class="bg-[#015EB8] text-white text-center py-4">
+            <p>©2024 Campus Safety. All rights reserved.</p>
+            <div class="flex justify-center space-x-4 mt-2">
+                <a href="#" class="text-white">Privacy Policy</a>
+                <a href="#" class="text-white">Terms of Service</a>
+                <a href="#" class="text-white">Contact Us</a>
+            </div>
+        </footer>
+    </div>
+</body>
+</html>

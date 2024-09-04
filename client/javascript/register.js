@@ -89,6 +89,8 @@ document.addEventListener("DOMContentLoaded", function (){
         alert.innerText = "Passwords do not match.";
         return;
         }
+
+        // validation passed, now post to backend
         
         alert.style.display = "block";
         alert.style.color = 'green';
@@ -96,6 +98,28 @@ document.addEventListener("DOMContentLoaded", function (){
         alert.style.border='green';
         alert.innerText = "Details succesfully captured, time to post!";
         console.log("Details succesfully captured, time to post!");
+
+        fetch("/auth/register", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                email: email,
+                phone: phone,
+                account: account,
+                password: psw
+            })
+        })
+            .then(response => response.json())
+            .then(data => {
+                // Handle the response data here
+                console.log(data);
+            })
+            .catch(error => {
+                // Handle any errors here
+                console.error(error);
+            });
         
         
         

@@ -1016,6 +1016,24 @@ video {
   color: rgb(185 28 28 / var(--tw-text-opacity));
 }
 
+.alert-box-green {
+  margin-bottom: 4%;
+  display: none;
+  border-radius: 1rem;
+  border-width: 1px;
+  --tw-border-opacity: 1;
+  border-color: rgb(74 222 128 / var(--tw-border-opacity));
+  --tw-bg-opacity: 1;
+  background-color: rgb(254 226 226 / var(--tw-bg-opacity));
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  text-align: center;
+  --tw-text-opacity: 1;
+  color: rgb(21 128 61 / var(--tw-text-opacity));
+}
+
 .file\:border-0::file-selector-button {
   border-width: 0px;
 }

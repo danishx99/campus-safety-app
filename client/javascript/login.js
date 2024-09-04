@@ -23,9 +23,6 @@ loginBtn.addEventListener("click", function(event){
         alert.innerText = "Please fill in all fields";
         return;
       }
-      /*if(rememberMe){
-        console.log("Remember me checked");
-      }*/
      if(!email.endsWith("@students.wits.ac.za") && !email.endsWith("@wits.ac.za")){
         var alert = document.getElementById("alert");
         alert.style.display = "block";
@@ -34,5 +31,12 @@ loginBtn.addEventListener("click", function(event){
      }
 
     console.log(email);
+    var alert = document.getElementById("alert");
+    alert.style.display = "block";
+    alert.style.color = 'green';
+    alert.style.backgroundColor = '#ddffdd';
+    alert.style.border='green';
+    alert.innerText = "Login Successfull";
+
     
 })

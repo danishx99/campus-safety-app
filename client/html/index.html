@@ -1,18 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Campus Safety App</title>
+    <link href="../styles/output.css" rel="stylesheet" />
+    <link href="../styles/styles.css" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="../JS/loadComponents.js" defer></script>
+  </head>
 
-<!-- TEST FILE TO CHECK THAT TAILWINDCSS WORKS -- CAN DELETE -->
+  <body class="flex flex-col min-h-screen bg-gray-100">
+    <div id="header-placeholder"></div>
+    <div class="flex flex-1">
+      <div id="navbar-placeholder"></div>
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tailwind CSS via CDN</title>
-    <link href="../styles/styles.css" rel="stylesheet">
-    <link href="../styles/output.css" rel="stylesheet">
-</head>
+      <!-- Main Content -->
+      <main class="flex-1 p-6 overflow-auto">
+        <h1 class="text-2xl font-bold mb-4">Welcome to Campus Safety</h1>
+        <p class="text-gray-700">
+          This is where your main content will be displayed.
+        </p>
+      </main>
+    </div>
 
-<body>
-    <h1 class="text-3xl text-red-800">Hello, Tailwind!</h1>
-</body>
-
+    <div id="footer-placeholder"></div>
+  </body>
 </html>

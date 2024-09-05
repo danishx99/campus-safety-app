@@ -91,12 +91,6 @@ document.addEventListener("DOMContentLoaded", function (){
         }
 
         // validation passed, now post to backend
-        
-        alert.style.display = "block";
-        alert.style.color = 'green';
-        alert.style.backgroundColor = '#ddffdd';
-        alert.style.border='green';
-        alert.innerText = "Details succesfully captured, time to post!";
         console.log("Details succesfully captured, time to post!");
 
         fetch("/auth/register", {
@@ -114,7 +108,21 @@ document.addEventListener("DOMContentLoaded", function (){
             .then(response => response.json())
             .then(data => {
                 // Handle the response data here
+                if (data.message ==="User registered successfully") {
+                    
+                    alert.style.display = "block";
+                    alert.style.color = 'green';
+                    alert.style.backgroundColor = '#ddffdd';
+                    alert.style.border='green';
+                    alert.innerText = "User successfully registered. Redirecting../";
+
+                // redirect to login page
+                setTimeout(() => {
+                    window.location.href = "/";
+                }, 3000);
                 console.log(data);
+                }
+                
             })
             .catch(error => {
                 // Handle any errors here

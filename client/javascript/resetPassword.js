@@ -58,6 +58,7 @@ resetBtn.addEventListener('click', function (event) {
         return;
       }
 
+    // reset password
     var alert = document.getElementById("alert");
     alert.style.display = "block";
     alert.style.color = 'green';
@@ -65,5 +66,25 @@ resetBtn.addEventListener('click', function (event) {
     alert.style.border='green';
     alert.innerText = "Reset Successfull";
 
+    // TIME TO POST
 
+    fetch("/auth/resetPassword", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            new_password: new_password,
+            conf_password: conf_password,
+        }),
+    })
+        .then((response) => response.json())
+        .then((data) => {
+            // Handle the response data here
+            console.log(data);
+        })
+        .catch((error) => {
+            // Handle any errors here
+            console.error(error);
+        });
 });

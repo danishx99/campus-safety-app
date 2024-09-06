@@ -7,6 +7,7 @@ const app = express()
 const PORT = process.env.PORT|| 3000;
 const frontendRoutes= require('./server/routes/frontendRoutes.js');
 const authRoutes= require('./server/routes/authRoutes.js');
+const adminRoutes= require('./server/routes/adminRoutes.js');
 
 app.use(express.json())         // automatically passes body as json object
 //Serve frontend from two folders above the current directory
@@ -17,6 +18,7 @@ app.use(express.urlencoded({extended: true}));
 
 app.use("",frontendRoutes);
 app.use("/auth",authRoutes);
+app.use("/admin",adminRoutes);
 
 dotenv.config();
 

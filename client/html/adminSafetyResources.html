@@ -7,6 +7,8 @@
     <title>Admin Safety Resources</title>
     <link href="../styles/styles.css" rel="stylesheet">
     <link href="../styles/output.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="../javascript/loadComponents.js" defer></script>
 </head>
 
 <body>
@@ -86,11 +88,11 @@
                         <label class="block text-lg mb-2" for="description">Description</label>
                         <textarea id="description" class="w-full p-2 border rounded"></textarea>
                     </div>
-                    <button type="submit" class="bg-[#015EB8] text-white py-2 px-4 rounded">Upload</button>
+                    <button id="btnResource" class="bg-[#015EB8] text-white py-2 px-4 rounded">Upload</button>
                 </form>
             </main>
         </div>
-
+        
         <div id="footer-placeholder"></div>
     </div>
 </body>

@@ -26,4 +26,8 @@ router.get('/verifyEmail', (req, res) => {
     res.sendFile(path.join(__dirname,'../../client/html/auth','verifyEmail.html'));
 })
 
+router.get('/index', (req, res) => {
+    res.sendFile(path.join(__dirname,'../../client/html','index.html'));
+})
+
 module.exports = router;

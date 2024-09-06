@@ -52,19 +52,20 @@ resetBtn.addEventListener('click', function (event) {
         return;
       }
       
-      // make sure password == confirmed password
-      if (new_password !== conf_password) {
-        alert.innerText ="Passwords do not match.";
-        return;
-      }
+    // make sure password == confirmed password
+    if (new_password !== conf_password) {
+    alert.innerText ="Passwords do not match.";
+    return;
+    }
+
+    //send token 
+    const urlParams = new URLSearchParams(window.location.search);
+    const token = urlParams.get('token');
+
+
 
     // reset password
     var alert = document.getElementById("alert");
-    alert.style.display = "block";
-    alert.style.color = 'green';
-    alert.style.backgroundColor = '#ddffdd';
-    alert.style.border='green';
-    alert.innerText = "Reset Successfull";
 
     // TIME TO POST
 
@@ -74,14 +75,34 @@ resetBtn.addEventListener('click', function (event) {
             "Content-Type": "application/json",
         },
         body: JSON.stringify({
-            new_password: new_password,
-            conf_password: conf_password,
+            resetToken: token,
+            password: new_password,
         }),
     })
         .then((response) => response.json())
         .then((data) => {
-            // Handle the response data here
-            console.log(data);
+            
+            if(data.message==="Password reset successfully"){
+                alert.style.display = "block";
+                alert.style.color = 'green';
+                alert.style.backgroundColor = '#ddffdd';
+                alert.style.border='green';
+                alert.innerText = "Password Reset Successful";
+
+                // redirect to login page
+            setTimeout(() => {
+                window.location.href = '/';
+            }, 2500);
+            }
+
+            else if(data.error){
+                console.error("Error resetting password :", data.error);
+                alert.style.display = "block";
+                alert.style.color = 'red';
+                alert.style.backgroundColor = '#ffdddd';
+                alert.style.border = 'red';
+                alert.innerText = data.error;
+            }
         })
         .catch((error) => {
             // Handle any errors here

@@ -38,13 +38,11 @@ document.addEventListener("DOMContentLoaded", function (){
             .then(data => {
                 // Handle the response data here
                 if (data.message ==="Resource added successfully") {
-                    
                     alert.style.display = "block";
                     alert.style.color = 'green';
                     alert.style.backgroundColor = '#ddffdd';
                     alert.style.border='green';
-                    alert.innerText = "Resource added successfully";
-
+                    alert.innerText = "Resource added successfully"
                     console.log(data);
                 }
                 

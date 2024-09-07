@@ -2,8 +2,10 @@
 const bcrypt = require("bcryptjs"); // For password hashing
 const jwt = require("jsonwebtoken"); // For generating JSON Web Tokens
 const dotenv = require("dotenv"); // For accessing environment variables
+const crypto = require('crypto');
 const User= require("../schemas/User")
 const mailer = require("../utils/mailingTool"); // Transporter for sending emails
+const { log } = require("console");
 
 dotenv.config();
 
@@ -42,12 +44,22 @@ exports.register = async (req,res) =>{
         phone,
         role,
         password: hashedPassword,
+        isVerified: false,
         });
+
+        // Generate a unique verification token
+        const verificationToken = crypto.randomBytes(32).toString('hex');
+        newUser.verificationToken = verificationToken;
+        newUser.verificationTokenExpires = Date.now() + 3600000; // 1 hour expiry
 
         // Save the new user to the database
         await newUser.save();
 
-        res.status(201).json({ message: "User registered successfully" });
+        // send verification email
+        var url = req.protocol + "://" + req.get("host");
+        await mailer.sendVerificationEmail(email,url,verificationToken);
+
+        res.status(201).json({ message: "Registration successful! Please verify your email." });
 
 
     } catch (error) {
@@ -187,4 +199,66 @@ exports.forgotPassword = async (req,res) =>{
 
 exports.verifyEmail = async (req,res) =>{
 
+    const { token } = req.body;
+    // console.log("Token is: ",token);
+    
+
+    try {
+        // Find user with the corresponding verification token
+        const user = await User.findOne({
+        verificationToken: token,
+        verificationTokenExpires: { $gt: Date.now() }, // Check token expiration
+        });
+
+        if (!user) {
+        return res.status(400).json({ error: 'Invalid or expired token' });
+        }
+
+        // Mark email as verified
+        user.isVerified = true;
+        user.verificationToken = undefined;
+        user.verificationTokenExpires = undefined;
+
+        await user.save();
+        console.log("Email verified succesfully");
+        
+
+        res.status(200).json({ message: 'Email verified successfully!' });
+    } catch (error) {
+        res.status(500).json({ error: 'Error verifying email', error });
+    }
+
 };
+
+// Resend verification email (if token expires or email was missed)
+exports.resendVerificationEmail = async (req, res) => {
+
+    //decode jwt to get user email, then use that to search
+  
+    try {
+
+      const user = await User.findOne({ email });
+      if (!user || user.isVerified) {
+        return res.status(400).json({ message: "User doesn't exist or is already verified" });
+      }
+  
+      // Generate a new verification token
+      const newVerificationToken = crypto.randomBytes(32).toString('hex');
+      user.verificationToken = newVerificationToken;
+      user.verificationTokenExpires = Date.now() + 3600000; // 1 hour from now
+  
+      await user.save();
+  
+      // Send new verification email
+      var url = req.protocol + "://" + req.get("host");
+    //   const verifyUrl = `${url}/verifyEmail?token=${newVerificationToken}`;
+  
+      // Send the new token via email
+      await mailer.resendVerificationEmail(user.email,url,newVerificationToken);
+  
+      res.status(200).json({ message: 'Verification email resent successfully!' });
+    } catch (error) {
+      res.status(500).json({ message: 'Error resending verification email', error });
+    }
+  };
+  

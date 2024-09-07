@@ -28,7 +28,17 @@ const userSchema = new Schema({
     type: String,
     required: true,
     enum: ['admin', 'staff', 'student'] 
-  }
+  },
+  isVerified: {
+    type: Boolean,
+    default: false
+   }, // Email verification status
+  	verificationToken: {
+      type: String
+   }, // Token to verify email
+  	verificationTokenExpires: {
+      type: Date
+   }, // Expiration time for the token
 }, {
   timestamps: true // Automatically add createdAt and updatedAt timestamps
 });

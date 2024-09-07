@@ -108,18 +108,18 @@ document.addEventListener("DOMContentLoaded", function (){
             .then(response => response.json())
             .then(data => {
                 // Handle the response data here
-                if (data.message ==="User registered successfully") {
+                if (data.message ==="Registration successful! Please verify your email.") {
                     
                     alert.style.display = "block";
                     alert.style.color = 'green';
                     alert.style.backgroundColor = '#ddffdd';
                     alert.style.border='green';
-                    alert.innerText = "User successfully registered. Redirecting../";
+                    alert.innerText = "Registration successful! Please verify your email.";
 
-                // redirect to login page
-                setTimeout(() => {
-                    window.location.href = "/";
-                }, 3000);
+                // // redirect to login page
+                // setTimeout(() => {
+                //     window.location.href = "/";
+                // }, 3000);
                 console.log(data);
                 }
                 

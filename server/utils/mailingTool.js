@@ -71,4 +71,42 @@ const sendSuccess = (to) => {
     return transporter.sendMail(mailOptions);
   };
 
-module.exports = { sendRequest, sendSuccess };
+  const sendVerificationEmail = (to,url,token) => {
+    const mailOptions = {
+      from: "noreply@campus-safety.com",
+      to,
+      subject:"Email Verification",
+      text: `
+        Hello there,
+
+        Please verify your email by clicking the link: ${url}/verifyEmail?token=${token}
+
+        Best regards,
+        Campus Safety Admin Team        
+
+    `,
+    };
+  
+    return transporter.sendMail(mailOptions);
+  };
+
+  const resendVerificationEmail = (to,url,token) => {
+    const mailOptions = {
+      from: "noreply@campus-safety.com",
+      to,
+      subject:"Email Verification (Resend)",
+      text: `
+        Hello there,
+
+        Please verify your email by clicking the link: ${url}/verifyEmail?token=${token}
+
+        Best regards,
+        Campus Safety Admin Team        
+
+    `,
+    };
+  
+    return transporter.sendMail(mailOptions);
+  };
+
+module.exports = { sendRequest, sendSuccess, sendVerificationEmail,resendVerificationEmail };

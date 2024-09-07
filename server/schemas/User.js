@@ -28,6 +28,16 @@ const userSchema = new Schema({
     required: true,
     enum: ['admin', 'staff', 'student'] 
   },
+  isVerified: {
+    type: Boolean,
+    default: false
+   }, // Email verification status
+  	verificationToken: {
+      type: String
+   }, // Token to verify email
+  	verificationTokenExpires: {
+      type: Date
+   }, // Expiration time for the token
   profilePicture: {
     type: String,
     default: '../assets/user-profile.png'

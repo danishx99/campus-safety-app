@@ -4,10 +4,7 @@ async function loadSafetyResources() {
 
     return data.data;
 };
-
-console.log(loadSafetyResources());
-
-const resources = [
+/*const resources = [
     {
       title: "Campus Control",
       description: "Call +27 11 717 4444/6666 for emergency assistance",
@@ -19,7 +16,11 @@ const resources = [
       type: "Emergency Contact"
     },
     // Add more resources as needed
-];
+];*/
+
+(async () => {
+const resources = await loadSafetyResources(); // Wait for the resources to load
+
 
 function createResource(resource) {
     const resourceDiv = document.createElement('div');
@@ -28,9 +29,10 @@ function createResource(resource) {
     );
   
     const img = document.createElement('img');
-    if (resource.type === "Emergency Contact") {
+    /*if (resource.type === "Emergency Contact") {
         img.src = "../assets/phone.png";
-    }
+    }*/
+    img.src = "../assets/phone.png";
     img.alt = resource.title;
     img.classList.add('w-8', 'h-8', 'mr-4');
 
@@ -61,3 +63,4 @@ resources.forEach(resource => {
     const resourceElement = createResource(resource);
     carousel.appendChild(resourceElement);
 });
+})();

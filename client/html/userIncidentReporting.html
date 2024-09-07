@@ -14,7 +14,27 @@
             height: 400px;
             width: 100%;
             display: none;
-            /* Initially hide the map */
+        }
+
+        /* Loader styles */
+        #mapLoader {
+            display: none;
+            border: 4px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 4px solid #3498db;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
         }
     </style>
 </head>
@@ -53,14 +73,16 @@
                     <div class="bg-white mb-4 p-2 rounded-lg flex justify-between items-center">
                         <div class="flex w-full items-center">
                             <label class="text-black whitespace-nowrap" for="location">Set Location:</label>
-                            <input class=" rounded-lg text-black w-full" type="text" id="location"
+                            <input class="ml-2 rounded-lg text-black w-full" type="text" id="location"
                                 placeholder="Select Location" readonly>
                         </div>
                         <img id="showMap" onclick="toggleMap()" class="w-7 h-7 cursor-pointer"
                             src="../assets/locationPick.png" alt="">
                     </div>
 
-                    <div class="mb-2" id="map"></div>
+                    <!-- Loader and Map -->
+                    <div class="flex justify-center items-center" id="mapLoader"></div> <!-- Loader -->
+                    <div class="mb-2" id="map"></div> <!-- Map -->
 
                     <label for="incidentDate">Select Incident Date:</label>
                     <input class="p-2 rounded-xl mb-4 text-black" type="date" id="incidentDate" name="incidentDate">
@@ -91,7 +113,7 @@
             if (mapInitialized) return; // Prevent reinitializing the map
 
             var map = new google.maps.Map(document.getElementById("map"), {
-                zoom: 14,
+                zoom: 16,
                 center: location
             });
 
@@ -115,13 +137,18 @@
 
         function toggleMap() {
             var mapDiv = document.getElementById("map");
+            var loader = document.getElementById("mapLoader");
 
-            if (mapDiv.style.display === "none") {
+            // Show loader while map is initializing
+            loader.style.display = "block";
+            mapDiv.style.display = "none";
+
+            // Initialize map and show it after some delay (to simulate loading)
+            setTimeout(function () {
+                loader.style.display = "none";
                 mapDiv.style.display = "block";
-                google.maps.event.trigger(map, "resize"); // Trigger map resize
-            } else {
-                mapDiv.style.display = "none";
-            }
+                google.maps.event.trigger(map, "resize");
+            }, 5000); // You can adjust the delay as per your actual load time
         }
 
         // Initialize the map on page load, but keep it hidden

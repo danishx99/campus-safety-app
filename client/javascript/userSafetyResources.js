@@ -1,3 +1,12 @@
+async function loadSafetyResources() {
+    const response = await fetch('http://localhost:3000/user/userSafetyResources'); // Use the correct route
+    const data = await response.json();
+
+    return data.data;
+};
+
+console.log(loadSafetyResources());
+
 const resources = [
     {
       title: "Campus Control",

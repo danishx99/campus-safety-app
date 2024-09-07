@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Profile Management</title>
+    <link href="../styles/output.css" rel="stylesheet" />
+    <link href="../styles/styles.css" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="../javascript/loadComponents.js" defer></script>
+  </head>
+
+  <body class="flex flex-col min-h-screen bg-gray-100">
+    <div id="header-placeholder"></div>
+    <div class="flex flex-1">
+      <div id="navbar-placeholder"></div>
+      <main class="flex-1 p-6 overflow-auto flex items-center justify-center">
+        <div class="w-full max-w-2xl h-full">
+          <div class="bg-[#015EB8] text-white rounded-t-lg p-4 flex items-center space-x-4 relative border border-gray-200">
+            <div class="relative">
+              <img
+                id="avatar"
+                src="../assets/user-profile.png"
+                alt="User Profile"
+                class="w-20 h-20 rounded-full border-2 border-white"
+              />
+              <button
+                id="cameraButton"
+                class="absolute bottom-0 right-0 bg-white text-[#015EB8] rounded-full p-2 hidden hover:bg-gray-200 transition-colors duration-200"
+              >
+                <img src="../assets/add_a_photo.png" alt="Add photo" class="h-4 w-4" />
+              </button>
+              <input type="file" id="fileInput" class="hidden" accept="image/*" />
+            </div>
+            <div class="flex flex-col items-start">
+              <h1 class="text-2xl" id="profileName">Sims Mkhize</h1>
+              <div class="flex items-center space-x-2 mt-1">
+                <p class="text-xs border border-white rounded-full px-2 py-0.5 hover:bg-white hover:text-[#015EB8] transition-colors duration-200" id="profileRole">Admin</p>
+              </div>
+            </div>
+          </div>
+          <div class="p-4 bg-white rounded-b-lg flex-grow border border-gray-200 border-t-0">
+            <form id="profileForm" class="grid gap-4">
+              <div class="grid gap-2">
+                <label for="email" class="font-semibold">Email</label>
+                <input
+                  type="email"
+                  id="email"
+                  class="border p-2 rounded bg-gray-100 cursor-not-allowed"
+                  value="simsmkhize@nohoes.com"
+                  readonly
+                />
+              </div>
+              <div class="grid gap-2">
+                <label for="cellphone" class="font-semibold">Cellphone Number</label>
+                <input
+                  type="text"
+                  id="cellphone"
+                  class="border p-2 rounded"
+                  value="074-4763829"
+                  disabled
+                />
+              </div>
+              <div id="editFields" class="hidden">
+                <div class="grid gap-2">
+                  <label for="password" class="font-semibold">New Password</label>
+                  <input type="password" id="password" class="border p-2 rounded" />
+                </div>
+                <div class="grid gap-2">
+                  <label for="confirmPassword" class="font-semibold">Confirm Password</label>
+                  <input
+                    type="password"
+                    id="confirmPassword"
+                    class="border p-2 rounded"
+                  />
+                </div>
+              </div>
+              <div class="grid gap-2">
+                <label class="font-semibold">Date Joined</label>
+                <input
+                  type="text"
+                  value="2024-09-06"
+                  class="border p-2 rounded bg-gray-100 cursor-not-allowed"
+                  readonly
+                />
+              </div>
+              <button
+                type="button"
+                class="bg-[#015EB8] text-white p-2 rounded w-full hover:bg-[#014C93]"
+                id="submitButton"
+              >
+                Edit Profile
+              </button>
+            </form>
+            <button
+              id="logoutButton"
+              class="mt-4 bg-red-600 text-white p-2 rounded w-full hover:bg-red-700 transition-colors duration-200 md:hidden"
+            >
+              Logout
+            </button>
+          </div>
+        </div>
+      </main>
+    </div>
+    <div id="footer-placeholder"></div>
+  </body>
+
+  <script src="../javascript/profileManagement.js"></script>
+</html>

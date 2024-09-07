@@ -2,14 +2,13 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const userSchema = new Schema({
- 
   firstName: {
     type: String,
-    required: false
+    required: true
   },
   lastName: {
     type: String,
-    required: false
+    required: true
   },
   email: {
     type: String,
@@ -28,9 +27,13 @@ const userSchema = new Schema({
     type: String,
     required: true,
     enum: ['admin', 'staff', 'student'] 
+  },
+  profilePicture: {
+    type: String,
+    default: '../assets/user-profile.png'
   }
 }, {
-  timestamps: true // Automatically add createdAt and updatedAt timestamps
+  timestamps: true // This will automatically add createdAt and updatedAt fields
 });
 
 module.exports = mongoose.model('User', userSchema);

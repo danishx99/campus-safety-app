@@ -1,5 +1,6 @@
 document.addEventListener("DOMContentLoaded", function (){
     var resourceBtn = document.getElementById("btnResource");
+    var alert = document.getElementById("alert");
 
     resourceBtn.addEventListener("click", function(event) {
         console.log("Add resource button clicked");
@@ -23,7 +24,7 @@ document.addEventListener("DOMContentLoaded", function (){
         
         console.log("Details succesfully captured, time to post!");
 
-        fetch("/admin/adminSafetyResources", {
+        fetch("http://localhost:3000/admin/adminSafetyResources", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -38,13 +39,11 @@ document.addEventListener("DOMContentLoaded", function (){
             .then(data => {
                 // Handle the response data here
                 if (data.message ==="Resource added successfully") {
-                    
                     alert.style.display = "block";
                     alert.style.color = 'green';
                     alert.style.backgroundColor = '#ddffdd';
                     alert.style.border='green';
-                    alert.innerText = "Resource added successfully";
-
+                    alert.innerText = "Resource added successfully"
                     console.log(data);
                 }
                 
@@ -52,6 +51,6 @@ document.addEventListener("DOMContentLoaded", function (){
             .catch(error => {
                 // Handle any errors here
                 console.error(error);
-            }); 
+            });
     });
 });

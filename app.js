@@ -16,8 +16,6 @@ app.use(express.static("client"));
 
 const path = require("path");
 
-console.log(__dirname);
-
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "./client/html/index.html"));
 });

@@ -26,7 +26,7 @@ app.use("/profile",profileRoutes);
 
 dotenv.config();
 
-console.log(process.env.DB_CONNECT);
+// console.log(process.env.DB_CONNECT);
 
 //Connect to MongoDB
 mongoose

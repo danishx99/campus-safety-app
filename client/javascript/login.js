@@ -33,33 +33,64 @@ loginBtn.addEventListener("click", function(event){
      //Validation complete, time to POST to the server
     console.log(email);
     var alert = document.getElementById("alert");
-    alert.style.display = "block";
-    alert.style.color = 'green';
-    alert.style.backgroundColor = '#ddffdd';
-    alert.style.border='green';
-    alert.innerText = "Login Successfull";
+    // alert.style.display = "block";
+    // alert.style.color = 'green';
+    // alert.style.backgroundColor = '#ddffdd';
+    // alert.style.border='green';
+    // alert.innerText = "Login Successfull";
 
     //POST to server
     fetch("/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email: email,
-          password: psw,
-          rememberMe: rememberMe,
-        }),
-      })
-        .then((response) => {
-          if (response.status === 200) {
-            console.log("Login successful");
-            window.location.href = "";
-          } else {
-            console.log("Login failed");
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email: email,
+        password: psw,
+        rememberMe: rememberMe,
+      }),
+    })
+      .then(response => response.json())
+      .then(data => {
+
+        console.log(data);
+        if(data.error){
+
+          console.error("Error logging in:", data.error);
+          alert.style.display = "block";
+          alert.style.color = 'red';
+          alert.style.backgroundColor = '#ffdddd';
+          alert.style.border = 'red';
+          alert.innerText = data.error;
+        }
+        else if (data.success) {
+          console.log(data);
+    
+          alert.style.display = "block";
+          alert.style.color = 'green';
+          alert.style.backgroundColor = '#ddffdd';
+          alert.style.border = 'green';
+          alert.innerText = "Logging in user ...";
+    
+          // Check for data.redirect and redirect
+          if (data.redirect) {
+            setTimeout(() => {
+              window.location.href = "/index"; // You can use data.redirect.toLowerCase() if necessary
+            }, 1000);
           }
-        })
-        .catch((error) => {
-          console.error("Error:", error);
-        });
+        } else {
+          // Handle case when login fails but no exception was thrown
+          console.error("Login failed:", data);
+        }
+      })
+      .catch((error) => {
+        console.error("Error logging in:", error);
+        alert.style.display = "block";
+        alert.style.color = 'red';
+        alert.style.backgroundColor = '#ffdddd';
+        alert.style.border = 'red';
+        alert.innerText = `Error: ${error.message}`;
+      });
+    
 })

@@ -2,6 +2,7 @@ var resetBtn = document.getElementById('reset-btn');
 var email;
 
 resetBtn.addEventListener('click', function (event) {
+  event.preventDefault();
   console.log('Reset button clicked');
   email = document.getElementById('email').value;
 
@@ -21,11 +22,7 @@ resetBtn.addEventListener('click', function (event) {
 
   console.log(email);
   var alert = document.getElementById("alert");
-    alert.style.display = "block";
-    alert.style.color = 'green';
-    alert.style.backgroundColor = '#ddffdd';
-    alert.style.border='green';
-    alert.innerText = "Reset Email Sent Successfully";
+    
 
     //TIME TO POST
     fetch('/auth/forgotPassword', {
@@ -39,7 +36,24 @@ resetBtn.addEventListener('click', function (event) {
     })
     .then((res) => res.json())
     .then((data) => {
-        console.log('Success:', data);
+      if(data.message==="Password reset instructions have been sent to your email."){
+        console.log("Reset Link sent, please check you email");
+        alert.style.display = "block";
+      alert.style.color = 'green';
+      alert.style.backgroundColor = '#ddffdd';
+      alert.style.border='green';
+      alert.innerText = "Password reset instructions have been sent to your email";
+        
+      }
+      else if(data.error){
+        console.error("Error with email stuff :", data.error);
+        alert.style.display = "block";
+        alert.style.color = 'red';
+        alert.style.backgroundColor = '#ffdddd';
+        alert.style.border = 'red';
+        alert.innerText = data.error;
+      }
+       
     })
     .catch((error) => {
         console.error('Error:', error);

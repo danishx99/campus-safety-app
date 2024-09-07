@@ -33,11 +33,15 @@ document.addEventListener("DOMContentLoaded", function (){
             !account ||
             !psw ||
             !conf_psw ||
+            !firstName ||
+            !lastName ||
             email === "" ||
             phone === "" ||
             account === "" ||
             psw === "" ||
-            conf_psw === ""
+            conf_psw === "" ||
+            firstName === "" ||
+            lastName===""
           ) {
             alert.style.display = "block";
             alert.innerText = "Please fill in all fields";

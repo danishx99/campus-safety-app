@@ -13,7 +13,7 @@ exports.register = async (req,res) =>{
 
     try {
         
-        const {email,account,phone,password } = req.body;
+        const {email,account,phone,password, firstName, lastName} = req.body;
         let role;
 
         console.log("Register endpoint reached");
@@ -40,6 +40,8 @@ exports.register = async (req,res) =>{
 
         // Create a new user
         const newUser = new User({
+        firstName,
+        lastName,
         email,
         phone,
         role,

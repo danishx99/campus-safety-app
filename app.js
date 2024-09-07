@@ -14,6 +14,7 @@ const incidentReportingRoutes = require("./server/routes/incidentReportingRoutes
 
 app.use(cors()); // Enable all CORS requests
 app.use(express.json()); // automatically passes body as json object
+
 //Serve frontend from two folders above the current directory
 app.use(express.static("client"));
 app.use(express.urlencoded({ extended: true }));

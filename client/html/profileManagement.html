@@ -10,7 +10,7 @@
     <script src="../javascript/loadComponents.js" defer></script>
   </head>
 
-  <body class="flex flex-col min-h-screen bg-gray-100">
+  <body class="flex flex-col min-h-screen bg-blue-100">
     <div id="header-placeholder"></div>
     <div class="flex flex-1">
       <div id="navbar-placeholder"></div>
@@ -33,7 +33,7 @@
               <input type="file" id="fileInput" class="hidden" accept="image/*" />
             </div>
             <div class="flex flex-col items-start">
-              <h1 class="text-2xl" id="profileName">Sims Mkhize</h1>
+              <h1 class="text-2xl" id="profileName">First Last</h1>
               <div class="flex items-center space-x-2 mt-1">
                 <p class="text-xs border border-white rounded-full px-2 py-0.5 hover:bg-white hover:text-[#015EB8] transition-colors duration-200" id="profileRole">Admin</p>
               </div>
@@ -46,7 +46,7 @@
                 <input
                   type="email"
                   id="email"
-                  class="border p-2 rounded bg-gray-100 cursor-not-allowed"
+                  class="border p-2 rounded bg-blue-100 cursor-not-allowed"
                   value="simsmkhize@nohoes.com"
                   readonly
                 />
@@ -56,7 +56,7 @@
                 <input
                   type="text"
                   id="cellphone"
-                  class="border p-2 rounded"
+                  class="border p-2 rounded-md bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   value="074-4763829"
                   disabled
                 />
@@ -64,14 +64,18 @@
               <div id="editFields" class="hidden">
                 <div class="grid gap-2">
                   <label for="password" class="font-semibold">New Password</label>
-                  <input type="password" id="password" class="border p-2 rounded" />
+                  <input
+                    type="password"
+                    id="password"
+                    class="border p-2 rounded-md bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
                 </div>
                 <div class="grid gap-2">
                   <label for="confirmPassword" class="font-semibold">Confirm Password</label>
                   <input
                     type="password"
                     id="confirmPassword"
-                    class="border p-2 rounded"
+                    class="border p-2 rounded-md bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
               </div>
@@ -80,7 +84,7 @@
                 <input
                   type="text"
                   value="2024-09-06"
-                  class="border p-2 rounded bg-gray-100 cursor-not-allowed"
+                  class="border p-2 rounded bg-blue-100 cursor-not-allowed"
                   readonly
                 />
               </div>

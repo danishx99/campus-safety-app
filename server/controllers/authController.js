@@ -11,7 +11,7 @@ exports.register = async (req,res) =>{
 
     try {
         
-        const {email,account,phone,password } = req.body;
+        const {email,account,phone,password,firstName,lastName } = req.body;
         let role;
 
         console.log("Register endpoint reached");
@@ -42,6 +42,8 @@ exports.register = async (req,res) =>{
         phone,
         role,
         password: hashedPassword,
+        firstName,
+        lastName,
         });
 
         // Save the new user to the database

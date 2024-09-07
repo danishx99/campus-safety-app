@@ -9,7 +9,8 @@ document.addEventListener("DOMContentLoaded", function (){
     let account;
     let psw;
     let conf_psw;
-
+    let firstName;
+    let lastName;
 
     signupBtn.addEventListener("click", function(event){
         console.log("Signup button clicked");
@@ -19,6 +20,8 @@ document.addEventListener("DOMContentLoaded", function (){
         account= document.getElementById("acc-type").value;
         psw= document.getElementById("psw").value;
         conf_psw= document.getElementById("conf-psw").value;
+        firstName = document.getElementById("first-name").value;
+        lastName = document.getElementById("last-name").value;
 
         // get account type 
 
@@ -102,7 +105,9 @@ document.addEventListener("DOMContentLoaded", function (){
                 email: email,
                 phone: phone,
                 account: account,
-                password: psw
+                password: psw,
+                firstName: firstName,
+                lastName: lastName
             })
         })
             .then(response => response.json())

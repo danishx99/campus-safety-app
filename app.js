@@ -9,7 +9,9 @@ const frontendRoutes= require('./server/routes/frontendRoutes.js');
 const authRoutes= require('./server/routes/authRoutes.js');
 const adminRoutes= require('./server/routes/adminRoutes.js');
 const profileRoutes= require('./server/routes/profileRoutes.js');
+const cors = require('cors');
 
+app.use(cors());  // Enable all CORS requests
 app.use(express.json())         // automatically passes body as json object
 //Serve frontend from two folders above the current directory
 app.use(express.static("client"));
@@ -24,9 +26,7 @@ app.use("/profile",profileRoutes);
 
 dotenv.config();
 
-// console.log(process.env.DB_CONNECT);
-
-
+console.log(process.env.DB_CONNECT);
 
 //Connect to MongoDB
 mongoose

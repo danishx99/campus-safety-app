@@ -23,7 +23,9 @@ document.addEventListener("DOMContentLoaded", function (){
           }
         
         console.log("Details succesfully captured, time to post!");
-
+        document.getElementById("title").value = null;
+        document.getElementById("resource-type").value = null;
+        document.getElementById("description").value = null; 
         fetch("http://localhost:3000/admin/adminSafetyResources", {
             method: "POST",
             headers: {

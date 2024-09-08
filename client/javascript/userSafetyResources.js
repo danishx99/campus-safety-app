@@ -29,10 +29,15 @@ function createResource(resource) {
     );
   
     const img = document.createElement('img');
-    /*if (resource.type === "Emergency Contact") {
-        img.src = "../assets/phone.png";
-    }*/
-    img.src = "../assets/phone.png";
+    if (resource.type === "Emergency Contact") {
+        img.src = "../assets/phoneS.png";
+    }
+    else if (resource.type === "Safety Tip"){
+      img.src = "../assets/safetyTipS.png";
+    }
+    else if (resource.type === "Campus Safety Policy"){
+      img.src = "../assets/safetyPolicy.png";
+    }
     img.alt = resource.title;
     img.classList.add('w-8', 'h-8', 'mr-4');
 

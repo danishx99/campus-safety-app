@@ -18,36 +18,16 @@
         <div class="flex flex-1">
             <div id="navbar-placeholder"></div>
             <main class="flex-1 p-8 bg-white">
-                <div class="text-center my-8">
+                <div class="text-center mb-4">
                     <h2 class="text-3xl font-semibold text-gray-800">Safety Resources</h2>
                     <p class="text-gray-400 mt-2">Access important safety information and resources.</p>
                 </div>
                 
-                <div class="relative w-full h-96 overflow-y-auto py-6">
-                    <button id="scrollUp" class="absolute top-0 left-1/2 transform -translate-x-1/2 bg-blue-500 text-white p-3 rounded-full hover:bg-blue-700">↑</button>
-                    
-                    <div id="carousel" class="flex flex-col space-y-6 items-center">
+                <div class="relative w-full h-[75vh] overflow-y-auto py-6"> 
+                  <div id="carousel" class="flex flex-col space-y-6 items-center">
                       <!-- Dynamic safety resources will be inserted here -->
-                    </div>
-                    
-                    <button id="scrollDown" class="absolute bottom-0 left-1/2 transform -translate-x-1/2 bg-blue-500 text-white p-3 rounded-full hover:bg-blue-700">↓</button>
-                </div>
-
-                <script>
-                  document.getElementById('scrollUp').addEventListener('click', function() {
-                    document.getElementById('carousel').scrollBy({
-                      top: -300, // Scroll up by 300px
-                      behavior: 'smooth'
-                    });
-                  });
-                  
-                  document.getElementById('scrollDown').addEventListener('click', function() {
-                    document.getElementById('carousel').scrollBy({
-                      top: 300, // Scroll down by 300px
-                      behavior: 'smooth'
-                    });
-                  });
-                </script>
+                  </div>
+              </div>
             </main>
         </div>
     </div>

@@ -6,11 +6,6 @@ document.addEventListener("DOMContentLoaded", function(){
 
     var alert = document.getElementById("alert");
 
-    let email;
-    email= document.getElementById("email").value;
-
-    
-
     // Send token to verify endpoint
     fetch("/auth/verifyEmail", {
         method: "POST",
@@ -21,42 +16,43 @@ document.addEventListener("DOMContentLoaded", function(){
             token: token,
         }),
     })
-        .then((response) => response.json())
-        .then((data) => {
-            
-            if(data.message==="Email verified successfully!"){
-                alert.style.display = "block";
-                alert.style.color = 'green';
-                alert.style.backgroundColor = '#ddffdd';
-                alert.style.border='green';
-                alert.innerText = "Email verified successfully!";
+    .then((response) => response.json())
+    .then((data) => {
+        if (data.message === "Email verified successfully!") {
+            alert.style.display = "block";
+            alert.style.color = 'green';
+            alert.style.backgroundColor = '#ddffdd';
+            alert.style.border = 'green';
+            alert.innerText = "Email verified successfully!";
 
-                // redirect to login page
+            // Set email verified flag in local storage
+            localStorage.setItem('isEmailVerified', 'true');
+
+            // Redirect to login page
             setTimeout(() => {
                 window.location.href = '/';
             }, 2500);
-            }
-
-            else if(data.error){
-                console.error("Error verifying email :", data.error);
-                alert.style.display = "block";
-                alert.style.color = 'red';
-                alert.style.backgroundColor = '#ffdddd';
-                alert.style.border = 'red';
-                alert.innerText = data.error;
-            }
-        })
-        .catch((error) => {
-            // Handle any errors here
-            console.error(error);
-        });
+        } else if (data.error) {
+            console.error("Error verifying email:", data.error);
+            alert.style.display = "block";
+            alert.style.color = 'red';
+            alert.style.backgroundColor = '#ffdddd';
+            alert.style.border = 'red';
+            alert.innerText = data.error;
+        }
+    })
+    .catch((error) => {
+        console.error(error);
+    });
 
     var resendBtn = document.getElementById("resend-btn");
 
     resendBtn.addEventListener("click", function(event){
         console.log("Resend button clicked");
 
-        if(!email || email===""){
+        let email = document.getElementById("email").value;
+
+        if (!email || email===""){
             alert.style.display = "block";
             alert.innerText = "Please fill in all fields";
             return;

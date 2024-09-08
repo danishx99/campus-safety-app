@@ -24,3 +24,14 @@ exports.adminSafetyResources = async (req,res) =>{
         res.status(500).json({ error: "Error adding safety resource." + error });
     }
 };
+
+exports.deleteAllSafetyResources = async (req, res) => {
+    try {
+      // Remove all documents from the safetyResources collection
+      await safetyResources.deleteMany({});
+      res.status(200).json({ message: "All safety resources have been deleted." });
+    } catch (error) {
+      console.log("Error deleting safety resources:", error);
+      res.status(500).json({ error: "Error deleting safety resources." + error });
+    }
+  };

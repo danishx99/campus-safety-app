@@ -25,6 +25,9 @@ app.use(express.urlencoded({ extended: true }));
 dotenv.config();
 
 app.use(cookieParser());
+// Increase the payload size limit
+app.use(express.json({ limit: "10mb" }));
+app.use(express.urlencoded({ limit: "10mb", extended: true }));
 
 app.use("", frontendRoutes);
 app.use("/auth", authRoutes);

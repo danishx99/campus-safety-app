@@ -159,7 +159,6 @@ async function updateIncidentsStatus() {
 
     if (response.ok) {
       console.log("Statuses updated successfully!");
-      // You can add a success message or visual feedback here
       //show alert message and make it green
       message.innerText = "Incident statuses updated successfully";
       message.classList.add("block");

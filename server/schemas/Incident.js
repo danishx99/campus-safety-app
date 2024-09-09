@@ -27,7 +27,7 @@ const incidentSchema = new Schema(
       type: String,
       required: false,
       enum: ["Pending", "In progress", "Resolved"],
-      default: "pending",
+      default: "Pending",
     },
     reportedBy: {
       type: String,

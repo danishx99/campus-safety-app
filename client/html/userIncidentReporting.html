@@ -39,6 +39,7 @@
     </style>
 </head>
 
+
 <body class="flex flex-col min-h-screen bg-gray-100">
     <div id="header-placeholder"></div>
     <div class="flex flex-1">
@@ -46,14 +47,15 @@
 
         <!-- Main Content -->
         <main class="flex-1 p-6 overflow-auto">
-            <div class="flex flex-col bg-gray-200 rounded-lg border border-gray-400 p-4 mx-20">
-                <h2 class="text-center text-2xl font-bold mb-2">Incident Reporting</h2>
-                <h3 class="text-center text-lg font-semibold mb-4">Report Incidents on campus for prompt responses</h3>
+            <div class="flex flex-col bg-gray-200 rounded-lg border border-gray-400 p-4 mx-20 max-sm:mx-0">
+                <h2 class="text-center text-2xl font-bold mb-2 max-sm:text-xl">Incident Reporting</h2>
+                <h3 class="text-center text-lg font-semibold mb-4 max-sm:text-sm">Report Incidents on campus for prompt
+                    responses</h3>
 
-                <form class="flex flex-col px-8" action="">
-                    <input class="p-2 rounded-xl mb-4 text-black" type="text" placeholder="Title">
+                <form class="flex flex-col px-8 max-sm:px-4" action="">
+                    <input class="p-2 rounded-xl mb-4 text-black max-sm:text-sm" type="text" placeholder="Title">
 
-                    <select class="p-2 rounded-xl mb-4 bg-white" name="incidentType" id="incidentType">
+                    <select class="p-2 rounded-xl mb-4 bg-white max-sm:text-sm" name="incidentType" id="incidentType">
                         <option value="" selected>Incident Type</option>
                         <option value="theft">Theft</option>
                         <option value="assault">Assault</option>
@@ -62,15 +64,16 @@
                         <option value="other">Other</option>
                     </select>
 
-                    <div class="flex justify-between items-center bg-white rounded-lg mb-4">
+                    <div class="flex justify-between items-center bg-white rounded-lg mb-4 max-sm:text-sm">
                         <label class="p-2" for="imageUpload">Upload Image</label>
                         <input type="file" id="imageUpload" name="imageUpload" accept="image/*" capture="environment">
                     </div>
 
-                    <textarea class="p-2 rounded-lg mb-4 text-black" placeholder="Description" rows="5"
+                    <textarea class="p-2 rounded-lg mb-4 text-black max-sm:text-sm" placeholder="Description" rows="5"
                         id="description"></textarea>
 
-                    <div class="bg-white mb-4 p-2 rounded-lg flex justify-between items-center">
+
+                    <div class="bg-white mb-4 p-2 rounded-lg flex justify-between items-center max-sm:text-sm">
                         <div class="flex w-full items-center">
                             <label class="text-black whitespace-nowrap" for="location">Set Location:</label>
                             <input class="ml-2 rounded-lg text-black w-full" type="text" id="location"
@@ -81,12 +84,14 @@
                     </div>
 
                     <!-- Loader and Map -->
-                    <div class="flex justify-center items-center" id="mapLoader"></div> <!-- Loader -->
+                    <div class="mx-auto" id="mapLoader"></div> <!-- Loader -->
                     <div class="mb-2" id="map"></div> <!-- Map -->
 
-                    <label for="incidentDate">Select Incident Date:</label>
-                    <input class="p-2 rounded-xl mb-4 text-black" type="date" id="incidentDate" name="incidentDate">
-                    <button type="submit" class="bg-[#015EB8] text-white py-2 px-4 rounded-lg">Upload</button>
+                    <label class="max-sm:text-sm" for="incidentDate ">Select Incident Date:</label>
+                    <input class="p-2 rounded-xl mb-4 text-black max-sm:text-sm" type="datetime-local"
+                        id="incidentDateTime" name="incidentDateTime">
+                    <button type="submit"
+                        class="bg-[#015EB8] text-white py-2 px-4 rounded-lg max-sm:text-sm hover:opacity-80">Upload</button>
                 </form>
             </div>
         </main>
@@ -113,7 +118,7 @@
             if (mapInitialized) return; // Prevent reinitializing the map
 
             var map = new google.maps.Map(document.getElementById("map"), {
-                zoom: 16,
+                zoom: 8,
                 center: location
             });
 
@@ -136,6 +141,7 @@
         }
 
         function toggleMap() {
+
             var mapDiv = document.getElementById("map");
             var loader = document.getElementById("mapLoader");
 
@@ -147,8 +153,8 @@
             setTimeout(function () {
                 loader.style.display = "none";
                 mapDiv.style.display = "block";
-                google.maps.event.trigger(map, "resize");
-            }, 5000); // You can adjust the delay as per your actual load time
+                //google.maps.event.trigger(map, "resize");
+            }, 5000); // Simulate 5 seconds delay
         }
 
         // Initialize the map on page load, but keep it hidden
@@ -156,9 +162,8 @@
 
     </script>
 
-    <!-- Google Maps API -->
-    <script async defer
-        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAmnz9yP1MewDeyOE-OV92JrAclq18JzZ4&callback=initMap">
+    <script async
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAmnz9yP1MewDeyOE-OV92JrAclq18JzZ4&loading=async&callback=initMap">
         </script>
 
 </body>

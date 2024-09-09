@@ -26,9 +26,14 @@ const incidentSchema = new Schema(
     status: {
       type: String,
       required: false,
-      enum: ["pending", "inProgress", "resolved"],
+      enum: ["Pending", "In progress", "Resolved"],
+      default: "pending",
     },
     reportedBy: {
+      type: String,
+      required: true,
+    },
+    date: {
       type: String,
       required: true,
     },
@@ -37,3 +42,7 @@ const incidentSchema = new Schema(
     timestamps: true,
   }
 );
+
+const Incident = mongoose.model("Incident", incidentSchema);
+
+module.exports = Incident;

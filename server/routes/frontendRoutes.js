@@ -48,5 +48,12 @@ router.get("/admin/viewIncidents", (req, res) => {
   );
 });
 
+router.get("/profileManagement", (req, res) => {
+  res.sendFile(
+    path.join(__dirname, "../../client/html", "profileManagement.html")
+  );
+});
+
+
 
 module.exports = router;

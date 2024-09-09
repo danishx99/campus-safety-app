@@ -58,11 +58,11 @@ exports.register = async (req,res) =>{
         // Save the new user to the database
         await newUser.save();
 
-        // send verification email
-        var url = req.protocol + "://" + req.get("host");
-        await mailer.sendVerificationEmail(email,url,verificationToken);
+        // // send verification email
+        // var url = req.protocol + "://" + req.get("host");
+        // await mailer.sendVerificationEmail(email,url,verificationToken);
 
-        res.status(201).json({ message: "Registration successful! Please verify your email." });
+        res.status(201).json({ message: "Registration successful!" });
 
 
     } catch (error) {
@@ -200,6 +200,7 @@ exports.forgotPassword = async (req,res) =>{
 
 };
 
+// change this to accomodate new logic
 exports.verifyEmail = async (req,res) =>{
 
     const { token } = req.body;

@@ -47,20 +47,10 @@ exports.register = async (req,res) =>{
         role,
         password: hashedPassword,
         isVerified: false,
-        });
-
-        // Generate a unique verification token
-        const verificationToken = crypto.randomBytes(32).toString('hex');
-        newUser.verificationToken = verificationToken;
-        // newUser.verificationTokenExpires = Date.now() + 2 * 60 * 1000; // 2 minutes expiry
-        newUser.verificationTokenExpires = Date.now() + 3600000; // 1 hour expiry
+        });      
 
         // Save the new user to the database
         await newUser.save();
-
-        // // send verification email
-        // var url = req.protocol + "://" + req.get("host");
-        // await mailer.sendVerificationEmail(email,url,verificationToken);
 
         res.status(201).json({ message: "Registration successful!" });
 
@@ -198,6 +188,79 @@ exports.forgotPassword = async (req,res) =>{
         res.status(500).json({ error: "Error initiating password reset" });
       }
 
+};
+
+exports.isVerified = async (req,res) =>{
+
+  const token = req.cookies.token;
+  const decoded = jwt.verify(token, process.env.JWT_SECRET);
+  const email = decoded.userEmail;
+
+
+  try {
+
+    // find user by email
+    const user = await User.findOne({ email });
+
+    if (!user) {
+        return res
+            .status(401)
+            .json({ error: "A user with this email address does not exist." });
+    }
+
+    if (user.isVerified) {
+      console.log("Verified!");
+      
+    res.json({"isVerified":true});
+    }
+    console.log("Nigga nah!");
+    
+    res.json({"isVerified":false});
+
+    
+  } catch (error) {
+
+    console.error("Error checking user verification status :", error);
+
+  }
+};
+
+// send verification email
+exports.sendVerification= async (req,res)=>{
+
+  const token = req.cookies.token;
+  const decoded = jwt.verify(token, process.env.JWT_SECRET);
+  const email = decoded.userEmail;
+
+  try {
+
+    // find user by email
+    const user = await User.findOne({ email });
+    if (!user) {
+        return res
+            .status(401)
+            .json({ error: "A user with this email address does not exist." });
+    }
+
+    // Generate a unique verification token
+    const verificationToken = crypto.randomBytes(32).toString('hex');
+    user.verificationToken = verificationToken;
+    // newUser.verificationTokenExpires = Date.now() + 2 * 60 * 1000; // 2 minutes expiry
+    user.verificationTokenExpires = Date.now() + 3600000; // 1 hour expiry
+
+    user.save(); // save new tokens to user
+
+    // send verification email
+    var url = req.protocol + "://" + req.get("host");
+    await mailer.sendVerificationEmail(email,url,verificationToken);
+
+    console.log("Verification Email Succesfully Sent!");
+    res.json({message:"Verification Email Succesfully Sent!"});
+
+    
+  } catch (error) {
+    console.error("Error sending verification email :", error);
+  }
 };
 
 // change this to accomodate new logic

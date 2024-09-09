@@ -1,46 +1,47 @@
-const express = require("./server/node_modules/express");
-const mongoose = require("./server/node_modules/mongoose");
-const cookieParser = require("./server/node_modules/cookie-parser");
-const bodyParser = require("./server/node_modules/body-parser");
-const dotenv = require("./server/node_modules/dotenv");
-const cors = require("./server/node_modules/cors");
+const express = require('./server/node_modules/express');
+const mongoose = require('./server/node_modules/mongoose');
+const cookieParser = require('./server/node_modules/cookie-parser');
+const bodyParser = require('./server/node_modules/body-parser');
+const dotenv = require('./server/node_modules/dotenv');
+const cors = require('./server/node_modules/cors');
 const app = express();
 const PORT = process.env.PORT || 3000;
-const frontendRoutes = require("./server/routes/frontendRoutes.js");
-const authRoutes = require("./server/routes/authRoutes.js");
-const adminRoutes = require("./server/routes/adminRoutes.js");
-const userRoutes = require("./server/routes/userRoutes.js");
-const profileRoutes = require("./server/routes/profileRoutes.js");
-const incidentReportingRoutes = require("./server/routes/incidentReportingRoutes.js");
 
-app.use(cors()); // Enable all CORS requests
-app.use(express.json()); // automatically passes body as json object
+// Import routes
+const frontendRoutes = require('./server/routes/frontendRoutes.js');
+const authRoutes = require('./server/routes/authRoutes.js');
+const adminRoutes = require('./server/routes/adminRoutes.js');
+const userRoutes = require('./server/routes/userRoutes.js');
+const profileRoutes = require('./server/routes/profileRoutes.js');
+const incidentReportingRoutes = require('./server/routes/incidentReportingRoutes.js');
 
-//Serve frontend from two folders above the current directory
-app.use(express.static("client"));
-app.use(express.urlencoded({ extended: true }));
-
-// console.log(__dirname);
-
+// Load environment variables from .env file
 dotenv.config();
 
-app.use(cookieParser());
+// Middleware
+app.use(cors()); // Enable all CORS requests
+app.use(express.json()); // Automatically parses incoming JSON requests
+app.use(express.urlencoded({ extended: true })); // Parse URL-encoded bodies
+app.use(cookieParser()); // Parse cookies
 
-app.use("", frontendRoutes);
-app.use("/auth", authRoutes);
-app.use("/admin", adminRoutes);
-app.use("/profile", profileRoutes);
-app.use("/incidentReporting", incidentReportingRoutes);
-app.use("/user", userRoutes);
+// Serve frontend static files from the 'client' directory
+app.use(express.static('client'));
 
-//console.log(process.env.DB_CONNECT);
+// Route middleware
+app.use('', frontendRoutes);
+app.use('/auth', authRoutes);
+app.use('/admin', adminRoutes);
+app.use('/profile', profileRoutes);
+app.use('/incidentReporting', incidentReportingRoutes);
+app.use('/user', userRoutes);
 
-//Connect to MongoDB
+// MongoDB connection
 mongoose
   .connect(process.env.DB_CONNECT)
-  .then(() => console.log("Connected to MongoDB"))
-  .catch((err) => console.error("Error connecting to MongoDB:", err));
+  .then(() => console.log('Connected to MongoDB'))
+  .catch((err) => console.error('Error connecting to MongoDB:', err));
 
+// Start the server
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}`);
 });

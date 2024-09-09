@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
     // Check if the user has verified their email
+
     const isEmailVerified = localStorage.getItem('isEmailVerified') === 'true';
 
     if (!isEmailVerified) {
@@ -10,7 +11,27 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Redirect to verify email page
     document.getElementById('verifyEmailBtn').addEventListener('click', function() {
-        window.location.href = 'auth/verifyEmail.html'; // Redirect to the verify email page
+        // window.location.href = '/verifyEmail'; // Redirect to the verify email page
+
+        fetch('auth/sendVerification', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ email: localStorage.getItem('userEmail') })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.message==="Verification Email Succesfully Sent!") {
+                alert('Verification email sent successfully.');
+            } else {
+                alert('Failed to send verification email.');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while sending the verification email.');
+        });
     });
 
     // Close the toast notification

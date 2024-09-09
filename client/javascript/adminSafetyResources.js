@@ -23,7 +23,9 @@ document.addEventListener("DOMContentLoaded", function (){
           }
         
         console.log("Details succesfully captured, time to post!");
-
+        document.getElementById("title").value = null;
+        document.getElementById("resource-type").value = null;
+        document.getElementById("description").value = null; 
         fetch("http://localhost:3000/admin/adminSafetyResources", {
             method: "POST",
             headers: {
@@ -53,4 +55,31 @@ document.addEventListener("DOMContentLoaded", function (){
                 console.error(error);
             });
     });
+
+    async function deleteAllResources() {
+        console.log("Delete resource button clicked");
+        if (confirm('Are you sure you want to delete all safety resources? This action cannot be undone.')) {
+          try {
+            const response = await fetch('http://localhost:3000/admin/deleteSafetyResources', {
+              method: 'DELETE'
+            });
+            const result = await response.json();
+            if (response.ok) {
+                alert.style.display = "block";
+                alert.style.color = 'green';
+                alert.style.backgroundColor = '#ddffdd';
+                alert.style.border='green';
+                alert.innerText = "Resource deleted successfully"
+              // Optionally, refresh the list of resources after deletion
+              // loadSafetyResources();
+            } else {
+              alert('Error: ' + result.error);
+            }
+          } catch (error) {
+            console.error('Error deleting resources:', error);
+          }
+        }
+      }
+      // Attach the delete function to the button
+      document.getElementById('deleteAll').addEventListener('click', deleteAllResources);
 });

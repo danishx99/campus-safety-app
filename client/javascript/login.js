@@ -1,5 +1,5 @@
 var loginBtn = document.getElementById("login-btn");
-var googleBtn = document.getElementById("continue-google-btn");
+
 
 let email;
 let password;

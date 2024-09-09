@@ -5,10 +5,21 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 function loadComponent(elementId, filePath) {
+    const element = document.getElementById(elementId);
+    if (!element) {
+        console.error(`Element with ID "${elementId}" not found.`);
+        return; // Exit the function if the element is not found
+    }
+
     fetch(filePath)
-        .then(response => response.text())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`Failed to load component: ${response.statusText}`);
+            }
+            return response.text();
+        })
         .then(data => {
-            document.getElementById(elementId).innerHTML = data;
+            element.innerHTML = data;
         })
         .catch(error => console.error('Error loading component:', error));
 }

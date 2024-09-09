@@ -9,6 +9,7 @@ const PORT = process.env.PORT || 3000;
 const frontendRoutes = require("./server/routes/frontendRoutes.js");
 const authRoutes = require("./server/routes/authRoutes.js");
 const adminRoutes = require("./server/routes/adminRoutes.js");
+const userRoutes = require("./server/routes/userRoutes.js");
 const profileRoutes = require("./server/routes/profileRoutes.js");
 const incidentReportingRoutes = require("./server/routes/incidentReportingRoutes.js");
 
@@ -30,6 +31,7 @@ app.use("/auth", authRoutes);
 app.use("/admin", adminRoutes);
 app.use("/profile", profileRoutes);
 app.use("/incidentReporting", incidentReportingRoutes);
+app.use("/user", userRoutes);
 
 //console.log(process.env.DB_CONNECT);
 

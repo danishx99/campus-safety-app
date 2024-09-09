@@ -16,40 +16,54 @@ document.addEventListener("DOMContentLoaded", function(){
             token: token,
         }),
     })
-        .then((response) => response.json())
-        .then((data) => {
-            
-            if(data.message==="Email verified successfully!"){
-                alert.style.display = "block";
-                alert.style.color = 'green';
-                alert.style.backgroundColor = '#ddffdd';
-                alert.style.border='green';
-                alert.innerText = "Email verified successfully!";
+    .then((response) => response.json())
+    .then((data) => {
+        if (data.message === "Email verified successfully!") {
+            alert.style.display = "block";
+            alert.style.color = 'green';
+            alert.style.backgroundColor = '#ddffdd';
+            alert.style.border = 'green';
+            alert.innerText = "Email verified successfully!";
 
-                // redirect to login page
+            // Set email verified flag in local storage
+            localStorage.setItem('isEmailVerified', 'true');
+
+            // Redirect to login page
             setTimeout(() => {
                 window.location.href = '/';
             }, 2500);
-            }
-
-            else if(data.error){
-                console.error("Error verifying email :", data.error);
-                alert.style.display = "block";
-                alert.style.color = 'red';
-                alert.style.backgroundColor = '#ffdddd';
-                alert.style.border = 'red';
-                alert.innerText = data.error;
-            }
-        })
-        .catch((error) => {
-            // Handle any errors here
-            console.error(error);
-        });
+        } else if (data.error) {
+            console.error("Error verifying email:", data.error);
+            alert.style.display = "block";
+            alert.style.color = 'red';
+            alert.style.backgroundColor = '#ffdddd';
+            alert.style.border = 'red';
+            alert.innerText = data.error;
+        }
+    })
+    .catch((error) => {
+        console.error(error);
+    });
 
     var resendBtn = document.getElementById("resend-btn");
 
     resendBtn.addEventListener("click", function(event){
         console.log("Resend button clicked");
+
+        let email = document.getElementById("email").value;
+
+        if (!email || email===""){
+            alert.style.display = "block";
+            alert.innerText = "Please fill in all fields";
+            return;
+        }
+    
+        //check format of email- must be wits email
+        if (!email.endsWith(".wits.ac.za")) {
+            alert.style.display = "block";
+            alert.innerText = "Invalid email format. Please use a Wits email address.";
+            return;
+        }
 
         fetch("/auth/ResendVerificationEmail", {
             method: "POST",
@@ -57,12 +71,26 @@ document.addEventListener("DOMContentLoaded", function(){
                 "Content-Type": "application/json",
             },
             body: JSON.stringify({
-                // email: email,
+                email,
             }),
         })
         .then((res) => res.json())
         .then((data) => {
-            console.log("Success:", data);
+            if(data.message ==="Verification email resent successfully!"){
+                alert.style.display = "block";
+                alert.style.color = 'green';
+                alert.style.backgroundColor = '#ddffdd';
+                alert.style.border='green';
+                alert.innerText = "Verification email resent successfully!";
+            }
+            else if(data.error){
+                console.error("Error with Resending Verification Email :", data.error);
+                alert.style.display = "block";
+                alert.style.color = 'red';
+                alert.style.backgroundColor = '#ffdddd';
+                alert.style.border = 'red';
+                alert.innerText = data.error;
+            }
         })
         .catch((error) => {
             console.error("Error:", error);

@@ -1,7 +1,6 @@
 document.addEventListener("DOMContentLoaded", function (){
 
     var signupBtn= document.getElementById("signup-btn");
-    var googleBtn= document.getElementById("continue-google-btn");
     var alert = document.getElementById("alert");
 
     let email;
@@ -117,18 +116,18 @@ document.addEventListener("DOMContentLoaded", function (){
             .then(response => response.json())
             .then(data => {
                 // Handle the response data here
-                if (data.message ==="Registration successful! Please verify your email.") {
+                if (data.message ==="Registration successful!") {
                     
                     alert.style.display = "block";
                     alert.style.color = 'green';
                     alert.style.backgroundColor = '#ddffdd';
                     alert.style.border='green';
-                    alert.innerText = "Registration successful! Please verify your email.";
+                    alert.innerText = "Registration successful!";
 
-                // // redirect to login page
-                // setTimeout(() => {
-                //     window.location.href = "/";
-                // }, 3000);
+                // redirect to login page
+                setTimeout(() => {
+                    window.location.href = "/";
+                }, 3000);
                 console.log(data);
                 }
                 

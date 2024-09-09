@@ -52,16 +52,17 @@ exports.register = async (req,res) =>{
         // Generate a unique verification token
         const verificationToken = crypto.randomBytes(32).toString('hex');
         newUser.verificationToken = verificationToken;
+        // newUser.verificationTokenExpires = Date.now() + 2 * 60 * 1000; // 2 minutes expiry
         newUser.verificationTokenExpires = Date.now() + 3600000; // 1 hour expiry
 
         // Save the new user to the database
         await newUser.save();
 
-        // send verification email
-        var url = req.protocol + "://" + req.get("host");
-        await mailer.sendVerificationEmail(email,url,verificationToken);
+        // // send verification email
+        // var url = req.protocol + "://" + req.get("host");
+        // await mailer.sendVerificationEmail(email,url,verificationToken);
 
-        res.status(201).json({ message: "Registration successful! Please verify your email." });
+        res.status(201).json({ message: "Registration successful!" });
 
 
     } catch (error) {
@@ -199,6 +200,7 @@ exports.forgotPassword = async (req,res) =>{
 
 };
 
+// change this to accomodate new logic
 exports.verifyEmail = async (req,res) =>{
 
     const { token } = req.body;
@@ -235,7 +237,7 @@ exports.verifyEmail = async (req,res) =>{
 // Resend verification email (if token expires or email was missed)
 exports.resendVerificationEmail = async (req, res) => {
 
-    //decode jwt to get user email, then use that to search
+    const {email}=req.body;
   
     try {
 
@@ -259,8 +261,20 @@ exports.resendVerificationEmail = async (req, res) => {
       await mailer.resendVerificationEmail(user.email,url,newVerificationToken);
   
       res.status(200).json({ message: 'Verification email resent successfully!' });
+
+      console.log(`Verification email sent succesfully to ${email}`);
+      
     } catch (error) {
       res.status(500).json({ message: 'Error resending verification email', error });
     }
   };
   
+exports.logout = async (req, res) => {
+    try {
+        res.clearCookie('token');
+        res.status(200).json({ message: "Logged out successfully" });
+    } catch (error) {
+        console.error("Error logging out user:", error);
+        res.status(500).json({ error: "Error logging out user" });
+    }
+};

@@ -46,28 +46,41 @@ exports.getIncidents = async (req, res) => {
 
 exports.reportIncident = async (req, res) => {
   //get jwt token from cookies
-  // const token = req.cookies.token;
-  // const decoded = jwt.verify(token, process.env.JWT_SECRET);
-  // const email = decoded.email;
+  const token = req.cookies.token;
+  const decoded = jwt.verify(token, process.env.JWT_SECRET);
+  const email = decoded.userEmail;
+
+  //console.log(decoded.userEmail);
 
   //for testing purposes
-  const email = "2544233test@students.wits.ac.za";
+  //const email = "2544233test@students.wits.ac.za";
 
   try {
     const { title, type, description, location, image, date } = req.body;
+
+    //only use image if it is not null
+    let imageBase64 = null;
+    if (image) {
+      imageBase64 = image;
+    }
+
     const incident = new Incident({
       title,
       type,
       description,
       location,
-      image,
+      image: imageBase64 || null,
       reportedBy: email,
       date,
     });
+
     await incident.save();
-    res.status(201).json({ message: "Incident reported successfully" });
+    res.status(200).json({ message: "Incident reported successfully" });
   } catch (error) {
-    res.status(500).json({ error: "Error reporting incident" });
+    res
+      .status(500)
+      .json({ error: "Internal server error while reporting incident" });
+    console.log(error);
   }
 };
 

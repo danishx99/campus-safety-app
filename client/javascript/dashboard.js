@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Redirect to verify email page
     document.getElementById('verifyEmailBtn').addEventListener('click', function() {
-        window.location.href = 'auth/verifyEmail.html'; // Redirect to the verify email page
+        window.location.href = '/verifyEmail'; // Redirect to the verify email page
     });
 
     // Close the toast notification

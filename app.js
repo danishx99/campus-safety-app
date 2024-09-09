@@ -18,22 +18,17 @@ const incidentReportingRoutes = require('./server/routes/incidentReportingRoutes
 // Load environment variables from .env file
 dotenv.config();
 
-// Middleware
-app.use(cors()); // Enable all CORS requests
-app.use(express.json()); // Automatically parses incoming JSON requests
-app.use(express.urlencoded({ extended: true })); // Parse URL-encoded bodies
-app.use(cookieParser()); // Parse cookies
+app.use(cookieParser());
+// Increase the payload size limit
+app.use(express.json({ limit: "10mb" }));
+app.use(express.urlencoded({ limit: "10mb", extended: true }));
 
-// Serve frontend static files from the 'client' directory
-app.use(express.static('client'));
-
-// Route middleware
-app.use('', frontendRoutes);
-app.use('/auth', authRoutes);
-app.use('/admin', adminRoutes);
-app.use('/profile', profileRoutes);
-app.use('/incidentReporting', incidentReportingRoutes);
-app.use('/user', userRoutes);
+app.use("", frontendRoutes);
+app.use("/auth", authRoutes);
+app.use("/admin", adminRoutes);
+app.use("/profile", profileRoutes);
+app.use("/incidentReporting", incidentReportingRoutes);
+app.use("/user", userRoutes);
 
 // MongoDB connection
 mongoose

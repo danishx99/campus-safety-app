@@ -57,8 +57,8 @@ exports.register = async (req,res) =>{
 
 
     } catch (error) {
-        console.error("Error logging in user:", error);
-        res.status(500).json({ error: "Error logging in user" });
+        console.error("Error registering user:", error);
+        res.status(500).json({ error: "Error registering user" });
     }
 
 };
@@ -103,6 +103,61 @@ exports.login = async (req, res) => {
         console.error("Error logging in user:", error);
         res.status(500).json({ error: "Error logging in user" });
     }
+};
+
+exports.googleRegister= async (req,res) =>{
+
+  const{name,surname,email,phone,role}=req.body;
+
+  try {
+
+    let role;
+
+    console.log("Register with Google endpoint reached");
+
+    if(account==0){
+        role="admin";
+    }else if( account==1){
+        role="staff";
+    }else if( account==2){
+        role="student";
+    }
+
+    // check if user already exists
+    const existing = await User.findOne({ email });
+    if (existing) {
+    return res
+        .status(400)
+        .json({ error: "A user with this email address already exists." });
+    }
+
+    // Create a new user
+    const newUser = new User({
+      name,
+      surname,
+      email,
+      phone,
+      role,
+      FCMtoken,
+      isVerified: true,
+      });      
+
+      // Save the new user to the database
+      await newUser.save();
+
+
+
+      res.status(201).json({ message: "Registration successful!" });
+    
+  } catch (error) {
+    console.error("Error registering user with Google :", error);
+    res.status(500).json({ error: "Error registering user with Google" });    
+  }
+
+};
+
+exports.googleLogin= async (req,res) =>{
+
 };
 
 

@@ -14,15 +14,94 @@ document.addEventListener("DOMContentLoaded", function(){
         measurementId: "G-TDKPZ0ZSC0"
     };
 
+    let role;
+
     // Initialize Firebase
-    // initializeApp(firebaseConfig);
+    initializeApp(firebaseConfig);
     
 
     googleBtn.addEventListener("click", function(event){
 
         event.preventDefault();
 
-        alert("Sign up with Google btn clicked");
+        const auth = firebase.auth();
+
+        const provider = new firebase.auth.GoogleAuthProvider();
+
+        auth
+        .signInWithPopup(provider)
+        .then((result) => {
+            // This gives you a Google Access Token. You can use it to access the Google API.
+            var token = result.credential.accessToken;
+            // The signed-in user info.
+            var user = result.user;
+            //   console.log(user);
+            var email = user.email;
+            var phone = user.phoneNumber;
+            var fname = user.displayName.split(" ")[0];
+            var lname = user.displayName.split(" ")[1];
+
+            //show loader while waiting for response
+            // var loader = document.getElementById("loaderGoogle");
+            // loader.style.display = "flex";
+
+            fetch("/auth/googleRegister", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                name: fname,
+                surname: lname,
+                email,
+                phone,
+                role,
+            }),
+            })
+            .then((response) => {
+                return response.json();
+            })
+            .then((data) => {
+                console.log(data);
+
+                if (data.error) {
+                    console.error("Error registering user :", data.error);
+                    alert.style.display = "block";
+                    alert.style.color = 'red';
+                    alert.style.backgroundColor = '#ffdddd';
+                    alert.style.border = 'red';
+                    alert.innerText = data.error;                    
+                } 
+                else {                
+                    alert.style.display = "block";
+                    alert.style.color = 'green';
+                    alert.style.backgroundColor = '#ddffdd';
+                    alert.style.border='green';
+                    alert.innerText = "Sign up with Google successful!";
+
+                // redirect to login page
+                setTimeout(() => {
+                    window.location.href = "/login";
+                }, 3000);
+                }
+            })
+            .catch((error) => {
+                console.log("Error:", error);
+                // loader.style.display = "none";
+            });
+            // ...
+        })
+        .catch((error) => {
+            // Handle Errors here.
+            var errorCode = error.code;
+            var errorMessage = error.message;
+            // The email of the user's account used.
+            var email = error.email;
+            // The firebase.auth.AuthCredential type that was used.
+            var credential = error.credential;
+            console.log(error);
+            // ...
+        });
 
 
        

@@ -60,7 +60,7 @@ app.get('/sendNotificationToEveryone', async (req, res) => {
     }
 
     // Send a notification to all users
-    await sendNotification(fcmTokens, 'Hello', 'This is a test notification');
+    await sendNotification(fcmTokens, 'Interesting fact', 'Danish dreams of Dan at night.');
     res.send('Notification sent to everyone');
   } catch (err) {
     console.error(err);

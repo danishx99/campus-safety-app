@@ -208,14 +208,7 @@ exports.isVerified = async (req,res) =>{
             .json({ error: "A user with this email address does not exist." });
     }
 
-    if (user.isVerified) {
-      console.log("Verified!");
-      
-    res.json({"isVerified":true});
-    }
-    console.log("Nigga nah!");
-    
-    res.json({"isVerified":false});
+
 
     
   } catch (error) {

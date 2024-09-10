@@ -170,6 +170,11 @@
             var mapDiv = document.getElementById("map");
             var loader = document.getElementById("mapLoader");
 
+            if (mapInitialized) {
+                mapDiv.style.display = mapDiv.style.display === "none" ? "block" : "none";
+                return;
+            }
+
             // Show loader while map is initializing
             loader.style.display = "block";
             mapDiv.style.display = "none";

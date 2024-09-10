@@ -19,9 +19,7 @@ async function fetchAndDisplayIncidents() {
     loader.style.display = "block";
     incidentsContainer.style.display = "none";
 
-    const response = await fetch(
-      "http://localhost:3000/incidentReporting/getIncidents"
-    );
+    const response = await fetch("/incidentReporting/getIncidents");
 
     const data = await response.json();
     console.log(data);
@@ -36,6 +34,16 @@ async function fetchAndDisplayIncidents() {
 
     // Clear existing content
     incidentsContainer.innerHTML = "";
+
+    //check if there are no incidents
+    if (incidents.length === 0) {
+      errorMessage.innerText = "No incidents reported yet";
+      errorMessage.classList.add("block");
+      //disable save button
+      document.getElementById("save").disabled = true;
+      document.getElementById("save").classList.add("cursor-not-allowed");
+      return;
+    }
 
     incidents.forEach((incident, index) => {
       // Create the incident card
@@ -146,16 +154,13 @@ async function updateIncidentsStatus() {
   console.log(updatedStatuses);
 
   try {
-    const response = await fetch(
-      "http://localhost:3000/incidentReporting/updateIncident",
-      {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ incidents: updatedStatuses }),
-      }
-    );
+    const response = await fetch("/incidentReporting/updateIncident", {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ incidents: updatedStatuses }),
+    });
 
     if (response.ok) {
       console.log("Statuses updated successfully!");

@@ -144,6 +144,15 @@ document.addEventListener("DOMContentLoaded", function (){
                 }, 3000);
                 console.log(data);
                 }
+
+                else if(data.error){
+                    console.error("Error registering user :", data.error);
+                    alert.style.display = "block";
+                    alert.style.color = 'red';
+                    alert.style.backgroundColor = '#ffdddd';
+                    alert.style.border = 'red';
+                    alert.innerText = data.error;
+                }
                 
             })
             .catch(error => {

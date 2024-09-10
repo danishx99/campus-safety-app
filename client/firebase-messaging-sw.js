@@ -21,39 +21,36 @@ firebase.initializeApp({
 
   
   messaging.onBackgroundMessage((payload) => {
-
-    if(payload.notification){
-      console.log("Notification payload received and automatically handle by FCM: ", payload.notification);
-      return;
-    }
-
-    console.log(
-      '[firebase-messaging-sw.js] Received background message ',
-      payload
-    );
-    // Customize notification here
-    const notificationTitle = 'This is a custom title';
-    const notificationOptions = {
+    console.log('[firebase-messaging-sw.js] Received background message ', payload);
+  
+    let notificationTitle = 'This is a custom title';
+    let notificationOptions = {
       body: 'Background Message body.',
       icon: './calendar.png',
       data: { url: 'http://127.0.0.1:3000' }
     };
   
+    if (payload.notification) {
+      // If Firebase default notification payload is present, use its values
+      notificationTitle = payload.notification.title || notificationTitle;
+      notificationOptions.body = payload.notification.body || notificationOptions.body;
+      notificationOptions.icon = payload.notification.icon || notificationOptions.icon;
+    }
+  
+    // Show the custom notification
     self.registration.showNotification(notificationTitle, notificationOptions);
   });
-
+  
   self.addEventListener('notificationclick', function(event) {
     event.notification.close();
     event.waitUntil(
       clients.matchAll({ type: 'window', includeUncontrolled: true }).then(windowClients => {
-        // Check if there is already a window/tab open with the target URL
         for (let i = 0; i < windowClients.length; i++) {
           let client = windowClients[i];
           if (client.url === event.notification.data.url && 'focus' in client) {
             return client.focus();
           }
         }
-        // If not, then open the target URL in a new window/tab
         if (clients.openWindow) {
           return clients.openWindow(event.notification.data.url);
         }

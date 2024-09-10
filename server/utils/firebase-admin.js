@@ -1,5 +1,5 @@
 const admin = require('firebase-admin');
-const serviceAccount = require('../../campus-safety-fcm-firebase-adminsdk-k3uhg-12971bad4e.json');
+const serviceAccount = require('../../campus-safety-fcm-firebase-adminsdk-k3uhg-5fe8524d8f.json');
 
 //Initialize the admin SDK with the service account and make sure to catch any errors
 

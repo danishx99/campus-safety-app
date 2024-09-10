@@ -55,6 +55,10 @@ app.get('/sendNotificationToEveryone', async (req, res) => {
     const fcmTokens = users.map(user => user.FCMtoken);
     console.log('FCM tokens:', fcmTokens);
 
+    if(fcmTokens.length === 0) {
+      return res.status(400).send('No users found');
+    }
+
     // Send a notification to all users
     await sendNotification(fcmTokens, 'Hello', 'This is a test notification');
     res.send('Notification sent to everyone');

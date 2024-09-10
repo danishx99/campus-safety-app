@@ -10,9 +10,22 @@ document.addEventListener("DOMContentLoaded", function (){
     let conf_psw;
     let firstName;
     let lastName;
+    let FCMtoken;
 
     signupBtn.addEventListener("click", function(event){
+        
+
         console.log("Signup button clicked");
+
+        if(localStorage.getItem('fcmToken')){
+            console.log("FCM Token found and will be used for registration");
+            FCMtoken = localStorage.getItem('fcmToken');
+        }else{
+            console.log("FCM token not found");
+            FCMtoken = "null";
+        }
+
+
 
         email= document.getElementById("email").value;
         phone = document.getElementById("phone-num").value;
@@ -110,7 +123,8 @@ document.addEventListener("DOMContentLoaded", function (){
                 account: account,
                 password: psw,
                 firstName: firstName,
-                lastName: lastName
+                lastName: lastName,
+                FCMtoken: FCMtoken
             })
         })
             .then(response => response.json())

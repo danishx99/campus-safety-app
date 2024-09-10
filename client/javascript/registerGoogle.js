@@ -18,6 +18,8 @@ document.addEventListener("DOMContentLoaded", function(){
         measurementId: "G-TDKPZ0ZSC0"
     };
 
+    let role;
+
     // Initialize Firebase
     // initializeApp(firebaseConfig);
 

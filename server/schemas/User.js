@@ -23,6 +23,9 @@ const userSchema = new Schema({
     type: String,
     required: true
   },
+  FCMtoken: {
+    type: String
+  },
   role: {
     type: String,
     required: true,

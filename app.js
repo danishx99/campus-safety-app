@@ -4,6 +4,8 @@ const cookieParser = require('./server/node_modules/cookie-parser');
 const bodyParser = require('./server/node_modules/body-parser');
 const dotenv = require('./server/node_modules/dotenv');
 const cors = require('./server/node_modules/cors');
+const User = require('./server/schemas/User.js');
+const sendNotification = require('./server/utils/sendNotification.js');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -34,6 +36,33 @@ app.use('/admin', adminRoutes);
 app.use('/profile', profileRoutes);
 app.use('/incidentReporting', incidentReportingRoutes);
 app.use('/user', userRoutes);
+
+//Route to clear user collection
+app.get('/clearusers', async (req, res) => {
+  try {
+    await User.deleteMany({});
+    res.send('User collection cleared');
+  } catch (err) {
+    console.log(err)
+    res.status(500).send(err);
+  }
+});
+
+app.get('/sendNotificationToEveryone', async (req, res) => {
+  try {
+    // Get all FCM tokens
+    const users = await User.find({});
+    const fcmTokens = users.map(user => user.FCMtoken);
+    console.log('FCM tokens:', fcmTokens);
+
+    // Send a notification to all users
+    await sendNotification(fcmTokens, 'Hello', 'This is a test notification');
+    res.send('Notification sent to everyone');
+  } catch (err) {
+    console.error(err);
+    res.status(500).send(err);
+  }
+});
 
 // MongoDB connection
 mongoose

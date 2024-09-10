@@ -13,7 +13,7 @@ exports.register = async (req,res) =>{
 
     try {
         
-        const {email,account,phone,password, firstName, lastName} = req.body;
+        const {email,account,phone,password, firstName, lastName, FCMtoken} = req.body;
         let role;
 
         console.log("Register endpoint reached");
@@ -45,6 +45,7 @@ exports.register = async (req,res) =>{
         email,
         phone,
         role,
+        FCMtoken,
         password: hashedPassword,
         isVerified: false,
         });

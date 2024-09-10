@@ -11,6 +11,19 @@
 
     <!-- <script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js"></script> -->
+
+    <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-messaging-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-analytics-compat.js"></script>
+
+    <style>
+       .token-wrap {
+            word-wrap: break-word;
+            max-width: 100%;
+        }
+       
+    </style>
+
 </head>
 
 <body>
@@ -35,7 +48,20 @@
     >
     <div class="alert-box" id="alert" role="alert"></div>
       <div class="flex flex-col space-y-1.5 p-6">
+
+        <div id="token" class="token-wrap">
+          dye5LI-V3TZNelef-Sp4vb:APA91bGJmQW68w2r6tFJUhObiFmoAAGRIrpt_erzstrmqqBa1TzFUE0Voqx83OeTyROL6zwiA9AzUr5ucf8ZgbJc9R14VC2
+        </div>
+      <!-- <!-- Uncomment one of these to use a different display method:
+      <div id="token" class="token-truncate">
+          dye5LI-V3TZNelef-Sp4vb:APA91bGJmQW68w2r6tFJUhObiFmoAAGRIrpt_erzstrmqqBa1TzFUE0Voqx83OeTyROL6zwiA9AzUr5ucf8ZgbJc9R14VC2
+      </div>
+      <div id="token" class="token-scroll">
+          dye5LI-V3TZNelef-Sp4vb:APA91bGJmQW68w2r6tFJUhObiFmoAAGRIrpt_erzstrmqqBa1TzFUE0Voqx83OeTyROL6zwiA9AzUr5ucf8ZgbJc9R14VC2
+      </div> -->
+       
         <h3 class="whitespace-nowrap text-3xl font-semibold leading-none tracking-tight text-center">Sign Up</h3>
+        
       </div>
       <div class="p-2 space-y-7">
         <div class="space-y-2">
@@ -230,6 +256,12 @@ confeyeicon.addEventListener('click', () => {
 </script>
 
 <script src="../../javascript/register.js"></script>
-<script src="../../javascript/registerGoogle.js"></script>
+<script src="../../javascript/FCM/firebaseConfig.js"></script>
+<!-- <script src="../../javascript/FCM/unregisterServiceWorkers.js"></script> -->
+
+
+
+
+
 
 </html>

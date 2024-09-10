@@ -76,7 +76,7 @@ loginBtn.addEventListener("click", function(event){
           // Check for data.redirect and redirect
           if (data.redirect) {
             setTimeout(() => {
-              window.location.href = "/index"; // You can use data.redirect.toLowerCase() if necessary
+              window.location.href = "/admin"; // You can use data.redirect.toLowerCase() if necessary
             }, 1000);
           }
         } else {

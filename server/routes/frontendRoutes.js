@@ -32,7 +32,7 @@ router.get("/verifyEmail", (req, res) => {
   );
 });
 
-router.get("/adminDashboard", (req, res) => {
+router.get("/admin", (req, res) => {
   res.sendFile(path.join(__dirname, "../../client/html", "index.html"));
 });
 

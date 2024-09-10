@@ -32,7 +32,7 @@ router.get("/verifyEmail", (req, res) => {
   );
 });
 
-router.get("/index", (req, res) => {
+router.get("/adminDashboard", (req, res) => {
   res.sendFile(path.join(__dirname, "../../client/html", "index.html"));
 });
 
@@ -48,12 +48,22 @@ router.get("/admin/viewIncidents", (req, res) => {
   );
 });
 
+router.get("/admin/safetyResources", (req, res) => {
+  res.sendFile(
+    path.join(__dirname, "../../client/html", "adminSafetyResources.html")
+  );
+});
+
+router.get("/user/safetyResources", (req, res) => {
+  res.sendFile(
+    path.join(__dirname, "../../client/html", "userSafetyResources.html")
+  );
+});
+
 router.get("/profileManagement", (req, res) => {
   res.sendFile(
     path.join(__dirname, "../../client/html", "profileManagement.html")
   );
 });
-
-
 
 module.exports = router;

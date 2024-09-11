@@ -19,13 +19,13 @@ exports.homeRedirect = async (req, res) => {
 
 
     if(role == "student"){
-    return res.redirect("/userDashboard");  
+    return res.redirect("/user");  
     } else if(role == "staff"){
-    return res.redirect("/userDashboard");
+    return res.redirect("/user");
     } else if(role == "admin"){
-    return res.redirect("/admindashboard");
+    return res.redirect("/admin");
     }
-
+    
   } catch (error) {
     console.error("Error authenticating user:", error);
     res.status(401).json({error: "Invalid token"});

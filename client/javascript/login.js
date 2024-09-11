@@ -101,10 +101,6 @@ loginBtn.addEventListener("click", async function(event){
   }
   
 
-
-
-   
-
     //POST to server
     fetch("/auth/login", {
       method: "POST",
@@ -152,15 +148,15 @@ loginBtn.addEventListener("click", async function(event){
 
             if(data.redirect === "admin"){
               setTimeout(() => {
-                window.location.href = "/adminDashboard";
+                window.location.href = "/admin";
               }, 1000);
             } else if(data.redirect === "student"){
               setTimeout(() => {
-                window.location.href = "/userDashboard";
+                window.location.href = "/user";
               }, 1000);
             } else if(data.redirect === "staff"){
               setTimeout(() => {
-                window.location.href = "/userDashboard";
+                window.location.href = "/user";
               }, 1000);
             }
           }

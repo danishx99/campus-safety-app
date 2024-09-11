@@ -1,12 +1,13 @@
 const express = require("express");
 const router = express.Router();
 const path = require("path");
-
-// router.get('/', (req,res)=>{
-//     res.sendFile(path.join(__dirname,'../public/login.html'));
-// });
+const { homeRedirect } = require("../middlewares/homeRedirect");
 
 router.get("/", (req, res) => {
+  homeRedirect(req, res);
+});
+
+router.get("/login", (req, res) => {
   res.sendFile(path.join(__dirname, "../../client/html/auth", "login.html"));
 });
 
@@ -33,7 +34,11 @@ router.get("/verifyEmail", (req, res) => {
 });
 
 router.get("/admin", (req, res) => {
-  res.sendFile(path.join(__dirname, "../../client/html", "index.html"));
+  res.sendFile(path.join(__dirname, "../../client/html", "adminDashboard.html"));
+});
+
+router.get("/user", (req, res) => {
+  res.sendFile(path.join(__dirname, "../../client/html", "userDashboard.html"));
 });
 
 router.get("/user/reportIncident", (req, res) => {

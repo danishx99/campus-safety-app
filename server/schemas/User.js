@@ -17,14 +17,14 @@ const userSchema = new Schema({
   },
   password: {
     type: String,
-    required: true
+    required: false // no password for google sign in
   },
   phone: {
     type: String,
-    required: true
+    required: false // what if no phone number associated with student google acc
   },
   FCMtoken: {
-    type: String
+    type: String,
   },
   role: {
     type: String,

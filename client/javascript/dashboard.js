@@ -1,74 +1,95 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // Check if the user has verified their email
+    const toast = document.getElementById('toast');
+    const toastMessage = document.getElementById('toastMessage');
+    const verifyEmailBtn = document.getElementById('verifyEmailBtn');
+    const closeToastBtn = document.getElementById('closeToastBtn');
 
-    const isEmailVerified = localStorage.getItem('isEmailVerified') === 'true';
+    let isEmailVerified = false;
 
-    if (!isEmailVerified) {
-        // Show toast notification
-        const toast = document.getElementById('toast');
+    // Function to show toast with custom message
+    function showToast(message, hideButtons = false) {
+        toastMessage.textContent = message;
         toast.classList.remove('hidden');
+        if (hideButtons) {
+            verifyEmailBtn.style.display = 'none';
+            closeToastBtn.style.display = 'none';
+        } else {
+            verifyEmailBtn.style.display = 'inline-block';
+            closeToastBtn.style.display = 'inline-block';
+        }
     }
 
-    // Redirect to verify email page
-    document.getElementById('verifyEmailBtn').addEventListener('click', function() {
-        // window.location.href = '/verifyEmail'; // Redirect to the verify email page
+    // Check if the user has verified their email
+    fetch('/auth/checkEmailVerification', {
+        method: 'GET',
+        credentials: 'include'
+    })
+    .then(response => response.json())
+    .then(data => {
+        isEmailVerified = data.isVerified;
+        if (!isEmailVerified) {
+            showToast('Please verify your email to access all features.');
+        }
+    })
+    .catch(error => {
+        console.error('Error checking email verification:', error);
+        showToast('An error occurred while checking your email verification status.');
+    });
 
+    // Send verification email
+    verifyEmailBtn.addEventListener('click', function() {
         fetch('auth/sendVerification', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ email: localStorage.getItem('userEmail') })
+            credentials: 'include'
         })
         .then(response => response.json())
         .then(data => {
-            if (data.message==="Verification Email Succesfully Sent!") {
-                alert('Verification email sent successfully.');
+            if (data.message === "Verification Email Successfully Sent!") {
+                showToast('Verification email sent successfully. Please check your inbox.', true);
             } else {
-                alert('Failed to send verification email.');
+                showToast('An error occurred while sending the verification email.', true);
             }
         })
         .catch(error => {
             console.error('Error:', error);
-            alert('An error occurred while sending the verification email.');
+            showToast('An error occurred while sending the verification email.', true);
         });
     });
 
     // Close the toast notification
-    document.getElementById('closeToastBtn').addEventListener('click', function() {
-        const toast = document.getElementById('toast');
+    closeToastBtn.addEventListener('click', function() {
         toast.classList.add('hidden');
     });
-    
 
-    document.addEventListener('DOMContentLoaded', function() {
-        const cards = document.querySelectorAll('.card-link');
+    const cards = document.querySelectorAll('.card-link');
 
-        cards.forEach(card => {
-            card.addEventListener('click', function(e) {
-                e.preventDefault();
-                if (!isEmailVerified) {
-                    alert('Please verify your email to access this feature.');
-                    return;
-                }
+    cards.forEach(card => {
+        card.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            if (!isEmailVerified) {
+                showToast('Please verify your email to access this feature.', true);
+                return;
+            }
 
-                switch(this.id) {
-                    case 'reported-incidents-card':
-                        window.location.href = 'userIncidentReporting.html';
-                        break;
-                    case 'send-notifications-card':
-                        // Replace with the correct page for sending notifications
-                        window.location.href = 'sendNotifications.html';
-                        break;
-                    case 'location-services-card':
-                        // Replace with the correct page for location services
-                        window.location.href = 'locationServices.html';
-                        break;
-                    case 'safety-resources-card':
-                        window.location.href = 'userSafetyResources.html';
-                        break;
-                }
-            });
+            // If email is verified, proceed with navigation
+            switch(this.id) {
+                case 'reported-incidents-card':
+                    window.location.href = 'userIncidentReporting.html';
+                    break;
+                case 'send-notifications-card':
+                    window.location.href = 'sendNotifications.html';
+                    break;
+                case 'location-services-card':
+                    window.location.href = 'locationServices.html';
+                    break;
+                case 'safety-resources-card':
+                    window.location.href = 'userSafetyResources.html';
+                    break;
+            }
         });
     });
 });

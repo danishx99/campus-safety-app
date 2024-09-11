@@ -57,8 +57,8 @@ exports.register = async (req,res) =>{
 
 
     } catch (error) {
-        console.error("Error logging in user:", error);
-        res.status(500).json({ error: "Error logging in user" });
+        console.error("Error registering user:", error);
+        res.status(500).json({ error: "Error registering user" });
     }
 
 };
@@ -108,6 +108,97 @@ exports.login = async (req, res) => {
         console.error("Error logging in user:", error);
         res.status(500).json({ error: "Error logging in user" });
     }
+};
+
+exports.googleRegister= async (req,res) =>{
+
+  const{name,surname,email,phone,account}=req.body;
+
+  try {
+
+    let role;
+
+    console.log("Register with Google endpoint reached");
+
+    if(account==0){
+        role="admin";
+    }else if( account==1){
+        role="staff";
+    }else if( account==2){
+        role="student";
+    }
+
+    // check if user already exists
+    const existing = await User.findOne({ email });
+    if (existing) {
+    return res
+        .status(400)
+        .json({ error: "A user with this email address already exists." });
+    }
+
+    // Create a new user
+    const newUser = new User({
+      firstName:name,
+      lastName:surname,
+      email,
+      phone,
+      role,
+      FCMtoken,
+      isVerified: true,
+      });      
+
+      // Save the new user to the database
+      await newUser.save();
+
+      res.status(201).json({ message: "Registration successful!" });
+    
+  } catch (error) {
+    console.error("Error registering user with Google :", error);
+    res.status(500).json({ error: "Error registering user with Google" });    
+  }
+
+};
+
+exports.googleLogin= async (req,res) =>{
+
+  const {email}= req.body;
+
+  try {
+    
+    // find user by email
+    const user = await User.findOne({ email });
+    if (!user) {
+        return res
+            .status(401)
+            .json({ error: "A user with this email address does not exist." });
+    }
+
+    // Use rememberMe to set different token expiration times
+    let rememberMe =false;
+    const tokenExpiration = rememberMe ? "7d" : "24h"; // 7 days or 24 hours
+
+    // sign JWT with email and role
+    const token = jwt.sign(
+        { userEmail: user.email, role: user.role },
+        process.env.JWT_SECRET,
+        { expiresIn: tokenExpiration } // Adjust expiration based on rememberMe
+    );
+
+    // Set token as an HttpOnly cookie
+    const maxAge = rememberMe ? 7 * 24 * 60 * 60 * 1000 : 24 * 60 * 60 * 1000; // 7 days or 24 hours
+    res.cookie("token", token, { httpOnly: true, maxAge });
+
+    // Return success
+    res.json({ success: true, redirect: user.role });
+
+  } catch (error) {
+    console.error("Error logging in using Google", error);
+    res.status(500).json({ error: "Error logging in using Google" });
+  }
+
+
+
+
 };
 
 
@@ -253,8 +344,8 @@ exports.sendVerification= async (req,res)=>{
     var url = req.protocol + "://" + req.get("host");
     await mailer.sendVerificationEmail(email,url,verificationToken);
 
-    console.log("Verification Email Succesfully Sent!");
-    res.json({message:"Verification Email Succesfully Sent!"});
+    console.log("Verification Email Successfully Sent!");
+    res.json({message:"Verification Email Successfully Sent!"});
 
     
   } catch (error) {
@@ -339,4 +430,26 @@ exports.logout = async (req, res) => {
         console.error("Error logging out user:", error);
         res.status(500).json({ error: "Error logging out user" });
     }
+};
+
+exports.checkEmailVerification = async (req, res) => {
+  try {
+    const token = req.cookies.token;
+    if (!token) {
+      return res.status(401).json({ error: "No token provided" });
+    }
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const email = decoded.userEmail;
+
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    res.json({ isVerified: user.isVerified });
+  } catch (error) {
+    console.error("Error checking email verification status:", error);
+    res.status(500).json({ error: "Error checking email verification status" });
+  }
 };

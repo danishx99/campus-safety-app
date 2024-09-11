@@ -107,7 +107,7 @@ exports.login = async (req, res) => {
 
 exports.googleRegister= async (req,res) =>{
 
-  const{name,surname,email,phone,role}=req.body;
+  const{name,surname,email,phone,account}=req.body;
 
   try {
 
@@ -133,8 +133,8 @@ exports.googleRegister= async (req,res) =>{
 
     // Create a new user
     const newUser = new User({
-      name,
-      surname,
+      firstName:name,
+      lastName:surname,
       email,
       phone,
       role,
@@ -144,8 +144,6 @@ exports.googleRegister= async (req,res) =>{
 
       // Save the new user to the database
       await newUser.save();
-
-
 
       res.status(201).json({ message: "Registration successful!" });
     
@@ -157,6 +155,44 @@ exports.googleRegister= async (req,res) =>{
 };
 
 exports.googleLogin= async (req,res) =>{
+
+  const {email}= req.body;
+
+  try {
+    
+    // find user by email
+    const user = await User.findOne({ email });
+    if (!user) {
+        return res
+            .status(401)
+            .json({ error: "A user with this email address does not exist." });
+    }
+
+    // Use rememberMe to set different token expiration times
+    let rememberMe =false;
+    const tokenExpiration = rememberMe ? "7d" : "24h"; // 7 days or 24 hours
+
+    // sign JWT with email and role
+    const token = jwt.sign(
+        { userEmail: user.email, role: user.role },
+        process.env.JWT_SECRET,
+        { expiresIn: tokenExpiration } // Adjust expiration based on rememberMe
+    );
+
+    // Set token as an HttpOnly cookie
+    const maxAge = rememberMe ? 7 * 24 * 60 * 60 * 1000 : 24 * 60 * 60 * 1000; // 7 days or 24 hours
+    res.cookie("token", token, { httpOnly: true, maxAge });
+
+    // Return success
+    res.json({ success: true, redirect: user.role });
+
+  } catch (error) {
+    console.error("Error logging in using Google", error);
+    res.status(500).json({ error: "Error logging in using Google" });
+  }
+
+
+
 
 };
 

@@ -343,6 +343,15 @@ window.initFireBaseFCM = function() {
             <option value="2">Staff</option>
         </select>
         </div>
+        <div id="hidden-admin-code" class="hidden">
+          <label
+            class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+            for="admin-code"
+          >
+          Enter Admin Code
+        </label>
+          <input type="text" placeholder="Code" class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2  text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50" id="admin-code" name="admin-code">
+        </div>
         <div class="space-y-2">
           <label
             class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
@@ -453,7 +462,7 @@ window.initFireBaseFCM = function() {
       <!-- drop-down menu -->
       <select
         class="flex h-10 w-full rounded-md text-gray-600 border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 "
-         id="acc-type">
+         id="acc-type2">
           <option value="" disabled selected>Select your Account Type</option>
           <option value="0">Admin</option>
           <option value="1">Student</option>
@@ -461,7 +470,9 @@ window.initFireBaseFCM = function() {
       </select>
 
         <!-- <label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70" for="code">Code</label> -->
-      <input type="text" placeholder="Code" class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 -mt-36 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50" id="code" name="code">
+      <div id="hidden-admin-google" class="hidden">
+        <input type="text" placeholder="Code" class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2  text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50" id="code" name="code">
+      </div>
 
       <div class="flex justify-center">
         <button

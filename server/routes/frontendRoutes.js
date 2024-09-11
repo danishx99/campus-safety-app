@@ -59,6 +59,12 @@ router.get("/admin/viewIncidents", (req, res) => {
   );
 });
 
+router.get("/admin/generateCode", (req, res) => {
+  res.sendFile(
+    path.join(__dirname, "../../client/html", "adminGenerateCode.html")
+  );
+});
+
 //Safety Resources
 router.get("/admin/safetyResources", (req, res) => {
   res.sendFile(

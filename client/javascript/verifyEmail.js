@@ -30,7 +30,7 @@ document.addEventListener("DOMContentLoaded", function(){
 
             // Redirect to login page
             setTimeout(() => {
-                window.location.href = '/index';
+                window.location.href = '/admin';
             }, 2500);
         } else if (data.error) {
             console.error("Error verifying email:", data.error);

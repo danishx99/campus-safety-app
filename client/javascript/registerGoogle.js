@@ -4,6 +4,7 @@ document.addEventListener("DOMContentLoaded", function () {
     var proceedGoogle = document.getElementById("proceed-google-btn"); // button on the sub-page
   
     var alert = document.getElementById("alert");
+    var displayCode = document.getElementById("hidden-admin-google");
   
     var form1 = document.getElementById("form-p1");
     var form2 = document.getElementById("form-p2");
@@ -21,8 +22,17 @@ document.addEventListener("DOMContentLoaded", function () {
   
     let account;
     let code;
+
+    document.getElementById("acc-type2").addEventListener("change", function() {
+      if (this.value === "0") {
+          displayCode.className = "space-y-2";
+          displayCode.style.display = ""; // Ensure the element is visible
+      } else {
+          displayCode.style.display = "none";
+      }
+  });
   
-    account = document.getElementById("acc-type").value;
+    account = document.getElementById("acc-type2").value;
     code = document.getElementById("code").value;
   
     // Initialize Firebase Auth App (using the named app "authApp")

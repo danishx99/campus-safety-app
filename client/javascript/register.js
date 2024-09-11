@@ -2,6 +2,7 @@ document.addEventListener("DOMContentLoaded", function (){
 
     var signupBtn= document.getElementById("signup-btn");
     var alert = document.getElementById("alert");
+    var code = document.getElementById("hidden-admin-code");
 
     let email;
     let phone;
@@ -19,6 +20,15 @@ document.addEventListener("DOMContentLoaded", function (){
     function hideLoader(){
         document.getElementById("loader").style.display = "none";
     }
+
+    document.getElementById("acc-type").addEventListener("change", function() {
+        if (this.value === "0") {
+            code.className = "space-y-2";
+            code.style.display = ""; // Ensure the element is visible
+        } else {
+            code.style.display = "none";
+        }
+    });
 
 
 

@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Campus Safety Dashboard</title>
+    <link rel="icon" type="image/svg+xml" href="../../assets/logo.png" />
+    <link href="../styles/output.css" rel="stylesheet" />
+    <link href="../styles/styles.css" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="../javascript/loadComponents.js" defer></script>
+    <script src="../javascript/dashboard.js" defer></script>
+</head>
+
+<body class="flex flex-col min-h-screen bg-gradient-to-b from-blue-50 to-blue-105">
+    <div id="header-placeholder"></div>
+
+    <!-- Toast Notification -->
+    <div id="toast"
+        class="hidden fixed top-4 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white p-4 rounded-lg shadow-lg flex items-center justify-between w-full max-w-xs sm:max-w-md z-50">
+        <span id="toastMessage" class="text-sm">Please verify your email to access all features.</span>
+        <div class="flex items-center">
+            <button id="verifyEmailBtn" class="ml-4 bg-blue-500 text-white px-2 py-1 rounded text-sm">Verify
+                Email</button>
+            <button id="closeToastBtn" class="ml-2 text-white">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <div class="flex flex-1 p-6">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 w-full">
+            <!-- Report Incident Card -->
+            <a href="user/reportIncident" id="report-incident-card" class="card-link">
+                <div class="bg-white shadow-lg rounded-lg p-4 hover:shadow-xl transition transform hover:scale-105 flex flex-col lg:row-span-2">
+                    <h2 class="text-xl font-bold text-gray-800 mb-2">Report an Incident</h2>
+                    <p class="text-gray-600 mb-4">Report incidents on campus for prompt response.</p>
+                    <div class="space-y-2 mb-4 flex-grow">
+                        <div class="bg-blue-100 p-2 rounded-md flex items-center">
+                            <img src="../assets/incidentDashboard.png" alt="Armed Robbery Icon" class="h-6 w-6 mr-2">
+                            <div>
+                                <h3 class="text-gray-800 font-semibold">Armed Robbery</h3>
+                                <p class="text-gray-600 text-sm">Were you, or did you witness a robbery?</p>
+                            </div>
+                        </div>
+                        <div class="bg-blue-100 p-2 rounded-md flex items-center">
+                            <img src="../assets/incidentDashboard.png" alt="Bullying Icon" class="h-6 w-6 mr-2">
+                            <div>
+                                <h3 class="text-gray-800 font-semibold">Bullying</h3>
+                                <p class="text-gray-600 text-sm">Were you verbally assaulted?</p>
+                            </div>
+                        </div>
+                        <div class="bg-blue-100 p-2 rounded-md flex items-center">
+                            <img src="../assets/incidentDashboard.png" alt="Vandalism Icon" class="h-6 w-6 mr-2">
+                            <div>
+                                <h3 class="text-gray-800 font-semibold">Vandalism</h3>
+                                <p class="text-gray-600 text-sm">Did you witness or identify any property damage?</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex justify-center mt-auto">
+                        <img src="../assets/reportDashboard.png" alt="Report Icon" class="h-24 w-24" />
+                    </div>
+                </div>
+            </a>
+
+            <!-- Middle Column -->
+            <div class="flex flex-col gap-6">
+                <!-- View Notifications Card -->
+                <a href="#" id="view-notifications-card" class="card-link">
+                    <div
+                        class="bg-white shadow-lg rounded-lg p-4 hover:shadow-xl transition transform hover:scale-105 flex flex-col">
+                        <h2 class="text-xl font-bold text-gray-800 mb-2">View Notifications</h2>
+                        <p class="text-gray-600 mb-4">Check real-time alerts about campus emergencies.</p>
+                        <div class="flex justify-center mt-auto">
+                            <img src="../assets/notificationDashboard.png" alt="Notification Icon" class="h-24 w-24" />
+                        </div>
+                    </div>
+                </a>
+
+                <!-- Location Services Card -->
+                <a href="#" id="location-services-card" class="card-link">
+                    <div class="bg-white shadow-lg rounded-lg p-4 hover:shadow-xl transition transform hover:scale-105 flex flex-col">
+                        <h2 class="text-xl font-bold text-gray-800 mb-2">Location Services</h2>
+                        <p class="text-gray-600 mb-4">View the location of campus buildings and safety resources.</p>
+                        <div class="flex justify-center mt-auto">
+                            <img src="../assets/mapDashboard.png" alt="Location Icon" class="h-24 w-24" />
+                        </div>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Safety Resources Card -->
+            <a href="/safetyResources" id="safety-resources-card" class="card-link">
+                <div class="bg-white shadow-lg rounded-lg p-4 hover:shadow-xl transition transform hover:scale-105 flex flex-col lg:row-span-2">
+                    <h2 class="text-xl font-bold text-gray-800 mb-2">Safety Resources</h2>
+                    <p class="text-gray-600 mb-4">Access important safety information and resources.</p>
+                    <div class="space-y-2 mb-4 flex-grow">
+                        <div class="bg-blue-100 p-2 rounded-md flex items-center">
+                            <img src="../assets/protectionDashboard.png" alt="Campus Control Icon" class="h-6 w-6 mr-2">
+                            <div>
+                                <h3 class="text-gray-800 font-semibold">Campus Control</h3>
+                                <p class="text-gray-600 text-sm">Call +27 11 717 4444/6666 for emergency assistance.</p>
+                            </div>
+                        </div>
+                        <div class="bg-blue-100 p-2 rounded-md flex items-center">
+                            <img src="../assets/protectionDashboard.png" alt="Emergency Procedures Icon"
+                                class="h-6 w-6 mr-2">
+                            <div>
+                                <h3 class="text-gray-800 font-semibold">Emergency Procedures</h3>
+                                <p class="text-gray-600 text-sm">Learn how to respond in an emergency.</p>
+                            </div>
+                        </div>
+                        <div class="bg-blue-100 p-2 rounded-md flex items-center">
+                            <img src="../assets/protectionDashboard.png" alt="Integrity Hotline Icon"
+                                class="h-6 w-6 mr-2">
+                            <div>
+                                <h3 class="text-gray-800 font-semibold">Integrity Hotline</h3>
+                                <p class="text-gray-600 text-sm">Call +27 82 923 8459 for improper, unethical or illegal
+                                    conduct.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex justify-center mt-auto">
+                        <img src="../assets/safetyDashboard.png" alt="Safety Icon" class="h-24 w-24" />
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+    <div id="footer-placeholder"></div>
+</body>
+
+</html>
+
+

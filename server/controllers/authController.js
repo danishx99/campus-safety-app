@@ -303,8 +303,8 @@ exports.sendVerification= async (req,res)=>{
     var url = req.protocol + "://" + req.get("host");
     await mailer.sendVerificationEmail(email,url,verificationToken);
 
-    console.log("Verification Email Succesfully Sent!");
-    res.json({message:"Verification Email Succesfully Sent!"});
+    console.log("Verification Email Successfully Sent!");
+    res.json({message:"Verification Email Successfully Sent!"});
 
     
   } catch (error) {
@@ -389,4 +389,26 @@ exports.logout = async (req, res) => {
         console.error("Error logging out user:", error);
         res.status(500).json({ error: "Error logging out user" });
     }
+};
+
+exports.checkEmailVerification = async (req, res) => {
+  try {
+    const token = req.cookies.token;
+    if (!token) {
+      return res.status(401).json({ error: "No token provided" });
+    }
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const email = decoded.userEmail;
+
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    res.json({ isVerified: user.isVerified });
+  } catch (error) {
+    console.error("Error checking email verification status:", error);
+    res.status(500).json({ error: "Error checking email verification status" });
+  }
 };

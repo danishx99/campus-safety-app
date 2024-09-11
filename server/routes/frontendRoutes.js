@@ -41,7 +41,7 @@ router.get("/verifyEmail", (req, res) => {
 
 //Admin Dashboard
 router.get("/adminDashboard", (req, res) => {
-  res.sendFile(path.join(__dirname, "../../client/html", "index.html"));
+  res.sendFile(path.join(__dirname, "../../client/html", "adminDashboard.html"));
 });
 
 //Incident Reporting

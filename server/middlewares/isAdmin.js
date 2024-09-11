@@ -35,6 +35,7 @@ exports.isAdmin = async (req, res, next) => {
     //res.status(401).json({message: "You are authorized to access this resource, your details are: " + verified.userId + " " + verified.role});
   } catch (error) {
     console.error("Error authenticating user:", error);
-    res.status(401).json({ error: "Invalid token" });
+    return res.redirect("/login"); //redirect to login page if the jwt token is invalid, expired, etc.
+    
   }
 };

@@ -30,7 +30,9 @@ exports.isLoggedIn = (pageType) => {
   
       } catch (error) {
         console.error("Error in isLoggedIn middleware:", error);
-        return res.status(401).json({ error: "Invalid token" });
+        return res.sendFile(
+          path.join(__dirname, "../../client/html/auth", "login.html") //redirect to login page if the jwt token is invalid, expired, etc.
+        );
       }
     };
   };

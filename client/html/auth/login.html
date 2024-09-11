@@ -50,7 +50,7 @@
 <body>
 
   <script type="module">
-    
+
      import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
     import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-messaging.js";
 
@@ -260,7 +260,11 @@ window.initFireBaseFCM = function() {
         <div class="space-y-2">
           <button id="login-btn" class="inline-flex items-center justify-center whitespace-nowrap rounded-lg hover:bg-blue-500 text-sm text-white font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 w-full bg-[#015EB8]">
             Login
-            <div id="loader" class="m-2 p-2 hidden"></div>
+            <div id="loader" class="m-2 p-2 hidden">
+            
+            </div>
+            
+          
           </button>
           <div class="flex items-center justify-center space-x-2">
             <span class="text-sm text-muted-foreground">or</span>

@@ -10,6 +10,8 @@ const firebaseConfig = {
 };
 
 
+
+
 // VAPID key for web push
 const vapidKey = 'BF93pnwopvvA-b_z5xXp7K2LKqX3xOHmhYRLQ_8q6KFm6PTRxDgaaIU0Y-9JWrym7Hw7Ur0H-lodMr4OJvfzKys';
 

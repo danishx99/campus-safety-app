@@ -16,17 +16,257 @@
     <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-messaging-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-analytics-compat.js"></script>
 
+   
+
     <style>
        .token-wrap {
             word-wrap: break-word;
             max-width: 100%;
         }
+
+          /* Loader styles */
+          #loader {
+            border: 4px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 4px solid #3498db;
+            width: 25px;
+            height: 25px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
        
     </style>
+
 
 </head>
 
 <body>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+    import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-messaging.js";
+
+//      window.initFireBaseFCM = async function(){
+//     // Import the functions you need from the SDKs you need
+
+
+//     // Your web app's Firebase configuration
+//     const firebaseConfig = {
+//         apiKey: "AIzaSyBA-red8RszDmGY3YGELrunZQxFmg7r04Y",
+//         authDomain: "campus-safety-fcm.firebaseapp.com",
+//         projectId: "campus-safety-fcm",
+//         storageBucket: "campus-safety-fcm.appspot.com",
+//         messagingSenderId: "221773083535",
+//         appId: "1:221773083535:web:0500a94bbb7a9dd6b891fa",
+//         measurementId: "G-8BZHJT3BRY"
+//     };
+    
+    
+    
+
+//     // Initialize Firebase
+//     const app = initializeApp(firebaseConfig);
+//     const messaging = getMessaging(app);
+
+//     // Function to register a specific service worker and wait for it to be ready and activated
+//     function registerReady(swScript, options, timeout = 5000) { 
+//     console.log('Registering service worker...');
+//     return navigator.serviceWorker.register(swScript, options).then(reg => { 
+//         var incomingSw = reg.installing || reg.waiting;
+//         if (reg.active && !incomingSw) { 
+//             return Promise.resolve(reg); 
+//         }
+
+//         return new Promise((fulfill, reject) => { 
+//             const timer = setTimeout(() => {
+//                 reject(new Error('Service worker activation timed out'));
+//             }, timeout);
+
+//             incomingSw.onstatechange = evt => { 
+//                 if (evt.target.state === 'activated') { 
+//                     clearTimeout(timer);
+//                     incomingSw.onstatechange = null; 
+//                     fulfill(reg); 
+//                 } 
+//             }; 
+//         }); 
+//     }); 
+// }
+
+//     // Register the service worker using registerReady
+//     if ('serviceWorker' in navigator) {
+//         registerReady("/firebase-messaging-sw.js", { scope: "/" })
+//             .then(function (registration) {
+//                 console.log('Service Worker registered with scope:', registration.scope);
+//                 console.log('Service Worker is ready and active.');
+
+//                 // Request notification permission
+//                 Notification.requestPermission().then((permission) => {
+//                     if (permission === 'granted') {
+//                         console.log('Notification permission granted.');2
+
+//                         // Get the FCM token after the service worker is ready
+//                         getToken(messaging, { vapidKey: 'BF93pnwopvvA-b_z5xXp7K2LKqX3xOHmhYRLQ_8q6KFm6PTRxDgaaIU0Y-9JWrym7Hw7Ur0H-lodMr4OJvfzKys', serviceWorkerRegistration: registration })
+//                             .then((currentToken) => {
+//                                 if (currentToken) {
+//                                     console.log('FCM Token:', currentToken);
+//                                     document.getElementById('token').textContent = currentToken;
+//                                 } else {
+//                                     console.log('No registration token available.');
+//                                     document.getElementById('token').textContent = 'No registration token available. Request permission to generate one.';
+//                                 }
+//                             })
+//                             .catch((err) => {
+//                                 console.error('An error occurred while retrieving token. ', err);
+//                                 document.getElementById('token').textContent = 'An error occurred while retrieving token. ' + err;
+//                             });
+//                     } else {
+//                         console.log('Notification permission denied.');
+//                         document.getElementById('token').textContent = 'Notification permission denied. Request permission to generate FCM token.';
+//                     }
+//                 });
+//             })
+//             .catch((err) => {
+//                 console.error('Service Worker registration failed: ', err);
+//                 document.getElementById('token').textContent = 'Service Worker registration failed: ' + err;
+//             });
+//     }
+
+//     // Handle incoming messages when the app is in the foreground
+//     onMessage(messaging, (payload) => {
+//         console.log('Message received. ', payload);
+//         // Customize notification here
+//         const notificationTitle = payload.notification.title;
+//         const notificationOptions = {
+//             body: payload.notification.body,
+//             icon: '/firebase-logo.png'
+//         };
+
+//         alert("Message received: " + payload.notification.body);
+//         // new Notification(notificationTitle, notificationOptions);
+//     });
+//     }
+
+window.initFireBaseFCM = function() {
+    return new Promise((resolve, reject) => {
+        // Import the functions you need from the SDKs you need
+
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBA-red8RszDmGY3YGELrunZQxFmg7r04Y",
+            authDomain: "campus-safety-fcm.firebaseapp.com",
+            projectId: "campus-safety-fcm",
+            storageBucket: "campus-safety-fcm.appspot.com",
+            messagingSenderId: "221773083535",
+            appId: "1:221773083535:web:0500a94bbb7a9dd6b891fa",
+            measurementId: "G-8BZHJT3BRY"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const messaging = getMessaging(app);
+
+        // Function to register a specific service worker and wait for it to be ready and activated
+        function registerReady(swScript, options, timeout = 5000) { 
+            console.log('Registering service worker...');
+            return navigator.serviceWorker.register(swScript, options).then(reg => { 
+                var incomingSw = reg.installing || reg.waiting;
+                if (reg.active && !incomingSw) { 
+                    return Promise.resolve(reg); 
+                }
+
+                return new Promise((fulfill, reject) => { 
+                    const timer = setTimeout(() => {
+                        reject(new Error('Service worker activation timed out'));
+                    }, timeout);
+
+                    incomingSw.onstatechange = evt => { 
+                        if (evt.target.state === 'activated') { 
+                            clearTimeout(timer);
+                            incomingSw.onstatechange = null; 
+                            fulfill(reg); 
+                        } 
+                    }; 
+                }); 
+            }); 
+        }
+
+        // Register the service worker using registerReady
+        if ('serviceWorker' in navigator) {
+            registerReady("/firebase-messaging-sw.js", { scope: "/" })
+                .then(function (registration) {
+                    console.log('Service Worker registered with scope:', registration.scope);
+                    console.log('Service Worker is ready and active.');
+
+                    // Request notification permission
+                    Notification.requestPermission().then((permission) => {
+                        if (permission === 'granted') {
+                            console.log('Notification permission granted.');
+
+                            // Get the FCM token after the service worker is ready
+                            getToken(messaging, { 
+                                vapidKey: 'BF93pnwopvvA-b_z5xXp7K2LKqX3xOHmhYRLQ_8q6KFm6PTRxDgaaIU0Y-9JWrym7Hw7Ur0H-lodMr4OJvfzKys', 
+                                serviceWorkerRegistration: registration 
+                            })
+                            .then((currentToken) => {
+                                if (currentToken) {
+                                    console.log('FCM Token:', currentToken);
+                                    resolve(currentToken); // Resolve with the current token
+                                } else {
+                                    console.log('No registration token available.');
+                                    reject('No registration token available. Request permission to generate one.'); // Reject with appropriate message
+                                }
+                            })
+                            .catch((err) => {
+                                console.error('An error occurred while retrieving token. ', err);
+                                reject('An error occurred while retrieving token.'); // Reject with the error
+                            });
+                        } else {
+                            console.log('Notification permission denied.');
+                            reject('Notification permission denied. Request permission to generate FCM token.');
+                        }
+                    });
+                })
+                .catch((err) => {
+                    console.error('Service Worker registration failed: ', err);
+                    reject('Service Worker registration failed.'); // Reject with service worker registration error
+                });
+        } else {
+            reject('Service worker not supported in this browser.');
+        }
+
+        // Handle incoming messages when the app is in the foreground
+        onMessage(messaging, (payload) => {
+            console.log('Message received. ', payload);
+            // Customize notification here
+            const notificationTitle = payload.notification.title;
+            const notificationOptions = {
+                body: payload.notification.body,
+                icon: '/firebase-logo.png'
+            };
+
+            alert("Message received: " + payload.notification.body);
+            // new Notification(notificationTitle, notificationOptions);
+        });
+    });
+}
+
+    
+</script>
+
+
+
+
+
 <style>:root{--background:0 0% 100%;--foreground:240 10% 3.9%;--card:0 0% 100%;--card-foreground:240 10% 3.9%;--popover:0 0% 100%;--popover-foreground:240 10% 3.9%;--primary:240 5.9% 10%;--primary-foreground:0 0% 98%;--secondary:240 4.8% 95.9%;--secondary-foreground:240 5.9% 10%;--muted:240 4.8% 95.9%;--muted-foreground:240 3.8% 45%;--accent:240 4.8% 95.9%;--accent-foreground:240 5.9% 10%;--destructive:0 72% 51%;--destructive-foreground:0 0% 98%;--border:240 5.9% 90%;--input:240 5.9% 90%;--ring:240 5.9% 10%;--chart-1:173 58% 39%;--chart-2:12 76% 61%;--chart-3:197 37% 24%;--chart-4:43 74% 66%;--chart-5:27 87% 67%;--radius:0.5rem;}img[src="/placeholder.svg"],img[src="/placeholder-user.jpg"]{filter:sepia(.3) hue-rotate(-60deg) saturate(.5) opacity(0.8) }</style>
 <style>h1, h2, h3, h4, h5, h6 { font-family: 'Inter', sans-serif; --font-sans-serif: 'Inter'; }
 </style>
@@ -47,18 +287,12 @@
       data-v0-t="card"
     >
     <div class="alert-box" id="alert" role="alert"></div>
-      <div class="flex flex-col space-y-1.5 p-6">
+      <div class="flex flex-col space-y-1.5">
 
-        <div id="token" class="token-wrap">
-          dye5LI-V3TZNelef-Sp4vb:APA91bGJmQW68w2r6tFJUhObiFmoAAGRIrpt_erzstrmqqBa1TzFUE0Voqx83OeTyROL6zwiA9AzUr5ucf8ZgbJc9R14VC2
+        <div id="token" class="token-wrap text-center hidden">
+          Generating token...
         </div>
-      <!-- <!-- Uncomment one of these to use a different display method:
-      <div id="token" class="token-truncate">
-          dye5LI-V3TZNelef-Sp4vb:APA91bGJmQW68w2r6tFJUhObiFmoAAGRIrpt_erzstrmqqBa1TzFUE0Voqx83OeTyROL6zwiA9AzUr5ucf8ZgbJc9R14VC2
-      </div>
-      <div id="token" class="token-scroll">
-          dye5LI-V3TZNelef-Sp4vb:APA91bGJmQW68w2r6tFJUhObiFmoAAGRIrpt_erzstrmqqBa1TzFUE0Voqx83OeTyROL6zwiA9AzUr5ucf8ZgbJc9R14VC2
-      </div> -->
+    
        
         <h3 class="whitespace-nowrap text-3xl font-semibold leading-none tracking-tight text-center">Sign Up</h3>
         
@@ -182,8 +416,12 @@
             id="signup-btn"
             >
               Sign Up
+              <div id="loader" class="m-2 p-2 hidden"></div>
             </button>
+
+            
           </div>
+
           
           <div class="flex items-center justify-center space-x-2">
             <span class="text-sm text-muted-foreground">or</span>
@@ -256,8 +494,6 @@ confeyeicon.addEventListener('click', () => {
 </script>
 
 <script src="../../javascript/register.js"></script>
-<script src="../../javascript/FCM/firebaseConfig.js"></script>
-<!-- <script src="../../javascript/FCM/unregisterServiceWorkers.js"></script> -->
 
 
 

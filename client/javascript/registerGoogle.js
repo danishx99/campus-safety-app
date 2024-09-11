@@ -17,7 +17,7 @@ document.addEventListener("DOMContentLoaded", function(){
     // Initialize Firebase
     // initializeApp(firebaseConfig);
     
-
+    
     googleBtn.addEventListener("click", function(event){
 
         event.preventDefault();

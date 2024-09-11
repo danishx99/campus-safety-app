@@ -29,4 +29,4 @@ async function sendNotification(fcmTokens, title, body, data = {}) {
 
 module.exports = sendNotification;
   
-// sendNotification(['eyWaTGlD-3v5cRW3k5BkON:APA91bFdypMWD6zu0BtV5JRJyuHjUrKuNBb6ZHT9W3zns4Ei4afoMYMXU7ifno2CEBS7piuX-w0pKGbOnDucN-IrHLoVyRvsOJq__JFWDYa2QfucQHjr6PVWyNhqPluEyqPEZ6lg9Wwm'], 'Hi there!', 'sending custome message!', { key1: 'value1', key2: 'value2' });
+// sendNotification(['eyWaTGlD-3v5cRW3k5BkON:APA91bGcypc0uykn_XZZI8af1RAw_fkcXYZ0SzHBS6n8mS35TqZh1v3mgLhOng9HKEmg37ZYXyqmHahmubkdxh0A0_Zmt6v4q75VEt7Ern10L6n9hkTwowNKcbU9m1ZQWk-0wwFJOXnK'], 'Hi there!', 'sending custome message!', { key1: 'value1', key2: 'value2' });

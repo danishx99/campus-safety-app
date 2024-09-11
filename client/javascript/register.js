@@ -12,20 +12,27 @@ document.addEventListener("DOMContentLoaded", function (){
     let lastName;
     let FCMtoken;
 
-    signupBtn.addEventListener("click", function(event){
-        
+    function showLoader(){
+        document.getElementById("loader").style.display = "block";
+    }
 
-        console.log("Signup button clicked");
-
-        if(localStorage.getItem('fcmToken')){
-            console.log("FCM Token found and will be used for registration");
-            FCMtoken = localStorage.getItem('fcmToken');
-        }else{
-            console.log("FCM token not found");
-            FCMtoken = "null";
-        }
+    function hideLoader(){
+        document.getElementById("loader").style.display = "none";
+    }
 
 
+
+    signupBtn.addEventListener("click", async function(event){
+
+        //Remove any previous alerts
+        alert.style.display = "none";
+
+        // Prevent the default form submission
+        event.preventDefault();
+
+        // Show the loader after initial signUp click
+        showLoader();
+       
 
         email= document.getElementById("email").value;
         phone = document.getElementById("phone-num").value;
@@ -35,37 +42,41 @@ document.addEventListener("DOMContentLoaded", function (){
         firstName = document.getElementById("first-name").value;
         lastName = document.getElementById("last-name").value;
 
-        // get account type 
-
+       
         // check fields are not empty
 
         if (
-            !email ||
-            !phone ||
-            !account ||
-            !psw ||
-            !conf_psw ||
-            !firstName ||
-            !lastName ||
-            email === "" ||
-            phone === "" ||
-            account === "" ||
-            psw === "" ||
-            conf_psw === "" ||
-            firstName === "" ||
-            lastName===""
-          ) {
-            alert.style.display = "block";
-            alert.innerText = "Please fill in all fields";
-            return;
-          }
+          !email ||
+          !phone ||
+          !account ||
+          !psw ||
+          !conf_psw ||
+          !firstName ||
+          !lastName ||
+          email === "" ||
+          phone === "" ||
+          account === "" ||
+          psw === "" ||
+          conf_psw === "" ||
+          firstName === "" ||
+          lastName === ""
+        ) {
+          alert.style.display = "block";
+          alert.innerText = "Please fill in all fields";
+          //Scroll to top of page
+          window.scrollTo(0, 0);
+          hideLoader();
+          return;
+        }
 
         // input validation
-        
         //check format of email- must be wits email
         if (!email.endsWith(".wits.ac.za")) {
             alert.style.display = "block";
             alert.innerText = "Invalid email format. Please use a Wits email address.";
+            //Scroll to top of page
+            window.scrollTo(0, 0);
+            hideLoader();
             return;
         }
 
@@ -74,7 +85,10 @@ document.addEventListener("DOMContentLoaded", function (){
         if (!phonePattern.test(phone)) {
             alert.style.display = "block";
             alert.innerText = "Invalid phone number. Please enter a valid 10-digit phone number.";
-        return;
+            //Scroll to top of page
+            window.scrollTo(0, 0);
+            hideLoader();
+            return;
         }
 
         // make sure strong password
@@ -99,6 +113,9 @@ document.addEventListener("DOMContentLoaded", function (){
                 alert.style.display = "block";
                 alert.innerText = "Password must be at least 8 characters long.";
             }
+            //Scroll to top of page
+            window.scrollTo(0, 0);
+            hideLoader();
             return;
           }
           
@@ -106,8 +123,63 @@ document.addEventListener("DOMContentLoaded", function (){
         if (psw !== conf_psw) {
         alert.style.display = "block";
         alert.innerText = "Passwords do not match.";
+        //Scroll to top of page
+        window.scrollTo(0, 0);
+        hideLoader();
         return;
         }
+
+        
+        try {
+            // Try to initialize Firebase FCM and await the result
+            let result = await initFireBaseFCM();
+            console.log("FCM TOKEN RESULT FROM PROMISE:", result);
+            // Handle the successful case (this is when the token is resolved properly)
+            FCMtoken = result;
+        } catch (error) {
+             console.log("FCM TOKEN ERROR FROM PROMISE:", error);
+            // Handle different rejection scenarios
+            if (error === "No registration token available. Request permission to generate one.") {
+                alert.style.display = "block";
+                alert.innerText = "Could not generate FCM token. Please enable notifications and try again.";
+                window.scrollTo(0, 0);
+                hideLoader();
+                return;
+            } else if (error === "An error occurred while retrieving token.") {
+                alert.style.display = "block";
+                alert.innerText = "An error occurred while retrieving FCM token needed for registration. Please try again.";
+                window.scrollTo(0, 0);
+                hideLoader();
+                return;
+            } else if (error === "Notification permission denied. Request permission to generate FCM token.") {
+                alert.style.display = "block";
+                alert.innerText = "Notification permission denied. Please enable notifications and try again.";
+                window.scrollTo(0, 0);
+                hideLoader();
+                return;
+            } else if (error === "Service Worker registration failed.") {
+                alert.style.display = "block";
+                alert.innerText = "There was an error registering the service worker needed for notifications. Please try again.";
+                window.scrollTo(0, 0);
+                hideLoader();
+                return;
+            } else if (error === "Service worker not supported in this browser.") {
+                alert.style.display = "block";
+                alert.innerText = "Service worker not supported in this browser. Please try again.";
+                window.scrollTo(0, 0);
+                hideLoader();
+                return;
+            } else {
+                alert.style.display = "block";
+                alert.innerText = "An unexpected error occurred. Please try again.";
+                window.scrollTo(0, 0);
+                hideLoader();
+                return;
+            }
+        }
+        
+
+      
 
         // validation passed, now post to backend
         console.log("Details succesfully captured, time to post!");
@@ -129,14 +201,21 @@ document.addEventListener("DOMContentLoaded", function (){
         })
             .then(response => response.json())
             .then(data => {
+                hideLoader();
+
                 // Handle the response data here
                 if (data.message ==="Registration successful!") {
-                    
+
                     alert.style.display = "block";
                     alert.style.color = 'green';
                     alert.style.backgroundColor = '#ddffdd';
                     alert.style.border='green';
-                    alert.innerText = "Registration successful!";
+                    alert.innerText = "Registration successful! Redirecting to login page...";
+
+                    //Scroll to top of page
+                    window.scrollTo(0, 0);
+
+                
 
                 // redirect to login page
                 setTimeout(() => {
@@ -144,7 +223,6 @@ document.addEventListener("DOMContentLoaded", function (){
                 }, 3000);
                 console.log(data);
                 }
-
                 else if(data.error){
                     console.error("Error registering user :", data.error);
                     alert.style.display = "block";
@@ -152,8 +230,10 @@ document.addEventListener("DOMContentLoaded", function (){
                     alert.style.backgroundColor = '#ffdddd';
                     alert.style.border = 'red';
                     alert.innerText = data.error;
+                    //Scroll to top of page
+                    window.scrollTo(0, 0);
+                    
                 }
-                
             })
             .catch(error => {
                 // Handle any errors here

@@ -67,7 +67,7 @@ exports.login = async (req, res) => {
     try {
         console.log("Login endpoint reached");
         
-        const { email, password, rememberMe } = req.body;
+        const { email, password, rememberMe, FCMtoken } = req.body;
 
         // find user by email
         const user = await User.findOne({ email });
@@ -95,6 +95,11 @@ exports.login = async (req, res) => {
 
         // Set token as an HttpOnly cookie
         const maxAge = rememberMe ? 7 * 24 * 60 * 60 * 1000 : 24 * 60 * 60 * 1000; // 7 days or 24 hours
+
+        // Update the user's FCM token
+        user.FCMtoken = FCMtoken;
+        await user.save();
+        
         res.cookie("token", token, { httpOnly: true, maxAge });
 
         // Return success

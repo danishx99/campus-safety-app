@@ -1,15 +1,28 @@
 var resetBtn = document.getElementById('reset-btn');
 var email;
 
+function showLoader(){
+  document.getElementById('loader').style.display = 'block';
+}
+
+function hideLoader(){
+  document.getElementById('loader').style.display = 'none';
+}
+
+
 resetBtn.addEventListener('click', function (event) {
   event.preventDefault();
   console.log('Reset button clicked');
+
+  showLoader();
+
   email = document.getElementById('email').value;
 
   if (!email || email === '') {
     var alert = document.getElementById('alert');
     alert.style.display = 'block';
     alert.innerText = 'Please fill in all fields';
+    hideLoader();
     return;
   }
 
@@ -17,6 +30,7 @@ resetBtn.addEventListener('click', function (event) {
     var alert = document.getElementById('alert');
     alert.style.display = 'block';
     alert.innerText = 'Please enter a valid Wits email address';
+    hideLoader();
     return;
   }
 
@@ -36,6 +50,8 @@ resetBtn.addEventListener('click', function (event) {
     })
     .then((res) => res.json())
     .then((data) => {
+      hideLoader();
+
       if(data.message==="Password reset instructions have been sent to your email."){
         console.log("Reset Link sent, please check you email");
         alert.style.display = "block";
@@ -48,15 +64,15 @@ resetBtn.addEventListener('click', function (event) {
       else if(data.error){
         console.error("Error with email stuff :", data.error);
         alert.style.display = "block";
-        alert.style.color = 'red';
-        alert.style.backgroundColor = '#ffdddd';
-        alert.style.border = 'red';
         alert.innerText = data.error;
       }
        
     })
     .catch((error) => {
         console.error('Error:', error);
+        alert.style.display = "block";
+        alert.innerText = "An error occured, please try again later: "+error;
+        hideLoader();
     });
 
 })

@@ -468,14 +468,14 @@ exports.checkEmailVerification = async (req, res) => {
 
 exports.generateCode = async (req, res) => {
   try {
-    const { role } = req.body;
-
+  
+    console.log("Generate code endpoint reached");
     //Generate a random 5 digit code and prefix it with the role
-    const code = role + Math.floor(10000 + Math.random() * 90000);
+    const code = Math.floor(10000 + Math.random() * 90000);
 
     //const codeCheck = await Code.findOne({ userCode: code });
     while((await Code.findOne({ userCode: code }))){
-        code = role + Math.floor(10000 + Math.random() * 90000);
+        code = Math.floor(10000 + Math.random() * 90000);
     }
             
 
@@ -485,7 +485,6 @@ exports.generateCode = async (req, res) => {
 
     const newCode = new Code({
       userCode: code,
-      role,
     });
 
     await newCode.save();

@@ -4,6 +4,7 @@ const jwt = require("jsonwebtoken"); // For generating JSON Web Tokens
 const dotenv = require("dotenv"); // For accessing environment variables
 const crypto = require('crypto');
 const User= require("../schemas/User")
+const Code= require("../schemas/Code")
 const mailer = require("../utils/mailingTool"); // Transporter for sending emails
 const { log } = require("console");
 
@@ -20,13 +21,24 @@ exports.register = async (req,res) =>{
 
         if(account==0){
             role="admin";
+            //Check if the user has a valid code
+            const codeCheck = await Code.findOne({ userCode: code });
+            if (!codeCheck) {
+              return res.status(400).json({
+                error: "Invalid code. Please contact management for further assistance",
+              });
+            }
+            // check that code Check was not made more than 24 hours ago
+
+            if (Date.now() - codeCheck.createdAt > 86400000) {
+              return res.status(400).json({ error: "Registration code has expired" });
+            }
         }else if( account==1){
             role="staff";
         }else if( account==2){
             role="student";
         }
         
-
         // check if user already exists
         const existing = await User.findOne({ email });
         if (existing) {
@@ -451,5 +463,36 @@ exports.checkEmailVerification = async (req, res) => {
   } catch (error) {
     console.error("Error checking email verification status:", error);
     res.status(500).json({ error: "Error checking email verification status" });
+  }
+};
+
+exports.generateCode = async (req, res) => {
+  try {
+    const { role } = req.body;
+
+    //Generate a random 5 digit code and prefix it with the role
+    const code = role + Math.floor(10000 + Math.random() * 90000);
+
+    //const codeCheck = await Code.findOne({ userCode: code });
+    while((await Code.findOne({ userCode: code }))){
+        code = role + Math.floor(10000 + Math.random() * 90000);
+    }
+            
+
+    console.log("Generated code: ", code);
+
+    //Store code along with role in the database
+
+    const newCode = new Code({
+      userCode: code,
+      role,
+    });
+
+    await newCode.save();
+
+    res.json({ message: code });
+  } catch (error) { 
+    console.log("Error generating code:", error);
+    res.status(500).json({ error: "Error generating code" });
   }
 };

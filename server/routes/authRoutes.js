@@ -14,5 +14,6 @@ router.post("/forgotPassword", async (req,res )=> authController.forgotPassword(
 router.post("/verifyEmail", async (req,res )=> authController.verifyEmail(req,res));
 router.get("/logout", async (req,res) => authController.logout(req,res));
 router.get("/checkEmailVerification", async (req, res) => authController.checkEmailVerification(req, res));
+router.get("/generateCode", async (req, res) => authController.generateCode(req, res));
 
 module.exports = router;

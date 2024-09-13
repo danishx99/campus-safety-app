@@ -10,7 +10,6 @@
     <link href="../styles/styles.css" rel="stylesheet" />
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="../javascript/loadComponents.js" defer></script>
-    <script src="../javascript/dashboard.js" defer></script>
 </head>
 
 <body class="flex flex-col min-h-screen bg-gradient-to-b from-blue-50 to-blue-105">
@@ -35,7 +34,7 @@
     <div class="flex flex-1 p-6">
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 w-full">
             <!-- Report Incident Card -->
-            <a href="user/reportIncident" id="report-incident-card" class="card-link">
+            <a id="report-incident-card" class="card-link">
                 <div class="bg-white shadow-lg rounded-lg p-4 hover:shadow-xl transition transform hover:scale-105 flex flex-col lg:row-span-2">
                     <h2 class="text-xl font-bold text-gray-800 mb-2">Report an Incident</h2>
                     <p class="text-gray-600 mb-4">Report incidents on campus for prompt response.</p>
@@ -71,7 +70,7 @@
             <!-- Middle Column -->
             <div class="flex flex-col gap-6">
                 <!-- View Notifications Card -->
-                <a href="#" id="view-notifications-card" class="card-link">
+                <a  id="view-notifications-card" class="card-link">
                     <div
                         class="bg-white shadow-lg rounded-lg p-4 hover:shadow-xl transition transform hover:scale-105 flex flex-col">
                         <h2 class="text-xl font-bold text-gray-800 mb-2">View Notifications</h2>
@@ -83,7 +82,7 @@
                 </a>
 
                 <!-- Location Services Card -->
-                <a href="#" id="location-services-card" class="card-link">
+                <a id="location-services-card" class="card-link">
                     <div class="bg-white shadow-lg rounded-lg p-4 hover:shadow-xl transition transform hover:scale-105 flex flex-col">
                         <h2 class="text-xl font-bold text-gray-800 mb-2">Location Services</h2>
                         <p class="text-gray-600 mb-4">View the location of campus buildings and safety resources.</p>
@@ -95,7 +94,7 @@
             </div>
 
             <!-- Safety Resources Card -->
-            <a href="/safetyResources" id="safety-resources-card" class="card-link">
+            <a  id="safety-resources-card" class="card-link">
                 <div class="bg-white shadow-lg rounded-lg p-4 hover:shadow-xl transition transform hover:scale-105 flex flex-col lg:row-span-2">
                     <h2 class="text-xl font-bold text-gray-800 mb-2">Safety Resources</h2>
                     <p class="text-gray-600 mb-4">Access important safety information and resources.</p>
@@ -134,6 +133,8 @@
     </div>
     <div id="footer-placeholder"></div>
 </body>
+
+<script type="module" src="../javascript/userDashboard.js"></script>
 
 </html>
 

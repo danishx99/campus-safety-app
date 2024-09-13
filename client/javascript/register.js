@@ -51,6 +51,7 @@ document.addEventListener("DOMContentLoaded", function (){
         conf_psw= document.getElementById("conf-psw").value;
         firstName = document.getElementById("first-name").value;
         lastName = document.getElementById("last-name").value;
+        code = document.getElementById("admin-code").value;
 
        
         // check fields are not empty
@@ -81,7 +82,7 @@ document.addEventListener("DOMContentLoaded", function (){
 
         // input validation
         //check format of email- must be wits email
-        if (!email.endsWith(".wits.ac.za")) {
+        if (!email.endsWith("wits.ac.za")) {
             alert.style.display = "block";
             alert.innerText = "Invalid email format. Please use a Wits email address.";
             //Scroll to top of page
@@ -99,6 +100,26 @@ document.addEventListener("DOMContentLoaded", function (){
             window.scrollTo(0, 0);
             hideLoader();
             return;
+        }
+
+        //make sure code is filled in and is 5 digits
+        if(code === "none"){
+            alert.style.display = "block";
+            alert.innerText = "Please enter an admin code.";
+            //Scroll to top of page
+            window.scrollTo(0, 0);
+            hideLoader();
+            return;
+        }
+        if (code !== "none") {
+            if (!code || code === "" || code.length !== 5) {
+                alert.style.display = "block";
+                alert.innerText = "Invalid admin code. Please enter a valid 5-digit admin code.";
+                //Scroll to top of page
+                window.scrollTo(0, 0);
+                hideLoader();
+                return;
+            }
         }
 
         // make sure strong password
@@ -203,6 +224,7 @@ document.addEventListener("DOMContentLoaded", function (){
                 email: email,
                 phone: phone,
                 account: account,
+                code: code,
                 password: psw,
                 firstName: firstName,
                 lastName: lastName,

@@ -14,7 +14,7 @@ exports.register = async (req,res) =>{
 
     try {
         
-        const {email,account,phone,password, firstName, lastName, FCMtoken} = req.body;
+        const {email,account,code, phone,password, firstName, lastName, FCMtoken} = req.body;
         let role;
 
         console.log("Register endpoint reached");
@@ -64,6 +64,9 @@ exports.register = async (req,res) =>{
 
         // Save the new user to the database
         await newUser.save();
+        
+        //Delete the code because it has been used
+        await Code.deleteOne({ userCode: code });
 
         res.status(201).json({ message: "Registration successful!" });
 

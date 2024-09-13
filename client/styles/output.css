@@ -605,6 +605,11 @@ video {
   right: 0px;
 }
 
+.inset-y-0 {
+  top: 0px;
+  bottom: 0px;
+}
+
 .bottom-0 {
   bottom: 0px;
 }
@@ -1213,6 +1218,10 @@ video {
 
 .pb-1 {
   padding-bottom: 0.25rem;
+}
+
+.pr-3 {
+  padding-right: 0.75rem;
 }
 
 .pr-5 {

@@ -98,4 +98,10 @@ router.get("/profileManagement", authMiddleware ,(req, res) => {
   );
 });
 
+router.get("/panic", (req, res) => {
+  res.sendFile(
+    path.join(__dirname, "../../client/html", "panicButton.html")
+  );
+});
+
 module.exports = router;

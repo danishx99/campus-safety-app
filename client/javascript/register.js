@@ -102,23 +102,16 @@ document.addEventListener("DOMContentLoaded", function (){
             return;
         }
 
-        //make sure code is filled in and is 5 digits
-        if(code === "none"){
-            alert.style.display = "block";
-            alert.innerText = "Please enter an admin code.";
-            //Scroll to top of page
-            window.scrollTo(0, 0);
-            hideLoader();
-            return;
-        }
-        if (code !== "none") {
-            if (!code || code === "" || code.length !== 5) {
-                alert.style.display = "block";
-                alert.innerText = "Invalid admin code. Please enter a valid 5-digit admin code.";
-                //Scroll to top of page
-                window.scrollTo(0, 0);
-                hideLoader();
-                return;
+        if(account === "0"){
+            if (code !== "none") {
+                if (!code || code === "" || code.length !== 5) {
+                    alert.style.display = "block";
+                    alert.innerText = "Invalid admin code. Please enter a valid 5-digit admin code.";
+                    //Scroll to top of page
+                    window.scrollTo(0, 0);
+                    hideLoader();
+                    return;
+                }
             }
         }
 

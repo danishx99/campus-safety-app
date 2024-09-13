@@ -175,6 +175,8 @@ window.initFireBaseFCM = function() {
         const app = initializeApp(firebaseConfig);
         const messaging = getMessaging(app);
 
+
+
         // Function to register a specific service worker and wait for it to be ready and activated
         function registerReady(swScript, options, timeout = 15000) { 
             console.log('Registering service worker...');
@@ -198,6 +200,16 @@ window.initFireBaseFCM = function() {
                     }; 
                 }); 
             }); 
+        }
+        
+        function unregisterExistingServiceWorkers() {
+            return navigator.serviceWorker.getRegistrations()
+                .then(registrations => {
+                    return Promise.all(registrations.map(registration => registration.unregister()));
+                })
+                .then(() => {
+                    console.log('All existing service workers unregistered');
+                });
         }
 
         // Register the service worker using registerReady

@@ -155,7 +155,6 @@
 //         // new Notification(notificationTitle, notificationOptions);
 //     });
 //     }
-
 window.initFireBaseFCM = function() {
     return new Promise((resolve, reject) => {
         // Import the functions you need from the SDKs you need
@@ -199,46 +198,51 @@ window.initFireBaseFCM = function() {
                 }); 
             }); 
         }
+        
+        function unregisterExistingServiceWorkers() {
+            return navigator.serviceWorker.getRegistrations()
+                .then(registrations => {
+                    return Promise.all(registrations.map(registration => registration.unregister()));
+                })
+                .then(() => {
+                    console.log('All existing service workers unregistered');
+                });
+        }
 
         // Register the service worker using registerReady
         if ('serviceWorker' in navigator) {
-            registerReady("/firebase-messaging-sw.js", { scope: "/" })
+            unregisterExistingServiceWorkers()
+                .then(() => registerReady("/firebase-messaging-sw.js", { scope: "/" }))
                 .then(function (registration) {
                     console.log('Service Worker registered with scope:', registration.scope);
                     console.log('Service Worker is ready and active.');
 
                     // Request notification permission
-                    Notification.requestPermission().then((permission) => {
+                    return Notification.requestPermission().then((permission) => {
                         if (permission === 'granted') {
                             console.log('Notification permission granted.');
 
                             // Get the FCM token after the service worker is ready
-                            getToken(messaging, { 
+                            return getToken(messaging, { 
                                 vapidKey: 'BF93pnwopvvA-b_z5xXp7K2LKqX3xOHmhYRLQ_8q6KFm6PTRxDgaaIU0Y-9JWrym7Hw7Ur0H-lodMr4OJvfzKys', 
                                 serviceWorkerRegistration: registration 
-                            })
-                            .then((currentToken) => {
-                                if (currentToken) {
-                                    console.log('FCM Token:', currentToken);
-                                    resolve(currentToken); // Resolve with the current token
-                                } else {
-                                    console.log('No registration token available.');
-                                    reject('No registration token available. Request permission to generate one.'); // Reject with appropriate message
-                                }
-                            })
-                            .catch((err) => {
-                                console.error('An error occurred while retrieving token. ', err);
-                                reject('An error occurred while retrieving token.'); // Reject with the error
                             });
                         } else {
-                            console.log('Notification permission denied.');
-                            reject('Notification permission denied. Request permission to generate FCM token.');
+                            throw new Error('Notification permission denied.');
                         }
                     });
                 })
+                .then((currentToken) => {
+                    if (currentToken) {
+                        console.log('FCM Token:', currentToken);
+                        resolve(currentToken); // Resolve with the current token
+                    } else {
+                        throw new Error('No registration token available.');
+                    }
+                })
                 .catch((err) => {
-                    console.error('Service Worker registration failed: ', err);
-                    reject('Service Worker registration failed.'); // Reject with service worker registration error
+                    console.error('An error occurred: ', err);
+                    reject(err.message || 'An error occurred during the process.'); // Reject with the error message
                 });
         } else {
             reject('Service worker not supported in this browser.');
@@ -259,7 +263,6 @@ window.initFireBaseFCM = function() {
         });
     });
 }
-
     
 </script>
 

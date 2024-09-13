@@ -54,8 +54,7 @@
      import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
     import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-messaging.js";
 
-    
-window.initFireBaseFCM = function() {
+    window.initFireBaseFCM = function() {
     return new Promise((resolve, reject) => {
         // Import the functions you need from the SDKs you need
 
@@ -75,7 +74,7 @@ window.initFireBaseFCM = function() {
         const messaging = getMessaging(app);
 
         // Function to register a specific service worker and wait for it to be ready and activated
-        function registerReady(swScript, options, timeout = 5000) { 
+        function registerReady(swScript, options, timeout = 15000) { 
             console.log('Registering service worker...');
             return navigator.serviceWorker.register(swScript, options).then(reg => { 
                 var incomingSw = reg.installing || reg.waiting;
@@ -98,46 +97,51 @@ window.initFireBaseFCM = function() {
                 }); 
             }); 
         }
+        
+        function unregisterExistingServiceWorkers() {
+            return navigator.serviceWorker.getRegistrations()
+                .then(registrations => {
+                    return Promise.all(registrations.map(registration => registration.unregister()));
+                })
+                .then(() => {
+                    console.log('All existing service workers unregistered');
+                });
+        }
 
         // Register the service worker using registerReady
         if ('serviceWorker' in navigator) {
-            registerReady("/firebase-messaging-sw.js", { scope: "/" })
+            unregisterExistingServiceWorkers()
+                .then(() => registerReady("/firebase-messaging-sw.js", { scope: "/" }))
                 .then(function (registration) {
                     console.log('Service Worker registered with scope:', registration.scope);
                     console.log('Service Worker is ready and active.');
 
                     // Request notification permission
-                    Notification.requestPermission().then((permission) => {
+                    return Notification.requestPermission().then((permission) => {
                         if (permission === 'granted') {
                             console.log('Notification permission granted.');
 
                             // Get the FCM token after the service worker is ready
-                            getToken(messaging, { 
+                            return getToken(messaging, { 
                                 vapidKey: 'BF93pnwopvvA-b_z5xXp7K2LKqX3xOHmhYRLQ_8q6KFm6PTRxDgaaIU0Y-9JWrym7Hw7Ur0H-lodMr4OJvfzKys', 
                                 serviceWorkerRegistration: registration 
-                            })
-                            .then((currentToken) => {
-                                if (currentToken) {
-                                    console.log('FCM Token:', currentToken);
-                                    resolve(currentToken); // Resolve with the current token
-                                } else {
-                                    console.log('No registration token available.');
-                                    reject('No registration token available. Request permission to generate one.'); // Reject with appropriate message
-                                }
-                            })
-                            .catch((err) => {
-                                console.error('An error occurred while retrieving token. ', err);
-                                reject('An error occurred while retrieving token.'); // Reject with the error
                             });
                         } else {
-                            console.log('Notification permission denied.');
-                            reject('Notification permission denied. Request permission to generate FCM token.');
+                            throw new Error('Notification permission denied.');
                         }
                     });
                 })
+                .then((currentToken) => {
+                    if (currentToken) {
+                        console.log('FCM Token:', currentToken);
+                        resolve(currentToken); // Resolve with the current token
+                    } else {
+                        throw new Error('No registration token available.');
+                    }
+                })
                 .catch((err) => {
-                    console.error('Service Worker registration failed: ', err);
-                    reject('Service Worker registration failed.'); // Reject with service worker registration error
+                    console.error('An error occurred: ', err);
+                    reject(err.message || 'An error occurred during the process.'); // Reject with the error message
                 });
         } else {
             reject('Service worker not supported in this browser.');
@@ -158,6 +162,7 @@ window.initFireBaseFCM = function() {
         });
     });
 }
+
 
   </script>
 <style>:root{--background:0 0% 100%;--foreground:240 10% 3.9%;--card:0 0% 100%;--card-foreground:240 10% 3.9%;--popover:0 0% 100%;--popover-foreground:240 10% 3.9%;--primary:240 5.9% 10%;--primary-foreground:0 0% 98%;--secondary:240 4.8% 95.9%;--secondary-foreground:240 5.9% 10%;--muted:240 4.8% 95.9%;--muted-foreground:240 3.8% 45%;--accent:240 4.8% 95.9%;--accent-foreground:240 5.9% 10%;--destructive:0 72% 51%;--destructive-foreground:0 0% 98%;--border:240 5.9% 90%;--input:240 5.9% 90%;--ring:240 5.9% 10%;--chart-1:173 58% 39%;--chart-2:12 76% 61%;--chart-3:197 37% 24%;--chart-4:43 74% 66%;--chart-5:27 87% 67%;--radius:0.5rem;}img[src="/placeholder.svg"],img[src="/placeholder-user.jpg"]{filter:sepia(.3) hue-rotate(-60deg) saturate(.5) opacity(0.8) }</style>

@@ -20,7 +20,7 @@ exports.isUser = async (req, res, next) => {
     let userEmail = verified.userEmail;
     let role = verified.role;
 
-    if (role !== "student" || role !== "staff") {
+    if (role !== "student" && role !== "staff") {
       //return status 403 and send html file
       return res
         .status(403).json({

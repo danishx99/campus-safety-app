@@ -16,6 +16,7 @@ const adminRoutes = require('./server/routes/adminRoutes.js');
 const userRoutes = require('./server/routes/userRoutes.js');
 const profileRoutes = require('./server/routes/profileRoutes.js');
 const incidentReportingRoutes = require('./server/routes/incidentReportingRoutes.js');
+const notificationRoutes = require('./server/routes/notificationRoutes.js');
 
 // Load environment variables from .env file
 dotenv.config();
@@ -36,6 +37,7 @@ app.use('/admin', adminRoutes);
 app.use('/profile', profileRoutes);
 app.use('/incidentReporting', incidentReportingRoutes);
 app.use('/user', userRoutes);
+app.use('/notifications', notificationRoutes);
 
 //Route to clear user collection
 app.get('/clearusers', async (req, res) => {

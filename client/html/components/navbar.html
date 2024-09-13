@@ -1,3 +1,13 @@
+<script>
+    function logout() {
+        localStorage.removeItem("userProfilePicture");
+        window.location.href = "/auth/logout";
+    }
+
+</script>
+
+
+
 <!-- Desktop Navigation -->
 <nav class="hidden h-full md:flex bg-white w-64 p-4 flex-col shadow-md">
     <ul class="flex-1 space-y-2">
@@ -33,7 +43,7 @@
         </li>
     </ul>
     <div class="border-t border-gray-200 pt-4 mt-4">
-        <a href="#" class="flex items-center text-gray-700 hover:bg-gray-300 p-2 rounded-md" id="logoutButton">
+        <a href="" class="flex items-center text-gray-700 hover:bg-gray-300 p-2 rounded-md" id="logoutButton" onclick="logout()">
             <img src="../assets/logout-solid.png" alt="Logout" class="h-6 w-6 mr-3">
             <span class="font-medium">Logout</span>
         </a>

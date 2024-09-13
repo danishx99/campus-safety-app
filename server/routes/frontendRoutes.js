@@ -43,6 +43,13 @@ router.get("/verifyEmail", (req, res) => {
   );
 });
 
+//Admin send Notifications
+router.get("/admin/sendNotifications", (req, res) => {
+  res.sendFile(
+    path.join(__dirname, "../../client/html", "sendNotifications.html")
+  );
+});
+
 //Admin Dashboard
 router.get("/admin", isAdmin ,(req, res) => {
   res.sendFile(path.join(__dirname, "../../client/html", "adminDashboard.html"));

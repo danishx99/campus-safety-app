@@ -101,22 +101,9 @@ function updateProfileDisplay(user) {
 }
 
 function logout() {
-    fetch('/auth/logout', {
-        method: 'POST',
-        credentials: 'include'
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.message === "Logged out successfully") {
-            window.location.href = '/';
-        } else {
-            console.error('Logout failed:', data.error);
-        }
-    })
-    .catch(error => {
-        console.error('Error during logout:', error);
-        showMessage('An error occurred during logout. Please try again.', true);
-    });
+    //Change address bar to logout
+    localStorage.removeItem('userProfilePicture');
+    window.location.href = "/auth/logout";
 }
 
 // Function to update header profile picture
@@ -194,9 +181,9 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     const logoutButton = document.getElementById('logoutButton');
-    if (logoutButton) {
-        logoutButton.addEventListener('click', logout);
-    }
+
+    logoutButton.addEventListener('click', logout);
+    
 
     // Fetch user details and update the profile
     fetch('/profile/getCurrentUser')

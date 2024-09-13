@@ -1,6 +1,6 @@
 const admin = require('./firebase-admin');
 
-async function sendNotification(fcmTokens, title, body, data = {}) {
+async function _sendNotification(fcmTokens, title, body, data = {}) {
     const message = {
       notification: {
         title,
@@ -27,6 +27,6 @@ async function sendNotification(fcmTokens, title, body, data = {}) {
     }
   }
 
-module.exports = sendNotification;
+module.exports = _sendNotification;
   
-// sendNotification(['eyWaTGlD-3v5cRW3k5BkON:APA91bGcypc0uykn_XZZI8af1RAw_fkcXYZ0SzHBS6n8mS35TqZh1v3mgLhOng9HKEmg37ZYXyqmHahmubkdxh0A0_Zmt6v4q75VEt7Ern10L6n9hkTwowNKcbU9m1ZQWk-0wwFJOXnK'], 'Hi there!', 'sending custome message!', { key1: 'value1', key2: 'value2' });
+// _sendNotification(['eyWaTGlD-3v5cRW3k5BkON:APA91bHCVTn3PWsrepRC-NGrpulN4dq2C_wME2eFjVl7YPm2ua7Z7jK069VkIPp6E9Hisj-_lhLKpzfsmS8RGaqSgLT041peiXeeh-9RGrRhpBvc2cO4kAJ0-TGqJ82EMdK4uWHXgTxr'], 'Hi there!', 'sending custome message!', { key1: 'value1', key2: 'value2' });

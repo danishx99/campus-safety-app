@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Campus Safety App</title>
+    <link rel="icon" type="image/svg+xml" href="../../assets/logo.png" />
+    <link href="../styles/output.css" rel="stylesheet" />
+    <link href="../styles/styles.css" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="../javascript/loadComponents.js" defer></script>
+    <style>
+       
+
+        /* Loader styles */
+        /* Loader styles */
+        #loader {
+           border: 4px solid #f3f3f3;
+           border-radius: 50%;
+           border-top: 4px solid #3498db;
+           width: 25px;
+           height: 25px;
+           animation: spin 1s linear infinite;
+       }
+
+       @keyframes spin {
+           0% {
+               transform: rotate(0deg);
+           }
+
+           100% {
+               transform: rotate(360deg);
+           }
+       }
+    </style>
+</head>
+
+
+<body class="flex flex-col min-h-screen bg-gray-100">
+    <div id="header-placeholder"></div>
+    <div class="flex flex-1">
+        <div id="navbar-placeholder"></div>
+
+        <!-- Main Content -->
+        <main class="flex-1 p-6 overflow-auto">
+
+            <div class="flex flex-col bg-gray-200 rounded-lg border border-gray-400 p-4 mx-20 max-sm:mx-0">
+                <h2 class="text-center text-2xl font-bold mb-2 max-sm:text-xl">Send notifications</h2>
+                <h3 class="text-center text-lg font-semibold mb-4 max-sm:text-sm">Send insant, real time notifications to users.</h3>
+
+                <div class="alert-box" id="alert" role="alert">Test Error</div>
+
+                <form id="notificationForm" class="flex flex-col px-8 max-sm:px-4" >
+
+                    <input id="notificationTitle" class="p-2 rounded-xl mb-4 text-black max-sm:text-sm" type="text"
+                        placeholder="Title">
+
+                                <!-- Dropdown for selecting Incident Type -->
+                                <label for="notificationType" class="block text-sm font-medium m-2">Select Notification Type:</label>
+                                <select class="p-2 rounded-xl mb-4 bg-white max-sm:text-sm" name="incidentType" id="notificationType">
+                                    <option value="" selected>Announcement</option>
+                                    <option value="assault">Emergency Alert</option>
+                                </select>
+
+                                <!-- Dropdown for selecting the Target Audience -->
+                                <label for="recepient" class="block text-sm font-medium m-2">Send To:</label>
+                                <select class="p-2 rounded-xl mb-4 bg-white max-sm:text-sm" name="targetAudience" id="recipient">
+                                    <option value="everyone" selected>Everyone</option>
+                                    <option value="staff">Staff</option>
+                                    <option value="students">Students</option>
+                                </select>
+
+
+            
+
+                    <textarea class="p-2 rounded-lg mb-4 text-black max-sm:text-sm" placeholder="Message" rows="5"
+                        id="notificationMessage"></textarea>
+
+
+                    <button id="sendNotificationBtn"
+                        class="bg-[#015EB8] text-white flex justify-center items-center py-2 mt-2 px-4 rounded-lg max-sm:text-sm hover:opacity-80">
+                        <span class="flex items-center">
+                            Send notification
+                            <div id="loader" class="m-2 p-2 hidden">
+                        </span>
+                    </button>
+                </form>
+            </div>
+        </main>
+    </div>
+    <div id="footer-placeholder"></div>
+
+    <script src="../javascript/sendNotifications.js"></script>
+
+</body>
+
+</html>

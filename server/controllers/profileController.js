@@ -1,82 +1,57 @@
 const User = require('../schemas/User');
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
-exports.getProfile = async (req, res) => {
+// Logged in user information
+exports.getUserDetails = async (req, res) => {
   try {
-    const user = await User.findById(req.userId).select('-password');
+    const token = req.cookies.token;
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    const user = await User.findOne({ email: decoded.userEmail }).select("-password");
+
     if (!user) {
-      return res.status(404).json({ error: 'User not found' });
+      return res.status(404).json({ error: "User not found" });
     }
-    // Combine firstName and lastName for frontend
-    const profileData = {
-      ...user.toObject(),
-      fullName: `${user.firstName} ${user.lastName}`,
-      dateJoined: user.createdAt.toISOString().split('T')[0] // Format date as YYYY-MM-DD
+
+    const userData = {
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      role: user.role,
+      phone: user.phone,
+      profilePicture: user.profilePicture,
+      createdAt: user.createdAt
     };
-    res.json(profileData);
+
+    res.json({ message: "Successfully got user details", user: userData });
   } catch (error) {
-    res.status(500).json({ error: 'Error fetching profile' });
+    console.log("Error getting user details:", error);
+    res.status(500).json({ error: "Internal server error" });
   }
 };
 
-exports.updateProfile = async (req, res) => {
+// Update user information
+exports.updateUserDetails = async (req, res) => {
   try {
-    const { firstName, lastName, phone } = req.body;
-    const user = await User.findByIdAndUpdate(
-      req.userId,
-      { firstName, lastName, phone },
-      { new: true, runValidators: true }
-    ).select('-password');
+    const token = req.cookies.token;
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const email = decoded.userEmail;
 
-    if (!user) {
-      return res.status(404).json({ error: 'User not found' });
+    const { phone, newPassword, profilePicture } = req.body;
+
+    const updateData = {};
+    if (phone) updateData.phone = phone;
+    if (newPassword) {
+      updateData.password = await bcrypt.hash(newPassword, 10);
     }
-    res.json(user);
-  } catch (error) {
-    res.status(500).json({ error: 'Error updating profile' });
-  }
-};
-
-exports.updatePassword = async (req, res) => {
-  try {
-    const { currentPassword, newPassword } = req.body;
-    const user = await User.findById(req.userId);
-
-    if (!user) {
-      return res.status(404).json({ error: 'User not found' });
+    if (profilePicture) {
+      updateData.profilePicture = profilePicture;
     }
 
-    const isMatch = await bcrypt.compare(currentPassword, user.password);
-    if (!isMatch) {
-      return res.status(400).json({ error: 'Current password is incorrect' });
-    }
-
-    const hashedPassword = await bcrypt.hash(newPassword, 10);
-    user.password = hashedPassword;
-    await user.save();
-
-    res.json({ message: 'Password updated successfully' });
-  } catch (error) {
-    res.status(500).json({ error: 'Error updating password' });
-  }
-};
-
-exports.updateProfilePicture = async (req, res) => {
-  try {
-    const { profilePicture } = req.body;
-
-    if (!profilePicture) {
-      return res.status(400).json({ error: 'Profile picture is required' });
-    }
-
-    // Validate base64 string (basic check)
-    if (!profilePicture.match(/^data:image\/(png|jpeg|jpg);base64,/)) {
-      return res.status(400).json({ error: 'Invalid image format' });
-    }
-
-    const user = await User.findByIdAndUpdate(
-      req.userId,
-      { profilePicture },
+    const user = await User.findOneAndUpdate(
+      { email },
+      updateData,
       { new: true, runValidators: true }
     ).select('-password');
 
@@ -84,9 +59,10 @@ exports.updateProfilePicture = async (req, res) => {
       return res.status(404).json({ error: 'User not found' });
     }
 
-    res.json({ message: 'Profile picture updated successfully', user });
+    res.status(200).json({ message: 'User updated successfully', user });
   } catch (error) {
-    console.error('Error updating profile picture:', error);
-    res.status(500).json({ error: 'Error updating profile picture' });
+    console.error('Error updating user details:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 };
+

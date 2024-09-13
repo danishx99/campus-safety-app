@@ -42,13 +42,13 @@
           </div>
           <div class="p-4 bg-white rounded-b-lg flex-grow border border-gray-200 border-t-0">
             <form id="profileForm" class="grid gap-4">
+              <div id="messageContainer" class="hidden mb-4 p-4 rounded-md text-sm font-medium"></div>
               <div class="grid gap-2">
                 <label for="email" class="font-semibold">Email</label>
                 <input
                   type="email"
                   id="email"
                   class="border p-2 rounded bg-blue-100 cursor-not-allowed"
-                  value="simsmkhize@nohoes.com"
                   readonly
                 />
               </div>
@@ -58,26 +58,38 @@
                   type="text"
                   id="cellphone"
                   class="border p-2 rounded-md bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  value="074-4763829"
                   disabled
+                  placeholder="Enter your new cellphone number"
                 />
               </div>
               <div id="editFields" class="hidden">
                 <div class="grid gap-2">
                   <label for="password" class="font-semibold">New Password</label>
-                  <input
-                    type="password"
-                    id="password"
-                    class="border p-2 rounded-md bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
+                  <div class="relative">
+                    <input
+                      type="password"
+                      id="password"
+                      class="border p-2 rounded-md bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 w-full"
+                      placeholder="Enter new password"
+                    />
+                    <button type="button" id="togglePassword" class="absolute inset-y-0 right-0 pr-3 flex items-center">
+                      <img src="../assets/eye-close.png" alt="Toggle password visibility" class="h-5 w-5">
+                    </button>
+                  </div>
                 </div>
                 <div class="grid gap-2">
                   <label for="confirmPassword" class="font-semibold">Confirm Password</label>
-                  <input
-                    type="password"
-                    id="confirmPassword"
-                    class="border p-2 rounded-md bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
+                  <div class="relative">
+                    <input
+                      type="password"
+                      id="confirmPassword"
+                      class="border p-2 rounded-md bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 w-full"
+                      placeholder="Confirm new password"
+                    />
+                    <button type="button" id="toggleConfirmPassword" class="absolute inset-y-0 right-0 pr-3 flex items-center">
+                      <img src="../assets/eye-close.png" alt="Toggle password visibility" class="h-5 w-5">
+                    </button>
+                  </div>
                 </div>
               </div>
               <div class="grid gap-2">

@@ -46,6 +46,11 @@ router.get("/admin", isAdmin ,(req, res) => {
   res.sendFile(path.join(__dirname, "../../client/html", "adminDashboard.html"));
 });
 
+//User Dashboard
+router.get("/user", (req, res) => {
+  res.sendFile(path.join(__dirname, "../../client/html", "userDashboard.html"));
+});
+
 //Incident Reporting
 router.get("/user/reportIncident", (req, res) => {
   res.sendFile(

@@ -28,10 +28,23 @@ document.addEventListener("DOMContentLoaded", function(){
             // Set email verified flag in local storage
             localStorage.setItem('isEmailVerified', 'true');
 
-            // Redirect to login page
-            setTimeout(() => {
-                window.location.href = '/admin';
-            }, 2500);
+            // Check for data.redirect and redirect
+          if (data.redirect) {
+
+            if(data.redirect === "admin"){
+              setTimeout(() => {
+                window.location.href = "/admin";
+              }, 1000);
+            } else if(data.redirect === "student"){
+              setTimeout(() => {
+                window.location.href = "/user";
+              }, 1000);
+            } else if(data.redirect === "staff"){
+              setTimeout(() => {
+                window.location.href = "/user";
+              }, 1000);
+            }
+          }
         } else if (data.error) {
             console.error("Error verifying email:", data.error);
             alert.style.display = "block";

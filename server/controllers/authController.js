@@ -392,7 +392,10 @@ exports.verifyEmail = async (req,res) =>{
         console.log("Email verified succesfully");
         
 
-        res.status(200).json({ message: 'Email verified successfully!' });
+        res.status(200).json({ 
+          message: 'Email verified successfully!',
+          redirect: user.role // Include the user's role for redirection
+      });
     } catch (error) {
         res.status(500).json({ error: 'Error verifying email', error });
     }

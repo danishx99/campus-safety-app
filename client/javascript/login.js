@@ -15,6 +15,7 @@ function hideLoader(){
 }
 
 
+
 loginBtn.addEventListener("click", async function(event){
     console.log("Login button clicked");
 

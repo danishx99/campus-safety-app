@@ -5,7 +5,7 @@ dotenv.config();
 const path = require("path");
 const User = require("../schemas/User");
 
-// Middleware to check if a user is already logged in
+// Middleware to check if a user is already logged in(used to intercept login and register requests)
 exports.isLoggedIn = (pageType) => {
     return (req, res, next) => {
       try {

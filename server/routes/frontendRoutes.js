@@ -5,6 +5,8 @@ const path = require("path");
 const {homeRedirect} = require("../middlewares/homeRedirect");
 const { isAdmin } = require("../middlewares/isAdmin");
 const {isLoggedIn} = require("../middlewares/isLoggedIn");
+const { isUser } = require("../middlewares/isUser");
+const { authMiddleware } = require("../middlewares/authMiddleware");
 
 // router.get('/', (req,res)=>{
 //     res.sendFile(path.join(__dirname,'../public/login.html'));
@@ -47,7 +49,7 @@ router.get("/admin", isAdmin ,(req, res) => {
 });
 
 //User Dashboard
-router.get("/user", (req, res) => {
+router.get("/user", isUser, (req, res) => {
   res.sendFile(path.join(__dirname, "../../client/html", "userDashboard.html"));
 });
 
@@ -83,7 +85,7 @@ router.get("/user/safetyResources", (req, res) => {
   );
 });
 
-router.get("/profileManagement", (req, res) => {
+router.get("/profileManagement", authMiddleware ,(req, res) => {
   res.sendFile(
     path.join(__dirname, "../../client/html", "profileManagement.html")
   );

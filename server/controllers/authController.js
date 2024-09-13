@@ -34,9 +34,9 @@ exports.register = async (req,res) =>{
               return res.status(400).json({ error: "Registration code has expired" });
             }
         }else if( account==1){
-            role="staff";
-        }else if( account==2){
             role="student";
+        }else if( account==2){
+            role="staff";
         }
         
         // check if user already exists

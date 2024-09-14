@@ -8,27 +8,35 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('loader').style.display = 'none';
     }
 
-   
-    let title = document.getElementById('notificationTitle').value;
-    let message = document.getElementById('notificationMessage').value;
     let sendButton = document.getElementById('sendNotificationBtn');
+
+
+    sendButton.addEventListener('click', async function(event) {
+
+    let title = document.getElementById('notificationTitle').value;
+
+   
+    let message = document.getElementById('notificationMessage').value;
+
+    
     let notificationType = document.getElementById('notificationType').value;
-    notificationType = notificationType.toLowerCase();
+    
     let recipient = document.getElementById('recipient').value;
     recipient = recipient.toLowerCase();
 
-   
+    console.log("notificationType", notificationType);
 
-    sendButton.addEventListener('click', async function(event) {
 
 
         event.preventDefault();
 
       
         showLoader();
+        console.log("title", title);
+        console.log("message", message);
 
 
-        if(title === '' || message === '' || notificationType === '' || recipient === '') {
+        if(title === '' || message === '') {
             var alert = document.getElementById('alert');
             alert.style.display = 'block';
             alert.innerText = 'Please fill in all fields';
@@ -39,7 +47,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
         try {
-            const response = await fetch('/notification/sendNotification', {
+            const response = await fetch('/notifications/sendNotification', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

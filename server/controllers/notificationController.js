@@ -1,6 +1,7 @@
 
 const notification = require("../schemas/notification");
 const User = require("../schemas/User");
+const jwt = require("jsonwebtoken");
 
 const _sendNotification = require("../utils/sendNotification");
 
@@ -11,6 +12,8 @@ exports.sendNotification = async (req, res) => {
         const token = req.cookies.token;
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
         const sender = decoded.userEmail;
+
+        console.log("re",req.body.recipient)
 
         
         const newNotification = new notification({
@@ -23,23 +26,25 @@ exports.sendNotification = async (req, res) => {
             senderLocation: req.body.senderLocation// [latitude, longitude]
         });
 
-        const fcmTokens = [];
+        let recipient = req.body.recipient;
+
+        let fcmTokens = [];
 
         const savedNotification = await newNotification.save();
 
-        if(recepient === 'everyone') {
-            // Get all FCM tokens
+        if(recipient === 'everyone') {
+            // Get all FCM tokens , exlcuding admins
             const users = await User.find({});
             fcmTokens = users.map(user => user.FCMtoken);
-        }else if(recepient === 'staff') {
+        }else if(recipient === 'staff') {
             // Get all staff FCM tokens
             const users = await User.find({role: 'staff'});
             fcmTokens = users.map(user => user.FCMtoken);
-        } else if(recepient === 'student') {
+        } else if(recipient === 'student') {
             // Get all student FCM tokens
             const users = await User.find({role: 'student'});
             fcmTokens = users.map(user => user.FCMtoken);
-        } else if(recepient === 'specific') {
+        } else if(recipient === 'specific') {
             // Get specific user FCM token
             const users = await User.find({email: req.body.recipient});
             fcmTokens = users.map(user => user.FCMtoken);

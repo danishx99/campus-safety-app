@@ -44,7 +44,7 @@ router.get("/verifyEmail", (req, res) => {
 });
 
 //Admin send Notifications
-router.get("/admin/sendNotifications", (req, res) => {
+router.get("/admin/sendNotifications",isAdmin,(req, res) => {
   res.sendFile(
     path.join(__dirname, "../../client/html", "sendNotifications.html")
   );

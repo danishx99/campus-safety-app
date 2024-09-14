@@ -172,7 +172,10 @@ loginBtn.addEventListener("click", async function(event){
         alert.style.color = 'red';
         alert.style.backgroundColor = '#ffdddd';
         alert.style.border = 'red';
-        alert.innerText = `Error: ${error.message}`;
+        alert.innerText = `An error occurred while logging in. Please try again.`;
+
+        hideLoader();
+
       });
     
 })

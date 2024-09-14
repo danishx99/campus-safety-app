@@ -38,7 +38,7 @@ loginBtn.addEventListener("click", async function(event){
         hideLoader();
         return;
       }
-     if(!email.endsWith("@students.wits.ac.za") && !email.endsWith("@wits.ac.za")){
+     if(!email.endsWith("@students.wits.ac.za") || !email.endsWith("@wits.ac.za")){
         var alert = document.getElementById("alert");
         alert.style.display = "block";
         alert.innerText = "Please enter a valid Wits email address";

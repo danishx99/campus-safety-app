@@ -7,7 +7,7 @@ document.addEventListener("DOMContentLoaded", function () {
 function loadComponent(elementId, filePath) {
     const element = document.getElementById(elementId);
     if (!element) {
-        console.error(`Element with ID "${elementId}" not found.`);
+        //console.error(`Element with ID "${elementId}" not found.`);
         return; // Exit the function if the element is not found
     }
 

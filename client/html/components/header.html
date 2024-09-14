@@ -4,7 +4,7 @@
         <a href="/admin" class="text-xl font-semibold md:block">Campus Safety</a>
     </div>
     <div class="flex items-center space-x-4">
-        <button  id="panicBtn" class="bg-red-600 text-white p-2 rounded-full flex items-center hover:bg-[#c53030]">
+        <button id="panicBtn" class="bg-red-600 text-white p-2 rounded-full flex items-center hover:bg-[#c53030]">
             <img src="../assets/danger.png" alt="Danger" class="h-5 md:h-6 md:mr-2"> 
             <span class="hidden md:inline-block font-medium">Panic</span>
         </button>
@@ -21,13 +21,40 @@
 </header>
 
 <script>
-  document.addEventListener('DOMContentLoaded', function() {
+  document.addEventListener('DOMContentLoaded', async function() {
     const headerProfilePic = document.getElementById('headerProfilePic');
     const savedProfilePicture = localStorage.getItem('userProfilePicture');
-    const profileBtn= document.getElementById('profileBtn');
+    const profileBtn = document.getElementById('profileBtn');
+    const panicBtn = document.getElementById('panicBtn');
+
     if (savedProfilePicture) {
       headerProfilePic.src = savedProfilePicture;
     }
 
+    try {
+      const response = await fetch('/profile/getCurrentUser', {
+        method: 'GET',
+        credentials: 'include'
+      });
+      const data = await response.json();
+
+      if (data.user) {
+        // Set profile picture
+        if (data.user.profilePicture) {
+          headerProfilePic.src = data.user.profilePicture;
+          localStorage.setItem('userProfilePicture', data.user.profilePicture);
+        } else {
+          // If no profile picture, use default
+          headerProfilePic.src = '../assets/user-profile.png';
+        }
+
+        // Hide panic button for admin users
+        if (data.user.role === 'admin') {
+          panicBtn.classList.add('hidden');
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching user details:', error);
+    }
   });
 </script>

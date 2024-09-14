@@ -50,6 +50,14 @@
    const app = initializeApp(firebaseConfig);
    const messaging = getMessaging(app);
 
+   function playSound(){
+     //Play browser notifcation sound
+     const audio = new Audio("../assets/notification.mp3");
+     audio.play().catch(error => {
+         console.log("Failed to play the notification sound: ", error);
+     });
+   }
+
 // Handle incoming messages when the app is in the foreground
 onMessage(messaging, (payload) => {
     console.log('Message received. ', payload);
@@ -67,17 +75,20 @@ onMessage(messaging, (payload) => {
 
     // Customize the message based on the notificationType with HTML tags for emphasis
     if (notificationType === "emergency-alert") {
-        detailedMessage = `<strong>Emergency Alert</strong> from <strong>${sender}</strong>.<br/><em>Details:</em> ${notificationBody}`;
+        detailedMessage = `<strong>Emergency-alert</strong> from <strong>${sender}</strong>: <br/>${notificationBody}`;
         notifier.alert(detailedMessage, { durations: { alert: 20000 }, labels: { alert: notificationTitle } });
+        playSound();
 
     } else if (notificationType === "announcement") {
         detailedMessage = `<strong>Announcement</strong> from <strong>${sender}</strong>: <br/>${notificationBody}`;
         notifier.success(detailedMessage, { durations: { success: 20000 }, labels: { success: notificationTitle } });
+        playSound();
 
     } else {
         // Default notification handling with styled message
         detailedMessage = `Notification from <strong>${sender}</strong>: ${notificationBody}`;
         notifier.info(detailedMessage, { durations: { info: 20000 }, labels: { info: notificationTitle } });
+        playSound();
     }
 
     // Log the custom data for debugging or further processing

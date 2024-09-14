@@ -82,7 +82,7 @@ document.addEventListener("DOMContentLoaded", function (){
 
         // input validation
         //check format of email- must be wits email
-        if (!email.endsWith("@students.wits.ac.za") || !email.endsWith("@wits.ac.za")) {
+        if (!email.endsWith("@students.wits.ac.za") && !email.endsWith("@wits.ac.za")) {
             alert.style.display = "block";
             alert.innerText = "Invalid email format. Please use a Wits email address.";
             //Scroll to top of page

@@ -138,9 +138,9 @@ exports.googleRegister= async (req,res) =>{
     if(account==0){
         role="admin";
     }else if( account==1){
-        role="staff";
-    }else if( account==2){
         role="student";
+    }else if( account==2){
+        role="staff";
     }
 
     // check if user already exists
@@ -158,7 +158,7 @@ exports.googleRegister= async (req,res) =>{
       email,
       phone,
       role,
-      FCMtoken,
+      // FCMtoken,
       isVerified: true,
       });      
 

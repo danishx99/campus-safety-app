@@ -10,33 +10,49 @@ document.addEventListener("DOMContentLoaded", function () {
     var form2 = document.getElementById("form-p2");
   
     // Firebase configuration for Auth
-    const authFirebaseConfig = {
-      apiKey: "AIzaSyCKYgVkEWA40OPzRDWGnwkBIDq4-ozQT_4",
-      authDomain: "campus-safety-53fa9.firebaseapp.com",
-      projectId: "campus-safety-53fa9",
-      storageBucket: "campus-safety-53fa9.appspot.com",
-      messagingSenderId: "637676540009",
-      appId: "1:637676540009:web:9c595c9b61161ca062d2f8",
-      measurementId: "G-TDKPZ0ZSC0"
+    // const authFirebaseConfig = {
+    //   apiKey: "AIzaSyCKYgVkEWA40OPzRDWGnwkBIDq4-ozQT_4",
+    //   authDomain: "campus-safety-53fa9.firebaseapp.com",
+    //   projectId: "campus-safety-53fa9",
+    //   storageBucket: "campus-safety-53fa9.appspot.com",
+    //   messagingSenderId: "637676540009",
+    //   appId: "1:637676540009:web:9c595c9b61161ca062d2f8",
+    //   measurementId: "G-TDKPZ0ZSC0"
+    // };
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBA-red8RszDmGY3YGELrunZQxFmg7r04Y",
+      authDomain: "campus-safety-fcm.firebaseapp.com",
+      projectId: "campus-safety-fcm",
+      storageBucket: "campus-safety-fcm.appspot.com",
+      messagingSenderId: "221773083535",
+      appId: "1:221773083535:web:0500a94bbb7a9dd6b891fa",
+      measurementId: "G-8BZHJT3BRY"
     };
   
-    let account;
+    var account;
     let code;
 
     document.getElementById("acc-type2").addEventListener("change", function() {
       if (this.value === "0") {
           displayCode.className = "space-y-2";
           displayCode.style.display = ""; // Ensure the element is visible
+          account= this.value;
       } else {
           displayCode.style.display = "none";
+          account= this.value;
       }
+      console.log("Account value inside event listener:", account);
   });
+
   
-    account = document.getElementById("acc-type2").value;
+    // // get account type and code of admin 
+    // account = document.getElementById("acc-type2").value;
     code = document.getElementById("code").value;
   
     // Initialize Firebase Auth App (using the named app "authApp")
-    const authApp = firebase.initializeApp(authFirebaseConfig, "authApp");
+    // const authApp = firebase.initializeApp(authFirebaseConfig, "authApp");
+    const authApp=firebase.initializeApp(firebaseConfig);
   
     continueGoogle.addEventListener("click", function (event) {
       event.preventDefault();
@@ -47,6 +63,17 @@ document.addEventListener("DOMContentLoaded", function () {
     proceedGoogle.addEventListener("click", function (event) {
       event.preventDefault();
       console.log("button clickky");
+      console.log("Account value outside event listener:", account);
+
+      // Check if the account has a value
+      if (!account) {
+        alert.style.display = "block";
+        alert.style.color = 'red';
+        alert.style.backgroundColor = '#ffdddd';
+        alert.style.border = 'red';
+        alert.innerText = "Please select an account type.";
+        return; // Stop further execution
+      }
   
       const auth = firebase.auth(authApp);  // Use the named app for auth services
       const provider = new firebase.auth.GoogleAuthProvider();

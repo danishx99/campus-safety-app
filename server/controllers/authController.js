@@ -408,13 +408,20 @@ exports.verifyEmail = async (req,res) =>{
 // Resend verification email (if token expires or email was missed)
 exports.resendVerificationEmail = async (req, res) => {
 
-    const {email}=req.body;
+    // const {email}=req.body;
+
+    const token = req.cookies.token;
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const email = decoded.userEmail;
   
     try {
 
+      console.log("Resend email endpoint reached");
+      
+
       const user = await User.findOne({ email });
       if (!user || user.isVerified) {
-        return res.status(400).json({ message: "User doesn't exist or is already verified" });
+        return res.status(400).json({ error: "User doesn't exist or is already verified" });
       }
   
       // Generate a new verification token
@@ -436,7 +443,7 @@ exports.resendVerificationEmail = async (req, res) => {
       console.log(`Verification email sent succesfully to ${email}`);
       
     } catch (error) {
-      res.status(500).json({ message: 'Error resending verification email', error });
+      res.status(500).json({ error: 'Error resending verification email', error });
     }
   };
   

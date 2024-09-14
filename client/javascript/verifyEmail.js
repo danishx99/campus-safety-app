@@ -63,28 +63,28 @@ document.addEventListener("DOMContentLoaded", function(){
     resendBtn.addEventListener("click", function(event){
         console.log("Resend button clicked");
 
-        let email = document.getElementById("email").value;
+        // let email = document.getElementById("email").value;
 
-        if (!email || email===""){
-            alert.style.display = "block";
-            alert.innerText = "Please fill in all fields";
-            return;
-        }
+        // if (!email || email===""){
+        //     alert.style.display = "block";
+        //     alert.innerText = "Please fill in all fields";
+        //     return;
+        // }
     
-        //check format of email- must be wits email
-        if (!email.endsWith(".wits.ac.za")) {
-            alert.style.display = "block";
-            alert.innerText = "Invalid email format. Please use a Wits email address.";
-            return;
-        }
+        // //check format of email- must be wits email
+        // if (!email.endsWith(".wits.ac.za")) {
+        //     alert.style.display = "block";
+        //     alert.innerText = "Invalid email format. Please use a Wits email address.";
+        //     return;
+        // }
 
-        fetch("/auth/ResendVerificationEmail", {
+        fetch("/auth/resendVerificationEmail", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
             body: JSON.stringify({
-                email,
+                // email,
             }),
         })
         .then((res) => res.json())

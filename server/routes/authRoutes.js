@@ -9,6 +9,7 @@ router.post("/googleRegister", async (req,res )=> authController.googleRegister(
 router.post("/googleLogin", async (req,res )=> authController.googleLogin(req,res));
 router.post("/isVerified", async (req,res )=> authController.isVerified(req,res));
 router.post("/sendVerification", async (req,res )=> authController.sendVerification(req,res));
+router.post("/resendVerificationEmail", async (req,res )=> authController.resendVerificationEmail(req,res));
 router.post("/resetPassword", async (req,res )=> authController.resetPassword(req,res));
 router.post("/forgotPassword", async (req,res )=> authController.forgotPassword(req,res));
 router.post("/verifyEmail", async (req,res )=> authController.verifyEmail(req,res));

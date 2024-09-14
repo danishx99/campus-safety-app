@@ -1,7 +1,7 @@
 <header class="bg-[#015EB8] text-white p-4 flex justify-between items-center">
     <div class="flex items-center">
-        <a href="/admin"><img src="../assets/logo.png" alt="Campus Safety Logo" class="h-8 mr-2"></a>
-        <a href="/admin" class="text-xl font-semibold md:block">Campus Safety</a>
+        <a href="/user"><img src="../assets/logo.png" alt="Campus Safety Logo" class="h-8 mr-2"></a>
+        <a href="/user" class="text-xl font-semibold md:block">Campus Safety</a>
     </div>
     <div class="flex items-center space-x-4">
         <button id="panicBtn" class="bg-red-600 text-white p-2 rounded-full flex items-center hover:bg-[#c53030]">
@@ -24,7 +24,6 @@
   document.addEventListener('DOMContentLoaded', async function() {
     const headerProfilePic = document.getElementById('headerProfilePic');
     const savedProfilePicture = localStorage.getItem('userProfilePicture');
-    const profileBtn = document.getElementById('profileBtn');
     const panicBtn = document.getElementById('panicBtn');
 
     if (savedProfilePicture) {
@@ -39,18 +38,9 @@
       const data = await response.json();
 
       if (data.user) {
-        // Set profile picture
         if (data.user.profilePicture) {
           headerProfilePic.src = data.user.profilePicture;
           localStorage.setItem('userProfilePicture', data.user.profilePicture);
-        } else {
-          // If no profile picture, use default
-          headerProfilePic.src = '../assets/user-profile.png';
-        }
-
-        // Hide panic button for admin users
-        if (data.user.role === 'admin') {
-          panicBtn.classList.add('hidden');
         }
       }
     } catch (error) {

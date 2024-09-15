@@ -1,33 +1,34 @@
 <header class="bg-[#015EB8] text-white p-4 flex justify-between items-center">
     <div class="flex items-center">
-        <a href="/admin"><img src="../assets/logo.png" alt="Campus Safety Logo" class="h-8 mr-2"></a>
-        <a href="/admin" class="text-xl font-semibold md:block">Campus Safety</a>
+        <a href="/"><img src="../assets/logo.png" alt="Campus Safety Logo" class="h-8 mr-2"></a>
+        <a href="/" class="text-xl font-semibold md:block">Campus Safety</a>
     </div>
     <div class="flex items-center space-x-4">
-        <button  id="panicBtn" class="bg-red-600 text-white p-2 rounded-full flex items-center hover:bg-[#c53030]">
-            <img src="../assets/danger.png" alt="Danger" class="h-5 md:h-6 md:mr-2"> 
+        <button id="panicBtn" class="bg-red-600 text-white p-2 rounded-full flex items-center hover:bg-[#c53030]">
+            <img src="../assets/danger.png" alt="Danger" class="h-5 md:h-6 md:mr-2">
             <span class="hidden md:inline-block font-medium">Panic</span>
         </button>
         <button class="bg-[#FDB913] text-white p-2 rounded-full flex items-center hover:bg-[#F5A623]">
-            <img src="../assets/bell-ring.png" alt="Notifications" class="h-5 md:h-6 md:mr-2"> 
+            <img src="../assets/bell-ring.png" alt="Notifications" class="h-5 md:h-6 md:mr-2">
             <span class="hidden md:inline-block font-medium">Notifications</span>
         </button>
-        <a id="profileBtn" href="/profileManagement" class="rounded-full flex items-center"> 
+        <a id="profileBtn" href="/profileManagement" class="rounded-full flex items-center">
             <div class="w-10 h-10 rounded-full overflow-hidden border-2 border-white">
-                <img src="../assets/user-profile.png" alt="User Profile" class="w-full h-full object-cover" id="headerProfilePic">
+                <img src="../assets/user-profile.png" alt="User Profile" class="w-full h-full object-cover"
+                    id="headerProfilePic">
             </div>
         </a>
     </div>
 </header>
 
 <script>
-  document.addEventListener('DOMContentLoaded', function() {
-    const headerProfilePic = document.getElementById('headerProfilePic');
-    const savedProfilePicture = localStorage.getItem('userProfilePicture');
-    const profileBtn= document.getElementById('profileBtn');
-    if (savedProfilePicture) {
-      headerProfilePic.src = savedProfilePicture;
-    }
+    document.addEventListener('DOMContentLoaded', function () {
+        const headerProfilePic = document.getElementById('headerProfilePic');
+        const savedProfilePicture = localStorage.getItem('userProfilePicture');
+        const profileBtn = document.getElementById('profileBtn');
+        if (savedProfilePicture) {
+            headerProfilePic.src = savedProfilePicture;
+        }
 
-  });
+    });
 </script>

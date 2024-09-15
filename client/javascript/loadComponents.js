@@ -1,14 +1,33 @@
 document.addEventListener("DOMContentLoaded", function () {
-    loadComponent("header-placeholder", "../html/components/header.html");
+    loadHeader();
     loadComponent("navbar-placeholder", "../html/components/navbar.html");
     loadComponent("footer-placeholder", "../html/components/footer.html");
 });
 
+async function loadHeader() {
+    try {
+        const response = await fetch('/profile/getCurrentUser', {
+            method: 'GET',
+            credentials: 'include'
+        });
+        const data = await response.json();
+
+        if (data.user && data.user.role === 'admin') {
+            loadComponent("header-placeholder", "../html/components/adminHeader.html");
+        } else {
+            loadComponent("header-placeholder", "../html/components/userHeader.html");
+        }
+    } catch (error) {
+        console.error('Error loading header:', error);
+        // Load user header as fallback
+        loadComponent("header-placeholder", "../html/components/userHeader.html");
+    }
+}
+
 function loadComponent(elementId, filePath) {
     const element = document.getElementById(elementId);
     if (!element) {
-        console.error(`Element with ID "${elementId}" not found.`);
-        return; // Exit the function if the element is not found
+        return;
     }
 
     fetch(filePath)

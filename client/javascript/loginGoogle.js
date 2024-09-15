@@ -4,19 +4,19 @@ document.addEventListener("DOMContentLoaded", function(){
     var alert = document.getElementById("alert");
 
     // Your web app's Firebase configuration
-    // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-    const authFirebaseConfig = {
-        apiKey: "AIzaSyCKYgVkEWA40OPzRDWGnwkBIDq4-ozQT_4",
-        authDomain: "campus-safety-53fa9.firebaseapp.com",
-        projectId: "campus-safety-53fa9",
-        storageBucket: "campus-safety-53fa9.appspot.com",
-        messagingSenderId: "637676540009",
-        appId: "1:637676540009:web:9c595c9b61161ca062d2f8",
-        measurementId: "G-TDKPZ0ZSC0"
-    };
+    const firebaseConfig = {
+        apiKey: "AIzaSyBA-red8RszDmGY3YGELrunZQxFmg7r04Y",
+        authDomain: "campus-safety-fcm.firebaseapp.com",
+        projectId: "campus-safety-fcm",
+        storageBucket: "campus-safety-fcm.appspot.com",
+        messagingSenderId: "221773083535",
+        appId: "1:221773083535:web:0500a94bbb7a9dd6b891fa",
+        measurementId: "G-8BZHJT3BRY"
+      };
+    
 
-    // Initialize Firebase Auth App (using the named app "authApp")
-    const authApp = firebase.initializeApp(authFirebaseConfig, "authApp");
+    // Initialize Firebase Auth App 
+    const authApp=firebase.initializeApp(firebaseConfig);
     
 
     googleBtn.addEventListener("click", function(event){
@@ -61,18 +61,35 @@ document.addEventListener("DOMContentLoaded", function(){
                     alert.style.border = 'red';
                     alert.innerText = data.error;
                 }
-                else {
+                else if(data.success) {
                     alert.style.display = "block";
                     alert.style.color = 'green';
                     alert.style.backgroundColor = '#ddffdd';
                     alert.style.border = 'green';
                     alert.innerText = "Login with Google successful!";
     
-                    // redirect to login page
-                    setTimeout(() => {
-                    window.location.href = "/admin";
-                    }, 3000);
+                    window.scrollTo(0, 0);
+    
+                    // Check for data.redirect and redirect
+                    if (data.redirect) {                        
+
+                        if(data.redirect === "admin"){
+                        setTimeout(() => {
+                            window.location.href = "/admin";
+                        }, 1000);
+                        } else if(data.redirect === "student"){
+                        setTimeout(() => {
+                            window.location.href = "/user";
+                        }, 1000);
+                        } else if(data.redirect === "staff"){
+                        setTimeout(() => {
+                            window.location.href = "/user";
+                        }, 1000);
+                        }
+                    }
                 }
+
+                
                 })
                 .catch((error) => {
                 console.log("Error:", error);

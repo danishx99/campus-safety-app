@@ -1,12 +1,20 @@
 const admin = require('./firebase-admin');
 
 async function _sendNotification(fcmTokens, title, body, data = {}) {
+
+  const stringifiedData = {};
+    for (const key in data) {
+        if (data.hasOwnProperty(key)) {
+            stringifiedData[key] = String(data[key]);
+        }
+    }
+
     const message = {
       notification: {
         title,
         body
       },
-      data,
+      data: stringifiedData,
       tokens: fcmTokens
     };
   

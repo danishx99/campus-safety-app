@@ -1,11 +1,10 @@
 <script>
+
     function logout() {
-        localStorage.removeItem("userProfilePicture");
-        window.location.href = "/auth/logout";
+        // localStorage.removeItem('token');
+        window.location.href = '/auth/logout';
     }
-
 </script>
-
 
 
 <!-- Desktop Navigation -->
@@ -43,7 +42,7 @@
         </li>
     </ul>
     <div class="border-t border-gray-200 pt-4 mt-4">
-        <a href="" class="flex items-center text-gray-700 hover:bg-gray-300 p-2 rounded-md" id="logoutButton" onclick="logout()">
+        <a href="/auth/logout" class="flex items-center text-gray-700 hover:bg-gray-300 p-2 rounded-md" id="logoutButton">
             <img src="../assets/logout-solid.png" alt="Logout" class="h-6 w-6 mr-3">
             <span class="font-medium">Logout</span>
         </a>

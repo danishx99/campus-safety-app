@@ -10,7 +10,7 @@
     <link href="../styles/styles.css" rel="stylesheet" />
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="../javascript/loadComponents.js" defer></script>
-    <script src="../javascript/dashboard.js" defer></script>
+    <script src="../javascript/adminDashboard.js" defer></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-messaging-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-analytics-compat.js"></script>
@@ -24,7 +24,7 @@
 
   
     <script type="module">
-
+       
     let notifier = new AWN();
 
     // notifier.success('Success message', {durations: {success: 10000}})
@@ -50,18 +50,56 @@
    const app = initializeApp(firebaseConfig);
    const messaging = getMessaging(app);
 
-     // Handle incoming messages when the app is in the foreground
-     onMessage(messaging, (payload) => {
-            console.log('Message received. ', payload);
-            // Customize notification here
-            const notificationTitle = payload.notification.title;
-            const notificationOptions = {
-                body: payload.notification.body,
-                icon: '/firebase-logo.png'
-            };
-            notifier.success(notificationOptions.body, { durations: { info: 10000 }, labels: { success: notificationTitle } });
-        });
-    </script>
+   function playSound(){
+     //Play browser notifcation sound
+     const audio = new Audio("../assets/notification.mp3");
+     audio.play().catch(error => {
+         console.log("Failed to play the notification sound: ", error);
+     });
+   }
+
+// Handle incoming messages when the app is in the foreground
+onMessage(messaging, (payload) => {
+    console.log('Message received. ', payload);
+    
+    // Access custom data
+    const notificationType = payload.data.notificationType;
+    const sender = payload.data.sender;
+    const senderLocation = payload.data.senderLocation;
+
+    // Access notification payload
+    const notificationTitle = payload.notification.title;
+    const notificationBody = payload.notification.body;
+
+    let detailedMessage = notificationBody;  // Base notification body
+
+    // Customize the message based on the notificationType with HTML tags for emphasis
+    if (notificationType === "emergency-alert") {
+        detailedMessage = `<strong>Emergency-alert</strong> from <strong>${sender}</strong>: <br/>${notificationBody}`;
+        notifier.alert(detailedMessage, { durations: { alert: 20000 }, labels: { alert: notificationTitle } });
+        playSound();
+
+    } else if (notificationType === "announcement") {
+        detailedMessage = `<strong>Announcement</strong> from <strong>${sender}</strong>: <br/>${notificationBody}`;
+        notifier.success(detailedMessage, { durations: { success: 20000 }, labels: { success: notificationTitle } });
+        playSound();
+
+    } else {
+        // Default notification handling with styled message
+        detailedMessage = `Notification from <strong>${sender}</strong>: ${notificationBody}`;
+        notifier.info(detailedMessage, { durations: { info: 20000 }, labels: { info: notificationTitle } });
+        playSound();
+    }
+
+    // Log the custom data for debugging or further processing
+    console.log(`Notification Type: ${notificationType}`);
+    console.log(`Sender: ${sender}`);
+    console.log(`Sender Location: ${senderLocation}`);
+});
+
+
+
+</script>
 
     
     <div id="header-placeholder"></div>
@@ -121,7 +159,7 @@
             <!-- Middle Column -->
             <div class="flex flex-col gap-6">
                 <!-- Send Notifications Card -->
-                <a href="#" id="send-notifications-card" class="card-link">
+                <a href="" id="send-notifications-card" class="card-link">
                     <div
                         class="bg-white shadow-lg rounded-lg p-4 hover:shadow-xl transition transform hover:scale-105 flex flex-col">
                         <h2 class="text-xl font-bold text-gray-800 mb-2">Send Notifications</h2>

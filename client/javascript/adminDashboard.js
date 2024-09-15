@@ -1,4 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
+
+
     const toast = document.getElementById('toast');
     const toastMessage = document.getElementById('toastMessage');
     const verifyEmailBtn = document.getElementById('verifyEmailBtn');
@@ -81,7 +83,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     window.location.href = 'userIncidentReporting.html';
                     break;
                 case 'send-notifications-card':
-                    window.location.href = 'sendNotifications.html';
+                    window.location.href = '/admin/sendNotifications';
                     break;
                 case 'location-services-card':
                     window.location.href = 'locationServices.html';

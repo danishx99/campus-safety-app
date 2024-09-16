@@ -11,6 +11,15 @@ document.addEventListener("DOMContentLoaded", function(){
     const toastMessage = document.getElementById('toastMessage');
     const verifyEmailBtn = document.getElementById('verifyEmailBtn');
     const closeToastBtn = document.getElementById('closeToastBtn');
+    //const toastLoader = document.getElementById('Tloader');
+
+    function showLoader(){
+        document.getElementById("loader").style.display = "block";
+    }
+    
+    function hideLoader(){
+        document.getElementById("loader").style.display = "none";
+    }
 
     let isEmailVerified = false;
 
@@ -46,6 +55,8 @@ document.addEventListener("DOMContentLoaded", function(){
 
     // Send verification email
     verifyEmailBtn.addEventListener('click', function() {
+        showLoader();
+        verifyEmailBtn.style.display = 'none';
         fetch('auth/sendVerification', {
             method: 'POST',
             headers: {
@@ -60,16 +71,20 @@ document.addEventListener("DOMContentLoaded", function(){
             } else {
                 showToast('An error occurred while sending the verification email.', true);
             }
+            hideLoader();
+            closeToastBtn.style.display = 'inline-block';
         })
         .catch(error => {
             console.error('Error:', error);
             showToast('An error occurred while sending the verification email.', true);
+            hideLoader();
         });
     });
 
     // Close the toast notification
     closeToastBtn.addEventListener('click', function() {
         toast.classList.add('hidden');
+
     });
 
     const cards = document.querySelectorAll('.card-link');

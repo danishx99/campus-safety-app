@@ -22,86 +22,86 @@
 
 <body class="flex flex-col min-h-screen bg-gradient-to-b from-blue-50 to-blue-105">
 
-  
+
     <script type="module">
-       
-    let notifier = new AWN();
 
-    // notifier.success('Success message', {durations: {success: 10000}})
-    //notifier.success("Accept states cannot have outgoing edges. Remove any outgoing edges from this state first.", { durations: { info: 10000 }, labels: { success: "Oops!" } });
+        let notifier = new AWN();
 
-
-
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
-    import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-messaging.js";
-
-
-   const firebaseConfig = {
-       apiKey: "AIzaSyBA-red8RszDmGY3YGELrunZQxFmg7r04Y",
-       authDomain: "campus-safety-fcm.firebaseapp.com",
-       projectId: "campus-safety-fcm",
-       storageBucket: "campus-safety-fcm.appspot.com",
-       messagingSenderId: "221773083535",
-       appId: "1:221773083535:web:0500a94bbb7a9dd6b891fa",
-       measurementId: "G-8BZHJT3BRY"
-   };
-
-   // Initialize Firebase
-   const app = initializeApp(firebaseConfig);
-   const messaging = getMessaging(app);
-
-   function playSound(){
-     //Play browser notifcation sound
-     const audio = new Audio("../assets/notification.mp3");
-     audio.play().catch(error => {
-         console.log("Failed to play the notification sound: ", error);
-     });
-   }
-
-// Handle incoming messages when the app is in the foreground
-onMessage(messaging, (payload) => {
-    console.log('Message received. ', payload);
-    
-    // Access custom data
-    const notificationType = payload.data.notificationType;
-    const sender = payload.data.sender;
-    const senderLocation = payload.data.senderLocation;
-
-    // Access notification payload
-    const notificationTitle = payload.notification.title;
-    const notificationBody = payload.notification.body;
-
-    let detailedMessage = notificationBody;  // Base notification body
-
-    // Customize the message based on the notificationType with HTML tags for emphasis
-    if (notificationType === "emergency-alert") {
-        detailedMessage = `<strong>Emergency-alert</strong> from <strong>${sender}</strong>: <br/>${notificationBody}`;
-        notifier.alert(detailedMessage, { durations: { alert: 20000 }, labels: { alert: notificationTitle } });
-        playSound();
-
-    } else if (notificationType === "announcement") {
-        detailedMessage = `<strong>Announcement</strong> from <strong>${sender}</strong>: <br/>${notificationBody}`;
-        notifier.success(detailedMessage, { durations: { success: 20000 }, labels: { success: notificationTitle } });
-        playSound();
-
-    } else {
-        // Default notification handling with styled message
-        detailedMessage = `Notification from <strong>${sender}</strong>: ${notificationBody}`;
-        notifier.info(detailedMessage, { durations: { info: 20000 }, labels: { info: notificationTitle } });
-        playSound();
-    }
-
-    // Log the custom data for debugging or further processing
-    console.log(`Notification Type: ${notificationType}`);
-    console.log(`Sender: ${sender}`);
-    console.log(`Sender Location: ${senderLocation}`);
-});
+        // notifier.success('Success message', {durations: {success: 10000}})
+        //notifier.success("Accept states cannot have outgoing edges. Remove any outgoing edges from this state first.", { durations: { info: 10000 }, labels: { success: "Oops!" } });
 
 
 
-</script>
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+        import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-messaging.js";
 
-    
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBA-red8RszDmGY3YGELrunZQxFmg7r04Y",
+            authDomain: "campus-safety-fcm.firebaseapp.com",
+            projectId: "campus-safety-fcm",
+            storageBucket: "campus-safety-fcm.appspot.com",
+            messagingSenderId: "221773083535",
+            appId: "1:221773083535:web:0500a94bbb7a9dd6b891fa",
+            measurementId: "G-8BZHJT3BRY"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const messaging = getMessaging(app);
+
+        function playSound() {
+            //Play browser notifcation sound
+            const audio = new Audio("../assets/notification.mp3");
+            audio.play().catch(error => {
+                console.log("Failed to play the notification sound: ", error);
+            });
+        }
+
+        // Handle incoming messages when the app is in the foreground
+        onMessage(messaging, (payload) => {
+            console.log('Message received. ', payload);
+
+            // Access custom data
+            const notificationType = payload.data.notificationType;
+            const sender = payload.data.sender;
+            const senderLocation = payload.data.senderLocation;
+
+            // Access notification payload
+            const notificationTitle = payload.notification.title;
+            const notificationBody = payload.notification.body;
+
+            let detailedMessage = notificationBody;  // Base notification body
+
+            // Customize the message based on the notificationType with HTML tags for emphasis
+            if (notificationType === "emergency-alert") {
+                detailedMessage = `<strong>Emergency-alert</strong> from <strong>${sender}</strong>: <br/>${notificationBody}`;
+                notifier.alert(detailedMessage, { durations: { alert: 20000 }, labels: { alert: notificationTitle } });
+                playSound();
+
+            } else if (notificationType === "announcement") {
+                detailedMessage = `<strong>Announcement</strong> from <strong>${sender}</strong>: <br/>${notificationBody}`;
+                notifier.success(detailedMessage, { durations: { success: 20000 }, labels: { success: notificationTitle } });
+                playSound();
+
+            } else {
+                // Default notification handling with styled message
+                detailedMessage = `Notification from <strong>${sender}</strong>: ${notificationBody}`;
+                notifier.info(detailedMessage, { durations: { info: 20000 }, labels: { info: notificationTitle } });
+                playSound();
+            }
+
+            // Log the custom data for debugging or further processing
+            console.log(`Notification Type: ${notificationType}`);
+            console.log(`Sender: ${sender}`);
+            console.log(`Sender Location: ${senderLocation}`);
+        });
+
+
+
+    </script>
+
+
     <div id="header-placeholder"></div>
 
     <!-- Toast Notification -->
@@ -123,8 +123,9 @@ onMessage(messaging, (payload) => {
     <div class="flex flex-1 p-6">
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 w-full">
             <!-- Reported Incidents Card -->
-            <a href="/admin/viewIncidents" id="reported-incidents-card" class="card-link">
-                <div class="bg-white shadow-lg rounded-lg p-4 hover:shadow-xl transition transform hover:scale-105 flex flex-col lg:row-span-2">
+            <a href="/test" id="reported-incidents-card" class="card-link">
+                <div
+                    class="bg-white shadow-lg rounded-lg p-4 hover:shadow-xl transition transform hover:scale-105 flex flex-col lg:row-span-2">
                     <h2 class="text-xl font-bold text-gray-800 mb-2">Reported Incidents</h2>
                     <p class="text-gray-600 mb-4">Respond to incidents on campus for prompt response.</p>
                     <div class="space-y-2 mb-4 flex-grow">
@@ -166,6 +167,23 @@ onMessage(messaging, (payload) => {
                         <p class="text-gray-600 mb-4">Issue real-time alerts about campus emergencies.</p>
                         <div class="flex justify-center mt-auto">
                             <img src="../assets/notificationDashboard.png" alt="Notification Icon" class="h-24 w-24" />
+                            <!--Link to view notification history-->
+
+
+
+                        </div>
+    
+
+                    </div>
+                </a>
+
+                <a href="" id="generate-code-card" class="card-link">
+                    <div
+                        class="bg-white shadow-lg rounded-lg p-4 hover:shadow-xl transition transform hover:scale-105 flex flex-col">
+                        <h2 class="text-xl font-bold text-gray-800 mb-2">Generate Admin Code</h2>
+                        <p class="text-gray-600 mb-4">Generate a one-time code for users to sign up as admin</p>
+                        <div class="flex justify-center mt-auto">
+                            <img src="../assets/one-time-password.png" alt="Notification Icon" class="h-24 w-24" />
                         </div>
                     </div>
                 </a>
@@ -184,9 +202,10 @@ onMessage(messaging, (payload) => {
 
             <!-- Safety Resources Card -->
             <a href="/admin/safetyResources" id="safety-resources-card" class="card-link">
-                <div class="bg-white shadow-lg rounded-lg p-4 hover:shadow-xl transition transform hover:scale-105 flex flex-col lg:row-span-2">
+                <div
+                    class="bg-white shadow-lg rounded-lg p-4 hover:shadow-xl transition transform hover:scale-105 flex flex-col lg:row-span-2">
                     <h2 class="text-xl font-bold text-gray-800 mb-2">Safety Resources</h2>
-                    <p class="text-gray-600 mb-4">Access important safety information and resources.</p>
+                    <p class="text-gray-600 mb-4">Add, view and delete important safety information and resources.</p>
                     <div class="space-y-2 mb-4 flex-grow">
                         <div class="bg-blue-100 p-2 rounded-md flex items-center">
                             <img src="../assets/protectionDashboard.png" alt="Campus Control Icon" class="h-6 w-6 mr-2">

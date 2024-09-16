@@ -101,7 +101,7 @@ document.addEventListener("DOMContentLoaded", () => {
           alert.classList.remove("border-green-400");
           alert.style.display = "none";
         }, 2000);
-        //form.reset();
+        form.reset();
       } else {
         // Handle error response
         console.error("Error submitting incident:", result);

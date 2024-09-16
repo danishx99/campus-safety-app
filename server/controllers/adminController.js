@@ -44,6 +44,27 @@ exports.deleteOneSafetyResources = async (req, res) => {
   }
 };
 
+exports.updateSafetyResource = async (req, res) => {
+  const resourceId = req.params.id;
+  const updatedData = req.body;  // The updated data from the request body
+
+  try {
+    const result = await safetyResources.updateOne(
+      { _id: new ObjectId(resourceId) },
+      { $set: updatedData }
+    );
+
+    if (result.matchedCount === 0) {
+      return res.status(404).send('Resource not found');
+    }
+
+    res.status(200).send('Resource updated successfully');
+  } catch (err) {
+    console.error('Error updating resource:', err);
+    res.status(500).send('Error updating the resource');
+  }
+};
+
 /*exports.deleteAllSafetyResources = async (req, res) => {
     try {
       // Remove all documents from the safetyResources collection

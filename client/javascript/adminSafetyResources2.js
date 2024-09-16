@@ -67,8 +67,9 @@ function createResource(resource) {
     editButton.textContent = 'Edit';
     editButton.classList.add('bg-blue-500', 'text-white', 'rounded', 'px-2', 'py-1', 'text-sm');
     editButton.onclick = () => {
-        // Add your edit functionality here
         alert(`Edit resource: ${resource.title}`);
+        const resourceId = resource._id; 
+        window.location.href = `adminSafetyResources3.html?id=${resourceId}`
     };
 
     const deleteButton = document.createElement('button');
@@ -76,16 +77,16 @@ function createResource(resource) {
     
     // Create and append the image inside the delete button
     const deleteIcon = document.createElement('img');
-    deleteIcon.src = '../assets/delete.png'; // Use the correct path to your delete icon
+    deleteIcon.src = '../assets/delete.png';
     deleteIcon.alt = 'Delete';
-    deleteIcon.classList.add('w-4', 'h-4'); // Optional: Add classes to control the size of the image
+    deleteIcon.classList.add('w-4', 'h-4');
     
     deleteButton.appendChild(deleteIcon);
     
-    // Add delete functionality
+
     deleteButton.onclick = async () => {
         alert(`Delete resource: ${resource.title}`);
-        const resourceId = resource._id; // Get the ID of the resource
+        const resourceId = resource._id;
         try {
             const response = await fetch(`http://localhost:3000/admin/deleteSafetyResources/${resourceId}`, {
                 method: 'DELETE',

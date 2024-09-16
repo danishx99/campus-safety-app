@@ -60,12 +60,14 @@ document.addEventListener("DOMContentLoaded", () => {
       image: imageBase64 || null,
     };
 
+    console.log(data);
+
     // Show loader
     loader.style.display = "block";
 
     try {
       const response = await fetch(
-        "http://localhost:3000/incidentReporting/reportIncident",
+        "/incidentReporting/reportIncident",
         {
           method: "POST",
           body: JSON.stringify(data),
@@ -78,7 +80,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       // Hide loader
       loader.style.display = "none";
-      console.log("here");
+      //console.log("here");
 
       const result = await response.json();
 

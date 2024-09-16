@@ -1,7 +1,3 @@
-// here we do all our dodgy stuff
-const bcrypt = require("bcryptjs"); // For password hashing
-const jwt = require("jsonwebtoken"); // For generating JSON Web Tokens
-const dotenv = require("dotenv"); // For accessing environment variables
 const safetyResources= require("../schemas/safetyResources")
 const ObjectId = require('mongodb').ObjectId;
 
@@ -41,6 +37,27 @@ exports.deleteOneSafetyResources = async (req, res) => {
   } catch (err) {
     console.error('Error deleting the resource:', err);
     res.status(500).send('Error deleting the resource');
+  }
+};
+
+exports.updateSafetyResource = async (req, res) => {
+  const resourceId = req.params.id;
+  const updatedData = req.body;  // The updated data from the request body
+
+  try {
+    const result = await safetyResources.updateOne(
+      { _id: new ObjectId(resourceId) },
+      { $set: updatedData }
+    );
+
+    if (result.matchedCount === 0) {
+      return res.status(404).send('Resource not found');
+    }
+
+    res.status(200).send('Resource updated successfully');
+  } catch (err) {
+    console.error('Error updating resource:', err);
+    res.status(500).send('Error updating the resource');
   }
 };
 

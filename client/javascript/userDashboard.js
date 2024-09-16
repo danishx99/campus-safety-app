@@ -79,23 +79,23 @@ document.addEventListener("DOMContentLoaded", function(){
             e.preventDefault();
             
             if (!isEmailVerified) {
-                showToast('Please verify your email to access this feature.', true);
+                showToast('Please verify your email to access this feature.');
                 return;
             }
 
             // If email is verified, proceed with navigation
             switch(this.id) {
-                case 'reported-incidents-card':
-                    window.location.href = 'userIncidentReporting.html';
+                case 'report-incident-card':
+                    window.location.href = '/user/reportIncident';
                     break;
-                case 'send-notifications-card':
-                    window.location.href = '/admin/sendNotifications';
+                case 'view-notifications-card':
+                    window.location.href = '/user/viewNotifications';
                     break;
                 case 'location-services-card':
-                    window.location.href = 'locationServices.html';
+                    window.location.href = '/user/locationServices';
                     break;
                 case 'safety-resources-card':
-                    window.location.href = 'userSafetyResources.html';
+                    window.location.href = '/user/safetyResources';
                     break;
             }
         });

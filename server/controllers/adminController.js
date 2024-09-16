@@ -3,6 +3,7 @@ const bcrypt = require("bcryptjs"); // For password hashing
 const jwt = require("jsonwebtoken"); // For generating JSON Web Tokens
 const dotenv = require("dotenv"); // For accessing environment variables
 const safetyResources= require("../schemas/safetyResources")
+const ObjectId = require('mongodb').ObjectId;
 
 exports.adminSafetyResources = async (req,res) =>{
     try{
@@ -25,7 +26,25 @@ exports.adminSafetyResources = async (req,res) =>{
     }
 };
 
-exports.deleteAllSafetyResources = async (req, res) => {
+exports.deleteOneSafetyResources = async (req, res) => {
+  const resourceId = req.params.id;
+
+  try {
+    // Await the deletion of the resource
+    const result = await safetyResources.deleteOne({ _id: new ObjectId(resourceId) });
+    
+    if (result.deletedCount === 0) {
+      return res.status(404).send('Resource not found');
+    }
+
+    res.status(200).send('Resource deleted successfully');
+  } catch (err) {
+    console.error('Error deleting the resource:', err);
+    res.status(500).send('Error deleting the resource');
+  }
+};
+
+/*exports.deleteAllSafetyResources = async (req, res) => {
     try {
       // Remove all documents from the safetyResources collection
       await safetyResources.deleteMany({});
@@ -34,4 +53,4 @@ exports.deleteAllSafetyResources = async (req, res) => {
       console.log("Error deleting safety resources:", error);
       res.status(500).json({ error: "Error deleting safety resources." + error });
     }
-  };
+  };*/

@@ -82,7 +82,7 @@ document.addEventListener("DOMContentLoaded", function () {
       e.preventDefault();
 
       if (!isEmailVerified) {
-        showToast("Please verify your email to access this feature.", true);
+        showToast("Please verify your email to access this feature.");
         return;
       }
 

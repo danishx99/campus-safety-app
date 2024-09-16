@@ -1,5 +1,6 @@
 document.addEventListener("DOMContentLoaded", function (){
     var resourceBtn = document.getElementById("btnResource");
+    var viewBtn = document.getElementById("viewResources");
     var alert = document.getElementById("alert");
 
     resourceBtn.addEventListener("click", function(event) {
@@ -56,7 +57,12 @@ document.addEventListener("DOMContentLoaded", function (){
             });
     });
 
-    async function deleteAllResources() {
+    viewBtn.addEventListener("click", function(event) {
+      console.log("View resource button clicked");
+      window.location.assign("adminSafetyResources2.html");
+    });
+
+    /*async function deleteAllResources() {
         console.log("Delete resource button clicked");
         if (confirm('Are you sure you want to delete all safety resources? This action cannot be undone.')) {
           try {
@@ -81,5 +87,5 @@ document.addEventListener("DOMContentLoaded", function (){
         }
       }
       // Attach the delete function to the button
-      document.getElementById('deleteAll').addEventListener('click', deleteAllResources);
+      document.getElementById('deleteAll').addEventListener('click', deleteAllResources);*/
 });

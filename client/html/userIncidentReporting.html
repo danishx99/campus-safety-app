@@ -126,6 +126,7 @@
 
     <script>
         let mapInitialized = false;
+        let mapVisible = false; // Track map visibility
 
         function initMap() {
             navigator.geolocation.getCurrentPosition(function (position) {
@@ -163,34 +164,45 @@
                 document.getElementById('location').value = event.latLng.lat() + ', ' + event.latLng.lng();
             });
 
+            // When the map tiles are fully loaded, hide the loader
+            google.maps.event.addListenerOnce(map, 'tilesloaded', function () {
+                var loader = document.getElementById("mapLoader");
+                loader.style.display = "none"; // Hide loader
+                document.getElementById("map").style.display = "block"; // Show map
+            });
+
             mapInitialized = true; // Set the flag to true after initialization
         }
 
         function toggleMap() {
-
             var mapDiv = document.getElementById("map");
             var loader = document.getElementById("mapLoader");
 
-            if (mapInitialized) {
-                mapDiv.style.display = mapDiv.style.display === "none" ? "block" : "none";
-                return;
+            if (mapVisible) {
+                mapDiv.style.display = "none";
+                mapVisible = false;
+            } else {
+                if (mapInitialized) {
+                    mapDiv.style.display = "block";
+                } else {
+                    loader.style.display = "block";
+                    mapDiv.style.display = "none";
+
+                    // Fallback: hide the loader after 10 seconds even if tilesloaded event doesn't trigger
+                    setTimeout(function () {
+                        loader.style.display = "none";
+                        mapDiv.style.display = "block";
+                    }, 5000); // 10 seconds
+
+                    initMap();
+                }
+                mapVisible = true;
             }
-
-            // Show loader while map is initializing
-            loader.style.display = "block";
-            mapDiv.style.display = "none";
-
-            // Initialize map and show it after some delay (to simulate loading)
-            setTimeout(function () {
-                loader.style.display = "none";
-                mapDiv.style.display = "block";
-                //google.maps.event.trigger(map, "resize");
-            }, 5000); // Simulate 5 seconds delay
         }
 
-        // Initialize the map on page load, but keep it hidden
-        window.onload = initMap;
 
+        // Initialize the map when the page loads, but keep it hidden
+        window.onload = initMap;
     </script>
 
     <script async

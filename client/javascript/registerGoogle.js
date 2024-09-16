@@ -91,6 +91,15 @@ document.addEventListener("DOMContentLoaded", function () {
           var phone = user.phoneNumber;
           var fname = user.displayName.split(" ")[0];
           var lname = user.displayName.split(" ")[1];
+
+          if (!email.endsWith("@students.wits.ac.za") && !email.endsWith("@wits.ac.za")) {
+            alert.style.display = "block";
+            alert.innerText = "Invalid email format. Please use a Wits email address.";
+            //Scroll to top of page
+            window.scrollTo(0, 0);
+            hideLoader();
+            return;
+        }
   
           //show loader while waiting for response
           // var loader = document.getElementById("loaderGoogle");

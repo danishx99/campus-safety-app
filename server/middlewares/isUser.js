@@ -13,8 +13,6 @@ exports.isUser = async (req, res, next) => {
       return res.redirect("/login");
     }
 
-        
-
     const verified = jwt.verify(token, process.env.JWT_SECRET);
 
     let userEmail = verified.userEmail;
@@ -23,9 +21,10 @@ exports.isUser = async (req, res, next) => {
     if (role !== "student" && role !== "staff") {
       //return status 403 and send html file
       return res
-        .status(403).json({
-            error: "You are not authorized to access this resource (not a student or staff member). This page will probs be replaced with a dedicated page for this error",
-    });
+        .status(403)
+        .sendFile(
+          path.join(__dirname, "../../client/html/error/authorisation.html")
+        );
     }
 
     next();
@@ -33,6 +32,5 @@ exports.isUser = async (req, res, next) => {
   } catch (error) {
     console.error("Error authenticating user:", error);
     return res.redirect("/login"); //redirect to login page if the jwt token is invalid, expired, etc.
-    
   }
 };

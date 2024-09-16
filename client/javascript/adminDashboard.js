@@ -100,6 +100,9 @@ document.addEventListener("DOMContentLoaded", function () {
         case "generate-code-card":
           window.location.href = "/admin/generateCode";
           break;
+        case "emergency-alerts-card":
+          window.location.href = "/admin/emergencyAlerts";
+          break;
       }
     });
   });

@@ -59,7 +59,7 @@ function createResource(resource) {
 
     // Create the buttons wrapper (top-right corner)
     const buttonsWrapper = document.createElement('div');
-    buttonsWrapper.classList.add('absolute', 'top-2', 'right-4', 'flex', 'space-x-2');  // Important: absolute position relative to resourceDiv
+    buttonsWrapper.classList.add('absolute', 'top-8', 'right-4', 'flex', 'space-x-2');  // Important: absolute position relative to resourceDiv
     buttonsWrapper.style.right = '22px';
 
     // Create Edit Button
@@ -69,7 +69,8 @@ function createResource(resource) {
     editButton.onclick = () => {
         alert(`Edit resource: ${resource.title}`);
         const resourceId = resource._id; 
-        window.location.href = `adminSafetyResources3.html?id=${resourceId}`
+        localStorage.setItem('resourceId', resourceId);
+        window.location.href = `/admin/updateSafetyResources`
     };
 
     const deleteButton = document.createElement('button');

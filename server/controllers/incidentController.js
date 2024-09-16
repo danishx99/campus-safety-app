@@ -44,16 +44,26 @@ exports.getIncidents = async (req, res) => {
   }
 };
 
+// exports.getIncidents = async (req, res) => {  
+//   try {
+//     const incidents = await Incident.find();
+//     res.status(200).json({
+//       message: "Incidents fetched successfully",
+//       incidents: incidents,
+//     });
+//   } catch (error) {
+//     console.log(error);
+//     res.status(500).json({ error: "Error fetching incidents" });
+//   }
+// }
+
+
 exports.reportIncident = async (req, res) => {
   //get jwt token from cookies
   const token = req.cookies.token;
   const decoded = jwt.verify(token, process.env.JWT_SECRET);
   const email = decoded.userEmail;
 
-  //console.log(decoded.userEmail);
-
-  //for testing purposes
-  //const email = "2544233test@students.wits.ac.za";
 
   try {
     const { title, type, description, location, image, date } = req.body;

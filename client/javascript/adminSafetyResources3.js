@@ -1,6 +1,4 @@
 document.addEventListener("DOMContentLoaded", function (){
-    const queryParams = new URLSearchParams(window.location.search);
-    const resourceId = queryParams.get('id');
     var btnCancel = document.getElementById("cancel");
     var btnSave = document.getElementById("btnSave");
 
@@ -9,6 +7,12 @@ document.addEventListener("DOMContentLoaded", function (){
     });
 
     btnSave.addEventListener("click", async function(event) {
+        const resourceId = localStorage.getItem('resourceId');  // Retrieve the ID from localStorage
+        if (!resourceId) {
+            console.error('No resource ID found in localStorage');
+            alert('No resource ID found');
+            return;
+        }
         title= document.getElementById("title").value;
         type = document.getElementById("resource-type").value;
         desc= document.getElementById("description").value;
@@ -41,7 +45,7 @@ document.addEventListener("DOMContentLoaded", function (){
             if (response.ok) {
                 alert('Resource updated successfully!');
                 // Redirect back to some other page, e.g., the resources list
-                window.location.href = 'adminSafetyResources2.html';
+                window.location.href = '/admin/viewSafetyResources';
             } else {
                 alert('Failed to update resource');
             }

@@ -49,9 +49,10 @@
                 <h2 class="text-center text-2xl font-bold mb-2 max-sm:text-xl">Send notifications</h2>
                 <h3 class="text-center text-lg font-semibold mb-4 max-sm:text-sm">Send insant, real time notifications to users.</h3>
 
-                <div class="alert-box" id="alert" role="alert">Test Error</div>
+              
 
                 <form id="notificationForm" class="flex flex-col px-8 max-sm:px-4" >
+                    <div class="alert-box" id="alert" role="alert">Test Error</div>
 
                     <input id="notificationTitle" class="p-2 rounded-xl mb-4 text-black max-sm:text-sm" type="text"
                         placeholder="Title">
@@ -85,6 +86,12 @@
                             <div id="loader" class="m-2 p-2 hidden">
                         </span>
                     </button>
+
+                                                        <!-- Link to view notification history -->
+                <a href="/admin/notificationhistory" 
+                class="bg-[#015EB8] text-white flex justify-center items-center py-2 mt-2 px-4 rounded-lg max-sm:text-sm hover:opacity-80">
+                View Notification History
+                </a>
                 </form>
             </div>
         </main>

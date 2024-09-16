@@ -111,7 +111,7 @@ document.addEventListener("DOMContentLoaded", function(){
     notificationsCard.addEventListener("click", function(event){
         event.preventDefault();
 
-        alert("Delano show me some notifications!");
+        //alert("Delano show me some notifications!");
         
         
     });
@@ -119,7 +119,7 @@ document.addEventListener("DOMContentLoaded", function(){
     locationCard.addEventListener("click", function(event){
         event.preventDefault();
 
-        alert("Who is in charge of location again?");
+       // alert("Who is in charge of location again?");
         
     });
 

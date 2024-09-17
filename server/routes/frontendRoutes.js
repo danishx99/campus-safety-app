@@ -50,10 +50,26 @@ router.get("/admin/sendNotifications",isAdmin,(req, res) => {
   );
 });
 
+//Admin view Notifications
+router.get("/admin/viewNotifications",isAdmin,(req, res) => {
+  res.sendFile(
+    path.join(__dirname, "../../client/html", "viewNotificationsAdmin.html")
+  );
+}
+);
+
 //Admin Dashboard
 router.get("/admin", isAdmin ,(req, res) => {
   res.sendFile(path.join(__dirname, "../../client/html", "adminDashboard.html"));
 });
+
+
+
+router.get("/admin/notificationhistory", isAdmin ,(req, res) => {
+  res.sendFile(path.join(__dirname, "../../client/html", "notificationHistory.html"));
+}
+);
+
 
 //User Dashboard
 router.get("/user", isUser, (req, res) => {
@@ -91,6 +107,14 @@ router.get("/user/safetyResources", (req, res) => {
     path.join(__dirname, "../../client/html", "userSafetyResources.html")
   );
 });
+
+//View notifications
+router.get("/user/viewNotifications", isUser ,(req, res) => {
+  res.sendFile(
+    path.join(__dirname, "../../client/html", "viewNotifications.html")
+  );
+}
+);
 
 router.get("/admin/viewSafetyResources", (req, res) => {
   res.sendFile(

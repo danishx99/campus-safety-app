@@ -11,13 +11,17 @@ exports.authMiddleware = (req, res, next) => {
   }
 
   try {
+
+    console.log("token", token);
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     req.userEmail = decoded.userEmail;
     req.role = decoded.role;
 
+    console.log("decoded", decoded);
+
     next();
   } catch (error) {
-    console.log("Error authenticating user:", error);
-    res.status(401).json({ error: "Invalid token" });
+    console.error("Error authenticating user:", error);
+    return res.redirect("/login"); //redirect to login page if the jwt token is invalid, expired, etc.
   }
 };

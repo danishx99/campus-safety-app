@@ -1,4 +1,31 @@
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", async function () {
+  
+  
+const headerProfilePic = document.getElementById('headerProfilePic');
+const savedProfilePicture = localStorage.getItem('userProfilePicture');
+
+if (savedProfilePicture) {
+  headerProfilePic.src = savedProfilePicture;
+}
+
+try {
+  const response = await fetch('/profile/getCurrentUser', {
+    method: 'GET',
+    credentials: 'include'
+  });
+  const data = await response.json();
+
+  if (data.user && data.user.profilePicture) {
+    headerProfilePic.src = data.user.profilePicture;
+
+    console.log("I found a profile picture", data.user.profilePicture);
+    localStorage.setItem('userProfilePicture', data.user.profilePicture);
+  }
+} catch (error) {
+  console.error('Error fetching user details:', error);
+}
+
+
   const toast = document.getElementById("toast");
   const toastMessage = document.getElementById("toastMessage");
   const verifyEmailBtn = document.getElementById("verifyEmailBtn");

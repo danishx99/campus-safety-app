@@ -7,5 +7,5 @@ const router= express.Router();
 router.post("/adminSafetyResources", async (req,res )=> adminController.adminSafetyResources(req,res));
 router.put("/updateSafetyResource/:id", async (req,res) => adminController.updateSafetyResource(req,res));
 router.delete('/deleteSafetyResources/:id', deleteOneSafetyResources);
-
+router.get("/getSafetyResource/:id", async (req,res) => adminController.getSafetyResource(req,res)); 
 module.exports = router;

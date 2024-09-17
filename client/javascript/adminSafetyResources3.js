@@ -1,9 +1,32 @@
-document.addEventListener("DOMContentLoaded", function (){
+document.addEventListener("DOMContentLoaded", async function (){
     var btnCancel = document.getElementById("cancel");
     var btnSave = document.getElementById("btnSave");
+    const resourceId = localStorage.getItem('resourceId');
+    if (!resourceId) {
+        console.error('No resource ID found in localStorage');
+        alert('No resource ID found');
+        return;
+    }
+    try {
+        // Fetch the resource data using the resourceId
+        const response = await fetch(`http://localhost:3000/admin/getSafetyResource/${resourceId}`);
+        const resource = await response.json();
+
+        if (!response.ok) {
+            throw new Error('Failed to fetch resource');
+        }
+
+        // Prefill the form with the resource data
+        document.getElementById('title').value = resource.title;
+        document.getElementById('description').value = resource.description;
+        document.getElementById('resource-type').value = resource.type;
+    } catch (error) {
+        console.error('Error fetching resource data:', error);
+        alert('Error loading resource data');
+    }
 
     btnCancel.addEventListener("click", function(event) {
-        window.location.href = `adminSafetyResources2.html`
+        window.location.href = '/admin/viewSafetyResources';
     });
 
     btnSave.addEventListener("click", async function(event) {
@@ -43,7 +66,6 @@ document.addEventListener("DOMContentLoaded", function (){
             });
     
             if (response.ok) {
-                alert('Resource updated successfully!');
                 // Redirect back to some other page, e.g., the resources list
                 window.location.href = '/admin/viewSafetyResources';
             } else {

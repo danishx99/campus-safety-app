@@ -32,10 +32,10 @@ jobs:
         run: npm test
         continue-on-error: true  # Continue even if tests have non-zero exit code
 
-      # # Delete node_modules after tests
-      # - name: Clean up node_modules folder
-      #   working-directory: ./server
-      #   run: rm -rf node_modules
+      # Delete node_modules after tests
+      - name: Clean up node_modules folder
+        working-directory: ./server
+        run: rm -rf node_modules
 
       # Zip artifact for deployment
       - name: Zip artifact for deployment

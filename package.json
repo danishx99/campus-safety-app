@@ -3,9 +3,6 @@
   "version": "1.0.0",
   "main": "app.js",
   "scripts": {
-
-    "test": "jest",
-    "start": "npm i && cd .. && nodemon app.js",
     "install": "cd server && npm install"
   },
   "keywords": [],

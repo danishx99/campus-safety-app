@@ -1,3 +1,4 @@
+
 document.addEventListener("DOMContentLoaded", function () {
     loadHeader();
     loadNavbar();
@@ -13,16 +14,52 @@ async function loadHeader() {
         const data = await response.json();
 
         if (data.user && data.user.role === 'admin') {
-            loadComponent("header-placeholder", "../html/components/adminHeader.html");
+            loadComponent("header-placeholder", "../html/components/adminHeader.html", attachPanicButtonListener);
         } else {
-            loadComponent("header-placeholder", "../html/components/userHeader.html");
+            loadComponent("header-placeholder", "../html/components/userHeader.html", attachPanicButtonListener);
         }
     } catch (error) {
         console.error('Error loading header:', error);
         // Load user header as fallback
-        loadComponent("header-placeholder", "../html/components/userHeader.html");
+        loadComponent("header-placeholder", "../html/components/userHeader.html", attachPanicButtonListener);
     }
 }
+
+// Function to attach event listeners after the header is loaded
+function attachPanicButtonListener() {
+    var panicBtn = document.getElementById('panicBtn');
+    var modal = document.getElementById("incidentModal"); 
+    var span = document.getElementById("closeModalBtn");
+    
+    var sendBtn = document.getElementById("submitEmergency");
+
+    panicBtn.addEventListener('click', function(event){
+        event.preventDefault();
+        console.log("Panic button clicked");
+        modal.style.display = "block";
+    });
+
+    sendBtn.addEventListener('click', function(event){
+        event.preventDefault();
+        var title = document.getElementById("title").value;
+        var description = document.getElementById("description").value;
+        console.log("Emergency sent");
+        console.log(title);
+        console.log(description);
+        //modal.style.display = "none";
+    });
+
+    span.addEventListener('click', function() {
+        modal.style.display = "none";
+    });
+
+    window.onclick = function (event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    }
+}
+
 
 async function loadNavbar() {
     try {
@@ -44,7 +81,7 @@ async function loadNavbar() {
     }
 }
 
-function loadComponent(elementId, filePath) {
+function loadComponent(elementId, filePath, callback) {
     const element = document.getElementById(elementId);
     if (!element) {
         return;
@@ -59,6 +96,10 @@ function loadComponent(elementId, filePath) {
         })
         .then(data => {
             element.innerHTML = data;
+            if (callback && typeof callback === 'function') {
+                callback();  // Execute the callback after the component is loaded
+            }
         })
         .catch(error => console.error('Error loading component:', error));
 }
+

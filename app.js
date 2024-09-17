@@ -42,7 +42,7 @@ app.use("/notifications", notificationRoutes);
 
 //catch all other routes
 app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "./client/html/error", "404.html"));
+  res.sendFile(path.join(__dirname, "./client/html/error", "notFound404.html"));
 });
 
 //Route to clear user collection
@@ -90,3 +90,5 @@ mongoose
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}`);
 });
+
+module.exports = app;

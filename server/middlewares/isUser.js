@@ -30,7 +30,7 @@ exports.isUser = async (req, res, next) => {
     next();
     //res.status(401).json({message: "You are authorized to access this resource, your details are: " + verified.userId + " " + verified.role});
   } catch (error) {
-    console.error("Error authenticating user:", error);
+    console.log("Error authenticating user:", error);
     return res.redirect("/login"); //redirect to login page if the jwt token is invalid, expired, etc.
   }
 };

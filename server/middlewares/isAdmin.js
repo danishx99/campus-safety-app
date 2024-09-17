@@ -9,11 +9,10 @@ const User = require("../schemas/User");
 exports.isAdmin = async (req, res, next) => {
   try {
     const token = req.cookies.token;
-    
+
     if (!token) {
       return res.redirect("/login");
     }
-        
 
     const verified = jwt.verify(token, process.env.JWT_SECRET);
 
@@ -22,17 +21,16 @@ exports.isAdmin = async (req, res, next) => {
 
     if (role !== "admin") {
       //return status 403 and send html file
-      return res
-        .status(403).json({
-            error: "You are not authorized to access this resource (Not an admin). This page will probs be replaced with a dedicated page for this error",
-    });
+      return res.status(403).json({
+        error:
+          "You are not authorized to access this resource (Not an admin). This page will probs be replaced with a dedicated page for this error",
+      });
     }
 
     next();
     //res.status(401).json({message: "You are authorized to access this resource, your details are: " + verified.userId + " " + verified.role});
   } catch (error) {
-    console.error("Error authenticating user:", error);
+    console.log("Error authenticating user:", error);
     return res.redirect("/login"); //redirect to login page if the jwt token is invalid, expired, etc.
-    
   }
 };

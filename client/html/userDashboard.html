@@ -9,85 +9,151 @@
     <link href="../styles/output.css" rel="stylesheet" />
     <link href="../styles/styles.css" rel="stylesheet" />
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="../javascript/loadComponents.js" defer></script>
-    <script src="../javascript/dashboard.js" defer></script>
-    <script src="../javascript/panicButton.js" defer></script>
+    <!-- <script src="../javascript/loadComponents.js" defer></script> -->
+    <!-- <script src="../javascript/dashboard.js" defer></script> -->
+  
+
+
+    <!--Awsome notifications-->
+    <script src="../javascript/index.var.js"></script>
+    <link rel="stylesheet" href="../styles/style.css">
 
     <style>
-        /* Modal styles */
-        .modal {
-            display: none; /* Hidden by default */
-            position: fixed;
-            z-index: 100; /* Sit on top */
-            left: 0;
-            top: 0;
-            width: 100%; /* Full width */
-            height: 100%; /* Full height */
-            overflow: auto; /* Enable scroll if needed */
-            background-color: rgba(0, 0, 0, 0.5); /* Black w/ opacity */
+        /* Loader styles */
+        #loader {
+            border: 4px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 4px solid #3498db;
+            width: 25px;
+            height: 25px;
+            animation: spin 1s linear infinite;
         }
-
-        .modal-content {
-            background-color: #fefefe;
-            margin: 15% auto; /* 15% from the top and centered */
-            padding: 20px;
-            border: 1px solid #888;
-            width: 80%; /* Could be more or less, depending on screen size */
-            border-radius: 8px;
-        }
-
-        .close {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-        }
-
-        .close:hover,
-        .close:focus {
-            color: black;
-            text-decoration: none;
-            cursor: pointer;
-        }
-    </style> 
+    </style>
 
 </head>
 
 <body class="flex flex-col min-h-screen bg-gradient-to-b from-blue-50 to-blue-105">
+    <script type="module">
+
+        let notifier = new AWN();
+
+        // notifier.success('Success message', {durations: {success: 10000}})
+        //notifier.success("Accept states cannot have outgoing edges. Remove any outgoing edges from this state first.", { durations: { info: 10000 }, labels: { success: "Oops!" } });
+
+
+
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+        import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-messaging.js";
+
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBA-red8RszDmGY3YGELrunZQxFmg7r04Y",
+            authDomain: "campus-safety-fcm.firebaseapp.com",
+            projectId: "campus-safety-fcm",
+            storageBucket: "campus-safety-fcm.appspot.com",
+            messagingSenderId: "221773083535",
+            appId: "1:221773083535:web:0500a94bbb7a9dd6b891fa",
+            measurementId: "G-8BZHJT3BRY"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const messaging = getMessaging(app);
+
+        function playSound() {
+            //Play browser notifcation sound
+            const audio = new Audio("../assets/notification.mp3");
+            audio.play().catch(error => {
+                console.log("Failed to play the notification sound: ", error);
+            });
+        }
+
+        // Handle incoming messages when the app is in the foreground
+        onMessage(messaging, (payload) => {
+            console.log('Message received. ', payload);
+
+            // Access custom data
+            const notificationType = payload.data.notificationType;
+            const sender = payload.data.sender;
+            const senderLocation = payload.data.senderLocation;
+
+            // Access notification payload
+            const notificationTitle = payload.notification.title;
+            const notificationBody = payload.notification.body;
+
+            let detailedMessage = notificationBody;  // Base notification body
+
+            // Customize the message based on the notificationType with HTML tags for emphasis
+            if (notificationType === "emergency-alert") {
+                detailedMessage = `<strong>Emergency-alert</strong> from <strong>${sender}</strong>: <br/>${notificationBody}`;
+                notifier.alert(detailedMessage, { durations: { alert: 20000 }, labels: { alert: notificationTitle } });
+                playSound();
+
+            } else if (notificationType === "announcement") {
+                detailedMessage = `<strong>Announcement</strong> from <strong>${sender}</strong>: <br/>${notificationBody}`;
+                notifier.success(detailedMessage, { durations: { success: 20000 }, labels: { success: notificationTitle } });
+                playSound();
+
+            } else {
+                // Default notification handling with styled message
+                detailedMessage = `Notification from <strong>${sender}</strong>: ${notificationBody}`;
+                notifier.info(detailedMessage, { durations: { info: 20000 }, labels: { info: notificationTitle } });
+                playSound();
+            }
+
+            // Log the custom data for debugging or further processing
+            console.log(`Notification Type: ${notificationType}`);
+            console.log(`Sender: ${sender}`);
+            console.log(`Sender Location: ${senderLocation}`);
+        });
+
+
+
+    </script>
     <div id="header">
         <header class="bg-[#015EB8] text-white p-4 flex justify-between items-center">
             <div class="flex items-center">
-                <a href="/admin"><img src="../assets/logo.png" alt="Campus Safety Logo" class="h-8 mr-2"></a>
-                <a href="/admin" class="text-xl font-semibold md:block">Campus Safety</a>
+                <a href="/user"><img src="../assets/logo.png" alt="Campus Safety Logo" class="h-8 mr-2"></a>
+                <a href="/user" class="text-xl font-semibold md:block">Campus Safety</a>
             </div>
             <div class="flex items-center space-x-4">
-                <button  id="panicBtn" class="bg-red-600 text-white p-2 rounded-full flex items-center hover:bg-[#c53030]">
-                    <img src="../assets/danger.png" alt="Danger" class="h-5 md:h-6 md:mr-2"> 
-                    <span class="hidden md:inline-block font-medium">Panic</span>
-                </button>
-                <button class="bg-[#FDB913] text-white p-2 rounded-full flex items-center hover:bg-[#F5A623]">
-                    <img src="../assets/bell-ring.png" alt="Notifications" class="h-5 md:h-6 md:mr-2"> 
-                    <span class="hidden md:inline-block font-medium">Notifications</span>
-                </button>
+                <div class="relative inline-flex" id="panicContainer">
+                 
+                    <button id="panicButton" class="flex rounded-md bg-red-600 py-2 px-4 border border-transparent text-center text-sm text-white transition-all shadow-md hover:shadow-lg focus:bg-slate-700 focus:shadow-none active:bg-slate-700 hover:bg-slate-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none" type="button">
+                       Panic
+                        <img src="../assets/danger.png" alt="Notifications" class="h-5 md:h-6 md:mr-2"> 
+                    </button>
+                  
+                    <div id="dropdownMenupanic" class="absolute right-0 mt-2 w-64 bg-white rounded-md shadow-lg z-10 border border-gray-200 hidden">
+                      
+                    </div>
+                </div>
+               
+                <div class="relative inline-flex" id="notificationContainer">
+                 
+                  <button id="notificationButton" class="flex rounded-md bg-[#FDB913] py-2 px-4 border border-transparent text-center text-sm text-white transition-all shadow-md hover:shadow-lg focus:bg-slate-700 focus:shadow-none active:bg-slate-700 hover:bg-slate-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none" type="button">
+                      Notifications
+                      <img src="../assets/bell-ring.png" alt="Notifications" class="h-5 md:h-6 md:mr-2"> 
+                  </button>
+                  
+                  <span id="notificationBadge" class="absolute top-0.5 right-0.5 grid min-h-[24px] min-w-[24px] translate-x-2/4 -translate-y-2/4 place-items-center rounded-full bg-[white] py-1 px-1 text-xs text-black">
+                      0
+                  </span>
+                  <div id="dropdownMenu" class="absolute right-0 mt-2 w-64 bg-white rounded-md shadow-lg z-10 border border-gray-200 hidden">
+                      <div class="py-2" id="notificationList">
+                          <!-- Notifications will be inserted here -->
+                      </div>
+                  </div>
+              </div>
+            
                 <a id="profileBtn" href="/profileManagement" class="rounded-full flex items-center"> 
                     <div class="w-10 h-10 rounded-full overflow-hidden border-2 border-white">
-                        <img src="../assets/user-profile.png" alt="User Profile" class="w-full h-full object-cover" id="headerProfilePic">
+                        <img src="../assets/user-profile.png" alt="User Profile" class="w-full h-full object-cover"
+                            id="headerProfilePic">
                     </div>
                 </a>
             </div>
         </header>
-        
-        <script>
-          document.addEventListener('DOMContentLoaded', function() {
-            const headerProfilePic = document.getElementById('headerProfilePic');
-            const savedProfilePicture = localStorage.getItem('userProfilePicture');
-            const profileBtn= document.getElementById('profileBtn');
-            if (savedProfilePicture) {
-              headerProfilePic.src = savedProfilePicture;
-            }
-        
-          });
-        </script>
         
     </div>
 
@@ -98,12 +164,14 @@
         <div class="flex items-center">
             <button id="verifyEmailBtn" class="ml-4 bg-blue-500 text-white px-2 py-1 rounded text-sm">Verify
                 Email</button>
+                <div id="loader" class="m-2 p-2 hidden"></div>
             <button id="closeToastBtn" class="ml-2 text-white">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
                     stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                 </svg>
             </button>
+            
         </div>
     </div>
 
@@ -111,7 +179,8 @@
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 w-full">
             <!-- Report Incident Card -->
             <a id="report-incident-card" class="card-link cursor-pointer">
-                <div class="bg-white shadow-lg rounded-lg p-4 hover:shadow-xl transition transform hover:scale-105 flex flex-col lg:row-span-2">
+                <div
+                    class="bg-white shadow-lg rounded-lg p-4 hover:shadow-xl transition transform hover:scale-105 flex flex-col lg:row-span-2">
                     <h2 class="text-xl font-bold text-gray-800 mb-2">Report an Incident</h2>
                     <p class="text-gray-600 mb-4">Report incidents on campus for prompt response.</p>
                     <div class="space-y-2 mb-4 flex-grow">
@@ -146,7 +215,7 @@
             <!-- Middle Column -->
             <div class="flex flex-col gap-6">
                 <!-- View Notifications Card -->
-                <a  id="view-notifications-card" class="card-link cursor-pointer">
+                <a id="view-notifications-card" class="card-link cursor-pointer">
                     <div
                         class="bg-white shadow-lg rounded-lg p-4 hover:shadow-xl transition transform hover:scale-105 flex flex-col">
                         <h2 class="text-xl font-bold text-gray-800 mb-2">View Notifications</h2>
@@ -159,7 +228,8 @@
 
                 <!-- Location Services Card -->
                 <a id="location-services-card" class="card-link cursor-pointer">
-                    <div class="bg-white shadow-lg rounded-lg p-4 hover:shadow-xl transition transform hover:scale-105 flex flex-col">
+                    <div
+                        class="bg-white shadow-lg rounded-lg p-4 hover:shadow-xl transition transform hover:scale-105 flex flex-col">
                         <h2 class="text-xl font-bold text-gray-800 mb-2">Location Services</h2>
                         <p class="text-gray-600 mb-4">View the location of campus buildings and safety resources.</p>
                         <div class="flex justify-center mt-auto">
@@ -170,8 +240,9 @@
             </div>
 
             <!-- Safety Resources Card -->
-            <a  id="safety-resources-card" class="card-link cursor-pointer">
-                <div class="bg-white shadow-lg rounded-lg p-4 hover:shadow-xl transition transform hover:scale-105 flex flex-col lg:row-span-2">
+            <a id="safety-resources-card" class="card-link cursor-pointer">
+                <div
+                    class="bg-white shadow-lg rounded-lg p-4 hover:shadow-xl transition transform hover:scale-105 flex flex-col lg:row-span-2">
                     <h2 class="text-xl font-bold text-gray-800 mb-2">Safety Resources</h2>
                     <p class="text-gray-600 mb-4">Access important safety information and resources.</p>
                     <div class="space-y-2 mb-4 flex-grow">
@@ -210,58 +281,37 @@
             <div id="incidentModal" class="modal">
                 <div class="modal-content">
                     <span class="close" id="closeModalBtn">&times;</span>
-        
+
                     <!-- Form content copied from the first HTML file goes here -->
                     <!-- Include all the relevant HTML form content here. For brevity, this is omitted, but you can paste it directly. -->
+
                     <body class="flex flex-col min-h-screen bg-gray-100">
                         <div class="flex flex-1">
-                    
+
                             <!-- Main Content -->
                             <main class="flex-1 p-6 overflow-auto">
-                    
-                                <div class="flex flex-col bg-gray-200 rounded-lg border border-gray-400 p-4 mx-20 max-sm:mx-0">
-                                    <h2 class="text-center text-2xl font-bold mb-2 max-xl::text-xl text-red-700">Panic</h2>
-                                    <h3 class="text-center text-lg font-semibold mb-4 max-sm:text-sm">Send an SOS alert to all Campus Control. Your Live Location will be shared</h3>
-                    
+
+                                <div
+                                    class="flex flex-col bg-gray-200 rounded-lg border border-gray-400 p-4 mx-20 max-sm:mx-0">
+                                    <h2 class="text-center text-2xl font-bold mb-2 max-xl::text-xl text-red-700">Panic
+                                    </h2>
+                                    <h3 class="text-center text-lg font-semibold mb-4 max-sm:text-sm">Send an SOS alert
+                                        to all Campus Control. Your Live Location will be shared</h3>
+
                                     <div class="alert-box mb-4" id="alert" role="alert">Test Error</div>
-                    
+
                                     <form id="incidentForm" class="flex flex-col px-8 max-sm:px-4" action="">
-                    
-                                        <input id="title" class="p-2 rounded-xl mb-4 text-black max-sm:text-sm" type="text"
-                                            placeholder="Title">
-                    
-                                        <select class="p-2 rounded-xl mb-4 bg-white max-sm:text-sm" name="incidentType" id="incidentType">
+
+                                        <input id="title" class="p-2 rounded-xl mb-4 text-black max-sm:text-sm"
+                                            type="text" placeholder="Title">
+
+                                        <select class="p-2 rounded-xl mb-4 bg-white max-sm:text-sm" name="incidentType"
+                                            id="incidentType">
                                             <option value="" disabled selected>!!!Emergency Alert!!!</option>
                                         </select>
                     
                                         <textarea class="p-2 rounded-lg mb-4 text-black max-sm:text-sm" placeholder="Description" rows="5"
                                             id="description"></textarea>
-                    
-                    
-                                        <!-- <div class="bg-white mb-4 p-2 rounded-lg flex justify-between items-center max-sm:text-sm">
-                                            <div class="flex w-full items-center">
-                                                <label class="text-black whitespace-nowrap" for="location">Set Location:</label>
-                                                <input class="ml-2 rounded-lg text-black w-full" type="text" id="location"
-                                                    placeholder="Select Location" readonly>
-                                            </div>
-                                            <img id="showMap" onclick="toggleMap()" class="w-5 h-5 mr-3 cursor-pointer"
-                                                src="../assets/locationPick.png" alt="">
-                                        </div> -->
-                    
-                                        <!-- Loader and Map -->
-                    
-                                        <!-- Loader -->
-                                        <!-- <div class="mx-auto mb-2" id="mapLoader"></div>  -->
-                                         <!-- Map -->
-                                        <!-- <div class="mb-2" id="map"></div> -->
-                    
-                                        <!-- <div class="bg-white mb-4 p-2 rounded-lg flex items-center max-sm:text-sm">
-                                            <label for="incidentDateTime" class="flex-shrink-0 mr-2">Select Incident Date:</label>
-                                            <div class="flex-1">
-                                                <input class="p-2 rounded-xl text-black max-sm:text-sm w-full" type="datetime-local"
-                                                    id="incidentDateTime" name="incidentDateTime">
-                                            </div>
-                                        </div> -->
                     
                     
                                         <button type="submit" id="submitIncident"
@@ -270,7 +320,8 @@
                                                 SEND
                                                 <svg aria-hidden="true"
                                                     class="w-4 h-4 ml-2 text-gray-200 animate-spin dark:text-gray-600 fill-[#fbfbfb] hidden"
-                                                    viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg" id="submitLoader">
+                                                    viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg"
+                                                    id="submitLoader">
                                                     <path
                                                         d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
                                                         fill="currentColor" />
@@ -285,80 +336,7 @@
                             </main>
                         </div>
 
-                    
-                        <!-- <script>
-                            let mapInitialized = false;
-                    
-                            function initMap() {
-                                navigator.geolocation.getCurrentPosition(function (position) {
-                                    var currentLocation = {
-                                        lat: position.coords.latitude,
-                                        lng: position.coords.longitude
-                                    };
-                                    initializeMap(currentLocation);
-                                }, function () {
-                                    var defaultLocation = { lat: -26.11, lng: 28.01 }; // Fallback location
-                                    initializeMap(defaultLocation);
-                                });
-                            }
-                    
-                            function initializeMap(location) {
-                                if (mapInitialized) return; // Prevent reinitializing the map
-                    
-                                var map = new google.maps.Map(document.getElementById("map"), {
-                                    zoom: 8,
-                                    center: location
-                                });
-                    
-                                var marker = new google.maps.Marker({
-                                    position: location,
-                                    map: map,
-                                    draggable: true
-                                });
-                    
-                                google.maps.event.addListener(marker, 'dragend', function (event) {
-                                    document.getElementById('location').value = event.latLng.lat() + ', ' + event.latLng.lng();
-                                });
-                    
-                                google.maps.event.addListener(map, 'click', function (event) {
-                                    marker.setPosition(event.latLng);
-                                    document.getElementById('location').value = event.latLng.lat() + ', ' + event.latLng.lng();
-                                });
-                    
-                                mapInitialized = true; // Set the flag to true after initialization
-                            }
-                    
-                            function toggleMap() {
-                    
-                                var mapDiv = document.getElementById("map");
-                                var loader = document.getElementById("mapLoader");
-                    
-                                if (mapInitialized) {
-                                    mapDiv.style.display = mapDiv.style.display === "none" ? "block" : "none";
-                                    return;
-                                }
-                    
-                                // Show loader while map is initializing
-                                loader.style.display = "block";
-                                mapDiv.style.display = "none";
-                    
-                                // Initialize map and show it after some delay (to simulate loading)
-                                setTimeout(function () {
-                                    loader.style.display = "none";
-                                    mapDiv.style.display = "block";
-                                    //google.maps.event.trigger(map, "resize");
-                                }, 5000); // Simulate 5 seconds delay
-                            }
-                    
-                            // Initialize the map on page load, but keep it hidden
-                            window.onload = initMap;
-                    
-                        </script>
-                    
-                        <script async
-                            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAmnz9yP1MewDeyOE-OV92JrAclq18JzZ4&loading=async&callback=initMap">
-                            </script> -->
-                    
+
                     </body>
 
                 </div>
@@ -369,7 +347,6 @@
 </body>
 
 <script type="module" src="../javascript/userDashboard.js"></script>
+<script type="module" src="../javascript/headerFunctionality.js"></script>
 
 </html>
-
-

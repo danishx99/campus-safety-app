@@ -60,12 +60,14 @@ document.addEventListener("DOMContentLoaded", () => {
       image: imageBase64 || null,
     };
 
+    console.log(data);
+
     // Show loader
     loader.style.display = "block";
 
     try {
       const response = await fetch(
-        "http://localhost:3000/incidentReporting/reportIncident",
+        "/incidentReporting/reportIncident",
         {
           method: "POST",
           body: JSON.stringify(data),
@@ -78,7 +80,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       // Hide loader
       loader.style.display = "none";
-      console.log("here");
+      //console.log("here");
 
       const result = await response.json();
 
@@ -101,7 +103,7 @@ document.addEventListener("DOMContentLoaded", () => {
           alert.classList.remove("border-green-400");
           alert.style.display = "none";
         }, 2000);
-        //form.reset();
+        form.reset();
       } else {
         // Handle error response
         console.error("Error submitting incident:", result);

@@ -116,6 +116,18 @@ router.get("/user/viewNotifications", isUser ,(req, res) => {
 }
 );
 
+router.get("/admin/viewSafetyResources", (req, res) => {
+  res.sendFile(
+    path.join(__dirname, "../../client/html", "adminSafetyResources2.html")
+  );
+});
+
+router.get("/admin/updateSafetyResources", (req, res) => {
+  res.sendFile(
+    path.join(__dirname, "../../client/html", "adminSafetyResources3.html")
+  );
+});
+
 router.get("/profileManagement", authMiddleware ,(req, res) => {
   res.sendFile(
     path.join(__dirname, "../../client/html", "profileManagement.html")

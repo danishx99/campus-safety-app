@@ -109,7 +109,7 @@ try {
       e.preventDefault();
 
       if (!isEmailVerified) {
-        showToast("Please verify your email to access this feature.", true);
+        showToast("Please verify your email to access this feature.");
         return;
       }
 
@@ -126,6 +126,9 @@ try {
           break;
         case "generate-code-card":
           window.location.href = "/admin/generateCode";
+          break;
+        case "emergency-alerts-card":
+          window.location.href = "/admin/emergencyAlerts";
           break;
       }
     });

@@ -1,13 +1,13 @@
 <?xml version="1.0" ?>
 <!DOCTYPE coverage SYSTEM "http://cobertura.sourceforge.net/xml/coverage-04.dtd">
-<coverage lines-valid="417" lines-covered="245" line-rate="0.5875" branches-valid="100" branches-covered="45" branch-rate="0.45" timestamp="1726532418539" complexity="0" version="0.1">
+<coverage lines-valid="428" lines-covered="246" line-rate="0.5747" branches-valid="102" branches-covered="45" branch-rate="0.4411" timestamp="1726566765088" complexity="0" version="0.1">
   <sources>
     <source>C:\Users\Danish\Desktop\University\3rdYear\Semester2\SDP\campus-safety-app\server</source>
   </sources>
   <packages>
-    <package name="controllers" line-rate="0.4425" branch-rate="0.24239999999999998">
+    <package name="controllers" line-rate="0.4324" branch-rate="0.2352">
       <classes>
-        <class name="adminController.js" filename="controllers\adminController.js" line-rate="1" branch-rate="1">
+        <class name="adminController.js" filename="controllers\adminController.js" line-rate="0.7894" branch-rate="0.6666">
           <methods>
             <method name="(anonymous_0)" hits="2" signature="()V">
               <lines>
@@ -22,6 +22,11 @@
             <method name="(anonymous_2)" hits="3" signature="()V">
               <lines>
                 <line number="40" hits="3"/>
+              </lines>
+            </method>
+            <method name="(anonymous_3)" hits="0" signature="()V">
+              <lines>
+                <line number="61" hits="0"/>
               </lines>
             </method>
           </methods>
@@ -55,6 +60,15 @@
             <line number="54" hits="1" branch="false"/>
             <line number="56" hits="1" branch="false"/>
             <line number="57" hits="1" branch="false"/>
+            <line number="61" hits="1" branch="false"/>
+            <line number="62" hits="0" branch="false"/>
+            <line number="64" hits="0" branch="false"/>
+            <line number="65" hits="0" branch="false"/>
+            <line number="66" hits="0" branch="true" condition-coverage="0% (0/2)"/>
+            <line number="67" hits="0" branch="false"/>
+            <line number="70" hits="0" branch="false"/>
+            <line number="72" hits="0" branch="false"/>
+            <line number="73" hits="0" branch="false"/>
           </lines>
         </class>
         <class name="authController.js" filename="controllers\authController.js" line-rate="0.21559999999999999" branch-rate="0.14279999999999998">
@@ -430,13 +444,13 @@
         </class>
       </classes>
     </package>
-    <package name="middlewares" line-rate="1" branch-rate="0.9333">
+    <package name="middlewares" line-rate="0.9782" branch-rate="0.9333">
       <classes>
-        <class name="authMiddleware.js" filename="middlewares\authMiddleware.js" line-rate="1" branch-rate="1">
+        <class name="authMiddleware.js" filename="middlewares\authMiddleware.js" line-rate="0.875" branch-rate="1">
           <methods>
-            <method name="(anonymous_0)" hits="3" signature="()V">
+            <method name="(anonymous_0)" hits="2" signature="()V">
               <lines>
-                <line number="6" hits="3"/>
+                <line number="6" hits="2"/>
               </lines>
             </method>
           </methods>
@@ -445,16 +459,18 @@
             <line number="2" hits="1" branch="false"/>
             <line number="4" hits="1" branch="false"/>
             <line number="6" hits="1" branch="false"/>
-            <line number="7" hits="3" branch="false"/>
-            <line number="9" hits="3" branch="true" condition-coverage="100% (2/2)"/>
+            <line number="7" hits="2" branch="false"/>
+            <line number="9" hits="2" branch="true" condition-coverage="100% (2/2)"/>
             <line number="10" hits="1" branch="false"/>
-            <line number="13" hits="2" branch="false"/>
-            <line number="14" hits="2" branch="false"/>
+            <line number="13" hits="1" branch="false"/>
             <line number="15" hits="1" branch="false"/>
             <line number="16" hits="1" branch="false"/>
+            <line number="17" hits="1" branch="false"/>
             <line number="18" hits="1" branch="false"/>
             <line number="20" hits="1" branch="false"/>
-            <line number="21" hits="1" branch="false"/>
+            <line number="22" hits="1" branch="false"/>
+            <line number="24" hits="0" branch="false"/>
+            <line number="25" hits="0" branch="false"/>
           </lines>
         </class>
         <class name="homeRedirect.js" filename="middlewares\homeRedirect.js" line-rate="1" branch-rate="0.875">

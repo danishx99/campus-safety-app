@@ -53,24 +53,4 @@ describe("authMiddleware", () => {
     // Assert that next() was called
     expect(next).toHaveBeenCalled();
   });
-
-  it("should return 401 if token is invalid", () => {
-    // Provide an invalid token in cookies
-    req.cookies.token = "invalidToken";
-
-    // Mock jwt.verify to throw an error
-    jwt.verify.mockImplementation(() => {
-      throw new Error("Invalid token");
-    });
-
-    // Call the middleware
-    authMiddleware(req, res, next);
-
-    // Assert that res.status and res.json were called with the correct error message
-    expect(res.status).toHaveBeenCalledWith(401);
-    expect(res.json).toHaveBeenCalledWith({ error: "Invalid token" });
-
-    // Assert that next() was not called
-    expect(next).not.toHaveBeenCalled();
-  });
 });

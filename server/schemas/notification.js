@@ -29,10 +29,7 @@ const notificationSchema = new Schema(
             enum: ['incidentUpdate', 'announcement','emergency-alert','incidentReport','message']
         },
 
-        senderLocation: {
-            type: String,
-            required: false,
-        }
+        senderLocation: { type: [Number], required: false } // Array of numbers
 
     },
     {

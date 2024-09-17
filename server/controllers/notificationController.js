@@ -96,18 +96,18 @@ exports.sendNotification = async (req, res) => {
             // Get all student FCM tokens
             const users = await User.find({role: 'student'});
             fcmTokens = users.map(user => user.FCMtoken);
-        } else if(recipient === 'specific') {
+        } else if(recipient === 'admin') {
             // Get specific user FCM token
-            const users = await User.find({email: req.body.recipient});
+            const users = await User.find({role: 'admin'});
             fcmTokens = users.map(user => user.FCMtoken);
         }
 
         if(fcmTokens.length === 0) {
-            return res.status(200).send('No users found');
+            return res.status(200).json({ message: "Notification sent successfully" });
         }
 
         //Send notification
-        await _sendNotification(fcmTokens, savedNotification.title, savedNotification.message, { notificationType: savedNotification.notificationType, sender: savedNotification.sender, senderLocation: savedNotification.senderLocation });
+        await _sendNotification(fcmTokens, savedNotification.title, savedNotification.message, { notificationType: savedNotification.notificationType, sender: savedNotification.sender, senderLocation: savedNotification.senderLocation, recipient: savedNotification.recipient });
 
         res.status(200).json({ message: "Notification sent successfully" });
     } catch (error) {

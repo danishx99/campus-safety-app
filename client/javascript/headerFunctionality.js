@@ -86,7 +86,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       const clearButton = document.createElement("button");
       clearButton.className =
         "w-full text-left px-4 py-2 text-sm text-red-600 "; // Blue background for the button too
-      clearButton.innerHTML = "<a href='user/viewnotifications'>See all notifications</a>";
+      clearButton.innerHTML = "<a href='/notifications/redirectToNotificationPage'>See all notifications</a>";
       
       notificationList.appendChild(clearButton);
 
@@ -132,4 +132,144 @@ document.addEventListener("DOMContentLoaded", async () => {
       dropdownMenu.classList.add("hidden");
     }
   });
+
+  /* Notification dropdown */
+
+
+  /*Modal */
+
+document.getElementById('panicButton').addEventListener('click', function() {
+    document.getElementById('panicModal').classList.remove('hidden');
+});
+
+document.getElementById('closeModalBtn').addEventListener('click', function() {
+    document.getElementById('panicModal').classList.add('hidden');
+});
+
+// Optional: Close the modal when clicking outside of the modal content
+window.addEventListener('click', function(event) {
+    if (event.target === document.getElementById('panicModal')) {
+        document.getElementById('panicModal').classList.add('hidden');
+    }
+});
+
+
+function showpanicloader(){
+    document.getElementById('submitLoader').classList.remove('hidden');
+}
+
+function hidepanicloader(){
+    document.getElementById('submitLoader').classList.add('hidden');
+}
+document.getElementById('submitAlert').addEventListener('click', function(event) {
+
+    event.preventDefault();
+    showpanicloader();
+
+    // Collect the necessary data
+    const title = document.getElementById('title').value;
+    const message = document.getElementById('description').value;
+
+    if(!title || !message){
+
+        var alert = document.getElementById('alert');
+        alert.classList.remove('hidden');
+        alert.textContent = "Please fill in all fields";
+        setTimeout(function(){
+            alert.classList.add('hidden');
+        }
+        , 3000);
+        hidepanicloader();
+        return;
+    }
+    
+
+    // Get the user's location (latitude and longitude)
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function(position) {
+            const latitude = position.coords.latitude;
+            const longitude = position.coords.longitude;
+
+            // Send a request to the server to send a panic alert
+            fetch('/notifications/sendNotification', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                credentials: 'include',
+                body: JSON.stringify({
+                    recipient: 'admin', // You might need to adjust this based on your use case
+                    message: message,
+                    title: title,
+                    notificationType: "emergency-alert",
+                    senderLocation: [latitude, longitude] 
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.message === "Notification sent successfully") {
+                   var alert = document.getElementById('alert');
+                     alert.classList.remove('hidden');
+                    alert.textContent = "Emergency alert sent successfully";
+                    setTimeout(function(){
+                        alert.classList.add('hidden');
+                    }
+                    , 3000);
+                } else {
+                    var alert = document.getElementById('alert');
+                     alert.classList.remove('hidden');
+                    alert.textContent = "An error occurred while sending the panic alert.";
+                    setTimeout(function(){
+                        alert.classList.add('hidden');
+                    }
+                    , 3000);
+
+                }
+                hidepanicloader();
+                closeToastBtn.style.display = 'inline-block';
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                var alert = document.getElementById('alert');
+                alert.classList.remove('hidden');
+                alert.textContent = "An error occurred while sending the panic alert.";
+                setTimeout(function(){
+                    alert.classList.add('hidden');
+                }
+                , 3000);
+
+                hidepanicloader();
+            });
+        }, function(error) {
+            console.error('Geolocation error:', error);
+            var alert = document.getElementById('alert');
+            alert.classList.remove('hidden');
+            alert.textContent = "An error occurred while sending the panic alert.";
+            setTimeout(function(){
+                alert.classList.add('hidden');
+            }
+            , 3000);
+
+            hidepanicloader();
+        });
+    } else {
+        console.error('Geolocation is not supported by this browser.');
+       
+        var alert = document.getElementById('alert');
+        alert.classList.remove('hidden');
+        alert.textContent = "An error occurred while sending the panic alert.";
+        setTimeout(function(){
+            alert.classList.add('hidden');
+        }
+        , 3000);
+
+        hidepanicloader();
+    }
+});
+
+
+
+
+/*Modal */
+
 });

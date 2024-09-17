@@ -6,7 +6,7 @@ const { isAdmin } = require('../middlewares/isAdmin');
 const { authMiddleware } = require('../middlewares/authMiddleware');
 
 
-router.post("/sendNotification" ,isAdmin, notificationController.sendNotification);
+router.post("/sendNotification" ,authMiddleware, notificationController.sendNotification);
 
 //Get all unread notifications
 router.get("/getUnreadNotifications", authMiddleware, notificationController.getUnreadNotifications);

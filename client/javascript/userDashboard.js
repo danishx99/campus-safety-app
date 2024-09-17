@@ -126,9 +126,7 @@ document.addEventListener("DOMContentLoaded", function(){
     notificationsCard.addEventListener("click", function(event){
         event.preventDefault();
 
-        //alert("Delano show me some notifications!");
-        
-        
+        window.location.href="/user/viewNotifications";
     });
 
     locationCard.addEventListener("click", function(event){

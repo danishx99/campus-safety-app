@@ -67,7 +67,6 @@ function createResource(resource) {
     editButton.textContent = 'Edit';
     editButton.classList.add('bg-blue-500', 'text-white', 'rounded', 'px-2', 'py-1', 'text-sm');
     editButton.onclick = () => {
-        alert(`Edit resource: ${resource.title}`);
         const resourceId = resource._id; 
         localStorage.setItem('resourceId', resourceId);
         window.location.href = `/admin/updateSafetyResources`
@@ -86,7 +85,6 @@ function createResource(resource) {
     
 
     deleteButton.onclick = async () => {
-        alert(`Delete resource: ${resource.title}`);
         const resourceId = resource._id;
         try {
             const response = await fetch(`http://localhost:3000/admin/deleteSafetyResources/${resourceId}`, {

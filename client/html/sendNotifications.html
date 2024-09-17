@@ -11,28 +11,26 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- <script src="../javascript/loadComponents.js" defer></script> -->
     <style>
-       
-
         /* Loader styles */
         /* Loader styles */
         #loader {
-           border: 4px solid #f3f3f3;
-           border-radius: 50%;
-           border-top: 4px solid #3498db;
-           width: 25px;
-           height: 25px;
-           animation: spin 1s linear infinite;
-       }
+            border: 4px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 4px solid #3498db;
+            width: 25px;
+            height: 25px;
+            animation: spin 1s linear infinite;
+        }
 
-       @keyframes spin {
-           0% {
-               transform: rotate(0deg);
-           }
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
 
-           100% {
-               transform: rotate(360deg);
-           }
-       }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
     </style>
 </head>
 
@@ -45,32 +43,37 @@
                 <a href="/admin" class="text-xl font-semibold md:block">Campus Safety</a>
             </div>
             <div class="flex items-center space-x-4">
-               
+
                 <div class="relative inline-flex" id="notificationContainer">
-                
-                  <button id="notificationButton" class="flex rounded-md bg-[#FDB913] py-2 px-4 border border-transparent text-center text-sm text-white transition-all shadow-md hover:shadow-lg focus:bg-slate-700 focus:shadow-none active:bg-slate-700 hover:bg-slate-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none" type="button">
-                      Notifications
-                      <img src="../assets/bell-ring.png" alt="Notifications" class="h-5 md:h-6 md:mr-2"> 
-                  </button>
-                  <span id="notificationBadge" class="absolute top-0.5 right-0.5 grid min-h-[24px] min-w-[24px] translate-x-2/4 -translate-y-2/4 place-items-center rounded-full bg-[white] py-1 px-1 text-xs text-black">
-                      5
-                  </span>
-                  <div id="dropdownMenu" class="absolute right-0 mt-2 w-64 bg-white rounded-md shadow-lg z-10 border border-gray-200 hidden">
-                      <div class="py-2" id="notificationList">
-                          <!-- Notifications will be inserted here -->
-                      </div>
-                  </div>
-              </div>
-            
-                <a id="profileBtn" href="/profileManagement" class="rounded-full flex items-center"> 
+
+                    <button id="notificationButton"
+                        class="flex rounded-md bg-[#FDB913] py-2 px-4 border border-transparent text-center text-sm text-white transition-all shadow-md hover:shadow-lg focus:bg-slate-700 focus:shadow-none active:bg-slate-700 hover:bg-slate-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+                        type="button">
+                        Notifications
+                        <img src="../assets/bell-ring.png" alt="Notifications" class="h-5 md:h-6 md:mr-2">
+                    </button>
+                    <span id="notificationBadge"
+                        class="absolute top-0.5 right-0.5 grid min-h-[24px] min-w-[24px] translate-x-2/4 -translate-y-2/4 place-items-center rounded-full bg-[white] py-1 px-1 text-xs text-black">
+                        5
+                    </span>
+                    <div id="dropdownMenu"
+                        class="absolute right-0 mt-2 w-64 bg-white rounded-md shadow-lg z-10 border border-gray-200 hidden">
+                        <div class="py-2" id="notificationList">
+                            <!-- Notifications will be inserted here -->
+                        </div>
+                    </div>
+                </div>
+
+                <a id="profileBtn" href="/profileManagement" class="rounded-full flex items-center">
                     <div class="w-10 h-10 rounded-full overflow-hidden border-2 border-white">
-                        <img src="../assets/user-profile.png" alt="User Profile" class="w-full h-full object-cover" id="headerProfilePic">
+                        <img src="../assets/user-profile.png" alt="User Profile" class="w-full h-full object-cover"
+                            id="headerProfilePic">
                     </div>
                 </a>
             </div>
         </header>
-        
-        
+
+
     </div>
     <div class="flex flex-1">
         <div id="navbar-placeholder">
@@ -81,8 +84,8 @@
                     window.location.href = '/auth/logout';
                 }
             </script>
-            
-            
+
+
             <!-- Desktop Navigation -->
             <nav class="hidden h-full md:flex bg-white w-64 p-4 flex-col shadow-md">
                 <ul class="flex-1 space-y-2">
@@ -93,62 +96,78 @@
                         </a>
                     </li>
                     <li>
-                        <a href="/admin/viewIncidents" class="flex items-center text-gray-700 hover:bg-gray-300 p-2 rounded-md">
+                        <a href="/admin/viewIncidents"
+                            class="flex items-center text-gray-700 hover:bg-gray-300 p-2 rounded-md">
                             <img src="../assets/report.png" alt="View Incidents" class="h-6 w-6 mr-3">
                             <span class="font-medium">View Incidents</span>
                         </a>
                     </li>
                     <li>
-                        <a href="/admin/sendNotifications" class="flex items-center text-gray-700 hover:bg-gray-300 p-2 rounded-md">
+                        <a href="/admin/sendNotifications"
+                            class="flex items-center text-gray-700 hover:bg-gray-300 p-2 rounded-md">
                             <img src="../assets/alert.png" alt="Send Notifications" class="h-6 w-6 mr-3">
                             <span class="font-medium">Send Notifications</span>
                         </a>
                     </li>
                     <li>
-                        <a href="/admin/safetyResources" class="flex items-center text-gray-700 hover:bg-gray-300 p-2 rounded-md">
+                        <a href="/admin/safetyResources"
+                            class="flex items-center text-gray-700 hover:bg-gray-300 p-2 rounded-md">
                             <img src="../assets/resources.png" alt="Safety Resources" class="h-6 w-6 mr-3">
                             <span class="font-medium">Safety Resources</span>
                         </a>
                     </li>
                     <li>
-                        <a href="/admin/generateCode" class="flex items-center text-gray-700 hover:bg-gray-300 p-2 rounded-md">
-                            <img src="../assets/location.png" alt="Generate Code" class="h-6 w-6 mr-3">
+                        <a href="/admin/generateCode"
+                            class="flex items-center text-gray-700 hover:bg-gray-300 p-2 rounded-md">
+                            <img src="../assets/password-entry.png" alt="Generate Code" class="h-6 w-6 mr-3">
                             <span class="font-medium">Generate Code</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/admin/emergencyAlerts"
+                            class="flex items-center text-gray-700 hover:bg-gray-300 p-2 rounded-md">
+                            <img src="../assets/caution.png" alt="Generate Code" class="h-6 w-6 mr-3">
+                            <span class="font-medium">Manage Emergencies</span>
                         </a>
                     </li>
                 </ul>
                 <div class="border-t border-gray-200 pt-4 mt-4">
-                    <a href="/auth/logout" class="flex items-center text-gray-700 hover:bg-gray-300 p-2 rounded-md" id="logoutButton">
+                    <a href="/auth/logout" class="flex items-center text-gray-700 hover:bg-gray-300 p-2 rounded-md"
+                        id="logoutButton">
                         <img src="../assets/logout-solid.png" alt="Logout" class="h-6 w-6 mr-3">
                         <span class="font-medium">Logout</span>
                     </a>
                 </div>
             </nav>
-            
+
             <!-- Mobile Navigation -->
-            <nav class="fixed inset-x-0 bottom-0 bg-[#015EB8] text-white p-4 flex justify-around items-center md:hidden z-50">
+            <nav
+                class="fixed inset-x-0 bottom-0 bg-[#015EB8] text-white p-4 flex justify-around items-center md:hidden z-50">
                 <a href="/admin/viewIncidents" class="flex flex-col items-center">
-                    <img src="../assets/report-mobile.png" alt="View Incidents" class="h-8 w-8">
+                    <img src="../assets/report-mobile.png" alt="View Incidents" class="h-7 w-7">
                     <span class="text-xs mt-1">Incidents</span>
                 </a>
                 <a href="/admin/sendNotifications" class="flex flex-col items-center">
-                    <img src="../assets/alert-mobile.png" alt="Send Notifications" class="h-8 w-8">
+                    <img src="../assets/alert-mobile.png" alt="Send Notifications" class="h-7 w-7">
                     <span class="text-xs mt-1">Notify</span>
                 </a>
                 <a href="/admin" class="flex flex-col items-center">
-                    <img src="../assets/dashboard-mobile.png" alt="Dashboard" class="h-8 w-8">
+                    <img src="../assets/dashboard-mobile.png" alt="Dashboard" class="h-7 w-7">
                     <span class="text-xs mt-1">Dashboard</span>
                 </a>
                 <a href="/admin/safetyResources" class="flex flex-col items-center">
-                    <img src="../assets/resources-mobile.png" alt="Safety Resources" class="h-8 w-8">
+                    <img src="../assets/resources-mobile.png" alt="Safety Resources" class="h-7 w-7">
                     <span class="text-xs mt-1">Resources</span>
                 </a>
                 <a href="/admin/generateCode" class="flex flex-col items-center">
-                    <img src="../assets/location-mobile.png" alt="Generate Code" class="h-8 w-8">
+                    <img src="../assets/pick-code.png" alt="Generate Code" class="h-7 w-7">
                     <span class="text-xs mt-1">Gen Code</span>
                 </a>
+                <a href="/admin/emergencyAlerts" class="flex flex-col items-center">
+                    <img src="../assets/caution-white.png" alt="Generate Code" class="h-7 w-7">
+                    <span class="text-xs mt-1">Emergencies</span>
+                </a>
             </nav>
-            
         </div>
 
         <!-- Main Content -->
@@ -156,33 +175,36 @@
 
             <div class="flex flex-col bg-gray-200 rounded-lg border border-gray-400 p-4 mx-20 max-sm:mx-0">
                 <h2 class="text-center text-2xl font-bold mb-2 max-sm:text-xl">Send notifications</h2>
-                <h3 class="text-center text-lg font-semibold mb-4 max-sm:text-sm">Send insant, real time notifications to users.</h3>
+                <h3 class="text-center text-lg font-semibold mb-4 max-sm:text-sm">Send insant, real time notifications
+                    to users.</h3>
 
-              
 
-                <form id="notificationForm" class="flex flex-col px-8 max-sm:px-4" >
+
+                <form id="notificationForm" class="flex flex-col px-8 max-sm:px-4">
                     <div class="alert-box" id="alert" role="alert">Test Error</div>
 
                     <input id="notificationTitle" class="p-2 rounded-xl mb-4 text-black max-sm:text-sm" type="text"
                         placeholder="Title">
 
-                                <!-- Dropdown for selecting Incident Type -->
-                                <label for="notificationType" class="block text-sm font-medium m-2">Select Notification Type:</label>
-                                <select class="p-2 rounded-xl mb-4 bg-white max-sm:text-sm" name="incidentType" id="notificationType">
-                                    <option value="announcement" selected>Announcement</option>
-                                    <option value="emergency-alert">Emergency Alert</option>
-                                </select>
+                    <!-- Dropdown for selecting Incident Type -->
+                    <label for="notificationType" class="block text-sm font-medium m-2">Select Notification
+                        Type:</label>
+                    <select class="p-2 rounded-xl mb-4 bg-white max-sm:text-sm" name="incidentType"
+                        id="notificationType">
+                        <option value="announcement" selected>Announcement</option>
+                        <option value="emergency-alert">Emergency Alert</option>
+                    </select>
 
-                                <!-- Dropdown for selecting the Target Audience -->
-                                <label for="recepient" class="block text-sm font-medium m-2">Send To:</label>
-                                <select class="p-2 rounded-xl mb-4 bg-white max-sm:text-sm" name="targetAudience" id="recipient">
-                                    <option value="everyone" selected>Everyone</option>
-                                    <option value="staff">Staff</option>
-                                    <option value="student">Students</option>
-                                </select>
+                    <!-- Dropdown for selecting the Target Audience -->
+                    <label for="recepient" class="block text-sm font-medium m-2">Send To:</label>
+                    <select class="p-2 rounded-xl mb-4 bg-white max-sm:text-sm" name="targetAudience" id="recipient">
+                        <option value="everyone" selected>Everyone</option>
+                        <option value="staff">Staff</option>
+                        <option value="student">Students</option>
+                    </select>
 
 
-            
+
 
                     <textarea class="p-2 rounded-lg mb-4 text-black max-sm:text-sm" placeholder="Message" rows="5"
                         id="notificationMessage"></textarea>
@@ -196,11 +218,11 @@
                         </span>
                     </button>
 
-                                                        <!-- Link to view notification history -->
-                <a href="/admin/notificationhistory" 
-                class="bg-[#015EB8] text-white flex justify-center items-center py-2 mt-2 px-4 rounded-lg max-sm:text-sm hover:opacity-80">
-                View Notification History
-                </a>
+                    <!-- Link to view notification history -->
+                    <a href="/admin/notificationhistory"
+                        class="bg-[#015EB8] text-white flex justify-center items-center py-2 mt-2 px-4 rounded-lg max-sm:text-sm hover:opacity-80">
+                        View Notification History
+                    </a>
                 </form>
             </div>
         </main>

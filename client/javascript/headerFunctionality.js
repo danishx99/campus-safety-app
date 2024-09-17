@@ -81,13 +81,13 @@ document.addEventListener("DOMContentLoaded", async () => {
         notificationList.appendChild(div);
       });
 
-
       // Add a "See all notifications" button
       const clearButton = document.createElement("button");
       clearButton.className =
         "w-full text-left px-4 py-2 text-sm text-red-600 "; // Blue background for the button too
-      clearButton.innerHTML = "<a href='user/viewnotifications'>See all notifications</a>";
-      
+      clearButton.innerHTML =
+        "<a href='/notifications/redirectToNotificationPage'>See all notifications</a>";
+
       notificationList.appendChild(clearButton);
 
       // Update the notification badge with the total number of unread notifications (not the sliced number)
@@ -105,7 +105,8 @@ document.addEventListener("DOMContentLoaded", async () => {
       clearButton.className =
         "w-full text-left px-4 py-2 text-sm text-red-600 "; // Blue background for the button too
       clearButton.textContent = "See all notifications";
-      clearButton.innerHTML = "<a href='/notifications/redirectToNotificationPage'>See all notifications</a>";
+      clearButton.innerHTML =
+        "<a href='/notifications/redirectToNotificationPage'>See all notifications</a>";
       notificationList.appendChild(clearButton);
 
       // Update the notification badge to 0 since there are no notifications
@@ -113,7 +114,6 @@ document.addEventListener("DOMContentLoaded", async () => {
       notificationBadge.classList.remove("hidden");
     }
   }
-  
 
   function clearNotifications() {
     // Send a request to mark all notifications as read

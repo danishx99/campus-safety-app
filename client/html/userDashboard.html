@@ -9,9 +9,14 @@
     <link href="../styles/output.css" rel="stylesheet" />
     <link href="../styles/styles.css" rel="stylesheet" />
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="../javascript/loadComponents.js" defer></script>
-    <script src="../javascript/dashboard.js" defer></script>
-    <script src="../javascript/panicButton.js" defer></script>
+    <!-- <script src="../javascript/loadComponents.js" defer></script> -->
+    <!-- <script src="../javascript/dashboard.js" defer></script> -->
+  
+
+
+    <!--Awsome notifications-->
+    <script src="../javascript/index.var.js"></script>
+    <link rel="stylesheet" href="../styles/style.css">
 
     <style>
         /* Modal styles */
@@ -54,21 +59,119 @@
 </head>
 
 <body class="flex flex-col min-h-screen bg-gradient-to-b from-blue-50 to-blue-105">
+    <script type="module">
+
+        let notifier = new AWN();
+
+        // notifier.success('Success message', {durations: {success: 10000}})
+        //notifier.success("Accept states cannot have outgoing edges. Remove any outgoing edges from this state first.", { durations: { info: 10000 }, labels: { success: "Oops!" } });
+
+
+
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+        import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-messaging.js";
+
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBA-red8RszDmGY3YGELrunZQxFmg7r04Y",
+            authDomain: "campus-safety-fcm.firebaseapp.com",
+            projectId: "campus-safety-fcm",
+            storageBucket: "campus-safety-fcm.appspot.com",
+            messagingSenderId: "221773083535",
+            appId: "1:221773083535:web:0500a94bbb7a9dd6b891fa",
+            measurementId: "G-8BZHJT3BRY"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const messaging = getMessaging(app);
+
+        function playSound() {
+            //Play browser notifcation sound
+            const audio = new Audio("../assets/notification.mp3");
+            audio.play().catch(error => {
+                console.log("Failed to play the notification sound: ", error);
+            });
+        }
+
+        // Handle incoming messages when the app is in the foreground
+        onMessage(messaging, (payload) => {
+            console.log('Message received. ', payload);
+
+            // Access custom data
+            const notificationType = payload.data.notificationType;
+            const sender = payload.data.sender;
+            const senderLocation = payload.data.senderLocation;
+
+            // Access notification payload
+            const notificationTitle = payload.notification.title;
+            const notificationBody = payload.notification.body;
+
+            let detailedMessage = notificationBody;  // Base notification body
+
+            // Customize the message based on the notificationType with HTML tags for emphasis
+            if (notificationType === "emergency-alert") {
+                detailedMessage = `<strong>Emergency-alert</strong> from <strong>${sender}</strong>: <br/>${notificationBody}`;
+                notifier.alert(detailedMessage, { durations: { alert: 20000 }, labels: { alert: notificationTitle } });
+                playSound();
+
+            } else if (notificationType === "announcement") {
+                detailedMessage = `<strong>Announcement</strong> from <strong>${sender}</strong>: <br/>${notificationBody}`;
+                notifier.success(detailedMessage, { durations: { success: 20000 }, labels: { success: notificationTitle } });
+                playSound();
+
+            } else {
+                // Default notification handling with styled message
+                detailedMessage = `Notification from <strong>${sender}</strong>: ${notificationBody}`;
+                notifier.info(detailedMessage, { durations: { info: 20000 }, labels: { info: notificationTitle } });
+                playSound();
+            }
+
+            // Log the custom data for debugging or further processing
+            console.log(`Notification Type: ${notificationType}`);
+            console.log(`Sender: ${sender}`);
+            console.log(`Sender Location: ${senderLocation}`);
+        });
+
+
+
+    </script>
     <div id="header">
         <header class="bg-[#015EB8] text-white p-4 flex justify-between items-center">
             <div class="flex items-center">
-                <a href="/admin"><img src="../assets/logo.png" alt="Campus Safety Logo" class="h-8 mr-2"></a>
-                <a href="/admin" class="text-xl font-semibold md:block">Campus Safety</a>
+                <a href="/user"><img src="../assets/logo.png" alt="Campus Safety Logo" class="h-8 mr-2"></a>
+                <a href="/user" class="text-xl font-semibold md:block">Campus Safety</a>
             </div>
             <div class="flex items-center space-x-4">
-                <button  id="panicBtn" class="bg-red-600 text-white p-2 rounded-full flex items-center hover:bg-[#c53030]">
-                    <img src="../assets/danger.png" alt="Danger" class="h-5 md:h-6 md:mr-2"> 
-                    <span class="hidden md:inline-block font-medium">Panic</span>
-                </button>
-                <button class="bg-[#FDB913] text-white p-2 rounded-full flex items-center hover:bg-[#F5A623]">
-                    <img src="../assets/bell-ring.png" alt="Notifications" class="h-5 md:h-6 md:mr-2"> 
-                    <span class="hidden md:inline-block font-medium">Notifications</span>
-                </button>
+                <div class="relative inline-flex" id="panicContainer">
+                 
+                    <button id="panicButton" class="flex rounded-md bg-red-600 py-2 px-4 border border-transparent text-center text-sm text-white transition-all shadow-md hover:shadow-lg focus:bg-slate-700 focus:shadow-none active:bg-slate-700 hover:bg-slate-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none" type="button">
+                       Panic
+                        <img src="../assets/danger.png" alt="Notifications" class="h-5 md:h-6 md:mr-2"> 
+                    </button>
+                  
+                    <div id="dropdownMenupanic" class="absolute right-0 mt-2 w-64 bg-white rounded-md shadow-lg z-10 border border-gray-200 hidden">
+                      
+                    </div>
+                </div>
+               
+                <div class="relative inline-flex" id="notificationContainer">
+                 
+                  <button id="notificationButton" class="flex rounded-md bg-[#FDB913] py-2 px-4 border border-transparent text-center text-sm text-white transition-all shadow-md hover:shadow-lg focus:bg-slate-700 focus:shadow-none active:bg-slate-700 hover:bg-slate-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none" type="button">
+                      Notifications
+                      <img src="../assets/bell-ring.png" alt="Notifications" class="h-5 md:h-6 md:mr-2"> 
+                  </button>
+                  
+                  <span id="notificationBadge" class="absolute top-0.5 right-0.5 grid min-h-[24px] min-w-[24px] translate-x-2/4 -translate-y-2/4 place-items-center rounded-full bg-[white] py-1 px-1 text-xs text-black">
+                      0
+                  </span>
+                  <div id="dropdownMenu" class="absolute right-0 mt-2 w-64 bg-white rounded-md shadow-lg z-10 border border-gray-200 hidden">
+                      <div class="py-2" id="notificationList">
+                          <!-- Notifications will be inserted here -->
+                      </div>
+                  </div>
+              </div>
+            
                 <a id="profileBtn" href="/profileManagement" class="rounded-full flex items-center"> 
                     <div class="w-10 h-10 rounded-full overflow-hidden border-2 border-white">
                         <img src="../assets/user-profile.png" alt="User Profile" class="w-full h-full object-cover" id="headerProfilePic">
@@ -76,18 +179,6 @@
                 </a>
             </div>
         </header>
-        
-        <script>
-          document.addEventListener('DOMContentLoaded', function() {
-            const headerProfilePic = document.getElementById('headerProfilePic');
-            const savedProfilePicture = localStorage.getItem('userProfilePicture');
-            const profileBtn= document.getElementById('profileBtn');
-            if (savedProfilePicture) {
-              headerProfilePic.src = savedProfilePicture;
-            }
-        
-          });
-        </script>
         
     </div>
 
@@ -238,32 +329,6 @@
                                             id="description"></textarea>
                     
                     
-                                        <!-- <div class="bg-white mb-4 p-2 rounded-lg flex justify-between items-center max-sm:text-sm">
-                                            <div class="flex w-full items-center">
-                                                <label class="text-black whitespace-nowrap" for="location">Set Location:</label>
-                                                <input class="ml-2 rounded-lg text-black w-full" type="text" id="location"
-                                                    placeholder="Select Location" readonly>
-                                            </div>
-                                            <img id="showMap" onclick="toggleMap()" class="w-5 h-5 mr-3 cursor-pointer"
-                                                src="../assets/locationPick.png" alt="">
-                                        </div> -->
-                    
-                                        <!-- Loader and Map -->
-                    
-                                        <!-- Loader -->
-                                        <!-- <div class="mx-auto mb-2" id="mapLoader"></div>  -->
-                                         <!-- Map -->
-                                        <!-- <div class="mb-2" id="map"></div> -->
-                    
-                                        <!-- <div class="bg-white mb-4 p-2 rounded-lg flex items-center max-sm:text-sm">
-                                            <label for="incidentDateTime" class="flex-shrink-0 mr-2">Select Incident Date:</label>
-                                            <div class="flex-1">
-                                                <input class="p-2 rounded-xl text-black max-sm:text-sm w-full" type="datetime-local"
-                                                    id="incidentDateTime" name="incidentDateTime">
-                                            </div>
-                                        </div> -->
-                    
-                    
                                         <button type="submit" id="submitIncident"
                                             class="bg-[#9c1a1a] text-white flex justify-center items-center py-2 mt-2 px-4 rounded-lg max-sm:text-sm hover:opacity-80">
                                             <span class="flex items-center">
@@ -285,80 +350,7 @@
                             </main>
                         </div>
 
-                    
-                        <!-- <script>
-                            let mapInitialized = false;
-                    
-                            function initMap() {
-                                navigator.geolocation.getCurrentPosition(function (position) {
-                                    var currentLocation = {
-                                        lat: position.coords.latitude,
-                                        lng: position.coords.longitude
-                                    };
-                                    initializeMap(currentLocation);
-                                }, function () {
-                                    var defaultLocation = { lat: -26.11, lng: 28.01 }; // Fallback location
-                                    initializeMap(defaultLocation);
-                                });
-                            }
-                    
-                            function initializeMap(location) {
-                                if (mapInitialized) return; // Prevent reinitializing the map
-                    
-                                var map = new google.maps.Map(document.getElementById("map"), {
-                                    zoom: 8,
-                                    center: location
-                                });
-                    
-                                var marker = new google.maps.Marker({
-                                    position: location,
-                                    map: map,
-                                    draggable: true
-                                });
-                    
-                                google.maps.event.addListener(marker, 'dragend', function (event) {
-                                    document.getElementById('location').value = event.latLng.lat() + ', ' + event.latLng.lng();
-                                });
-                    
-                                google.maps.event.addListener(map, 'click', function (event) {
-                                    marker.setPosition(event.latLng);
-                                    document.getElementById('location').value = event.latLng.lat() + ', ' + event.latLng.lng();
-                                });
-                    
-                                mapInitialized = true; // Set the flag to true after initialization
-                            }
-                    
-                            function toggleMap() {
-                    
-                                var mapDiv = document.getElementById("map");
-                                var loader = document.getElementById("mapLoader");
-                    
-                                if (mapInitialized) {
-                                    mapDiv.style.display = mapDiv.style.display === "none" ? "block" : "none";
-                                    return;
-                                }
-                    
-                                // Show loader while map is initializing
-                                loader.style.display = "block";
-                                mapDiv.style.display = "none";
-                    
-                                // Initialize map and show it after some delay (to simulate loading)
-                                setTimeout(function () {
-                                    loader.style.display = "none";
-                                    mapDiv.style.display = "block";
-                                    //google.maps.event.trigger(map, "resize");
-                                }, 5000); // Simulate 5 seconds delay
-                            }
-                    
-                            // Initialize the map on page load, but keep it hidden
-                            window.onload = initMap;
-                    
-                        </script>
-                    
-                        <script async
-                            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAmnz9yP1MewDeyOE-OV92JrAclq18JzZ4&loading=async&callback=initMap">
-                            </script> -->
-                    
+
                     </body>
 
                 </div>
@@ -369,6 +361,7 @@
 </body>
 
 <script type="module" src="../javascript/userDashboard.js"></script>
+<script type="module" src="../javascript/headerFunctionality.js"></script>
 
 </html>
 

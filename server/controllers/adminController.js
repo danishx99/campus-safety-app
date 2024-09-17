@@ -58,6 +58,22 @@ exports.updateSafetyResource = async (req, res) => {
   }
 };
 
+exports.getSafetyResource = async (req, res) => {
+  const resourceId = req.params.id;
+
+  try {
+      const resource = await safetyResources.findOne({ _id: new ObjectId(resourceId) });
+      if (!resource) {
+          return res.status(404).send('Resource not found');
+      }
+
+      res.status(200).json(resource);  // Send the resource data as JSON
+  } catch (err) {
+      console.error('Error fetching resource:', err);
+      res.status(500).send('Error fetching resource');
+  }
+};
+
 /*exports.deleteAllSafetyResources = async (req, res) => {
     try {
       // Remove all documents from the safetyResources collection

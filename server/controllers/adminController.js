@@ -1,25 +1,20 @@
-const safetyResources= require("../schemas/safetyResources")
-const ObjectId = require('mongodb').ObjectId;
+const safetyResources = require("../schemas/safetyResources");
+const ObjectId = require("mongodb").ObjectId;
 
-exports.adminSafetyResources = async (req,res) =>{
-    try{
-        const {
-            title,
-            type,
-            description,
-          } = req.body;
-        const newResource = new safetyResources ({
-            title,
-            type,
-            description,
-        });
-        await newResource.save();
-        res.status(201).json({ message: "Resource added successfully" });
-    }
-    catch (error){
-        console.log("Error adding safety resource:", error);
-        res.status(500).json({ error: "Error adding safety resource." + error });
-    }
+exports.adminSafetyResources = async (req, res) => {
+  try {
+    const { title, type, description } = req.body;
+    const newResource = new safetyResources({
+      title,
+      type,
+      description,
+    });
+    await newResource.save();
+    res.status(201).json({ message: "Resource added successfully" });
+  } catch (error) {
+    console.log("Error adding safety resource:", error);
+    res.status(500).json({ error: "Error adding safety resource." + error });
+  }
 };
 
 exports.deleteOneSafetyResources = async (req, res) => {
@@ -27,22 +22,24 @@ exports.deleteOneSafetyResources = async (req, res) => {
 
   try {
     // Await the deletion of the resource
-    const result = await safetyResources.deleteOne({ _id: new ObjectId(resourceId) });
-    
+    const result = await safetyResources.deleteOne({
+      _id: new ObjectId(resourceId),
+    });
+
     if (result.deletedCount === 0) {
-      return res.status(404).send('Resource not found');
+      return res.status(404).send("Resource not found");
     }
 
-    res.status(200).send('Resource deleted successfully');
+    res.status(200).send("Resource deleted successfully");
   } catch (err) {
-    console.error('Error deleting the resource:', err);
-    res.status(500).send('Error deleting the resource');
+    console.log("Error deleting the resource:", err);
+    res.status(500).send("Error deleting the resource");
   }
 };
 
 exports.updateSafetyResource = async (req, res) => {
   const resourceId = req.params.id;
-  const updatedData = req.body;  // The updated data from the request body
+  const updatedData = req.body; // The updated data from the request body
 
   try {
     const result = await safetyResources.updateOne(
@@ -51,13 +48,13 @@ exports.updateSafetyResource = async (req, res) => {
     );
 
     if (result.matchedCount === 0) {
-      return res.status(404).send('Resource not found');
+      return res.status(404).send("Resource not found");
     }
 
-    res.status(200).send('Resource updated successfully');
+    res.status(200).send("Resource updated successfully");
   } catch (err) {
-    console.error('Error updating resource:', err);
-    res.status(500).send('Error updating the resource');
+    console.log("Error updating resource:", err);
+    res.status(500).send("Error updating the resource");
   }
 };
 

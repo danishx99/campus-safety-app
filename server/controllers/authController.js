@@ -72,7 +72,7 @@ exports.register = async (req,res) =>{
 
 
     } catch (error) {
-        console.error("Error registering user:", error);
+        console.log("Error registering user:", error);
         res.status(500).json({ error: "Error registering user" });
     }
 
@@ -120,7 +120,7 @@ exports.login = async (req, res) => {
         // Return success
         res.json({ success: true, redirect: user.role });
     } catch (error) {
-        console.error("Error logging in user:", error);
+        console.log("Error logging in user:", error);
         res.status(500).json({ error: "Error logging in user" });
     }
 };
@@ -168,7 +168,7 @@ exports.googleRegister= async (req,res) =>{
       res.status(201).json({ message: "Registration successful!" });
     
   } catch (error) {
-    console.error("Error registering user with Google :", error);
+    console.log("Error registering user with Google :", error);
     res.status(500).json({ error: "Error registering user with Google" });    
   }
 
@@ -207,7 +207,7 @@ exports.googleLogin= async (req,res) =>{
     res.json({ success: true, redirect: user.role });
 
   } catch (error) {
-    console.error("Error logging in using Google", error);
+    console.log("Error logging in using Google", error);
     res.status(500).json({ error: "Error logging in using Google" });
   }
 
@@ -296,7 +296,7 @@ exports.forgotPassword = async (req,res) =>{
         );
 
       } catch (error) {
-        console.error("Error initiating password reset:", error);
+        console.log("Error initiating password reset:", error);
         res.status(500).json({ error: "Error initiating password reset" });
       }
 
@@ -325,7 +325,7 @@ exports.isVerified = async (req,res) =>{
     
   } catch (error) {
 
-    console.error("Error checking user verification status :", error);
+    console.log("Error checking user verification status :", error);
 
   }
 };
@@ -364,7 +364,7 @@ exports.sendVerification= async (req,res)=>{
 
     
   } catch (error) {
-    console.error("Error sending verification email :", error);
+    console.log("Error sending verification email :", error);
   }
 };
 
@@ -452,7 +452,7 @@ exports.logout = async (req, res) => {
         res.clearCookie('token');
         res.status(200).redirect("/login");
     } catch (error) {
-        console.error("Error logging out user:", error);
+        console.log("Error logging out user:", error);
         res.status(500).json({ error: "Error logging out user" });
     }
 };
@@ -474,7 +474,7 @@ exports.checkEmailVerification = async (req, res) => {
 
     res.json({ isVerified: user.isVerified });
   } catch (error) {
-    console.error("Error checking email verification status:", error);
+    console.log("Error checking email verification status:", error);
     res.status(500).json({ error: "Error checking email verification status" });
   }
 };

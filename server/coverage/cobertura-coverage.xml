@@ -1,12 +1,62 @@
 <?xml version="1.0" ?>
 <!DOCTYPE coverage SYSTEM "http://cobertura.sourceforge.net/xml/coverage-04.dtd">
-<coverage lines-valid="235" lines-covered="63" line-rate="0.268" branches-valid="60" branches-covered="9" branch-rate="0.15" timestamp="1726524706758" complexity="0" version="0.1">
+<coverage lines-valid="417" lines-covered="245" line-rate="0.5875" branches-valid="100" branches-covered="45" branch-rate="0.45" timestamp="1726532418539" complexity="0" version="0.1">
   <sources>
-    <source>C:\Users\USER-PC\Desktop\3rd Year\CA 3\SDP\Project\campus-safety\campus-safety-app\server</source>
+    <source>C:\Users\Danish\Desktop\University\3rdYear\Semester2\SDP\campus-safety-app\server</source>
   </sources>
   <packages>
-    <package name="controllers" line-rate="0.21559999999999999" branch-rate="0.14279999999999998">
+    <package name="controllers" line-rate="0.4425" branch-rate="0.24239999999999998">
       <classes>
+        <class name="adminController.js" filename="controllers\adminController.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="2" signature="()V">
+              <lines>
+                <line number="4" hits="2"/>
+              </lines>
+            </method>
+            <method name="(anonymous_1)" hits="3" signature="()V">
+              <lines>
+                <line number="20" hits="3"/>
+              </lines>
+            </method>
+            <method name="(anonymous_2)" hits="3" signature="()V">
+              <lines>
+                <line number="40" hits="3"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+            <line number="2" hits="1" branch="false"/>
+            <line number="4" hits="1" branch="false"/>
+            <line number="5" hits="2" branch="false"/>
+            <line number="6" hits="2" branch="false"/>
+            <line number="7" hits="2" branch="false"/>
+            <line number="12" hits="2" branch="false"/>
+            <line number="13" hits="1" branch="false"/>
+            <line number="15" hits="1" branch="false"/>
+            <line number="16" hits="1" branch="false"/>
+            <line number="20" hits="1" branch="false"/>
+            <line number="21" hits="3" branch="false"/>
+            <line number="23" hits="3" branch="false"/>
+            <line number="25" hits="3" branch="false"/>
+            <line number="29" hits="2" branch="true" condition-coverage="100% (2/2)"/>
+            <line number="30" hits="1" branch="false"/>
+            <line number="33" hits="1" branch="false"/>
+            <line number="35" hits="1" branch="false"/>
+            <line number="36" hits="1" branch="false"/>
+            <line number="40" hits="1" branch="false"/>
+            <line number="41" hits="3" branch="false"/>
+            <line number="42" hits="3" branch="false"/>
+            <line number="44" hits="3" branch="false"/>
+            <line number="45" hits="3" branch="false"/>
+            <line number="50" hits="2" branch="true" condition-coverage="100% (2/2)"/>
+            <line number="51" hits="1" branch="false"/>
+            <line number="54" hits="1" branch="false"/>
+            <line number="56" hits="1" branch="false"/>
+            <line number="57" hits="1" branch="false"/>
+          </lines>
+        </class>
         <class name="authController.js" filename="controllers\authController.js" line-rate="0.21559999999999999" branch-rate="0.14279999999999998">
           <methods>
             <method name="(anonymous_0)" hits="5" signature="()V">
@@ -282,6 +332,256 @@
             <line number="508" hits="0" branch="false"/>
           </lines>
         </class>
+        <class name="incidentController.js" filename="controllers\incidentController.js" line-rate="1" branch-rate="0.6666">
+          <methods>
+            <method name="(anonymous_0)" hits="2" signature="()V">
+              <lines>
+                <line number="6" hits="2"/>
+              </lines>
+            </method>
+            <method name="(anonymous_1)" hits="2" signature="()V">
+              <lines>
+                <line number="60" hits="2"/>
+              </lines>
+            </method>
+            <method name="(anonymous_2)" hits="3" signature="()V">
+              <lines>
+                <line number="99" hits="3"/>
+              </lines>
+            </method>
+            <method name="(anonymous_3)" hits="2" signature="()V">
+              <lines>
+                <line number="113" hits="2"/>
+              </lines>
+            </method>
+            <method name="(anonymous_4)" hits="2" signature="()V">
+              <lines>
+                <line number="122" hits="2"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+            <line number="2" hits="1" branch="false"/>
+            <line number="3" hits="1" branch="false"/>
+            <line number="4" hits="1" branch="false"/>
+            <line number="6" hits="1" branch="false"/>
+            <line number="7" hits="2" branch="false"/>
+            <line number="8" hits="2" branch="false"/>
+            <line number="37" hits="1" branch="false"/>
+            <line number="42" hits="1" branch="false"/>
+            <line number="43" hits="1" branch="false"/>
+            <line number="60" hits="1" branch="false"/>
+            <line number="62" hits="2" branch="false"/>
+            <line number="63" hits="2" branch="false"/>
+            <line number="64" hits="2" branch="false"/>
+            <line number="66" hits="2" branch="false"/>
+            <line number="67" hits="2" branch="false"/>
+            <line number="70" hits="2" branch="false"/>
+            <line number="71" hits="2" branch="true" condition-coverage="50% (1/2)"/>
+            <line number="72" hits="2" branch="false"/>
+            <line number="77" hits="2" branch="false"/>
+            <line number="87" hits="2" branch="false"/>
+            <line number="89" hits="2" branch="false"/>
+            <line number="90" hits="1" branch="false"/>
+            <line number="92" hits="1" branch="false"/>
+            <line number="95" hits="1" branch="false"/>
+            <line number="99" hits="1" branch="false"/>
+            <line number="100" hits="3" branch="false"/>
+            <line number="101" hits="3" branch="false"/>
+            <line number="102" hits="3" branch="false"/>
+            <line number="103" hits="2" branch="true" condition-coverage="100% (2/2)"/>
+            <line number="104" hits="1" branch="false"/>
+            <line number="106" hits="1" branch="false"/>
+            <line number="108" hits="1" branch="false"/>
+            <line number="109" hits="1" branch="false"/>
+            <line number="113" hits="1" branch="false"/>
+            <line number="114" hits="2" branch="false"/>
+            <line number="115" hits="2" branch="false"/>
+            <line number="116" hits="1" branch="false"/>
+            <line number="118" hits="1" branch="false"/>
+            <line number="122" hits="1" branch="false"/>
+            <line number="123" hits="2" branch="false"/>
+            <line number="124" hits="2" branch="false"/>
+            <line number="126" hits="2" branch="false"/>
+            <line number="127" hits="3" branch="false"/>
+            <line number="130" hits="1" branch="false"/>
+            <line number="132" hits="1" branch="false"/>
+            <line number="133" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="userController.js" filename="controllers\userController.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="2" signature="()V">
+              <lines>
+                <line number="4" hits="2"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+            <line number="4" hits="1" branch="false"/>
+            <line number="5" hits="2" branch="false"/>
+            <line number="7" hits="2" branch="false"/>
+            <line number="8" hits="1" branch="false"/>
+            <line number="13" hits="1" branch="false"/>
+            <line number="14" hits="1" branch="false"/>
+          </lines>
+        </class>
+      </classes>
+    </package>
+    <package name="middlewares" line-rate="1" branch-rate="0.9333">
+      <classes>
+        <class name="authMiddleware.js" filename="middlewares\authMiddleware.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="3" signature="()V">
+              <lines>
+                <line number="6" hits="3"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+            <line number="2" hits="1" branch="false"/>
+            <line number="4" hits="1" branch="false"/>
+            <line number="6" hits="1" branch="false"/>
+            <line number="7" hits="3" branch="false"/>
+            <line number="9" hits="3" branch="true" condition-coverage="100% (2/2)"/>
+            <line number="10" hits="1" branch="false"/>
+            <line number="13" hits="2" branch="false"/>
+            <line number="14" hits="2" branch="false"/>
+            <line number="15" hits="1" branch="false"/>
+            <line number="16" hits="1" branch="false"/>
+            <line number="18" hits="1" branch="false"/>
+            <line number="20" hits="1" branch="false"/>
+            <line number="21" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="homeRedirect.js" filename="middlewares\homeRedirect.js" line-rate="1" branch-rate="0.875">
+          <methods>
+            <method name="(anonymous_0)" hits="5" signature="()V">
+              <lines>
+                <line number="7" hits="5"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+            <line number="2" hits="1" branch="false"/>
+            <line number="3" hits="1" branch="false"/>
+            <line number="4" hits="1" branch="false"/>
+            <line number="7" hits="1" branch="false"/>
+            <line number="8" hits="5" branch="false"/>
+            <line number="9" hits="5" branch="false"/>
+            <line number="10" hits="5" branch="true" condition-coverage="100% (2/2)"/>
+            <line number="11" hits="1" branch="false"/>
+            <line number="14" hits="4" branch="false"/>
+            <line number="16" hits="3" branch="false"/>
+            <line number="17" hits="3" branch="false"/>
+            <line number="19" hits="3" branch="true" condition-coverage="100% (2/2)"/>
+            <line number="20" hits="1" branch="false"/>
+            <line number="21" hits="2" branch="true" condition-coverage="100% (2/2)"/>
+            <line number="22" hits="1" branch="false"/>
+            <line number="23" hits="1" branch="true" condition-coverage="50% (1/2)"/>
+            <line number="24" hits="1" branch="false"/>
+            <line number="27" hits="1" branch="false"/>
+            <line number="28" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="isAdmin.js" filename="middlewares\isAdmin.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="4" signature="()V">
+              <lines>
+                <line number="9" hits="4"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+            <line number="2" hits="1" branch="false"/>
+            <line number="4" hits="1" branch="false"/>
+            <line number="5" hits="1" branch="false"/>
+            <line number="6" hits="1" branch="false"/>
+            <line number="9" hits="1" branch="false"/>
+            <line number="10" hits="4" branch="false"/>
+            <line number="11" hits="4" branch="false"/>
+            <line number="13" hits="4" branch="true" condition-coverage="100% (2/2)"/>
+            <line number="14" hits="1" branch="false"/>
+            <line number="17" hits="3" branch="false"/>
+            <line number="19" hits="2" branch="false"/>
+            <line number="20" hits="2" branch="false"/>
+            <line number="22" hits="2" branch="true" condition-coverage="100% (2/2)"/>
+            <line number="24" hits="1" branch="false"/>
+            <line number="30" hits="1" branch="false"/>
+            <line number="33" hits="1" branch="false"/>
+            <line number="34" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="isLoggedIn.js" filename="middlewares\isLoggedIn.js" line-rate="1" branch-rate="0.9">
+          <methods>
+            <method name="(anonymous_0)" hits="5" signature="()V">
+              <lines>
+                <line number="9" hits="5"/>
+              </lines>
+            </method>
+            <method name="(anonymous_1)" hits="5" signature="()V">
+              <lines>
+                <line number="10" hits="5"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+            <line number="2" hits="1" branch="false"/>
+            <line number="4" hits="1" branch="false"/>
+            <line number="5" hits="1" branch="false"/>
+            <line number="6" hits="1" branch="false"/>
+            <line number="9" hits="1" branch="false"/>
+            <line number="10" hits="5" branch="false"/>
+            <line number="11" hits="5" branch="false"/>
+            <line number="12" hits="5" branch="false"/>
+            <line number="15" hits="5" branch="true" condition-coverage="100% (2/2)"/>
+            <line number="16" hits="3" branch="false"/>
+            <line number="17" hits="2" branch="false"/>
+            <line number="19" hits="2" branch="true" condition-coverage="100% (4/4)"/>
+            <line number="20" hits="1" branch="false"/>
+            <line number="21" hits="1" branch="true" condition-coverage="50% (1/2)"/>
+            <line number="22" hits="1" branch="false"/>
+            <line number="26" hits="2" branch="true" condition-coverage="100% (2/2)"/>
+            <line number="27" hits="2" branch="false"/>
+            <line number="29" hits="1" branch="false"/>
+            <line number="30" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="isUser.js" filename="middlewares\isUser.js" line-rate="1" branch-rate="1">
+          <methods>
+            <method name="(anonymous_0)" hits="5" signature="()V">
+              <lines>
+                <line number="9" hits="5"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="1" hits="1" branch="false"/>
+            <line number="2" hits="1" branch="false"/>
+            <line number="4" hits="1" branch="false"/>
+            <line number="5" hits="1" branch="false"/>
+            <line number="6" hits="1" branch="false"/>
+            <line number="9" hits="1" branch="false"/>
+            <line number="10" hits="5" branch="false"/>
+            <line number="11" hits="5" branch="false"/>
+            <line number="12" hits="5" branch="true" condition-coverage="100% (2/2)"/>
+            <line number="13" hits="1" branch="false"/>
+            <line number="16" hits="4" branch="false"/>
+            <line number="18" hits="3" branch="false"/>
+            <line number="19" hits="3" branch="false"/>
+            <line number="21" hits="3" branch="true" condition-coverage="100% (4/4)"/>
+            <line number="23" hits="1" branch="false"/>
+            <line number="30" hits="2" branch="false"/>
+            <line number="33" hits="1" branch="false"/>
+            <line number="34" hits="1" branch="false"/>
+          </lines>
+        </class>
       </classes>
     </package>
     <package name="schemas" line-rate="1" branch-rate="1">
@@ -296,14 +596,35 @@
             <line number="17" hits="1" branch="false"/>
           </lines>
         </class>
-        <class name="User.js" filename="schemas\User.js" line-rate="1" branch-rate="1">
+        <class name="Incident.js" filename="schemas\Incident.js" line-rate="1" branch-rate="1">
           <methods>
           </methods>
           <lines>
             <line number="1" hits="1" branch="false"/>
             <line number="2" hits="1" branch="false"/>
             <line number="4" hits="1" branch="false"/>
-            <line number="52" hits="1" branch="false"/>
+            <line number="45" hits="1" branch="false"/>
+            <line number="47" hits="1" branch="false"/>
+          </lines>
+        </class>
+        <class name="User.js" filename="schemas\User.js" line-rate="1" branch-rate="1">
+          <methods>
+          </methods>
+          <lines>
+            <line number="1" hits="6" branch="false"/>
+            <line number="2" hits="6" branch="false"/>
+            <line number="4" hits="6" branch="false"/>
+            <line number="52" hits="6" branch="false"/>
+          </lines>
+        </class>
+        <class name="safetyResources.js" filename="schemas\safetyResources.js" line-rate="1" branch-rate="1">
+          <methods>
+          </methods>
+          <lines>
+            <line number="1" hits="2" branch="false"/>
+            <line number="2" hits="2" branch="false"/>
+            <line number="4" hits="2" branch="false"/>
+            <line number="25" hits="2" branch="false"/>
           </lines>
         </class>
       </classes>

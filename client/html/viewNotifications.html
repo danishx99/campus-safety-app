@@ -31,40 +31,157 @@
                 transform: rotate(360deg);
             }
         }
+          /* Modal styles */
+.modal {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+    z-index: 1000; /* Ensure modal is on top */
+}
+
+.modal-content {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    max-width: 500px;
+    width: 100%;
+    position: relative;
+}
+
+.close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+.hidden {
+    display: none;
+}
+
     </style>
 </head>
 
 
 <body class="flex flex-col min-h-screen bg-gray-100">
+    <script type="module">
+
+        let notifier = new AWN();
+
+        // notifier.success('Success message', {durations: {success: 10000}})
+        //notifier.success("Accept states cannot have outgoing edges. Remove any outgoing edges from this state first.", { durations: { info: 10000 }, labels: { success: "Oops!" } });
+
+
+
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+        import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-messaging.js";
+
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBA-red8RszDmGY3YGELrunZQxFmg7r04Y",
+            authDomain: "campus-safety-fcm.firebaseapp.com",
+            projectId: "campus-safety-fcm",
+            storageBucket: "campus-safety-fcm.appspot.com",
+            messagingSenderId: "221773083535",
+            appId: "1:221773083535:web:0500a94bbb7a9dd6b891fa",
+            measurementId: "G-8BZHJT3BRY"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const messaging = getMessaging(app);
+
+        function playSound() {
+            //Play browser notifcation sound
+            const audio = new Audio("../assets/notification.mp3");
+            audio.play().catch(error => {
+                console.log("Failed to play the notification sound: ", error);
+            });
+        }
+
+        // Handle incoming messages when the app is in the foreground
+        onMessage(messaging, (payload) => {
+            console.log('Message received. ', payload);
+
+            // Access custom data
+            const notificationType = payload.data.notificationType;
+            const sender = payload.data.sender;
+            const senderLocation = payload.data.senderLocation;
+            const recipient = payload.data.recipient;
+
+            // Access notification payload
+            const notificationTitle = payload.notification.title;
+            const notificationBody = payload.notification.body;
+
+
+            let detailedMessage = notificationBody;  // Base notification body
+
+            // Customize the message based on the notificationType with HTML tags for emphasis
+            if (notificationType === "emergency-alert" && recipient != "admin") {
+                detailedMessage = `<strong>Emergency-alert</strong> from <strong>${sender}</strong>: <br/>${notificationBody}`;
+                notifier.alert(detailedMessage, { durations: { alert: 20000 }, labels: { alert: notificationTitle } });
+                playSound();
+
+            } else if (notificationType === "announcement") {
+                detailedMessage = `<strong>Announcement</strong> from <strong>${sender}</strong>: <br/>${notificationBody}`;
+                notifier.success(detailedMessage, { durations: { success: 20000 }, labels: { success: notificationTitle } });
+                playSound();
+            } 
+
+            // Log the custom data for debugging or further processing
+            console.log(`Notification Type: ${notificationType}`);
+            console.log(`Sender: ${sender}`);
+            console.log(`Sender Location: ${senderLocation}`);
+        });
+
+
+
+    </script>
+
     <div id="header-placeholder">
         <header class="bg-[#015EB8] text-white p-4 flex justify-between items-center">
             <div class="flex items-center">
-                <a href="/"><img src="../assets/logo.png" alt="Campus Safety Logo" class="h-8 mr-2"></a>
-                <a href="/" class="text-xl font-semibold md:block">Campus Safety</a>
+                <a href="/user"><img src="../assets/logo.png" alt="Campus Safety Logo" class="h-8 mr-2"></a>
+                <a href="/user" class="text-xl font-semibold md:block">Campus Safety</a>
             </div>
             <div class="flex items-center space-x-4">
-
-                <div class="relative inline-flex" id="notificationContainer">
-
-                    <button id="notificationButton"
-                        class="flex rounded-md bg-[#FDB913] py-2 px-4 border border-transparent text-center text-sm text-white transition-all shadow-md hover:shadow-lg focus:bg-slate-700 focus:shadow-none active:bg-slate-700 hover:bg-slate-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
-                        type="button">
-                        Notifications
-                        <img src="../assets/bell-ring.png" alt="Notifications" class="h-5 md:h-6 md:mr-2">
+                <div class="relative inline-flex" id="panicContainer">
+                 
+                    <button id="panicButton" class="flex rounded-md bg-red-600 py-2 px-4 border border-transparent text-center text-sm text-white transition-all shadow-md hover:shadow-lg focus:bg-slate-700 focus:shadow-none active:bg-slate-700 hover:bg-slate-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none" type="button">
+                       Panic
+                        <img src="../assets/danger.png" alt="Notifications" class="h-5 md:h-6 md:mr-2"> 
                     </button>
-                    <span id="notificationBadge"
-                        class="absolute top-0.5 right-0.5 grid min-h-[24px] min-w-[24px] translate-x-2/4 -translate-y-2/4 place-items-center rounded-full bg-[white] py-1 px-1 text-xs text-black">
-                        5
-                    </span>
-                    <div id="dropdownMenu"
-                        class="absolute right-0 mt-2 w-64 bg-white rounded-md shadow-lg z-10 border border-gray-200 hidden">
-                        <div class="py-2" id="notificationList">
-                            <!-- Notifications will be inserted here -->
-                        </div>
+                  
+                    <div id="dropdownMenupanic" class="absolute right-0 mt-2 w-64 bg-white rounded-md shadow-lg z-10 border border-gray-200 hidden">
+                      
                     </div>
                 </div>
-
-                <a id="profileBtn" href="/profileManagement" class="rounded-full flex items-center">
+               
+                <div class="relative inline-flex" id="notificationContainer">
+                 
+                  <button id="notificationButton" class="flex rounded-md bg-[#FDB913] py-2 px-4 border border-transparent text-center text-sm text-white transition-all shadow-md hover:shadow-lg focus:bg-slate-700 focus:shadow-none active:bg-slate-700 hover:bg-slate-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none" type="button">
+                      Notifications
+                      <img src="../assets/bell-ring.png" alt="Notifications" class="h-5 md:h-6 md:mr-2"> 
+                  </button>
+                  
+                  <span id="notificationBadge" class="absolute top-0.5 right-0.5 grid min-h-[24px] min-w-[24px] translate-x-2/4 -translate-y-2/4 place-items-center rounded-full bg-[white] py-1 px-1 text-xs text-black">
+                      0
+                  </span>
+                  <div id="dropdownMenu" class="absolute right-0 mt-2 w-64 bg-white rounded-md shadow-lg z-10 border border-gray-200 hidden">
+                      <div class="py-2" id="notificationList">
+                          <!-- Notifications will be inserted here -->
+                      </div>
+                  </div>
+              </div>
+            
+                <a id="profileBtn" href="/profileManagement" class="rounded-full flex items-center"> 
                     <div class="w-10 h-10 rounded-full overflow-hidden border-2 border-white">
                         <img src="../assets/user-profile.png" alt="User Profile" class="w-full h-full object-cover"
                             id="headerProfilePic">
@@ -72,9 +189,35 @@
                 </a>
             </div>
         </header>
-
-
     </div>
+     <!-- PANIC MODAL -->
+<div id="panicModal" class="modal hidden">
+    <div class="modal-content">
+        <span class="close" id="closeModalBtn">&times;</span>
+
+        
+
+        <h2 class="text-center text-2xl font-bold mb-4 text-red-700">Emergency Alert</h2>
+        <h3 class="text-center text-lg font-semibold mb-6">Send an SOS alert to Campus Control. Your live location will be shared.</h3>
+
+        <div class="alert-box mb-4" id="alert" role="alert">Test Error</div>
+
+        <form id="alertForm" class="flex flex-col px-6 py-4">
+            <input id="title" class="p-3 mb-4 rounded-lg border border-gray-300 text-gray-700 focus:outline-none focus:ring-2 focus:ring-red-600" type="text" placeholder="Title">
+           
+            <textarea class="p-3 mb-4 rounded-lg border border-gray-300 text-gray-700 focus:outline-none focus:ring-2 focus:ring-red-600" placeholder="Description" rows="3" id="description"></textarea>
+            <button id="submitAlert" class="bg-red-600 text-white py-2 px-4 rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-600">
+                <span class="flex items-center text-center justify-center">
+                    Send Alert
+                    <svg aria-hidden="true" class="w-4 h-4 ml-2 animate-spin hidden" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg" id="submitLoader">
+                        <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor" />
+                        <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill" />
+                    </svg>
+                </span>
+            </button>
+        </form>
+    </div>
+</div>
     <div class="flex flex-1">
         <div id="navbar-placeholder">
             <script>

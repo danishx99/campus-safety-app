@@ -1,6 +1,6 @@
 const admin = require("./firebaseAdmin");
 
-async function _sendNotification(fcmTokens, title, body, data = {}) {
+async function sendNotificationn(fcmTokens, title, body, data = {}) {
   const stringifiedData = {};
   for (const key in data) {
     if (data.hasOwnProperty(key)) {
@@ -36,6 +36,6 @@ async function _sendNotification(fcmTokens, title, body, data = {}) {
   }
 }
 
-module.exports = _sendNotification;
+module.exports = sendNotificationn;
 
 // _sendNotification(['eyWaTGlD-3v5cRW3k5BkON:APA91bHCVTn3PWsrepRC-NGrpulN4dq2C_wME2eFjVl7YPm2ua7Z7jK069VkIPp6E9Hisj-_lhLKpzfsmS8RGaqSgLT041peiXeeh-9RGrRhpBvc2cO4kAJ0-TGqJ82EMdK4uWHXgTxr'], 'Hi there!', 'sending custome message!', { key1: 'value1', key2: 'value2' });

@@ -17,6 +17,4 @@ try {
 // //Log to see if the admin is initialized(by finding out from admin)
 // console.log(admin);
 
-
-
 module.exports = admin;

@@ -56,29 +56,29 @@ app.get("/clearusers", async (req, res) => {
   }
 });
 
-app.get("/sendNotificationToEveryone", async (req, res) => {
-  try {
-    // Get all FCM tokens
-    const users = await User.find({});
-    const fcmTokens = users.map((user) => user.FCMtoken);
-    console.log("FCM tokens:", fcmTokens);
+// app.get("/sendNotificationToEveryone", async (req, res) => {
+//   try {
+//     // Get all FCM tokens
+//     const users = await User.find({});
+//     const fcmTokens = users.map((user) => user.FCMtoken);
+//     console.log("FCM tokens:", fcmTokens);
 
-    if (fcmTokens.length === 0) {
-      return res.status(400).send("No users found");
-    }
+//     if (fcmTokens.length === 0) {
+//       return res.status(400).send("No users found");
+//     }
 
-    // Send a notification to all users
-    await sendNotification(
-      fcmTokens,
-      "Interesting fact",
-      "Danish and Tendo made out"
-    );
-    res.send("Notification sent to everyone");
-  } catch (err) {
-    console.error(err);
-    res.status(500).send(err);
-  }
-});
+//     // Send a notification to all users
+//     await sendNotification(
+//       fcmTokens,
+//       "Interesting fact",
+//       "Danish and Tendo made out"
+//     );
+//     res.send("Notification sent to everyone");
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).send(err);
+//   }
+// });
 
 // MongoDB connection
 mongoose

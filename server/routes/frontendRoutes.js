@@ -2,9 +2,9 @@ const express = require("express");
 const router = express.Router();
 const path = require("path");
 
-const {homeRedirect} = require("../middlewares/homeRedirect");
+const { homeRedirect } = require("../middlewares/homeRedirect");
 const { isAdmin } = require("../middlewares/isAdmin");
-const {isLoggedIn} = require("../middlewares/isLoggedIn");
+const { isLoggedIn } = require("../middlewares/isLoggedIn");
 const { isUser } = require("../middlewares/isUser");
 const { authMiddleware } = require("../middlewares/authMiddleware");
 
@@ -12,18 +12,13 @@ const { authMiddleware } = require("../middlewares/authMiddleware");
 //     res.sendFile(path.join(__dirname,'../public/login.html'));
 // });
 
-router.get("/" ,(req, res) => {
+router.get("/", (req, res) => {
   homeRedirect(req, res);
 });
 
-router.get("/register", isLoggedIn("register") ,(req, res) => {
+router.get("/register", isLoggedIn("register"), (req, res) => {});
 
-});
-
-router.get("/login", isLoggedIn("login") ,(req, res) => {
- 
-}
-);
+router.get("/login", isLoggedIn("login"), (req, res) => {});
 
 router.get("/forgotPassword", (req, res) => {
   res.sendFile(
@@ -44,32 +39,31 @@ router.get("/verifyEmail", (req, res) => {
 });
 
 //Admin send Notifications
-router.get("/admin/sendNotifications",isAdmin,(req, res) => {
+router.get("/admin/sendNotifications", isAdmin, (req, res) => {
   res.sendFile(
     path.join(__dirname, "../../client/html", "sendNotifications.html")
   );
 });
 
 //Admin view Notifications
-router.get("/admin/viewNotifications",isAdmin,(req, res) => {
+router.get("/admin/viewNotifications", isAdmin, (req, res) => {
   res.sendFile(
     path.join(__dirname, "../../client/html", "viewNotificationsAdmin.html")
   );
-}
-);
-
-//Admin Dashboard
-router.get("/admin", isAdmin ,(req, res) => {
-  res.sendFile(path.join(__dirname, "../../client/html", "adminDashboard.html"));
 });
 
+//Admin Dashboard
+router.get("/admin", isAdmin, (req, res) => {
+  res.sendFile(
+    path.join(__dirname, "../../client/html", "adminDashboard.html")
+  );
+});
 
-
-router.get("/admin/notificationhistory", isAdmin ,(req, res) => {
-  res.sendFile(path.join(__dirname, "../../client/html", "notificationHistory.html"));
-}
-);
-
+router.get("/admin/notificationhistory", isAdmin, (req, res) => {
+  res.sendFile(
+    path.join(__dirname, "../../client/html", "notificationHistory.html")
+  );
+});
 
 //User Dashboard
 router.get("/user", isUser, (req, res) => {
@@ -109,12 +103,11 @@ router.get("/user/safetyResources", (req, res) => {
 });
 
 //View notifications
-router.get("/user/viewNotifications", isUser ,(req, res) => {
+router.get("/user/viewNotifications", isUser, (req, res) => {
   res.sendFile(
     path.join(__dirname, "../../client/html", "viewNotifications.html")
   );
-}
-);
+});
 
 router.get("/admin/viewSafetyResources", (req, res) => {
   res.sendFile(
@@ -128,16 +121,18 @@ router.get("/admin/updateSafetyResources", (req, res) => {
   );
 });
 
-router.get("/profileManagement", authMiddleware ,(req, res) => {
+router.get("/profileManagement", authMiddleware, (req, res) => {
   res.sendFile(
     path.join(__dirname, "../../client/html", "profileManagement.html")
   );
 });
 
 router.get("/panic", (req, res) => {
-  res.sendFile(
-    path.join(__dirname, "../../client/html", "panicButton.html")
-  );
+  res.sendFile(path.join(__dirname, "../../client/html", "panicButton.html"));
+});
+
+router.get("/user/locationServices", (req, res) => {
+  res.sendFile(path.join(__dirname, "../../client/html", "mapServices.html"));
 });
 
 module.exports = router;

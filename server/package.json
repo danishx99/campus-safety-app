@@ -4,7 +4,7 @@
   "main": "app.js",
   "scripts": {
     "test": "jest",
-    "start": "npm i && cd .. && nodemon app.js"
+    "startApp": "npm i && cd .. && nodemon app.js"
   },
   "keywords": [],
   "author": "",
@@ -29,6 +29,7 @@
     "jsonwebtoken": "^9.0.2",
     "mongodb": "^6.8.0",
     "mongoose": "^8.5.3",
+    "nodemon": "^3.1.4",
     "nodemailer": "^6.9.15"
   }
 }

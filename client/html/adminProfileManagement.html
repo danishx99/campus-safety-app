@@ -1,16 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Profile Management</title>
+    <link rel="icon" type="image/svg+xml" href="../../assets/logo.png" />
+    <link href="../styles/output.css" rel="stylesheet" />
+    <link href="../styles/styles.css" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Generate Code</title>
-  <link rel="icon" type="image/svg+xml" href="../../assets/logo.png" />
-  <link href="../styles/output.css" rel="stylesheet" />
-  <link href="../styles/styles.css" rel="stylesheet" />
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="../javascript/loadComponents.js" defer></script>
-  <!--Awsome notifications-->
+    <!--Awsome notifications-->
   <script src="../javascript/index.var.js"></script>
   <link rel="stylesheet" href="../styles/style.css">
 
@@ -241,49 +240,160 @@
           </a>
         </nav>
       </div>
-      <main class="flex items-center justify-center flex-1 w-full px-4 py-8">
-        <div class="border text-card-foreground w-full max-w-lg p-6 space-y-4 bg-white rounded-lg shadow-md"
-          data-v0-t="card">
 
-          <div class="alert-box" id="alert" role="alert"></div>
-
-          <div class="flex flex-col space-y-1.5 pb-1 pt-6">
-            <h3 class="whitespace-nowrap text-3xl font-semibold leading-none tracking-tight text-center">Generate Code
-            </h3>
-          </div>
-          <div class="p-2 space-y-7">
-            <section id="form-p2" class="p-2 space-y-6">
-
-              <p>Click here to generate an Admin Code</p>
-
-              <!-- <label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70" for="code">Code</label> -->
-              <div id="codeD" class="flex justify-between ">
-                <input type="text" placeholder="Code"
-                  class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2  text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                  id="genCode" name="code" readonly>
-                <img src="../assets/copy.png" alt="copy" id="copyCode"
-                  class=" ml-5 mt-2 cursor-pointer text-gray-400 hover:text-gray-600 w-6 h-6">
+      <main class="flex-1 p-6 overflow-auto flex items-center justify-center">
+        <div class="w-full max-w-2xl h-full">
+          <div
+            class="bg-[#015EB8] text-white rounded-t-lg p-4 flex items-center space-x-4 relative border border-gray-200"
+          >
+            <div class="relative">
+              <img
+                id="avatar"
+                src="../assets/user-profile.png"
+                alt="User Profile"
+                class="w-20 h-20 rounded-full border-2 border-white"
+              />
+              <button
+                id="cameraButton"
+                class="absolute bottom-0 right-0 bg-white text-[#015EB8] rounded-full p-2 hidden hover:bg-gray-200 transition-colors duration-200"
+              >
+                <img
+                  src="../assets/add_a_photo.png"
+                  alt="Add photo"
+                  class="h-4 w-4"
+                />
+              </button>
+              <input
+                type="file"
+                id="fileInput"
+                class="hidden"
+                accept="image/*"
+              />
+            </div>
+            <div class="flex flex-col items-start">
+              <h1 class="text-2xl" id="profileName">First Last</h1>
+              <div class="flex items-center space-x-2 mt-1">
+                <p
+                  class="text-xs border border-white rounded-full px-2 py-0.5 hover:bg-white hover:text-[#015EB8] transition-colors duration-200"
+                  id="profileRole"
+                >
+                  Admin
+                </p>
               </div>
-
-              <div class="flex justify-center">
-                <button
-                  class="inline-flex items-center justify-center whitespace-nowrap rounded-3xl hover:bg-blue-500 text-sm text-white font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 w-72 bg-[#015EB8]"
-                  id="generate-code-btn">
-                  Generate Code
-                  <div id="loader" class="m-2 p-2 hidden"></div>
-                </button>
-            </section>
+            </div>
           </div>
+          <div
+            class="p-4 bg-white rounded-b-lg flex-grow border border-gray-200 border-t-0"
+          >
+            <form id="profileForm" class="grid gap-4">
+              <div
+                id="messageContainer"
+                class="hidden mb-4 p-4 rounded-md text-sm font-medium"
+              ></div>
+              <div class="grid gap-2">
+                <label for="email" class="font-semibold">Email</label>
+                <input
+                  type="email"
+                  id="email"
+                  class="border p-2 rounded bg-blue-100 cursor-not-allowed"
+                  readonly
+                />
+              </div>
+              <div class="grid gap-2">
+                <label for="cellphone" class="font-semibold"
+                  >Cellphone Number</label
+                >
+                <input
+                  type="text"
+                  id="cellphone"
+                  class="border p-2 rounded-md bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  disabled
+                  placeholder="Enter your new cellphone number"
+                />
+              </div>
+              <div id="editFields" class="hidden">
+                <div class="grid gap-2">
+                  <label for="password" class="font-semibold"
+                    >New Password</label
+                  >
+                  <div class="relative">
+                    <input
+                      type="password"
+                      id="password"
+                      class="border p-2 rounded-md bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 w-full"
+                      placeholder="Enter new password"
+                    />
+                    <button
+                      type="button"
+                      id="togglePassword"
+                      class="absolute inset-y-0 right-0 pr-3 flex items-center"
+                    >
+                      <img
+                        src="../assets/eye-close.png"
+                        alt="Toggle password visibility"
+                        class="h-5 w-5"
+                      />
+                    </button>
+                  </div>
+                </div>
+                <div class="grid gap-2">
+                  <label for="confirmPassword" class="font-semibold"
+                    >Confirm Password</label
+                  >
+                  <div class="relative">
+                    <input
+                      type="password"
+                      id="confirmPassword"
+                      class="border p-2 rounded-md bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 w-full"
+                      placeholder="Confirm new password"
+                    />
+                    <button
+                      type="button"
+                      id="toggleConfirmPassword"
+                      class="absolute inset-y-0 right-0 pr-3 flex items-center"
+                    >
+                      <img
+                        src="../assets/eye-close.png"
+                        alt="Toggle password visibility"
+                        class="h-5 w-5"
+                      />
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <div class="grid gap-2">
+                <label class="font-semibold">Date Joined</label>
+                <input
+                  type="text"
+                  value="2024-09-06"
+                  class="border p-2 rounded bg-blue-100 cursor-not-allowed"
+                  readonly
+                />
+              </div>
+              <button
+                type="button"
+                class="bg-[#015EB8] text-white p-2 rounded w-full hover:bg-[#014C93]"
+                id="submitButton"
+              >
+                Edit Profile
+              </button>
+            </form>
+            <a href="/auth/logout" id="logoutButton">
+            <button
+              class="mt-4 bg-red-600 text-white p-2 rounded w-full hover:bg-red-700 transition-colors duration-200 md:hidden"
+            >
+              Logout
+            </button>
+            </a>
+          </div>
+        </div>
       </main>
     </div>
     <footer class="bg-[#015EB8] text-white p-4 text-center">
       <p>&copy; 2024 Campus Safety App. All rights reserved.</p>
     </footer>
+  </body>
 
-  </div>
-</body>
-
-<script src="../javascript/adminGenerateCode.js"></script>
-<script src="../javascript/headerFunctionality.js"></script>
-
+  <script src="../javascript/profileManagement.js"></script>
+  <script src="../javascript/headerFunctionality.js"></script>
 </html>

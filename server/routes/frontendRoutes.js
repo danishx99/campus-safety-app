@@ -77,20 +77,20 @@ router.get("/user/reportIncident", (req, res) => {
   );
 });
 
-router.get("/admin/viewIncidents", (req, res) => {
+router.get("/admin/viewIncidents", isAdmin, (req, res) => {
   res.sendFile(
     path.join(__dirname, "../../client/html", "adminIncidentReporting.html")
   );
 });
 
-router.get("/admin/generateCode", (req, res) => {
+router.get("/admin/generateCode", isAdmin, (req, res) => {
   res.sendFile(
     path.join(__dirname, "../../client/html", "adminGenerateCode.html")
   );
 });
 
 //Safety Resources
-router.get("/admin/safetyResources", (req, res) => {
+router.get("/admin/safetyResources", isAdmin, (req, res) => {
   res.sendFile(
     path.join(__dirname, "../../client/html", "adminSafetyResources.html")
   );
@@ -109,21 +109,26 @@ router.get("/user/viewNotifications", isUser, (req, res) => {
   );
 });
 
-router.get("/admin/viewSafetyResources", (req, res) => {
+router.get("/admin/viewSafetyResources", isAdmin, (req, res) => {
   res.sendFile(
     path.join(__dirname, "../../client/html", "adminSafetyResources2.html")
   );
 });
 
-router.get("/admin/updateSafetyResources", (req, res) => {
+router.get("/admin/updateSafetyResources", isAdmin, (req, res) => {
   res.sendFile(
     path.join(__dirname, "../../client/html", "adminSafetyResources3.html")
   );
 });
 
-router.get("/profileManagement", authMiddleware, (req, res) => {
+router.get("/admin/profileManagement", isAdmin, authMiddleware, (req, res) => {
   res.sendFile(
-    path.join(__dirname, "../../client/html", "profileManagement.html")
+    path.join(__dirname, "../../client/html", "adminProfileManagement.html")
+  );
+});
+router.get("/user/profileManagement", authMiddleware, (req, res) => {
+  res.sendFile(
+    path.join(__dirname, "../../client/html", "userProfileManagement.html")
   );
 });
 
@@ -131,7 +136,7 @@ router.get("/panic", (req, res) => {
   res.sendFile(path.join(__dirname, "../../client/html", "panicButton.html"));
 });
 
-router.get("/user/locationServices", (req, res) => {
+router.get("/user/campusNavigation", (req, res) => {
   res.sendFile(path.join(__dirname, "../../client/html", "mapServices.html"));
 });
 

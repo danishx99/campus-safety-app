@@ -5,6 +5,8 @@ document.addEventListener("DOMContentLoaded", () => {
   submitButton.addEventListener("click", async (event) => {
     event.preventDefault(); // Prevent the default form submission
 
+    console.log("Submitting incident clicked");
+
     // Get form data
     const title = document.getElementById("title").value;
     const incidentType = document.getElementById("incidentType").value;
@@ -66,17 +68,14 @@ document.addEventListener("DOMContentLoaded", () => {
     loader.style.display = "block";
 
     try {
-      const response = await fetch(
-        "/incidentReporting/reportIncident",
-        {
-          method: "POST",
-          body: JSON.stringify(data),
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      const response = await fetch("/incidentReporting/reportIncident", {
+        method: "POST",
+        body: JSON.stringify(data),
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      });
 
       // Hide loader
       loader.style.display = "none";

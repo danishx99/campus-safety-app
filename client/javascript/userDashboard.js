@@ -107,7 +107,7 @@ document.addEventListener("DOMContentLoaded", function(){
                     window.location.href = '/user/viewNotifications';
                     break;
                 case 'location-services-card':
-                    window.location.href = '/user/locationServices';
+                    window.location.href = '/user/campusNavigation';
                     break;
                 case 'safety-resources-card':
                     window.location.href = '/user/safetyResources';

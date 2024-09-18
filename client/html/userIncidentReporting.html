@@ -89,11 +89,8 @@
         // notifier.success('Success message', {durations: {success: 10000}})
         //notifier.success("Accept states cannot have outgoing edges. Remove any outgoing edges from this state first.", { durations: { info: 10000 }, labels: { success: "Oops!" } });
 
-
-
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
         import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-messaging.js";
-
 
         const firebaseConfig = {
             apiKey: "AIzaSyBA-red8RszDmGY3YGELrunZQxFmg7r04Y",
@@ -131,7 +128,6 @@
             const notificationTitle = payload.notification.title;
             const notificationBody = payload.notification.body;
 
-
             let detailedMessage = notificationBody;  // Base notification body
 
             // Customize the message based on the notificationType with HTML tags for emphasis
@@ -154,7 +150,7 @@
 
     </script>
 
-    <div id="header-placeholder">
+    <div id="">
         <header class="bg-[#015EB8] text-white p-4 flex justify-between items-center">
             <div class="flex items-center">
                 <a href="/user"><img src="../assets/logo.png" alt="Campus Safety Logo" class="h-8 mr-2"></a>
@@ -212,8 +208,6 @@
         <div class="modal-content">
             <span class="close" id="closeModalBtn">&times;</span>
 
-
-
             <h2 class="text-center text-2xl font-bold mb-4 text-red-700">Emergency Alert</h2>
             <h3 class="text-center text-lg font-semibold mb-6">Send an SOS alert to Campus Control. Your live location
                 will be shared.</h3>
@@ -248,7 +242,7 @@
     </div>
 
     <div class="flex flex-1">
-        <div id="navbar-placeholder">
+        <div id="">
             <nav class="hidden h-full md:flex bg-white w-64 p-4 flex-col shadow-md">
                 <ul class="flex-1 space-y-2">
                     <li>
@@ -329,11 +323,11 @@
                 <h3 class="text-center text-lg font-semibold mb-4 max-sm:text-sm">Report Incidents on campus for prompt
                     responses</h3>
 
-                <div class="alert-box mb-4" id="alert" role="alert">Test Error</div>
+                <div class="alert-box mb-4" id="incidentAlert" role="alert">Test Error</div>
 
                 <form id="incidentForm" class="flex flex-col px-8 max-sm:px-4" action="">
 
-                    <input id="title" class="p-2 rounded-xl mb-4 text-black max-sm:text-sm" type="text"
+                    <input id="incidentTitle" class="p-2 rounded-xl mb-4 text-black max-sm:text-sm" type="text"
                         placeholder="Title">
 
                     <select class="p-2 rounded-xl mb-4 bg-white max-sm:text-sm" name="incidentType" id="incidentType">
@@ -351,13 +345,13 @@
                     </div>
 
                     <textarea class="p-2 rounded-lg mb-4 text-black max-sm:text-sm" placeholder="Description" rows="5"
-                        id="description"></textarea>
+                        id="incidentDesc"></textarea>
 
 
                     <div class="bg-white mb-4 p-2 rounded-lg flex justify-between items-center max-sm:text-sm">
                         <div class="flex w-full items-center">
                             <label class="text-black whitespace-nowrap" for="location">Set Location:</label>
-                            <input class="ml-2 rounded-lg text-black w-full" type="text" id="location"
+                            <input class="ml-2 rounded-lg text-black w-full" type="text" id="incidentLocation"
                                 placeholder="Select Location" readonly>
                         </div>
                         <img id="showMap" onclick="toggleMap()" class="w-5 h-5 mr-3 cursor-pointer"
@@ -397,7 +391,9 @@
             </div>
         </main>
     </div>
-    <div id="footer-placeholder"></div>
+    <footer class="bg-[#015EB8] text-white p-4 text-center">
+        <p>&copy; 2024 Campus Safety App. All rights reserved.</p>
+    </footer>
 
     <script>
         let mapInitialized = false;
@@ -431,12 +427,12 @@
             });
 
             google.maps.event.addListener(marker, 'dragend', function (event) {
-                document.getElementById('location').value = event.latLng.lat() + ', ' + event.latLng.lng();
+                document.getElementById('incidentLocation').value = event.latLng.lat() + ', ' + event.latLng.lng();
             });
 
             google.maps.event.addListener(map, 'click', function (event) {
                 marker.setPosition(event.latLng);
-                document.getElementById('location').value = event.latLng.lat() + ', ' + event.latLng.lng();
+                document.getElementById('incidentLocation').value = event.latLng.lat() + ', ' + event.latLng.lng();
             });
 
             // When the map tiles are fully loaded, hide the loader
@@ -488,9 +484,7 @@
     <script src="../javascript/headerFunctionality.js" defer></script>
 
 </body>
-<footer class="bg-[#015EB8] text-white p-4 text-center">
-    <p>&copy; 2024 Campus Safety App. All rights reserved.</p>
-</footer>
+
 
 
 </html>

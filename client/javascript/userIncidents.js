@@ -8,21 +8,26 @@ document.addEventListener("DOMContentLoaded", () => {
     console.log("Submitting incident clicked");
 
     // Get form data
-    const title = document.getElementById("title").value;
+    const title = document.getElementById("incidentTitle").value;
     const incidentType = document.getElementById("incidentType").value;
     const imageFile = document.getElementById("imageUpload").files[0];
-    const description = document.getElementById("description").value;
-    const location = document.getElementById("location").value;
+    const description = document.getElementById("incidentDesc").value;
+    const location = document.getElementById("incidentLocation").value;
     const dateTime = document.getElementById("incidentDateTime").value;
 
-    const alert = document.getElementById("alert");
+    const alert = document.getElementById("incidentAlert");
     alert.style.display = "none";
     //make the alert message red
     alert.classList.add("bg-red-100");
     alert.classList.add("text-red-500");
     alert.classList.add("border-red-300");
+    alert.classList.remove("bg-green-100");
+    alert.classList.remove("text-green-500");
+    alert.classList.remove("border-green-300");
 
     const loader = document.getElementById("submitLoader");
+
+    console.log(title, incidentType, description, location, dateTime);
 
     // Validate the form data
     if (!title || !incidentType || !description || !location || !dateTime) {

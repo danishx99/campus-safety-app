@@ -164,7 +164,7 @@ document.getElementById('submitAlert').addEventListener('click', function (event
           };
 
           // Send POST request with the alert data
-          fetch('emergency/sendPanic', {
+          fetch('/emergency/sendPanic', {
               method: 'POST',
               headers: {
                   'Content-Type': 'application/json'
@@ -173,7 +173,7 @@ document.getElementById('submitAlert').addEventListener('click', function (event
           })
           .then(response => response.json())
           .then(data => {
-              console.log('Success:', data);
+              console.log(data);
               if (data.message === "Emergency alert sent successfully") {
                   alert.style.display = "block";
                   alert.innerText = "Emergency alert sent successfully";
@@ -181,8 +181,8 @@ document.getElementById('submitAlert').addEventListener('click', function (event
                   alert.style.backgroundColor = '#ddffdd';
                   alert.style.border = 'green';
                   // Redirect to panic page after success
-                  //window.location.href = "/user/emergencyAlerts";
-              } else {
+                  window.location.href = "/user/emergencyAlerts";
+              } else if(data.error === "Error sending emergency alert") {
                   alert.style.display = "block";
                   alert.innerText = "Error sending emergency alert";
               }

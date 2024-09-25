@@ -37,7 +37,7 @@ exports.sendPanic = async (req, res) => {
         fcmTokens = users.map(user => user.FCMtoken);
 
          //Send notification
-         await _sendNotification(fcmTokens, "Emergency Alert", "Emergency Alert received from "+ email, { notificationType: "emergency-alert", sender: email, senderLocation: location, recipient: "admin"});
+         await _sendNotification(fcmTokens, "Emergency Alert", "", { notificationType: "emergency-alert", sender: email, senderLocation: location, recipient: "admin"});
 
         res.status(200).json({
         message: "Emergency alert sent successfully",

@@ -58,6 +58,66 @@
                 transform: rotate(360deg);
             }
         }
+
+        .chat-container {
+            width: 800px;
+            height: 500px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            background-color: #b2c0ce2c;
+        }
+        .chat-messages {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 10px;
+        }
+        .message {
+            max-width: 80%;
+            margin-bottom: 10px;
+            padding: 8px 12px;
+            border-radius: 18px;
+            line-height: 1.4;
+        }
+        .user-message {
+            background-color: #015EB8;
+            color: white;
+            align-self: flex-end;
+            margin-left: auto;
+        }
+        .admin-message {
+            background-color: #ffffff;
+            color: black;
+            align-self: flex-start;
+        }
+        .chat-input {
+            display: flex;
+            padding: 10px;
+            background-color: #b2c0ce2c;
+            border-top: 1px solid #015EB8;
+        }
+        .chat-input input {
+            flex-grow: 1;
+            border: none;
+            padding: 10px;
+            border-radius: 20px;
+            margin-right: 10px;
+        }
+        .chat-input button {
+            background-color: #015EB8;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        .char-count {
+            color: #015EB8;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+        
     </style>
 </head>
 
@@ -137,7 +197,7 @@
 
     </script>
 
-    <header class="bg-red-700 text-white p-4 flex justify-between items-center">
+    <header class="bg-[#015EB8] text-white p-4 flex justify-between items-center">
         <div class="flex items-center">
             <a href="/user"><img src="../assets/logo.png" alt="Campus Safety Logo" class="h-8 mr-2"></a>
             <a href="/user" class="text-xl font-semibold md:block">Campus Safety</a>
@@ -305,6 +365,7 @@
         </div>
 
         <!-- Main Content -->
+         
         <main class="flex-1 p-6 overflow-auto">
             <div class="flex flex-col bg-gray-200 rounded-lg border border-gray-400 p-4 mx-20 max-sm:mx-0">
                 <h2 class="text-center text-2xl font-bold mb-2 max-sm:text-xl">Emergency Alerts</h2>
@@ -312,15 +373,45 @@
                     alert has been received, Campus Protection Services is on the way to your location</h3>
 
                 <div class="alert-box mb-4" id="incidentAlert" role="alert">Test Error</div>
+                
+
+                <!-- Feeback -->
+                 <div>
+                    
+                 </div>
+
+                <!-- Chat box -->
+                <div class="chat-container hidden">
+                    <div class="chat-messages" id="chatMessages">
+                        <div class="message admin-message">
+                            Welcome to the Emergency Chat. How can I assist you?
+                        </div>
+                        <div class="message user-message">
+                            There's a fire in my building. What should I do?
+                        </div>
+                        <div class="message admin-message">
+                            Stay calm. Evacuate immediately using the nearest exit. Do not use elevators. Call 911 if you haven't already.
+                        </div>
+                    </div>
+                    <div class="chat-input">
+                        <input type="text" id="messageInput" placeholder="Type a message..." aria-label="Type a message">
+                        <button id="sendButton" aria-label="Send message">
+                            ➤
+                        </button>
+                    </div>
+                    <div class="char-count">200 characters remaining</div>
+                </div>
+
             </div>
         </main>
 
     </div>
-    <footer class="bg-red-700 text-white p-4 text-center">
+    <footer class="bg-[#015EB8] text-white p-4 text-center">
         <p>&copy; 2024 Campus Safety App. All rights reserved.</p>
     </footer>
 
     <script src="../javascript/headerFunctionality.js"></script>
+    <script src="../javascript/userEmergencyAlerts.js"></script>
 
 </body>
 

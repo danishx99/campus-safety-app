@@ -17,6 +17,7 @@ const adminRoutes = require("./server/routes/adminRoutes.js");
 const userRoutes = require("./server/routes/userRoutes.js");
 const profileRoutes = require("./server/routes/profileRoutes.js");
 const incidentReportingRoutes = require("./server/routes/incidentReportingRoutes.js");
+const emergencyAlertRoutes = require("./server/routes/emergencyAlertRoutes.js");
 const notificationRoutes = require("./server/routes/notificationRoutes.js");
 
 // Load environment variables from .env file
@@ -37,6 +38,7 @@ app.use("/auth", authRoutes);
 app.use("/admin", adminRoutes);
 app.use("/profile", profileRoutes);
 app.use("/incidentReporting", incidentReportingRoutes);
+app.use("/emergency", emergencyAlertRoutes);
 app.use("/user", userRoutes);
 app.use("/notifications", notificationRoutes);
 

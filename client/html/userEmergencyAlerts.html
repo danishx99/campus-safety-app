@@ -250,14 +250,13 @@
 
     <!-- PANIC MODAL -->
     <div id="panicModal" class="modal hidden">
+        <div class="alert-box mb-4" id="alert" role="alert">Test Error</div>
         <div class="modal-content">
             <span class="close" id="closeModalBtn">&times;</span>
 
             <h2 class="text-center text-2xl font-bold mb-4 text-red-700">Emergency Alert</h2>
             <h3 class="text-center text-lg font-semibold mb-6">Send an SOS alert to Campus Control. Your live location
                 will be shared.</h3>
-
-            <div class="alert-box mb-4" id="alert" role="alert">Test Error</div>
 
             <form id="alertForm" class="flex flex-col px-6 py-4">
                 <input id="title"
@@ -367,7 +366,7 @@
         <!-- Main Content -->
          
         <main class="flex-1 p-6 overflow-auto">
-            <div class="flex flex-col bg-gray-200 rounded-lg border border-gray-400 p-4 mx-20 max-sm:mx-0">
+            <div class="flex flex-col bg-white rounded-lg border border-gray-400 p-4 mx-20 max-sm:mx-0">
                 <h2 class="text-center text-2xl font-bold mb-2 max-sm:text-xl">Emergency Alerts</h2>
                 <h3 class="text-center text-lg font-semibold mb-4 max-sm:text-sm">Your
                     alert has been received, Campus Protection Services is on the way to your location</h3>
@@ -376,31 +375,48 @@
                 
 
                 <!-- Feeback -->
-                 <div>
-                    
+                 <div class="mb-5">
+                    <div class="flex flex-col bg-white rounded-lg border border-gray-400 p-4 mx-20 max-sm:mx-0">
+                    <h2 class="text-xl mb-4 ml-20"> <span class="text-xl font-bold mb-4">Admin</span> : Your alert has been received,
+                        <span class="text-xl font-bold mb-4">Campus Protection Services</span>  is on the way</h2>
+                    <!-- <div class="bg-[#da6200] rounded-full py-6 px-8 text-center flex items-center w-full max-w-4xl space-x-4">
+                        In Progress
+                    </div> -->
+                    <div class="flex justify-around">
+                        <p class="bg-[#E3E5E9] rounded-full flex items-center justify-center font-bold text-[#da6200] w-40 max-w-40">
+                            Received
+                        </p>
+                        <button id="chatBtn" class="inline-flex items-center justify-center whitespace-nowrap rounded-3xl hover:bg-blue-500 text-sm text-white font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 w-auto bg-[#015EB8]">
+                            Chat to Admin  
+                          </button>
+                    </div>
+                </div>
                  </div>
 
                 <!-- Chat box -->
-                <div class="chat-container hidden">
-                    <div class="chat-messages" id="chatMessages">
-                        <div class="message admin-message">
-                            Welcome to the Emergency Chat. How can I assist you?
+                 <div id="chatbox" class="hidden flex justify-center">
+                    <div class="chat-container ">
+                        <div class="chat-messages" id="chatMessages">
+                            <div class="message admin-message">
+                                Welcome to the Emergency Chat. How can I assist you?
+                            </div>
+                            <div class="message user-message">
+                                There's a fire in my building. What should I do?
+                            </div>
+                            <div class="message admin-message">
+                                Stay calm. Evacuate immediately using the nearest exit. Do not use elevators. Call 911 if you haven't already.
+                            </div>
                         </div>
-                        <div class="message user-message">
-                            There's a fire in my building. What should I do?
+                        <div class="chat-input">
+                            <input type="text" id="messageInput" placeholder="Type a message..." aria-label="Type a message">
+                            <button id="sendButton" aria-label="Send message">
+                                ➤
+                            </button>
                         </div>
-                        <div class="message admin-message">
-                            Stay calm. Evacuate immediately using the nearest exit. Do not use elevators. Call 911 if you haven't already.
-                        </div>
+                        <div class="char-count ml-2">200 characters remaining</div>
                     </div>
-                    <div class="chat-input">
-                        <input type="text" id="messageInput" placeholder="Type a message..." aria-label="Type a message">
-                        <button id="sendButton" aria-label="Send message">
-                            ➤
-                        </button>
-                    </div>
-                    <div class="char-count">200 characters remaining</div>
-                </div>
+                 </div>
+                
 
             </div>
         </main>

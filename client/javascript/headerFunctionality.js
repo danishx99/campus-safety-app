@@ -132,10 +132,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   });
 
-  /* Notification dropdown */
-
-
-  /*Modal */
 
 document.getElementById('panicButton').addEventListener('click', function() {
     document.getElementById('panicModal').classList.remove('hidden');
@@ -145,10 +141,70 @@ document.getElementById('closeModalBtn').addEventListener('click', function() {
     document.getElementById('panicModal').classList.add('hidden');
 });
 
-document.getElementById('submitAlert').addEventListener('click', function() {
-    //redirect to panic page  
-    window.location.href = "/user/emergencyAlerts";
+document.getElementById('submitAlert').addEventListener('click', function (event) {
+  event.preventDefault();
+
+  var alert = document.getElementById('alert');
+  //alert.style.display = "block";
+  //alert.innerText = "An unexpected error occurred. Please try again.";
+  
+  // Get the user's live location
+  if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(function (position) {
+          const userLocation = {
+              latitude: position.coords.latitude, 
+              longitude: position.coords.longitude
+          };
+
+          // Construct the data to send
+          const alertData = {
+              title: document.getElementById('title').value || "",
+              description: document.getElementById('description').value || "",
+              location: JSON.stringify(userLocation)
+          };
+
+          // Send POST request with the alert data
+          fetch('emergency/sendPanic', {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json'
+              },
+              body: JSON.stringify(alertData)
+          })
+          .then(response => response.json())
+          .then(data => {
+              console.log('Success:', data);
+              if (data.message === "Emergency alert sent successfully") {
+                  alert.style.display = "block";
+                  alert.innerText = "Emergency alert sent successfully";
+                  alert.style.color = 'green';
+                  alert.style.backgroundColor = '#ddffdd';
+                  alert.style.border = 'green';
+                  // Redirect to panic page after success
+                  //window.location.href = "/user/emergencyAlerts";
+              } else {
+                  alert.style.display = "block";
+                  alert.innerText = "Error sending emergency alert";
+              }
+          })
+          .catch((error) => {
+              console.error('Error:', error);
+              alert.style.display = "block";
+              alert.innerText = "Error"+error;
+              
+          });
+
+      }, function (error) {
+          console.error("Error fetching location:", error);
+          alert.style.display = "block";
+          alert.innerText = "Unable to retrieve your location.";
+      });
+  } else {
+      alert.style.display = "block";
+      alert.innerText = "Geolocation is not supported by your browser.";
+  }
 });
+
 
 // Optional: Close the modal when clicking outside of the modal content
 window.addEventListener('click', function(event) {
@@ -165,7 +221,8 @@ function showpanicloader(){
 function hidepanicloader(){
     document.getElementById('submitLoader').classList.add('hidden');
 }
-document.getElementById('submitAlert').addEventListener('click', function(event) {
+/*document.getElementById('submitAlert').addEventListener('click', function (event) {
+  console.log("submitAlert clicked");
 
     event.preventDefault();
     showpanicloader();
@@ -175,7 +232,6 @@ document.getElementById('submitAlert').addEventListener('click', function(event)
     const message = document.getElementById('description').value;
 
     if(!title || !message){
-
         var alert = document.getElementById('alert');
         alert.classList.remove('hidden');
         alert.textContent = "Please fill in all fields";
@@ -215,6 +271,8 @@ document.getElementById('submitAlert').addEventListener('click', function(event)
                    var alert = document.getElementById('alert');
                      alert.classList.remove('hidden');
                     alert.textContent = "Emergency alert sent successfully";
+                    // Redirect to panic page after success
+                    window.location.href = "/user/emergencyAlerts";
                     setTimeout(function(){
                         alert.classList.add('hidden');
                     }
@@ -227,7 +285,6 @@ document.getElementById('submitAlert').addEventListener('click', function(event)
                         alert.classList.add('hidden');
                     }
                     , 3000);
-
                 }
                 hidepanicloader();
                 closeToastBtn.style.display = 'inline-block';
@@ -269,7 +326,7 @@ document.getElementById('submitAlert').addEventListener('click', function(event)
 
         hidepanicloader();
     }
-});
+});*/
 
 
 

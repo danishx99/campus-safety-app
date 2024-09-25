@@ -137,7 +137,7 @@
 
     </script>
 
-    <header class="bg-[#015EB8] text-white p-4 flex justify-between items-center">
+    <header class="bg-red-700 text-white p-4 flex justify-between items-center">
         <div class="flex items-center">
             <a href="/user"><img src="../assets/logo.png" alt="Campus Safety Logo" class="h-8 mr-2"></a>
             <a href="/user" class="text-xl font-semibold md:block">Campus Safety</a>
@@ -306,12 +306,17 @@
 
         <!-- Main Content -->
         <main class="flex-1 p-6 overflow-auto">
+            <div class="flex flex-col bg-gray-200 rounded-lg border border-gray-400 p-4 mx-20 max-sm:mx-0">
+                <h2 class="text-center text-2xl font-bold mb-2 max-sm:text-xl">Emergency Alerts</h2>
+                <h3 class="text-center text-lg font-semibold mb-4 max-sm:text-sm">Your
+                    alert has been received, Campus Protection Services is on the way to your location</h3>
 
-
+                <div class="alert-box mb-4" id="incidentAlert" role="alert">Test Error</div>
+            </div>
         </main>
 
     </div>
-    <footer class="bg-[#015EB8] text-white p-4 text-center">
+    <footer class="bg-red-700 text-white p-4 text-center">
         <p>&copy; 2024 Campus Safety App. All rights reserved.</p>
     </footer>
 

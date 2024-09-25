@@ -78,6 +78,36 @@
                 transform: rotate(360deg);
             }
         }
+
+        .location-buttons {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .direction-step {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            padding: 5px;
+            border-bottom: 1px solid #e5e5e5;
+        }
+
+        .direction-icon {
+            width: 24px;
+            height: 24px;
+            margin-right: 10px;
+            background-size: contain;
+            background-repeat: no-repeat;
+        }
+
+        .direction-text {
+            flex: 1;
+        }
+
+        .direction-distance {
+            color: #666;
+            font-size: 0.9em;
+        }
     </style>
 </head>
 
@@ -329,14 +359,23 @@
 
             <div class="flex flex-col bg-gray-200 rounded-lg border border-gray-400 p-4 mx-20 max-sm:mx-0">
                 <h2 class="text-center text-2xl font-bold mb-6 max-sm:text-xl">Campus Navigation</h2>
-                <!-- <div class="alert-box mb-4" id="alert" role="alert">Test Error</div> -->
+                <!-- Location buttons -->
+                <div id="locationButtons" class="mb-4 flex flex-wrap justify-center">
+                    <!-- Buttons will be dynamically added here -->
+                </div>
+                
                 <!-- map here -->
                 <div id="map-container" class="relative">
                     <div id="mapLoader" class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
                     </div>
                     <div id="map"></div>
                 </div>
-
+                
+                <!-- Directions panel -->
+                <div id="directionsPanel" class="mt-4 p-4 bg-white rounded-lg shadow">
+                    <h3 class="font-bold mb-2">Directions:</h3>
+                    <div id="directionsContent"></div>
+                </div>
             </div>
         </main>
 
@@ -347,7 +386,17 @@
 
 
     <script>
+        let map, directionsService, directionsRenderer, currentLocationMarker;
         let mapInitialized = false;
+
+        const witsLocations = [
+            { name: "Wits Inter Campus Bus Service", lat: -26.191170236653846, lng: 28.02840292453766 },
+            { name: "The Great Hall", lat: -26.192847775992607, lng: 28.03059294819832 },
+            { name: "Counselling and Careers Development Unit", lat: -26.190934368353346, lng: 28.026815056800842 },
+            { name: "Old Mutual Sports Hall", lat: -26.189605795127147, lng: 28.029293417930603 },
+            { name: "The Matrix", lat: -26.189779088146377, lng: 28.030672073364258 },
+            { name: "Hall 29 (Wits - West Campus)", lat: -26.18655387026529, lng: 28.026176691055298 },
+        ];
 
         function initMap() {
             // Show the loader
@@ -364,7 +413,7 @@
                         initializeMap(userLocation); // Initialize map to current location
                     },
                     function () {
-                        const defaultLocation = { lat: -26.11, lng: 28.01 }; // Fallback location
+                        const defaultLocation = { lat: -26.1929, lng: 28.0305 }; // Wits center 
                         initializeMap(defaultLocation);
                     }
                 );
@@ -376,19 +425,33 @@
         }
 
         function initializeMap(location) {
-            if (mapInitialized) return; // Prevent reinitializing the map
+            if (mapInitialized) return;
 
-            // Initialize Google Map centered at the user's location
-            const map = new google.maps.Map(document.getElementById("map"), {
+            directionsService = new google.maps.DirectionsService();
+            directionsRenderer = new google.maps.DirectionsRenderer();
+
+            map = new google.maps.Map(document.getElementById("map"), {
                 zoom: 16,
                 center: location
             });
 
-            // Add a draggable marker at the user's location
-            const marker = new google.maps.Marker({
+            directionsRenderer.setMap(map);
+
+            currentLocationMarker = new google.maps.Marker({
                 position: location,
                 map: map,
-                draggable: false
+                draggable: false,
+                title: "Your Location"
+            });
+
+            // Create location buttons
+            const locationButtonsContainer = document.getElementById('locationButtons');
+            witsLocations.forEach(loc => {
+                const button = document.createElement('button');
+                button.textContent = loc.name;
+                button.className = 'bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded m-1';
+                button.onclick = () => showDirections(loc);
+                locationButtonsContainer.appendChild(button);
             });
 
             // Hide the loader after the map has finished loading
@@ -396,7 +459,83 @@
                 document.getElementById("mapLoader").style.display = "none";
             });
 
-            mapInitialized = true; // Flag to prevent reinitialization
+            mapInitialized = true;
+        }
+
+        function showDirections(destination) {
+            const start = currentLocationMarker.getPosition();
+            const end = new google.maps.LatLng(destination.lat, destination.lng);
+
+            directionsService.route(
+                {
+                    origin: start,
+                    destination: end,
+                    travelMode: 'WALKING'
+                },
+                function(response, status) {
+                    if (status === 'OK') {
+                        directionsRenderer.setDirections(response);
+                        displayDirections(response);
+                    } else {
+                        window.alert('Directions request failed due to ' + status);
+                    }
+                }
+            );
+        }
+
+        function displayDirections(response) {
+            const directionsPanel = document.getElementById('directionsContent');
+            directionsPanel.innerHTML = '';
+            const route = response.routes[0];
+            const legs = route.legs[0];
+
+            // Add summary
+            const summaryElement = document.createElement('div');
+            summaryElement.innerHTML = `<strong>Total distance:</strong> ${legs.distance.text}<br>
+                                    <strong>Estimated time:</strong> ${legs.duration.text}`;
+            summaryElement.className = 'mb-4 p-2 bg-gray-100 rounded';
+            directionsPanel.appendChild(summaryElement);
+
+            // Add steps
+            legs.steps.forEach((step, index) => {
+                const stepElement = document.createElement('div');
+                stepElement.className = 'direction-step';
+
+                const iconElement = document.createElement('div');
+                iconElement.className = 'direction-icon';
+                iconElement.style.backgroundImage = `url(${getDirectionIcon(step.maneuver)})`;
+
+                const textElement = document.createElement('div');
+                textElement.className = 'direction-text';
+                textElement.innerHTML = step.instructions;
+
+                const distanceElement = document.createElement('div');
+                distanceElement.className = 'direction-distance';
+                distanceElement.textContent = step.distance.text;
+
+                stepElement.appendChild(iconElement);
+                stepElement.appendChild(textElement);
+                stepElement.appendChild(distanceElement);
+
+                directionsPanel.appendChild(stepElement);
+            });
+        }
+
+        function getDirectionIcon(maneuver) {
+            switch (maneuver) {
+                case 'turn-right':
+                    return '../assets/turn_right.png';
+                case 'turn-left':
+                    return '../assets/turn_left.png';
+                case 'roundabout-left':
+                    return '../assets/roundabout_left.png';
+                case 'roundabout-right':
+                    return '../assets/roundabout_right.png';
+                case 'straight':
+                    return '../assets/straight.png';
+                default:
+                    return '../assets/directions_walk.png';
+            }
         }
 
         // Initialize the map on page load

@@ -126,7 +126,7 @@ document.addEventListener("DOMContentLoaded", function(){
     notificationsCard.addEventListener("click", function(event){
         event.preventDefault();
 
-        window.location.href="/user/viewNotifications";
+        window.location.href="/user/emergencyAlerts";
     });
 
     locationCard.addEventListener("click", function(event){

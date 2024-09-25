@@ -130,7 +130,7 @@
             </a>
         </div>
     </header>
-    
+
     <div class="flex flex-1">
         <div id="">
             <!-- Desktop Navigation -->
@@ -226,6 +226,19 @@
                 <h3 class="text-center text-lg font-semibold mb-4 max-sm:text-sm">Respond to incidents reported by
                     users</h3>
 
+                <!-- Filtering -->
+
+                <div class="flex gap-3 mb-6">
+                    <label>
+                        <input type="checkbox" class="status-filter" value="Pending" > Pending
+                    </label>
+                    <label>
+                        <input type="checkbox" class="status-filter" value="In Progress" > In Progress
+                    </label>
+                    <label>
+                        <input type="checkbox" class="status-filter" value="Resolved"> Resolved
+                    </label>
+                </div>
                 <div class="alert-box" id="alert" role="alert"></div>
 
                 <svg aria-hidden="true"

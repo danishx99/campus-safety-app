@@ -145,6 +145,11 @@ document.getElementById('closeModalBtn').addEventListener('click', function() {
     document.getElementById('panicModal').classList.add('hidden');
 });
 
+document.getElementById('submitAlert').addEventListener('click', function() {
+    //redirect to panic page  
+    window.location.href = "/user/emergencyAlerts";
+});
+
 // Optional: Close the modal when clicking outside of the modal content
 window.addEventListener('click', function(event) {
     if (event.target === document.getElementById('panicModal')) {

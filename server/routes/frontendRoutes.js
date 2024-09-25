@@ -140,4 +140,8 @@ router.get("/user/campusNavigation", (req, res) => {
   res.sendFile(path.join(__dirname, "../../client/html", "mapServices.html"));
 });
 
+router.get("/user/emergencyAlerts", (req, res) =>{
+  res.sendFile(path.join(__dirname, "../../client/html", "userEmergencyAlerts.html"));    
+});
+
 module.exports = router;

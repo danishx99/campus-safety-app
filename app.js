@@ -25,9 +25,10 @@ dotenv.config();
 
 // Middleware
 app.use(cors()); // Enable all CORS requests
-app.use(express.json()); // Automatically parses incoming JSON requests
-app.use(express.urlencoded({ extended: true })); // Parse URL-encoded bodies
+app.use(express.json({ limit: "50mb" }));
+app.use(express.urlencoded({ limit: "50mb", extended: true }));
 app.use(cookieParser()); // Parse cookies
+// Set a larger limit for JSON bodies
 
 // Serve frontend static files from the 'client' directory
 app.use(express.static("client"));
@@ -92,6 +93,5 @@ mongoose
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}`);
 });
-
 
 module.exports = app;

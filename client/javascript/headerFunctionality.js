@@ -164,7 +164,7 @@ document.getElementById('submitAlert').addEventListener('click', function (event
           };
 
           // Send POST request with the alert data
-          fetch('emergency/sendPanic', {
+          fetch('/emergency/sendPanic', {
               method: 'POST',
               headers: {
                   'Content-Type': 'application/json'

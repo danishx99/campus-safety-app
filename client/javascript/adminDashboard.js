@@ -130,6 +130,9 @@ try {
         case "emergency-alerts-card":
           window.location.href = "/admin/emergencyAlerts";
           break;
+        case "upcoming-events-card":
+          window.location.href = "/admin/getUpcomingEvents";
+          break;
       }
     });
   });

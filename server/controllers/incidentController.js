@@ -84,7 +84,7 @@ exports.reportIncident = async (req, res) => {
       date,
     });
 
-    console.log(incident);
+    //console.log(incident);
 
     await incident.save();
     res.status(200).json({ message: "Incident reported successfully" });
@@ -131,5 +131,53 @@ exports.updateIncidentStatus = async (req, res) => {
   } catch (error) {
     console.log(error);
     res.status(500).json({ error: "Error updating incident statuses" });
+  }
+};
+
+exports.getIncidentByUser = async (req, res) => {
+  try {
+    const token = req.cookies.token;
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const email = decoded.userEmail;
+
+    const incidents = await Incident.aggregate([
+      {
+        $match: { reportedBy: email },
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "reportedBy",
+          foreignField: "email",
+          as: "userDetails",
+        },
+      },
+      {
+        $unwind: {
+          path: "$userDetails",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $addFields: {
+          firstName: { $ifNull: ["$userDetails.firstName", "Unknown"] },
+          lastName: { $ifNull: ["$userDetails.lastName", "User"] },
+        },
+      },
+      {
+        $sort: {
+          status: 1,
+          createdAt: -1,
+        },
+      },
+    ]);
+
+    res.status(200).json({
+      message: "Incidents fetched successfully",
+      incidents: incidents,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "Error fetching incidents" });
   }
 };

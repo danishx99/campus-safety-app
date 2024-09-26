@@ -41,7 +41,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // Fetch and display incidents from the server
 async function fetchAndDisplayIncidents() {
-  const errorMessage = document.getElementById("alert");
+  const errorMessage = document.getElementById("pageAlert");
   const loader = document.getElementById("loader");
   const incidentsContainer = document.getElementById("allIncidents");
 
@@ -58,9 +58,15 @@ async function fetchAndDisplayIncidents() {
     loader.style.display = "block";
     incidentsContainer.style.display = "none";
 
-    const response = await fetch("/incidentReporting/getIncidents");
-    const data = await response.json();
-    const incidents = data.incidents;
+    const response = await fetch("/incidentReporting/getIncidentsByUser");
+
+    // Ensure the response is JSON and not HTML or other content
+    const contentType = response.headers.get("content-type");
+    if (!contentType || !contentType.includes("application/json")) {
+      throw new Error("Server did not return valid JSON");
+    }
+
+    const data = await response.json(); // Parse the JSON
 
     if (response.status !== 200) {
       errorMessage.innerText =
@@ -69,6 +75,8 @@ async function fetchAndDisplayIncidents() {
       return;
     }
 
+    const incidents = data.incidents;
+
     // Clear existing content
     incidentsContainer.innerHTML = "";
 
@@ -76,8 +84,6 @@ async function fetchAndDisplayIncidents() {
     if (incidents.length === 0) {
       errorMessage.innerText = "No incidents reported yet";
       errorMessage.classList.add("block");
-      document.getElementById("save").disabled = true;
-      document.getElementById("save").classList.add("cursor-not-allowed");
       return;
     }
 
@@ -107,6 +113,7 @@ async function fetchAndDisplayIncidents() {
     incidentsContainer.style.display = "block";
   }
 }
+
 
 // Add incidents to DOM
 function addIncidentToDOM(incident, index) {

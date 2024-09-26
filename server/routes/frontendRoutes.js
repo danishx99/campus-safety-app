@@ -77,6 +77,13 @@ router.get("/user/reportIncident", (req, res) => {
   );
 });
 
+router.get("/user/viewIncidents", isUser, (req, res) => {
+  res.sendFile(
+    path.join(__dirname, "../../client/html", "userViewIncidents.html")
+  );
+}
+);
+
 router.get("/admin/viewIncidents", isAdmin, (req, res) => {
   res.sendFile(
     path.join(__dirname, "../../client/html", "adminIncidentReporting.html")

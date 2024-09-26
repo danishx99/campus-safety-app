@@ -22,6 +22,10 @@ router.get(
   incidentController.getUserDetails
 );
 
+router.get("/getIncidentByUser",
+  //authMiddleware.verifyToken,
+  incidentController.getIncidentByUser
+);  
 router.put(
   "/updateIncident",
   //authMiddleware.verifyToken,

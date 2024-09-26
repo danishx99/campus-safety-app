@@ -116,6 +116,10 @@ function addIncidentToDOM(incident, index) {
     .split(", ")
     .map((coord) => parseFloat(coord));
 
+  // format the date of this format (2024-09-26T21:17)
+  const date = new Date(incident.date);
+  incident.date = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()} ${date.getHours()}:${date.getMinutes()}`;
+
   const options = ["Pending", "In Progress", "Resolved"];
   const optionsHTML = options
     .map(

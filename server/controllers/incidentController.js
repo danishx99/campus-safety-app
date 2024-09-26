@@ -29,7 +29,7 @@ exports.getIncidents = async (req, res) => {
       {
         $sort: {
           status: 1, // Sort by status
-          createdAt: 1, // Then by createdAt
+          createdAt: -1, // Then by createdAt
         },
       },
     ]);

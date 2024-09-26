@@ -121,6 +121,13 @@ router.get("/admin/updateSafetyResources", isAdmin, (req, res) => {
   );
 });
 
+router.get("/admin/getUpcomingEvents", isAdmin, (req, res) => {
+  res.sendFile(
+    path.join(__dirname, "../../client/html", "adminEvents.html")
+  );
+});
+
+
 router.get("/admin/profileManagement", isAdmin, authMiddleware, (req, res) => {
   res.sendFile(
     path.join(__dirname, "../../client/html", "adminProfileManagement.html")

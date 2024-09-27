@@ -127,33 +127,51 @@
             </nav>
 
             <!-- Mobile Navigation -->
-            <nav
-                class="fixed inset-x-0 bottom-0 bg-[#015EB8] text-white p-4 flex justify-around items-center md:hidden z-50">
-                <a href="/admin/viewIncidents" class="flex flex-col items-center">
-                    <img src="../assets/report-mobile.png" alt="View Incidents" class="h-7 w-7">
-                    <span class="text-xs mt-1">Incidents</span>
-                </a>
-                <a href="/admin/sendNotifications" class="flex flex-col items-center">
-                    <img src="../assets/alert-mobile.png" alt="Send Notifications" class="h-7 w-7">
-                    <span class="text-xs mt-1">Notify</span>
-                </a>
-                <a href="/admin" class="flex flex-col items-center">
-                    <img src="../assets/dashboard-mobile.png" alt="Dashboard" class="h-7 w-7">
-                    <span class="text-xs mt-1">Dashboard</span>
-                </a>
-                <a href="/admin/safetyResources" class="flex flex-col items-center">
-                    <img src="../assets/resources-mobile.png" alt="Safety Resources" class="h-7 w-7">
-                    <span class="text-xs mt-1">Resources</span>
-                </a>
-                <a href="/admin/generateCode" class="flex flex-col items-center">
-                    <img src="../assets/pick-code.png" alt="Generate Code" class="h-7 w-7">
-                    <span class="text-xs mt-1">Gen Code</span>
-                </a>
-                <a href="/admin/emergencyAlerts" class="flex flex-col items-center">
-                    <img src="../assets/caution-white.png" alt="Generate Code" class="h-7 w-7">
-                    <span class="text-xs mt-1">Emergencies</span>
-                </a>
-            </nav>
+        <nav
+        class="fixed inset-x-0 bottom-0 bg-[#015EB8] text-white p-4 flex justify-around items-center md:hidden z-50">
+        <a href="/admin/viewIncidents" class="flex flex-col items-center">
+          <img src="../assets/report-mobile.png" alt="View Incidents" class="h-7 w-7">
+          <span class="text-xs mt-1">Incidents</span>
+        </a>
+        <a href="/admin/sendNotifications" class="flex flex-col items-center">
+          <img src="../assets/alert-mobile.png" alt="Send Notifications" class="h-7 w-7">
+          <span class="text-xs mt-1">Notify</span>
+        </a>
+        <a href="/admin" class="flex flex-col items-center">
+          <img src="../assets/dashboard-mobile.png" alt="Dashboard" class="h-7 w-7">
+          <span class="text-xs mt-1">Dashboard</span>
+        </a>
+        <a href="/admin/emergencyAlerts" class="flex flex-col items-center">
+          <img src="../assets/caution-white.png" alt="Generate Code" class="h-7 w-7">
+          <span class="text-xs mt-1">Emergencies</span>
+      </a>
+        <button id="moreButton" class="flex flex-col items-center">
+          <img src="../assets/menu.png" alt="More" class="h-7 w-7">
+          <span class="text-xs mt-1">More</span>
+      </button>
+    </nav>
+    <!-- More menu (hidden by default) -->
+    <div id="moreMenu" class="fixed inset-0 bg-black bg-opacity-50 flex items-end justify-center md:hidden z-50 hidden transition-all duration-300 ease-in-out">
+      <div class="bg-white w-full max-w-md rounded-t-xl shadow-lg transform translate-y-full transition-transform duration-300 ease-in-out">
+        <div class="py-2">
+          <a href="/admin/generateCode" class="flex items-center px-4 py-3 hover:bg-gray-100 transition-colors duration-200">
+            <img src="../assets/password-entry.png" alt="Generate Code" class="h-7 w-7 mr-3">
+            <span class="text-base font-medium text-gray-700">Generate Code</span>
+          </a>
+          <a href="/admin/safetyResources" class="flex items-center px-4 py-3 hover:bg-gray-100 transition-colors duration-200">
+            <img src="../assets/resources.png" alt="Generate Code" class="h-7 w-7 mr-3">
+            <span class="text-base font-medium text-gray-700">Safety Resources</span>
+          </a>
+          <a href="/admin/getUpcomingEvents" class="flex items-center px-4 py-3 hover:bg-gray-100 transition-colors duration-200">
+            <img src="../assets/calendar.png" alt="Get Upcoming Events" class="h-7 w-7 mr-3">
+            <span class="text-base font-medium text-gray-700">Get Upcoming Events</span>
+          </a>
+        </div>
+        <button id="closeMoreMenu" class="w-full p-3 text-center text-white font-medium bg-[#015EB8] hover:bg-[#014c93] transition-colors duration-200">
+          Close
+        </button>
+      </div>
+    </div>
         </div>
 
         <!-- Main Content -->
@@ -269,9 +287,10 @@
         <p>&copy; 2024 Campus Safety App. All rights reserved.</p>
     </footer>
 
-    <script src="../javascript/headerFunctionality.js"></script>
 </body>
 
 <script src="../javascript/adminGetEvents.js"></script>
+<script src="../javascript/headerFunctionality.js"></script>
+<script src="../javascript/navbarFunctionality.js"></script>
 
 </html>

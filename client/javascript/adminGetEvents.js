@@ -9,11 +9,6 @@ document.addEventListener("DOMContentLoaded", ()=> {
         const loader = document.getElementById("loader");
         const incidentsContainer = document.getElementById("allEvents");
     
-        // // Get the currently checked statuses
-        // const checkedStatuses = Array.from(
-        // document.querySelectorAll(".status-filter:checked")
-        // ).map((checkbox) => checkbox.value);
-    
         // Hide error message
         errorMessage.classList.remove("block");
     
@@ -24,7 +19,7 @@ document.addEventListener("DOMContentLoaded", ()=> {
         loader.style.display = "block";
         incidentsContainer.style.display = "none";
     
-        const response = await fetch("https://eventsapi3a.azurewebsites.net/api/events");
+        const response = await fetch("https://eventsapi3a.azurewebsites.net/api/events/upcoming-events");
         const data = await response.json();
         const events = data.data;       // receive list of upcoming events - this is specific to events groups API
 
@@ -40,13 +35,12 @@ document.addEventListener("DOMContentLoaded", ()=> {
     
         // Clear existing content
         incidentsContainer.innerHTML = "";
+        // console.log(events.length);
     
         // Check if there are no events
         if (events.length === 0) {
             errorMessage.innerText = "No events reported yet";
             errorMessage.classList.add("block");
-            document.getElementById("save").disabled = true;
-            document.getElementById("save").classList.add("cursor-not-allowed");
             return;
         }
 
@@ -68,22 +62,7 @@ document.addEventListener("DOMContentLoaded", ()=> {
 
     // now add events to the DOM 
     function addIncidentToDOM(event, index) {
-        const incidentsContainer = document.getElementById("allEvents");
-    
-        // const [latitude, longitude] = incident.location
-        // .split(", ")
-        // .map((coord) => parseFloat(coord));
-    
-        // const options = ["Pending", "In Progress", "Resolved"];
-        // const optionsHTML = options
-        // .map(
-        //     (option) =>
-        //     `<option value="${option}" ${
-        //         incident.status === option ? "selected" : ""
-        //     }>${option}</option>`
-        // )
-        // .join("");
-    
+        const incidentsContainer = document.getElementById("allEvents");    
         const incidentDiv = document.createElement("div");
         incidentDiv.className = "mb-6";
     
@@ -96,9 +75,13 @@ document.addEventListener("DOMContentLoaded", ()=> {
                 <p class="max-sm:text-xs"> 
                     <span class="font-bold ">
                     ${event.eventAuthor}
-                    </span> reported an incident:
+                    </span> is hosting an event:
                     <span class="font-bold">${event.title}</span>
-                    (${event.date})
+                    (${event.date}) at ${event.location}
+                    <br>
+                    Time: ${event.startTime}
+                    <br>
+                    Max attendees: ${event.maxAttendees}
                 </p>
             
                 </div>
@@ -107,12 +90,18 @@ document.addEventListener("DOMContentLoaded", ()=> {
             <p class="mt-1 text-sm max-sm:text-xs">${event.description}</p>
             </div>
             <div class="flex mt-3 text-sm">
-            <button class="bg-[#015EB8] text-white py-2 px-4 rounded-lg max-sm:text-xs hover:opacity-80 mr-3 max-sm:px-2">
+            <button id="send-announcement-btn" class="bg-[#015EB8] text-white py-2 px-4 rounded-lg max-sm:text-xs hover:opacity-80 mr-3 max-sm:px-2">
                 Send announcement to all users
             </button>
             </div>
         </div>
         `;
         incidentsContainer.appendChild(incidentDiv);
+
+        // Add the onclick listener to the button
+        document.getElementById('send-announcement-btn').onclick = function() {
+            alert('Announcement sent to all users!');
+            // Add your logic to send the announcement here
+};
     }
 })

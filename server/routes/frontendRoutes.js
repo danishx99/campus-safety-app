@@ -112,7 +112,7 @@ router.get("/user/safetyResources", (req, res) => {
 //View notifications
 router.get("/user/viewNotifications", isUser, (req, res) => {
   res.sendFile(
-    path.join(__dirname, "../../client/html", "viewNotifications.html")
+    path.join(__dirname, "../../client/html", "viewNotificationsUser.html")
   );
 });
 
@@ -151,7 +151,7 @@ router.get("/panic", (req, res) => {
 });
 
 router.get("/user/campusNavigation", (req, res) => {
-  res.sendFile(path.join(__dirname, "../../client/html", "mapServices.html"));
+  res.sendFile(path.join(__dirname, "../../client/html", "userMapServices.html"));
 });
 
 router.get("/user/emergencyAlerts", (req, res) =>{

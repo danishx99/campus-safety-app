@@ -85,7 +85,7 @@ exports.sendNotification = async (req, res) => {
 
         if(recipient === 'everyone') {
             // Get all FCM tokens , exlcuding admins
-            const users = await User.find({});
+            const users = await User.find({role: {$ne: 'admin'}});
             fcmTokens = users.map(user => user.FCMtoken);
         }else if(recipient === 'staff') {
             // Get all staff FCM tokens
@@ -99,6 +99,10 @@ exports.sendNotification = async (req, res) => {
             // Get specific user FCM token
             const users = await User.find({role: 'admin'});
             fcmTokens = users.map(user => user.FCMtoken);
+        }else{
+            // Get specific user FCM token
+            const user = await User.findOne({email: recipient});
+            fcmTokens = [user.FCMtoken];
         }
 
         if(fcmTokens.length === 0) {
@@ -125,7 +129,8 @@ exports.getUnreadNotifications = async (req, res) => {
       // Find unread notifications where the recipient is 'admin', sorted by newest first
       notifications = await notification
         .find({ recipient: "admin", read: false })
-        .sort({ createdAt: -1 }); // Sort by createdAt in descending order
+        .sort({ createdAt: -1 }) // Sort by createdAt in descending order
+        .limit(5); // Limit the number of documents returned
     } else if (role === "staff") {
       // Find unread notifications where recipient is 'everyone', 'staff', or the specific user, sorted by newest first
       notifications = await notification
@@ -137,7 +142,8 @@ exports.getUnreadNotifications = async (req, res) => {
           ],
           read: false,
         })
-        .sort({ createdAt: -1 });
+        .sort({ createdAt: -1 })
+        .limit(5);
     } else {
       // Find unread notifications where recipient is 'everyone', 'student', or the specific user, sorted by newest first
       notifications = await notification
@@ -149,7 +155,8 @@ exports.getUnreadNotifications = async (req, res) => {
           ],
           read: false,
         })
-        .sort({ createdAt: -1 });
+        .sort({ createdAt: -1 })
+        .limit(5);
     }
 
     // Send the sorted notifications

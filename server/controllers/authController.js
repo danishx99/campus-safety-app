@@ -115,8 +115,15 @@ exports.login = async (req, res) => {
         user.FCMtoken = FCMtoken;
         await user.save();
         
-        res.cookie("token", token, { httpOnly: true, maxAge });
+        res.cookie("token", token, { httpOnly: true, maxAge, secure: true, sameSite: 'Strict'  });
 
+        //Send the user's role, email address, name and surname to the client as a cookie
+        res.cookie("role", user.role, { maxAge });
+        res.cookie("email", user.email, { maxAge });
+        res.cookie("firstname", user.firstName, { maxAge });
+        res.cookie("lastname", user.lastName, { maxAge });
+
+      
         // Return success
         res.json({ success: true, redirect: user.role });
     } catch (error) {
@@ -201,7 +208,13 @@ exports.googleLogin= async (req,res) =>{
 
     // Set token as an HttpOnly cookie
     const maxAge = rememberMe ? 7 * 24 * 60 * 60 * 1000 : 24 * 60 * 60 * 1000; // 7 days or 24 hours
-    res.cookie("token", token, { httpOnly: true, maxAge });
+    res.cookie("token", token, { httpOnly: true, maxAge, secure: true, sameSite: 'Strict'  });
+
+     //Send the user's role, email address, name and surname to the client as a cookie
+     res.cookie("role", user.role, { maxAge });
+     res.cookie("email", user.email, { maxAge });
+     res.cookie("firstname", user.firstName, { maxAge });
+     res.cookie("lastname", user.lastName, { maxAge });
 
     // Return success
     res.json({ success: true, redirect: user.role });
@@ -450,6 +463,11 @@ exports.resendVerificationEmail = async (req, res) => {
 exports.logout = async (req, res) => {
     try {
         res.clearCookie('token');
+        res.clearCookie('role');
+        res.clearCookie('email');
+        res.clearCookie('firstname');
+        res.clearCookie('lastname');
+        
         res.status(200).redirect("/login");
     } catch (error) {
         console.log("Error logging out user:", error);

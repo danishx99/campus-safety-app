@@ -1,6 +1,13 @@
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("incidentForm");
   const submitButton = document.getElementById("submitIncident");
+  const loader = document.getElementById("saveLoader");
+  const viewPastIncidents = document.getElementById("viewPastIncidents");
+
+  viewPastIncidents.addEventListener("click", async (event) => {
+    event.preventDefault(); // Prevent the default form submission
+    window.location.href = "/user/viewPastIncidents";
+  });
 
   submitButton.addEventListener("click", async (event) => {
     event.preventDefault(); // Prevent the default form submission
@@ -25,9 +32,7 @@ document.addEventListener("DOMContentLoaded", () => {
     alert.classList.remove("text-green-500");
     alert.classList.remove("border-green-300");
 
-    const loader = document.getElementById("submitLoader");
-
-    console.log(title, incidentType, description, location, dateTime);
+    //console.log(title, incidentType, description, location, dateTime);
 
     // Validate the form data
     if (!title || !incidentType || !description || !location || !dateTime) {

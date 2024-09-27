@@ -323,6 +323,14 @@
                 <h3 class="text-center text-lg font-semibold mb-4 max-sm:text-sm">Report Incidents on campus for prompt
                     responses</h3>
 
+                <!-- small button on the right to view past incidents -->
+                <div class="flex justify-end">
+                    <button type="submit" id="viewPastIncidents"
+                        class="bg-[#015EB8] text-white mb-4  sm:w-1/4  flex justify-center items-center py-2 mt-2 px-4 rounded-lg max-sm:text-sm hover:opacity-80">
+                        View Past Reported Incidents
+                    </button>
+                </div>
+
                 <div class="alert-box mb-4" id="incidentAlert" role="alert">Test Error</div>
 
                 <form id="incidentForm" class="flex flex-col px-8 max-sm:px-4" action="">
@@ -377,7 +385,7 @@
                             Save
                             <svg aria-hidden="true"
                                 class="w-4 h-4 ml-2 text-gray-200 animate-spin dark:text-gray-600 fill-[#fbfbfb] hidden"
-                                viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg" id="submitLoader">
+                                viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg" id="saveLoader">
                                 <path
                                     d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
                                     fill="currentColor" />
@@ -391,11 +399,13 @@
             </div>
         </main>
     </div>
+
     <footer class="bg-[#015EB8] text-white p-4 text-center">
         <p>&copy; 2024 Campus Safety App. All rights reserved.</p>
     </footer>
 
     <script>
+
         let mapInitialized = false;
         let mapVisible = false; // Track map visibility
 
@@ -405,10 +415,13 @@
                     lat: position.coords.latitude,
                     lng: position.coords.longitude
                 };
+                //set the location in the input field
+                document.getElementById('incidentLocation').value = currentLocation.lat + ', ' + currentLocation.lng;
                 initializeMap(currentLocation);
             }, function () {
                 var defaultLocation = { lat: -26.11, lng: 28.01 }; // Fallback location
                 initializeMap(defaultLocation);
+
             });
         }
 
@@ -440,12 +453,16 @@
                 var loader = document.getElementById("mapLoader");
                 loader.style.display = "none"; // Hide loader
                 document.getElementById("map").style.display = "block"; // Show map
+
             });
 
             mapInitialized = true; // Set the flag to true after initialization
         }
 
         function toggleMap() {
+
+
+
             var mapDiv = document.getElementById("map");
             var loader = document.getElementById("mapLoader");
 
@@ -467,13 +484,36 @@
 
                     initMap();
                 }
+
                 mapVisible = true;
             }
         }
 
 
         // Initialize the map when the page loads, but keep it hidden
-        window.onload = initMap;
+        window.onload = function () {
+
+            //map
+            initMap();
+
+            //date 
+            // Get the current date and time
+            var now = new Date();
+
+            // Format the date and time to match the datetime-local input format (YYYY-MM-DDTHH:MM)
+            var year = now.getFullYear();
+            var month = ('0' + (now.getMonth() + 1)).slice(-2); // Months are 0-indexed
+            var day = ('0' + now.getDate()).slice(-2);
+            var hours = ('0' + now.getHours()).slice(-2);
+            var minutes = ('0' + now.getMinutes()).slice(-2);
+
+            // Combine to form the desired value
+            var currentDateTime = `${year}-${month}-${day}T${hours}:${minutes}`;
+
+            // Set the value of the datetime-local input to the current date and time
+            document.getElementById('incidentDateTime').value = currentDateTime;
+        };
+
     </script>
 
     <script async

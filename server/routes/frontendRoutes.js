@@ -77,7 +77,7 @@ router.get("/user/reportIncident", (req, res) => {
   );
 });
 
-router.get("/user/viewIncidents", isUser, (req, res) => {
+router.get("/user/viewPastIncidents", isUser, (req, res) => {
   res.sendFile(
     path.join(__dirname, "../../client/html", "userViewIncidents.html")
   );

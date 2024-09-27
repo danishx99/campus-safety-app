@@ -38,6 +38,16 @@
 
 
 <body class="flex flex-col min-h-screen bg-gray-100">
+    <script type="module">
+        import { handleIncomingMessages } from '../javascript/fireBaseMessageHandler.js';
+        
+        // ADMINS ONLY
+        let notifier = new AWN();
+    
+        // Call the handler to manage incoming messages
+        handleIncomingMessages(notifier);
+    </script>
+    
     <div id="header-placeholder">
         <header class="bg-[#015EB8] text-white p-4 flex justify-between items-center">
             <div class="flex items-center">

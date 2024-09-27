@@ -52,58 +52,13 @@
 
 <body class="flex flex-col min-h-screen bg-gray-100">
     <script type="module">
+        import { handleIncomingMessages } from '../javascript/fireBaseMessageHandler.js';
+        
+        // ADMINS ONLY
         let notifier = new AWN();
-
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
-        import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-messaging.js";
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyBA-red8RszDmGY3YGELrunZQxFmg7r04Y",
-            authDomain: "campus-safety-fcm.firebaseapp.com",
-            projectId: "campus-safety-fcm",
-            storageBucket: "campus-safety-fcm.appspot.com",
-            messagingSenderId: "221773083535",
-            appId: "1:221773083535:web:0500a94bbb7a9dd6b891fa",
-            measurementId: "G-8BZHJT3BRY"
-        };
-
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const messaging = getMessaging(app);
-
-        function playSound() {
-            const audio = new Audio("../assets/notification.mp3");
-            audio.play().catch(error => {
-                console.log("Failed to play the notification sound: ", error);
-            });
-        }
-
-        // Handle incoming messages when the app is in the foreground
-        onMessage(messaging, (payload) => {
-            console.log('Message received. ', payload);
-
-            const notificationType = payload.data.notificationType;
-            const sender = payload.data.sender;
-            const senderLocation = payload.data.senderLocation;
-            const notificationTitle = payload.notification.title;
-            const notificationBody = payload.notification.body;
-
-            let detailedMessage = notificationBody;
-
-            if (notificationType === "emergency-alert" && recipient != "admin") {
-                detailedMessage = `<strong>Emergency-alert</strong> from <strong>${sender}</strong>: <br/>${notificationBody}`;
-                notifier.alert(detailedMessage, { durations: { alert: 20000 }, labels: { alert: notificationTitle } });
-                playSound();
-            } else if (notificationType === "announcement") {
-                detailedMessage = `<strong>Announcement</strong> from <strong>${sender}</strong>: <br/>${notificationBody}`;
-                notifier.success(detailedMessage, { durations: { success: 20000 }, labels: { success: notificationTitle } });
-                playSound();
-            }
-
-            console.log(`Notification Type: ${notificationType}`);
-            console.log(`Sender: ${sender}`);
-            console.log(`Sender Location: ${senderLocation}`);
-        });
+    
+        // Call the handler to manage incoming messages
+        handleIncomingMessages(notifier);
     </script>
 
     <div id="header-placeholder">

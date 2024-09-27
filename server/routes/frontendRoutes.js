@@ -77,6 +77,13 @@ router.get("/user/reportIncident", (req, res) => {
   );
 });
 
+router.get("/user/viewIncidents", isUser, (req, res) => {
+  res.sendFile(
+    path.join(__dirname, "../../client/html", "userViewIncidents.html")
+  );
+}
+);
+
 router.get("/admin/viewIncidents", isAdmin, (req, res) => {
   res.sendFile(
     path.join(__dirname, "../../client/html", "adminIncidentReporting.html")
@@ -120,6 +127,13 @@ router.get("/admin/updateSafetyResources", isAdmin, (req, res) => {
     path.join(__dirname, "../../client/html", "adminSafetyResources3.html")
   );
 });
+
+router.get("/admin/getUpcomingEvents", isAdmin, (req, res) => {
+  res.sendFile(
+    path.join(__dirname, "../../client/html", "adminEvents.html")
+  );
+});
+
 
 router.get("/admin/profileManagement", isAdmin, authMiddleware, (req, res) => {
   res.sendFile(

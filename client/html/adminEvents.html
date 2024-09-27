@@ -18,13 +18,81 @@
 
 <body class="flex flex-col min-h-screen bg-gray-100">
     <script type="module">
-         import { handleIncomingMessages } from '../javascript/fireBaseMessageHandler.js';
-        
-        // ADMINS ONLY
+
         let notifier = new AWN();
-    
-        // Call the handler to manage incoming messages
-        handleIncomingMessages(notifier);
+
+        // notifier.success('Success message', {durations: {success: 10000}})
+        //notifier.success("Accept states cannot have outgoing edges. Remove any outgoing edges from this state first.", { durations: { info: 10000 }, labels: { success: "Oops!" } });
+
+
+
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+        import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-messaging.js";
+
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBA-red8RszDmGY3YGELrunZQxFmg7r04Y",
+            authDomain: "campus-safety-fcm.firebaseapp.com",
+            projectId: "campus-safety-fcm",
+            storageBucket: "campus-safety-fcm.appspot.com",
+            messagingSenderId: "221773083535",
+            appId: "1:221773083535:web:0500a94bbb7a9dd6b891fa",
+            measurementId: "G-8BZHJT3BRY"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const messaging = getMessaging(app);
+
+        function playSound() {
+            //Play browser notifcation sound
+            const audio = new Audio("../assets/notification.mp3");
+            audio.play().catch(error => {
+                console.log("Failed to play the notification sound: ", error);
+            });
+        }
+
+        // Handle incoming messages when the app is in the foreground
+        onMessage(messaging, (payload) => {
+            console.log('Message received. ', payload);
+
+            // Access custom data
+            const notificationType = payload.data.notificationType;
+            const sender = payload.data.sender;
+            const senderLocation = payload.data.senderLocation;
+
+            // Access notification payload
+            const notificationTitle = payload.notification.title;
+            const notificationBody = payload.notification.body;
+
+            let detailedMessage = notificationBody;  // Base notification body
+
+            // Customize the message based on the notificationType with HTML tags for emphasis
+            if (notificationType === "emergency-alert") {
+                detailedMessage = `<strong>Emergency-alert</strong> from <strong>${sender}</strong>: <br/>${notificationBody}`;
+                notifier.alert(detailedMessage, { durations: { alert: 20000 }, labels: { alert: notificationTitle } });
+                playSound();
+
+            } else if (notificationType === "announcement") {
+                detailedMessage = `<strong>Announcement</strong> from <strong>${sender}</strong>: <br/>${notificationBody}`;
+                notifier.success(detailedMessage, { durations: { success: 20000 }, labels: { success: notificationTitle } });
+                playSound();
+
+            } else {
+                // Default notification handling with styled message
+                detailedMessage = `Notification from <strong>${sender}</strong>: ${notificationBody}`;
+                notifier.info(detailedMessage, { durations: { info: 20000 }, labels: { info: notificationTitle } });
+                playSound();
+            }
+
+            // Log the custom data for debugging or further processing
+            console.log(`Notification Type: ${notificationType}`);
+            console.log(`Sender: ${sender}`);
+            console.log(`Sender Location: ${senderLocation}`);
+        });
+
+
+
     </script>
 
     <header class="bg-[#015EB8] text-white p-4 flex justify-between items-center">
@@ -161,27 +229,26 @@
 
         <main class="flex-1 p-6 overflow-auto max-sm:px-0 max-sm:py-0">
             <div class="flex flex-col bg-gray-200 rounded-lg border border-gray-400 p-4 mx-10 max-sm:m-2">
-                <h2 class="text-center text-2xl font-bold mb-2 max-sm:text-xl">Reported Incidents</h2>
-                <h3 class="text-center text-lg font-semibold mb-4 max-sm:text-sm">Respond to incidents reported by
-                    users</h3>
+                <h2 class="text-center text-2xl font-bold mb-2 max-sm:text-xl">Upcoming Events</h2>
+                <h3 class="text-center text-lg font-semibold mb-4 max-sm:text-sm">Here are all the upcoming events provided from Campus Events</h3>
 
                 <!-- Filtering -->
 
-                <div class="flex gap-3 mb-6">
+                <!-- <div class="flex gap-3 mb-6">
                     <label>
-                        <input type="checkbox" class="status-filter" value="Pending"> Pending
+                        <input type="checkbox" class="status-filter" value="Pending" > Pending
                     </label>
                     <label>
-                        <input type="checkbox" class="status-filter" value="In Progress"> In Progress
+                        <input type="checkbox" class="status-filter" value="In Progress" > In Progress
                     </label>
                     <label>
                         <input type="checkbox" class="status-filter" value="Resolved"> Resolved
                     </label>
-                </div>
+                </div> -->
                 <div class="alert-box" id="alert" role="alert"></div>
 
                 <svg aria-hidden="true"
-                    class="w-10 h-10 mx-auto text-gray-200 animate-spin dark:text-gray-600 fill-[#fbfbfb] hidden"
+                    class="w-10 h-10 mx-auto text-gray-200 animate-spin dark:text-gray-600 fill-[#fbfbfb] hidden "
                     viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg" id="loader">
                     <path
                         d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
@@ -191,57 +258,56 @@
                         fill="currentFill" />
                 </svg>
 
-                <div id="allIncidents" class="max-h-[420px] overflow-y-auto pr-5 ">
+                <div id="allEvents" class="max-h-[420px] overflow-y-auto pr-5 ">
 
-                    <!-- <div id="incident" class="mb-6">
+                    <div id="incident" class="mb-6">
                         <div class="border border-black rounded-lg p-2 flex flex-col bg-white">
                             <div class="flex justify-between">
                                 <div class="flex items-center max-sm:text-xs text-sm">
                                     <img src="../assets/profileIcon.png" class="mr-2" alt="">
-                                    <p class="max-sm:text-xs"> <span class="font-bold ">name surname</span> reported an
-                                        incident:
+                                    <p class="max-sm:text-xs"> 
+
+                                        <span class="font-bold ">${event.eventAuthor} </span>
+                                         is hosting an event:
                                         <span class="font-bold">
-                                            title
+                                            ${event.title}
                                         </span>
-                                        (date here)
+                                        ${event.date}
                                     </p>
 
-                                    <img src="../assets/locationPick.png" alt="" height="20" width="20"
-                                        class="mx-2 cursor-pointer">
+                                    <!-- <img src="../assets/locationPick.png" alt="" height="20" width="20"
+                                        class="mx-2 cursor-pointer"> -->
                                     </p>
 
                                 </div>
-                                <select class="bg-gray-300 rounded-lg px-4 max-sm:text-xs max-sm:px-1 max-h-8 text-sm"
+                                <!-- <select class="bg-gray-300 rounded-lg px-4 max-sm:text-xs max-sm:px-1 max-h-8 text-sm"
                                     name="" id="">
                                     <option value="view">Pending</option>
                                     <option value="view">In Progress</option>
                                     <option value="delete">Complete</option>
-                                </select>
+                                </select> -->
                             </div>
-                            <p class="mt-1 text-sm max-sm:text-xs">Lorem ipsum, dolor sit amet consectetur adipisicing
-                                elit. Perspiciatis
-                                molestias
-                                voluptatem recusandae hic error dolorum ad tenetur quo similique. Distinctio voluptatum
-                                repellat iusto obcaecati ducimus quia aspernatur. Alias nesciunt, unde culpa velit,
-                                eligendi maiores nemo minus facere in quibusdam doloremque nobis accusantium! Nemo,
-                                eaque? Excepturi officiis tenetur corporis aliquam ullam!</p>
+                            <p class="mt-1 text-sm max-sm:text-xs">
+                                ${event.description}
+                            </p>
                         </div>
                         <div class="flex mt-3 text-sm">
 
-                            <button
+                            <!-- <button
                                 class="bg-[#015EB8] text-white py-2 px-4 rounded-lg max-sm:text-xs hover:opacity-80 mx-3 max-sm:px-2">Send
                                 notification to <span>${
-                                    incident.firstName
-                                    }</span></button>
+                                    event.eventAuthor
+                                    }</span></button> -->
                             <button
                                 class="bg-[#015EB8] text-white py-2 px-4 rounded-lg max-sm:text-xs hover:opacity-80 mr-3 max-sm:px-2">Send
                                 announcement to all users </button>
 
                         </div>
-                    </div> -->
+                    </div>
+
 
                 </div>
-                <button type="submit" id="save"
+                <!-- <button type="submit" id="save"
                     class="bg-[#015EB8] text-white flex justify-center items-center py-2 mt-2 px-4 rounded-lg max-sm:text-sm hover:opacity-80">
                     <span class="flex items-center">
                         Save
@@ -256,12 +322,15 @@
                                 fill="currentFill" />
                         </svg>
                     </span>
-                </button>
+                </button> -->
 
             </div>
 
-        </main>
     </div>
+
+    </main>
+
+        
     </div>
 
     <footer class="bg-[#015EB8] text-white p-4 text-center">
@@ -271,6 +340,6 @@
     <script src="../javascript/headerFunctionality.js"></script>
 </body>
 
-<script src="../javascript/adminIncidents.js"></script>
+<script src="../javascript/adminGetEvents.js"></script>
 
 </html>

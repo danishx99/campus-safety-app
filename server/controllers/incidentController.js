@@ -2,6 +2,9 @@ const Incident = require("../schemas/Incident.js");
 const User = require("../schemas/User.js");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const notification = require("../schemas/notification");
+
+const _sendNotification = require("../utils/sendNotification");
 
 exports.getIncidents = async (req, res) => {
   try {
@@ -87,6 +90,44 @@ exports.reportIncident = async (req, res) => {
     //console.log(incident);
 
     await incident.save();
+
+    //Create a notification for the incident
+    const newNotification = new notification({
+      recipient: "admin",
+      sender: email,
+      read: false,
+      message: "A new incident has been reported by " + email+ " , please check the incident tab for more details",
+      title: "Incident Reported",
+      notificationType: "incidentReported",
+    });
+
+    const savedNotification = await newNotification.save();
+
+
+
+    //Get all admin FCM tokens
+    const users = await User.find({ role: "admin" });
+    fcmTokens = users.map((user) => user.FCMtoken);
+
+
+
+    //Send notification
+    await _sendNotification(
+      fcmTokens,
+      "Incident Reported",
+      "A new incident has been reported by " + email+ " , please check the incident tab for more details",
+      {
+        notificationType: "Incident reported",
+        sender: email,
+        senderLocation: location,
+        recipient: "admin",
+      },
+    );
+    
+        
+
+
+
     res.status(200).json({ message: "Incident reported successfully" });
   } catch (error) {
     res

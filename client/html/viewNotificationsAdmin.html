@@ -38,6 +38,16 @@
 
 
 <body class="flex flex-col min-h-screen bg-gray-100">
+    <script type="module">
+        import { handleIncomingMessages } from '../javascript/fireBaseMessageHandler.js';
+        
+        // ADMINS ONLY
+        let notifier = new AWN();
+    
+        // Call the handler to manage incoming messages
+        handleIncomingMessages(notifier);
+    </script>
+    
     <div id="header-placeholder">
         <header class="bg-[#015EB8] text-white p-4 flex justify-between items-center">
             <div class="flex items-center">
@@ -53,7 +63,7 @@
                       <img src="../assets/bell-ring.png" alt="Notifications" class="h-5 md:h-6 md:mr-2"> 
                   </button>
                   <span id="notificationBadge" class="absolute top-0.5 right-0.5 grid min-h-[24px] min-w-[24px] translate-x-2/4 -translate-y-2/4 place-items-center rounded-full bg-[white] py-1 px-1 text-xs text-black">
-                      5
+                      
                   </span>
                   <div id="dropdownMenu" class="absolute right-0 mt-2 w-64 bg-white rounded-md shadow-lg z-10 border border-gray-200 hidden">
                       <div class="py-2" id="notificationList">

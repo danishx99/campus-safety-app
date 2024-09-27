@@ -36,87 +36,71 @@ document.addEventListener("DOMContentLoaded", async () => {
   const notificationList = document.getElementById("notificationList");
   const notificationBadge = document.getElementById("notificationBadge");
 
-  let notifications = [];
-  let totalUnreadNotifications = 0; // To track the total number of unread notifications
+  let totalUnreadNotifications = 0;
 
-  // Fetch unread notifications
+  // Fetch notifications(limited to 5)
   fetch("/notifications/getUnreadNotifications")
     .then((response) => response.json())
     .then((data) => {
-      notifications = data.notifications;
-      totalUnreadNotifications = notifications.length; // Store the total number of unread notifications
-
-      // Limit the displayed notifications to 5
-      notifications = notifications.slice(0, 5);
-      updateNotifications();
+      const notifications = data.notifications;
+      totalUnreadNotifications = notifications.length; // Get the total number of unread notifications
+      // alert(totalUnreadNotifications)
+      updateNotifications(notifications);
+      updateBadge(totalUnreadNotifications);
     })
     .catch((error) => {
-      console.log("Error fetching notifications:", error);
+      console.error("Error fetching notifications:", error);
     });
 
-  function updateNotifications() {
+  function updateNotifications(notifications) {
     notificationList.innerHTML = "";
 
     if (notifications.length > 0) {
       notifications.forEach((notification) => {
         const div = document.createElement("div");
-        div.className = "px-4 py-2"; // Add background and hover effect
-        div.style.color = "black"; // Set text color to ensure visibility
+        div.className = "px-4 py-2"; 
+        div.style.color = "black"; 
 
-        // Create a title element
+        // Title
         const title = document.createElement("div");
-        title.className = "text-navy-800 font-semibold"; // Dark navy blue color and bold font
+        title.className = "text-navy-800 font-semibold";
         title.textContent = notification.title;
 
-        // Create a message element
+        // Message
         const message = document.createElement("div");
-        message.className = "text-gray-600 text-sm truncate"; // Gray color and small text with truncation
+        message.className = "text-gray-600 text-sm truncate";
         message.textContent = notification.message;
 
-        // Append title and message to the main div
         div.appendChild(title);
         div.appendChild(message);
-
-        // Append the main div to the notification list
         notificationList.appendChild(div);
       });
 
-      // Add a "See all notifications" button
+      // "See all notifications" button(dont know why i name it clearButton and i was too lazy to change it)
       const clearButton = document.createElement("button");
-      clearButton.className =
-        "w-full text-left px-4 py-2 text-sm text-red-600 "; // Blue background for the button too
+      clearButton.className = "w-full text-left px-4 py-2 text-sm text-red-600";
       clearButton.innerHTML = "<a href='/notifications/redirectToNotificationPage'>See all notifications</a>";
-      
       notificationList.appendChild(clearButton);
 
-      // Update the notification badge with the total number of unread notifications (not the sliced number)
-      notificationBadge.textContent = totalUnreadNotifications;
-      notificationBadge.classList.remove("hidden");
     } else {
-      // If no notifications, display a "No notifications" message
-      const div = document.createElement("div");
-      div.className = "px-4 py-2 text-gray-500 bg-blue-50"; // Slight blue background
-      div.textContent = "No new notifications";
-      notificationList.appendChild(div);
+      // No notifications case
+      const noNotifDiv = document.createElement("div");
+      noNotifDiv.className = "px-4 py-2 text-gray-500 bg-blue-50";
+      noNotifDiv.textContent = "No new notifications";
+      notificationList.appendChild(noNotifDiv);
 
-      // Add a "See all notifications" button
       const clearButton = document.createElement("button");
-      clearButton.className =
-        "w-full text-left px-4 py-2 text-sm text-red-600 "; // Blue background for the button too
-      clearButton.textContent = "See all notifications";
-      clearButton.innerHTML =
-        "<a href='/notifications/redirectToNotificationPage'>See all notifications</a>";
+      clearButton.className = "w-full text-left px-4 py-2 text-sm text-red-600";
+      clearButton.innerHTML = "<a href='/notifications/redirectToNotificationPage'>See all notifications</a>";
       notificationList.appendChild(clearButton);
-
-      // Update the notification badge to 0 since there are no notifications
-      notificationBadge.textContent = totalUnreadNotifications;
-      notificationBadge.classList.remove("hidden");
     }
   }
 
-  function clearNotifications() {
-    // Send a request to mark all notifications as read
+  function updateBadge(count) {
+    notificationBadge.textContent = count;
+    // notificationBadge.classList.toggle("hidden", count === 0); // Hide badge if no unread notifications
   }
+
 
   notificationButton.addEventListener("click", () => {
     dropdownMenu.classList.toggle("hidden");
@@ -132,6 +116,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   });
 
+  /* Notification dropdown */
+
+  /*Panic Button */
 
 document.getElementById('panicButton').addEventListener('click', function() {
     document.getElementById('panicModal').classList.remove('hidden');
@@ -141,8 +128,20 @@ document.getElementById('closeModalBtn').addEventListener('click', function() {
     document.getElementById('panicModal').classList.add('hidden');
 });
 
+
+function showpanicloader(){
+  document.getElementById('submitLoader').classList.remove('hidden');
+}
+
+function hidepanicloader(){
+  document.getElementById('submitLoader').classList.add('hidden');
+}
+
+
 document.getElementById('submitAlert').addEventListener('click', function (event) {
   event.preventDefault();
+
+  showpanicloader();
 
   var alert = document.getElementById('alert');
   //alert.style.display = "block";
@@ -186,11 +185,14 @@ document.getElementById('submitAlert').addEventListener('click', function (event
                   alert.style.display = "block";
                   alert.innerText = "Error sending emergency alert";
               }
+
+              hidepanicloader();
           })
           .catch((error) => {
               console.error('Error:', error);
               alert.style.display = "block";
               alert.innerText = "Error"+error;
+              hidepanicloader();
               
           });
 
@@ -198,10 +200,12 @@ document.getElementById('submitAlert').addEventListener('click', function (event
           console.error("Error fetching location:", error);
           alert.style.display = "block";
           alert.innerText = "Unable to retrieve your location.";
+          hidepanicloader();
       });
   } else {
       alert.style.display = "block";
       alert.innerText = "Geolocation is not supported by your browser.";
+      hidepanicloader();
   }
 });
 
@@ -214,13 +218,6 @@ window.addEventListener('click', function(event) {
 });
 
 
-function showpanicloader(){
-    document.getElementById('submitLoader').classList.remove('hidden');
-}
-
-function hidepanicloader(){
-    document.getElementById('submitLoader').classList.add('hidden');
-}
 /*document.getElementById('submitAlert').addEventListener('click', function (event) {
   console.log("submitAlert clicked");
 

@@ -26,7 +26,7 @@ const notificationSchema = new Schema(
         notificationType: {
             type: String,
             required: true,
-            enum: ['incidentUpdate', 'announcement','emergency-alert','incidentReport','message']
+            enum: ['incidentUpdate', 'announcement','emergency-alert','incidentReported','message']
         },
 
         senderLocation: { type: [Number], required: false } // Array of numbers

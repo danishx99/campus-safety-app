@@ -117,135 +117,94 @@ switch (notificationType) {
 
 playSound(); 
 
-}else if (role === "staff" && recipient === "everyone") {
-  // Customize message based on notificationType
-  switch (notificationType) {
-    case "emergency-alert":
-      notifier.alert(detailedMessage, {
-        durations: { alert: 20000 },
-        labels: { alert: notificationTitle },
-      });
-      break;
-
-    case "announcement":
-      notifier.success(detailedMessage, {
-        durations: { success: 20000 },
-        labels: { success: notificationTitle },
-      });
-      break;
-
-    case "incidentReported":
-      notifier.alert(detailedMessage, {
-        durations: { success: 20000 },
-        labels: { alert: notificationTitle },
-      });
-      break;
-
-    case "incidentUpdate":
-      notifier.info(detailedMessage, {
-        durations: { info: 20000 },
-        labels: { info: notificationTitle },
-      });
-      break;
-
-    default:
-      notifier.info(detailedMessage, {
-        durations: { info: 20000 },
-        labels: { info: notificationTitle },
-      });
-      break;
-  }
-
-  playSound();
-} else if (role === "student" && recipient === "student") {
-  // Customize message based on notificationType
-  switch (notificationType) {
-    case "emergency-alert":
-      notifier.alert(detailedMessage, {
-        durations: { alert: 20000 },
-        labels: { alert: notificationTitle },
-      });
-      break;
-
-    case "announcement":
-      notifier.success(detailedMessage, {
-        durations: { success: 20000 },
-        labels: { success: notificationTitle },
-      });
-      break;
-
-    case "incidentReported":
-      notifier.alert(detailedMessage, {
-        durations: { success: 20000 },
-        labels: { alert: notificationTitle },
-      });
-      break;
-
-    case "incidentUpdate":
-      notifier.info(detailedMessage, {
-        durations: { info: 20000 },
-        labels: { info: notificationTitle },
-      });
-      break;
-
-    default:
-      notifier.info(detailedMessage, {
-        durations: { info: 20000 },
-        labels: { info: notificationTitle },
-      });
-      break;
-  }
-
-  playSound();
-} else if (role === "staff" && recipient === "staff") {
-  // Customize message based on notificationType
-  switch (notificationType) {
-    case "emergency-alert":
-      notifier.alert(detailedMessage, {
-        durations: { alert: 20000 },
-        labels: { alert: notificationTitle },
-      });
-      break;
-
-    case "announcement":
-      notifier.success(detailedMessage, {
-        durations: { success: 20000 },
-        labels: { success: notificationTitle },
-      });
-      break;
-
-    case "incidentReported":
-      notifier.alert(detailedMessage, {
-        durations: { success: 20000 },
-        labels: { alert: notificationTitle },
-      });
-      break;
-
-    case "incidentUpdate":
-      notifier.info(detailedMessage, {
-        durations: { info: 20000 },
-        labels: { info: notificationTitle },
-      });
-      break;
-
-    default:
-      notifier.info(detailedMessage, {
-        durations: { info: 20000 },
-        labels: { info: notificationTitle },
-      });
-      break;
-  }
-
-  playSound();
-} else if (recipient === email) {
-  // Customize message based on notificationType
-  switch (notificationType) {
-    case "emergency-alert":
-      notifier.alert(detailedMessage, {
-        durations: { alert: 20000 },
-        labels: { alert: notificationTitle },
-      });
-      break;
+}else if (role === "staff" && recipient === "everyone"){
+    // Customize message based on notificationType
+    switch (notificationType) {
+        case "emergency-alert":
+            notifier.alert(detailedMessage, { durations: { alert: 20000 }, labels: { alert: notificationTitle } });
+            break;
+    
+        case "announcement":
+            notifier.success(detailedMessage, { durations: { success: 20000 }, labels: { success: notificationTitle } });
+            break;
+    
+        case "incidentReported":
+            notifier.alert(detailedMessage, { durations: { success: 20000 }, labels: { alert: notificationTitle } });
+            break;
+    
+        case "incidentUpdate":
+            notifier.info(detailedMessage, { durations: { info: 20000 }, labels: { info: notificationTitle } });
+            break;
+    
+        default:
+            notifier.info(detailedMessage, { durations: { info: 20000 }, labels: { info: notificationTitle } });
+            break;
+          
+    }
+    
+    playSound(); 
+    
+}else if (role === "student" && recipient === "student"){
+    // Customize message based on notificationType
+    switch (notificationType) {
+        case "emergency-alert":
+            notifier.alert(detailedMessage, { durations: { alert: 20000 }, labels: { alert: notificationTitle } });
+            break;
+    
+        case "announcement":
+            notifier.success(detailedMessage, { durations: { success: 20000 }, labels: { success: notificationTitle } });
+            break;
+    
+        case "incidentReported":
+            notifier.alert(detailedMessage, { durations: { success: 20000 }, labels: { alert: notificationTitle } });
+            break;
+    
+        case "incidentUpdate":
+            notifier.info(detailedMessage, { durations: { info: 20000 }, labels: { info: notificationTitle } });
+            break;
+    
+        default:
+            notifier.info(detailedMessage, { durations: { info: 20000 }, labels: { info: notificationTitle } });
+            break;
+          
+    }
+    
+    playSound(); 
+    
+}
+else if (role === "staff" && recipient === "staff"){
+    // Customize message based on notificationType
+    switch (notificationType) {
+        case "emergency-alert":
+            notifier.alert(detailedMessage, { durations: { alert: 20000 }, labels: { alert: notificationTitle } });
+            break;
+    
+        case "announcement":
+            notifier.success(detailedMessage, { durations: { success: 20000 }, labels: { success: notificationTitle } });
+            break;
+    
+        case "incidentReported":
+            notifier.alert(detailedMessage, { durations: { success: 20000 }, labels: { alert: notificationTitle } });
+            break;
+    
+        case "incidentUpdate":
+            notifier.info(detailedMessage, { durations: { info: 20000 }, labels: { info: notificationTitle } });
+            break;
+    
+        default:
+            notifier.info(detailedMessage, { durations: { info: 20000 }, labels: { info: notificationTitle } });
+            break;
+          
+    }
+    
+    playSound(); 
+    
+    }else if(recipient === email){
+    // Customize message based on notificationType
+    switch (notificationType) {
+        case "emergency-alert":
+            notifier.alert(detailedMessage, { durations: { alert: 20000 }, labels: { alert: notificationTitle } });
+            break;
 
     case "announcement":
       notifier.success(detailedMessage, {

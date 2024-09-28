@@ -134,6 +134,12 @@ messaging.onBackgroundMessage(async (payload) => {
         icon = "/update-icon.png";
         tag = "update";
         break;
+      case "incidentMessage":
+        icon = "/update-icon.png";
+        tag = "update";
+        break;
+      default:
+        break;
     }
 
     const notificationOptions = {

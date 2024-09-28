@@ -20,9 +20,119 @@ document.addEventListener("DOMContentLoaded", () => {
   // Other event listeners for buttons and images
   const saveButton = document.getElementById("save");
   saveButton.addEventListener("click", updateIncidentsStatus);
+  
+  //Button for closing the modal
+  document.getElementById('closeModalBtn').addEventListener('click', function() {
+    hideModal();
+  });
 
-
+ //Add event listener to the submit button(send notification form)
+  const submitIncidentUpdate = document.getElementById('submitIncidentUpdate');
+  submitIncidentUpdate.addEventListener('click',sendNotificationUpdate )
+  
 });
+
+function showModal(){
+  document.getElementById('sendUpdateModal').classList.remove('hidden');
+}
+
+function hideModal(){
+  document.getElementById('sendUpdateModal').classList.add('hidden');
+  hideErrorMessage();
+}
+
+function showErrorMessage(message){
+  document.getElementById('alertSendNotification').innerText = message;
+  document.getElementById('alertSendNotification').classList.add('block');
+}
+//.alert-box {
+//   @apply bg-red-100 border hidden border-red-400 text-red-700 px-2 py-2 rounded-2xl text-center mb-[4%]
+// }
+function showSuccessMessage(message){
+  document.getElementById('alertSendNotification').innerText = message;
+  document.getElementById('alertSendNotification').classList.add('block');
+
+  //Make the styling green
+  document.getElementById('alertSendNotification').classList.remove('border-red-400');
+  document.getElementById('alertSendNotification').classList.add('border-green-400');
+  document.getElementById('alertSendNotification').classList.remove('text-red-700');
+  document.getElementById('alertSendNotification').classList.add('text-green-700');
+  document.getElementById('alertSendNotification').classList.remove('bg-red-100');
+  document.getElementById('alertSendNotification').classList.add('bg-green-100');
+
+}
+
+function hideErrorMessage(){
+  document.getElementById('alertSendNotification').classList.remove('block');
+}
+
+function showLoader(){
+  document.getElementById('submitLoader').classList.remove('hidden');
+}
+
+function hideLoader(){
+  document.getElementById('submitLoader').classList.add('hidden');
+}
+
+
+function sendNotificationUpdate(e){
+  e.preventDefault();
+
+   //Get the values to be sent
+   let title = document.getElementById('title').value;
+   let message = document.getElementById('description').value;
+   let email = document.getElementById('userEmail').value;
+   
+  //  alert("Sending notification to " + email + " with title: " + title + " and message: " + message);
+
+
+  if(!title || !message || !email){
+    showErrorMessage("Please fill in all fields");
+    return;
+  }
+
+  showLoader();
+
+
+  //Send the notification
+  fetch('/notifications/sendNotification',{
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      title: title,
+      message: message,
+      recipient: email,
+      notificationType: "incidentMessage",
+    })
+  })
+  .then(response => response.json())
+  .then(data => {
+    hideLoader();
+    if(data.response === 200){  
+      showSuccessMessage("Incident update sent successfully.");
+    }else{
+      showErrorMessage("An error occurred while sending out your incident update.");
+    }
+  })
+  .catch(error => {
+    hideLoader();
+    console.log("Error sending notification:", error);
+    showErrorMessage("An error occurred while sending notification");
+  })
+  
+
+}
+
+
+function populateEmailField(userEmail){
+  //Show the modal
+  showModal();
+  let emailField = document.getElementById('userEmail');
+  emailField.value = userEmail;
+}
+
 
 // Fetch and display incidents from the server
 async function fetchAndDisplayIncidents() {
@@ -154,7 +264,7 @@ function addIncidentToDOM(incident, index) {
         <p class="mt-1 text-sm max-sm:text-xs">${incident.description}</p>
       </div>
       <div class="flex mt-3 text-sm">
-        <button class="bg-[#015EB8] text-white py-2 px-4 rounded-lg max-sm:text-xs hover:opacity-80 mx-3 max-sm:px-2">
+        <button onclick="populateEmailField('${incident.userDetails.email}')" class="bg-[#015EB8] text-white py-2 px-4 rounded-lg max-sm:text-xs hover:opacity-80 mx-3 max-sm:px-2">
           Send notification to <span>${incident.firstName}</span>
         </button>
         <button class="bg-[#015EB8] text-white py-2 px-4 rounded-lg max-sm:text-xs hover:opacity-80 mr-3 max-sm:px-2">

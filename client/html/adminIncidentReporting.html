@@ -225,31 +225,31 @@
     </div>
 
      <!-- PANIC MODAL -->
-     <div id="panicModal" class="modal hidden">
+     <div id="sendUpdateModal" class="modal hidden">
         
       <div class="modal-content">
           <span class="close" id="closeModalBtn">&times;</span>
-          <div class="alert-box mb-4" id="alertSendNotification" role="alertSendNotification">Test Error</div>
+          <div class="alert-box m-4" id="alertSendNotification" role="alertSendNotification">Test Error</div>
           <h2 class="text-center text-2xl font-bold mb-4">Send Incident Update</h2>
           <h3 class="text-center text-lg font-semibold mb-6">Notify user about incident changes</h3>
 
           <form id="alertForm" class="flex flex-col px-6 py-4">
               <input id="title"
-                  class="p-3 mb-4 rounded-lg border border-gray-300 text-gray-700 focus:outline-none focus:ring-2 focus:ring-red-600"
+                  class="p-3 mb-4 rounded-lg border border-gray-300 text-gray-700 focus:outline-none focus:ring-2"
                   type="text" placeholder="Title ">
 
               <textarea
-                  class="p-3 mb-4 rounded-lg border border-gray-300 text-gray-700 focus:outline-none focus:ring-2 focus:ring-red-600"
+                  class="p-3 mb-4 rounded-lg border border-gray-300 text-gray-700 focus:outline-none focus:ring-2 "
                   placeholder="Description" rows="3" id="description"></textarea>
 
                   <!--User email-->
                   <input id="userEmail"
-                  class="p-3 mb-4 rounded-lg border border-gray-300 text-gray-700 focus:outline-none focus:ring-2 focus:ring-red-600"
+                  class="p-3 mb-4 rounded-lg border border-gray-300 text-gray-700 focus:outline-none focus:ring-2 "
                   type="text" placeholder="" readonly value="">
-              <button id="submitAlert"
-                  class="bg-red-600 text-white py-2 px-4 rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-600">
+              <button id="submitIncidentUpdate"
+                  class="bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2">
                   <span class="flex items-center text-center justify-center">
-                      Send Alert
+                      Send Update
                       <svg aria-hidden="true" class="w-4 h-4 ml-2 animate-spin hidden" viewBox="0 0 100 101"
                           fill="none" xmlns="http://www.w3.org/2000/svg" id="submitLoader">
                           <path

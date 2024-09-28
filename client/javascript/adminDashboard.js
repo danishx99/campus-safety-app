@@ -252,6 +252,9 @@ try {
         case "upcoming-events-card":
           window.location.href = "/admin/getUpcomingEvents";
           break;
+        case "transportation-management-card":
+          window.location.href = "/admin/transportationManagement";
+          break;
       }
     });
   });

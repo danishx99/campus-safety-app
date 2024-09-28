@@ -134,6 +134,12 @@ router.get("/admin/getUpcomingEvents", isAdmin, (req, res) => {
   );
 });
 
+router.get("/admin/transportationManagement", isAdmin, (req, res) => {
+  res.sendFile(
+    path.join(__dirname, "../../client/html", "adminTransportation.html")
+  );
+});
+
 
 router.get("/admin/profileManagement", isAdmin, authMiddleware, (req, res) => {
   res.sendFile(

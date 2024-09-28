@@ -1,97 +1,90 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Transportation Management</title>
+    <link rel="icon" type="image/svg+xml" href="../../assets/logo.png" />
+    <link href="../styles/output.css" rel="stylesheet" />
+    <link href="../styles/styles.css" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!--Awsome notifications-->
+    <script src="../javascript/index.var.js"></script>
+    <link rel="stylesheet" href="../styles/style.css" />
+  </head>
+  <body class="flex flex-col min-h-screen bg-gray-100">
+    <script type="module">
+      import { handleIncomingMessages } from "../javascript/fireBaseMessageHandler.js";
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Generate Code</title>
-  <link rel="icon" type="image/svg+xml" href="../../assets/logo.png" />
-  <link href="../styles/output.css" rel="stylesheet" />
-  <link href="../styles/styles.css" rel="stylesheet" />
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="../javascript/loadComponents.js" defer></script>
-  <!--Awsome notifications-->
-  <script src="../javascript/index.var.js"></script>
-  <link rel="stylesheet" href="../styles/style.css">
+      // ADMINS ONLY
+      let notifier = new AWN();
 
+      // Call the handler to manage incoming messages
+      handleIncomingMessages(notifier);
+    </script>
 
-  <style>
-    .token-wrap {
-      word-wrap: break-word;
-      max-width: 100%;
-    }
-
-    /* Loader styles */
-    #loader {
-      border: 4px solid #f3f3f3;
-      border-radius: 50%;
-      border-top: 4px solid #3498db;
-      width: 25px;
-      height: 25px;
-      animation: spin 1s linear infinite;
-    }
-
-    @keyframes spin {
-      0% {
-        transform: rotate(0deg);
-      }
-
-      100% {
-        transform: rotate(360deg);
-      }
-    }
-  </style>
-</head>
-
-<body>
-  <script type="module">
-    import { handleIncomingMessages } from '../javascript/fireBaseMessageHandler.js';
-    
-    // ADMINS ONLY
-    let notifier = new AWN();
-
-    // Call the handler to manage incoming messages
-    handleIncomingMessages(notifier);
-</script>
-
-  <div class="flex flex-col min-h-screen bg-gray-100">
-    <div id="">
-      <header class="bg-[#015EB8] text-white p-4 flex justify-between items-center">
-        <div class="flex items-center">
-          <a href="/admin"><img src="../assets/logo.png" alt="Campus Safety Logo" class="h-8 mr-2"></a>
-          <a href="/admin" class="text-xl font-semibold hidden sm:block">Campus Safety</a>
-        </div>
-        <div class="flex items-center space-x-4">
-
-          <div class="relative inline-flex" id="notificationContainer">
-
-            <button id="notificationButton"
-              class="flex rounded-md bg-[#FDB913] py-2 px-4 border border-transparent text-center text-sm text-white transition-all shadow-md hover:shadow-lg focus:bg-slate-700 focus:shadow-none active:bg-slate-700 hover:bg-slate-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
-              type="button">
-              Notifications
-              <img src="../assets/bell-ring.png" alt="Notifications" class="h-5 md:h-6 md:mr-2">
-            </button>
-            <span id="notificationBadge"
-              class="absolute top-0.5 right-0.5 grid min-h-[24px] min-w-[24px] translate-x-2/4 -translate-y-2/4 place-items-center rounded-full bg-[white] py-1 px-1 text-xs text-black">
-              
-            </span>
-            <div id="dropdownMenu"
-              class="absolute right-0 mt-2 w-64 bg-white rounded-md shadow-lg z-10 border border-gray-200 hidden">
-              <div class="py-2" id="notificationList">
-                <!-- Notifications will be inserted here -->
-              </div>
+    <header
+      class="bg-[#015EB8] text-white p-4 flex justify-between items-center"
+    >
+      <div class="flex items-center">
+        <a href="/admin"
+          ><img
+            src="../assets/logo.png"
+            alt="Campus Safety Logo"
+            class="h-8 mr-2"
+        /></a>
+        <a href="/admin" class="text-xl font-semibold hidden sm:block"
+          >Campus Safety</a
+        >
+      </div>
+      <div class="flex items-center space-x-4">
+        <div class="relative inline-flex" id="notificationContainer">
+          <button
+            id="notificationButton"
+            class="flex rounded-md bg-[#FDB913] py-2 px-4 border border-transparent text-center text-sm text-white transition-all shadow-md hover:shadow-lg focus:bg-slate-700 focus:shadow-none active:bg-slate-700 hover:bg-slate-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+            type="button"
+          >
+            Notifications
+            <img
+              src="../assets/bell-ring.png"
+              alt="Notifications"
+              class="h-5 md:h-6 md:mr-2"
+            />
+          </button>
+          <span
+            id="notificationBadge"
+            class="absolute top-0.5 right-0.5 grid min-h-[24px] min-w-[24px] translate-x-2/4 -translate-y-2/4 place-items-center rounded-full bg-[white] py-1 px-1 text-xs text-black"
+          >
+          </span>
+          <div
+            id="dropdownMenu"
+            class="absolute right-0 mt-2 w-64 bg-white rounded-md shadow-lg z-10 border border-gray-200 hidden"
+          >
+            <div class="py-2" id="notificationList">
+              <!-- Notifications will be inserted here -->
             </div>
           </div>
-
-          <a id="profileBtn" href="/admin/profileManagement" class="rounded-full flex items-center">
-            <div class="w-10 h-10 rounded-full overflow-hidden border-2 border-white">
-              <img src="../assets/user-profile.png" alt="User Profile" class="w-full h-full object-cover"
-                id="headerProfilePic">
-            </div>
-          </a>
         </div>
-      </header>
-    </div>
+
+        <a
+          id="profileBtn"
+          href="/admin/profileManagement"
+          class="rounded-full flex items-center"
+        >
+          <div
+            class="w-10 h-10 rounded-full overflow-hidden border-2 border-white"
+          >
+            <img
+              src="../assets/user-profile.png"
+              alt="User Profile"
+              class="w-full h-full object-cover"
+              id="headerProfilePic"
+            />
+          </div>
+        </a>
+      </div>
+    </header>
+
     <div class="flex flex-1">
       <div id="">
         <!-- Desktop Navigation -->
@@ -330,49 +323,19 @@
           </div>
         </div>
       </div>
-      <main class="flex items-center justify-center flex-1 w-full px-4 py-8">
-        <div class="border text-card-foreground w-full max-w-lg p-6 space-y-4 bg-white rounded-lg shadow-md"
-          data-v0-t="card">
 
-          <div class="alert-box" id="alert" role="alert"></div>
-
-          <div class="flex flex-col space-y-1.5 pb-1 pt-6">
-            <h3 class="whitespace-nowrap text-3xl font-semibold leading-none tracking-tight text-center">Generate Code
-            </h3>
-          </div>
-          <div class="p-2 space-y-7">
-            <section id="form-p2" class="p-2 space-y-6">
-
-              <p>Click here to generate an Admin Code</p>
-
-              <!-- <label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70" for="code">Code</label> -->
-              <div id="codeD" class="flex justify-between ">
-                <input type="text" placeholder="Code"
-                  class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2  text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                  id="genCode" name="code" readonly>
-                <img src="../assets/copy.png" alt="copy" id="copyCode"
-                  class=" ml-5 mt-2 cursor-pointer text-gray-400 hover:text-gray-600 w-6 h-6">
-              </div>
-
-              <div class="flex justify-center">
-                <button
-                  class="inline-flex items-center justify-center whitespace-nowrap rounded-3xl hover:bg-blue-500 text-sm text-white font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 w-72 bg-[#015EB8]"
-                  id="generate-code-btn">
-                  Generate Code
-                  <div id="loader" class="m-2 p-2 hidden"></div>
-                </button>
-            </section>
-          </div>
+      <main class="flex-1 p-6 overflow-auto">
+        <h1 class="text-2xl font-semibold mb-4">Transportation Management</h1>
       </main>
     </div>
+
     <footer class="bg-[#015EB8] text-white p-4 text-center">
       <p>&copy; 2024 Campus Safety App. All rights reserved.</p>
     </footer>
 
-  </div>
-</body>
+    <script src="../javascript/adminTransportation.js"></script>
+    <script src="../javascript/headerFunctionality.js"></script>
+    <script src="../javascript/navbarFunctionality.js"></script>
 
-<script src="../javascript/adminGenerateCode.js"></script>
-<script src="../javascript/headerFunctionality.js"></script>
-<script src="../javascript/navbarFunctionality.js"></script>
+  </body>
 </html>

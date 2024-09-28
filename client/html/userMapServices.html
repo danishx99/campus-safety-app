@@ -58,26 +58,24 @@
       }
 
       #mapLoader {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      border: 4px solid #f3f3f3;
-      border-radius: 50%;
-      border-top: 4px solid #3498db;
-      width: 40px;
-      height: 40px;
-      animation: spin 1s linear infinite;
-    }
+        display: none;
+        border: 4px solid #f3f3f3;
+        border-radius: 50%;
+        border-top: 4px solid #3498db;
+        width: 40px;
+        height: 40px;
+        animation: spin 1s linear infinite;
+      }
 
-    @keyframes spin {
-      0% {
-        transform: translate(-50%, -50%) rotate(0deg);
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+
+        100% {
+          transform: rotate(360deg);
+        }
       }
-      100% {
-        transform: translate(-50%, -50%) rotate(360deg);
-      }
-    }
 
       .location-buttons {
         display: flex;
@@ -146,99 +144,109 @@
       #directionsPanel::-webkit-scrollbar-thumb:hover {
         background: #555;
       }
+
+      @media (max-width: 640px) {
+        #locationButtons {
+          display: none;
+        }
+        #locationDropdown {
+          display: block;
+        }
+      }
+
+      #locationButtons button {
+        @apply bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded text-sm;
+      }
+
+      @media (min-width: 640px) {
+        #locationButtons button {
+          @apply py-2 px-4 text-base;
+        }
+      }
     </style>
   </head>
 
   <body class="flex flex-col min-h-screen bg-gray-100">
     <script type="module">
-      import { handleIncomingMessages } from '../javascript/fireBaseMessageHandler.js';
-      
+      import { handleIncomingMessages } from "../javascript/fireBaseMessageHandler.js";
+
       // ADMINS ONLY
       let notifier = new AWN();
-  
+
       // Call the handler to manage incoming messages
       handleIncomingMessages(notifier);
-  </script>
+    </script>
 
-    <header
-      class="bg-[#015EB8] text-white p-4 flex justify-between items-center"
-    >
-      <div class="flex items-center">
-        <a href="/user"
-          ><img
-            src="../assets/logo.png"
-            alt="Campus Safety Logo"
-            class="h-8 mr-2"
-        /></a>
-        <a href="/user" class="text-xl font-semibold md:block">Campus Safety</a>
-      </div>
-      <div class="flex items-center space-x-4">
-        <div class="relative inline-flex" id="panicContainer">
+    <header class="bg-[#015EB8] text-white p-4">
+      <div class="flex justify-between items-center">
+        <div class="flex items-center">
+          <a href="/user"
+            ><img
+              src="../assets/logo.png"
+              alt="Campus Safety Logo"
+              class="h-8 mr-2"
+          /></a>
+          <a href="/user" class="text-xl font-semibold hidden sm:block"
+            >Campus Safety</a
+          >
+        </div>
+        <div class="flex items-center space-x-2 sm:space-x-4">
           <button
             id="panicButton"
             class="flex rounded-md bg-red-600 py-2 px-4 border border-transparent text-center text-sm text-white transition-all shadow-md hover:shadow-lg focus:bg-slate-700 focus:shadow-none active:bg-slate-700 hover:bg-slate-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
-            type="button"
-          >
+            >
             Panic
             <img
               src="../assets/danger.png"
-              alt="Notifications"
-              class="h-5 md:h-6 md:mr-2"
+              alt="Danger"
+              class="h-4 ml-1 sm:h-5 sm:ml-2"
             />
           </button>
+          <div class="relative inline-flex" id="notificationContainer">
+            <button
+              id="notificationButton"
+              class="flex rounded-md bg-[#FDB913] py-2 px-4 border border-transparent text-center text-sm text-white transition-all shadow-md hover:shadow-lg focus:bg-slate-700 focus:shadow-none active:bg-slate-700 hover:bg-slate-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+              type="button"
+            >
+              <span class="hidden sm:inline">Notifications</span>
+              <img
+                src="../assets/bell-ring.png"
+                alt="Notifications"
+                class="h-5 md:h-6 md:mr-2"
+              />
+            </button>
 
-          <div
-            id="dropdownMenupanic"
-            class="absolute right-0 mt-2 w-64 bg-white rounded-md shadow-lg z-10 border border-gray-200 hidden"
-          ></div>
-        </div>
-
-        <div class="relative inline-flex" id="notificationContainer">
-          <button
-            id="notificationButton"
-            class="flex rounded-md bg-[#FDB913] py-2 px-4 border border-transparent text-center text-sm text-white transition-all shadow-md hover:shadow-lg focus:bg-slate-700 focus:shadow-none active:bg-slate-700 hover:bg-slate-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
-            type="button"
-          >
-            Notifications
-            <img
-              src="../assets/bell-ring.png"
-              alt="Notifications"
-              class="h-5 md:h-6 md:mr-2"
-            />
-          </button>
-
-          <span
-            id="notificationBadge"
-            class="absolute top-0.5 right-0.5 grid min-h-[24px] min-w-[24px] translate-x-2/4 -translate-y-2/4 place-items-center rounded-full bg-[white] py-1 px-1 text-xs text-black"
-          >
-            
-          </span>
-          <div
-            id="dropdownMenu"
-            class="absolute right-0 mt-2 w-64 bg-white rounded-md shadow-lg z-10 border border-gray-200 hidden"
-          >
-            <div class="py-2" id="notificationList">
-              <!-- Notifications will be inserted here -->
+            <span
+              id="notificationBadge"
+              class="absolute top-0.5 right-0.5 grid min-h-[24px] min-w-[24px] translate-x-2/4 -translate-y-2/4 place-items-center rounded-full bg-[white] py-1 px-1 text-xs text-black"
+            >
+            </span>
+            <div
+              id="dropdownMenu"
+              class="absolute right-0 mt-2 w-64 bg-white rounded-md shadow-lg z-10 border border-gray-200 hidden"
+            >
+              <div class="py-2" id="notificationList">
+                <!-- Notifications will be inserted here -->
+              </div>
             </div>
           </div>
-        </div>
-
-        <a
-          id="profileBtn"
-          href="/user/profileManagement"
-          class="rounded-full flex items-center"
-        >
-          <div
-            class="w-10 h-10 rounded-full overflow-hidden border-2 border-white"
+          <a
+            id="profileBtn"
+            href="/user/profileManagement"
+            class="rounded-full flex items-center"
           >
-            <img
-              src="../assets/user-profile.png"
-              alt="User Profile"
-              class="w-full h-full object-cover"
-              id="headerProfilePic"
-            />
-          </div>
-        </a>
+            <div
+              class="w-8 h-8 sm:w-10 sm:h-10 rounded-full overflow-hidden border-2 border-white"
+            >
+              <img
+                src="../assets/user-profile.png"
+                alt="User Profile"
+                class="w-full h-full object-cover"
+                id="headerProfilePic"
+              />
+            </div>
+          </a>
+        </div>
       </div>
     </header>
 
@@ -441,19 +449,26 @@
           <h2 class="text-center text-2xl font-bold mb-6 max-sm:text-xl">
             Campus Navigation
           </h2>
+
           <!-- Location buttons -->
-          <div id="locationButtons" class="mb-4 flex flex-wrap justify-center">
+          <div
+            id="locationButtons"
+            class="mb-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-6 gap-2"
+          >
             <!-- Buttons will be dynamically added here -->
           </div>
 
-          <!-- map here -->
-          <div id="map-container" class="relative">
-            <div
-              id="mapLoader"
-              class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
-            ></div>
-            <div id="map"></div>
-          </div>
+          <select
+            id="locationDropdown"
+            class="w-full p-2 rounded border border-gray-300 mb-4 hidden"
+          >
+            <option value="">Select a location</option>
+            <!-- Options will be dynamically added here -->
+          </select>
+
+          <!-- loader & map here -->
+          <div class="mx-auto" id="mapLoader"></div>
+          <div id="map"></div>
 
           <!-- Directions panel -->
           <div id="directionsPanel" class="mt-4 p-4 bg-white rounded-lg shadow">
@@ -505,10 +520,30 @@
         },
       ];
 
-      function initMap() {
-        // Show the loader
-        document.getElementById("mapLoader").style.display = "block";
+      function createLocationButtons() {
+        const locationDropdown = document.getElementById("locationDropdown");
 
+        witsLocations.forEach((loc) => {
+          // Create dropdown option
+          const option = document.createElement("option");
+          option.value = loc.name;
+          option.textContent = loc.name;
+          locationDropdown.appendChild(option);
+        });
+
+        // Add event listener to dropdown
+        locationDropdown.addEventListener("change", (event) => {
+          const selectedLocation = witsLocations.find(
+            (loc) => loc.name === event.target.value
+          );
+          if (selectedLocation) {
+            showDirections(selectedLocation);
+          }
+        });
+      }
+      createLocationButtons();
+
+      function initMap() {
         // Check if browser supports Geolocation API
         if (navigator.geolocation) {
           navigator.geolocation.getCurrentPosition(
@@ -565,7 +600,9 @@
 
         // Hide the loader after the map has finished loading
         google.maps.event.addListenerOnce(map, "idle", function () {
-          document.getElementById("mapLoader").style.display = "none";
+          var loader = document.getElementById("mapLoader");
+          loader.style.display = "none"; // Hide loader
+          document.getElementById("map").style.display = "block"; // Show map
         });
 
         mapInitialized = true;

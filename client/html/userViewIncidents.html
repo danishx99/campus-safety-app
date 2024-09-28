@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
+  <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Campus Safety App</title>
@@ -11,346 +10,471 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!--Awsome notifications-->
     <script src="../javascript/index.var.js"></script>
-    <link rel="stylesheet" href="../styles/style.css">
+    <link rel="stylesheet" href="../styles/style.css" />
     <!-- <script src="../javascript/loadComponents.js" defer></script> -->
     <style>
-        #map {
-            height: 400px;
-            width: 100%;
-            display: none;
+      #map {
+        height: 400px;
+        width: 100%;
+        display: none;
+      }
+
+      /* Loader styles */
+      #mapLoader {
+        display: none;
+        border: 4px solid #f3f3f3;
+        border-radius: 50%;
+        border-top: 4px solid #3498db;
+        width: 40px;
+        height: 40px;
+        animation: spin 1s linear infinite;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
         }
 
-        /* Loader styles */
-        #mapLoader {
-            display: none;
-            border: 4px solid #f3f3f3;
-            border-radius: 50%;
-            border-top: 4px solid #3498db;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
+        100% {
+          transform: rotate(360deg);
         }
+      }
 
-        @keyframes spin {
-            0% {
-                transform: rotate(0deg);
-            }
+      /* Modal styles */
+      .modal {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        /* Semi-transparent background */
+        z-index: 1000;
+        /* Ensure modal is on top */
+      }
 
-            100% {
-                transform: rotate(360deg);
-            }
-        }
+      .modal-content {
+        background: white;
+        border-radius: 8px;
+        padding: 20px;
+        max-width: 500px;
+        width: 100%;
+        position: relative;
+      }
 
-        /* Modal styles */
-        .modal {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            /* Semi-transparent background */
-            z-index: 1000;
-            /* Ensure modal is on top */
-        }
+      .close {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        font-size: 1.5rem;
+        cursor: pointer;
+      }
 
-        .modal-content {
-            background: white;
-            border-radius: 8px;
-            padding: 20px;
-            max-width: 500px;
-            width: 100%;
-            position: relative;
-        }
-
-        .close {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            font-size: 1.5rem;
-            cursor: pointer;
-        }
-
-        .hidden {
-            display: none;
-        }
+      .hidden {
+        display: none;
+      }
     </style>
-</head>
+  </head>
 
-
-<body class="flex flex-col min-h-screen bg-gray-100">
+  <body class="flex flex-col min-h-screen bg-gray-100">
     <script type="module">
+      let notifier = new AWN();
 
-        let notifier = new AWN();
+      // notifier.success('Success message', {durations: {success: 10000}})
+      //notifier.success("Accept states cannot have outgoing edges. Remove any outgoing edges from this state first.", { durations: { info: 10000 }, labels: { success: "Oops!" } });
 
-        // notifier.success('Success message', {durations: {success: 10000}})
-        //notifier.success("Accept states cannot have outgoing edges. Remove any outgoing edges from this state first.", { durations: { info: 10000 }, labels: { success: "Oops!" } });
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+      import {
+        getMessaging,
+        getToken,
+        onMessage,
+      } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-messaging.js";
 
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
-        import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-messaging.js";
+      const firebaseConfig = {
+        apiKey: "AIzaSyBA-red8RszDmGY3YGELrunZQxFmg7r04Y",
+        authDomain: "campus-safety-fcm.firebaseapp.com",
+        projectId: "campus-safety-fcm",
+        storageBucket: "campus-safety-fcm.appspot.com",
+        messagingSenderId: "221773083535",
+        appId: "1:221773083535:web:0500a94bbb7a9dd6b891fa",
+        measurementId: "G-8BZHJT3BRY",
+      };
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyBA-red8RszDmGY3YGELrunZQxFmg7r04Y",
-            authDomain: "campus-safety-fcm.firebaseapp.com",
-            projectId: "campus-safety-fcm",
-            storageBucket: "campus-safety-fcm.appspot.com",
-            messagingSenderId: "221773083535",
-            appId: "1:221773083535:web:0500a94bbb7a9dd6b891fa",
-            measurementId: "G-8BZHJT3BRY"
-        };
+      // Initialize Firebase
+      const app = initializeApp(firebaseConfig);
+      const messaging = getMessaging(app);
 
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const messaging = getMessaging(app);
+      function playSound() {
+        //Play browser notifcation sound
+        const audio = new Audio("../assets/notification.mp3");
+        audio.play().catch((error) => {
+          console.log("Failed to play the notification sound: ", error);
+        });
+      }
 
-        function playSound() {
-            //Play browser notifcation sound
-            const audio = new Audio("../assets/notification.mp3");
-            audio.play().catch(error => {
-                console.log("Failed to play the notification sound: ", error);
-            });
+      // Handle incoming messages when the app is in the foreground
+      onMessage(messaging, (payload) => {
+        console.log("Message received. ", payload);
+
+        // Access custom data
+        const notificationType = payload.data.notificationType;
+        const sender = payload.data.sender;
+        const senderLocation = payload.data.senderLocation;
+        const recipient = payload.data.recipient;
+
+        // Access notification payload
+        const notificationTitle = payload.notification.title;
+        const notificationBody = payload.notification.body;
+
+        let detailedMessage = notificationBody; // Base notification body
+
+        // Customize the message based on the notificationType with HTML tags for emphasis
+        if (notificationType === "emergency-alert" && recipient != "admin") {
+          detailedMessage = `<strong>Emergency-alert</strong> from <strong>${sender}</strong>: <br/>${notificationBody}`;
+          notifier.alert(detailedMessage, {
+            durations: { alert: 20000 },
+            labels: { alert: notificationTitle },
+          });
+          playSound();
+        } else if (notificationType === "announcement") {
+          detailedMessage = `<strong>Announcement</strong> from <strong>${sender}</strong>: <br/>${notificationBody}`;
+          notifier.success(detailedMessage, {
+            durations: { success: 20000 },
+            labels: { success: notificationTitle },
+          });
+          playSound();
         }
 
-        // Handle incoming messages when the app is in the foreground
-        onMessage(messaging, (payload) => {
-            console.log('Message received. ', payload);
-
-            // Access custom data
-            const notificationType = payload.data.notificationType;
-            const sender = payload.data.sender;
-            const senderLocation = payload.data.senderLocation;
-            const recipient = payload.data.recipient;
-
-            // Access notification payload
-            const notificationTitle = payload.notification.title;
-            const notificationBody = payload.notification.body;
-
-            let detailedMessage = notificationBody;  // Base notification body
-
-            // Customize the message based on the notificationType with HTML tags for emphasis
-            if (notificationType === "emergency-alert" && recipient != "admin") {
-                detailedMessage = `<strong>Emergency-alert</strong> from <strong>${sender}</strong>: <br/>${notificationBody}`;
-                notifier.alert(detailedMessage, { durations: { alert: 20000 }, labels: { alert: notificationTitle } });
-                playSound();
-
-            } else if (notificationType === "announcement") {
-                detailedMessage = `<strong>Announcement</strong> from <strong>${sender}</strong>: <br/>${notificationBody}`;
-                notifier.success(detailedMessage, { durations: { success: 20000 }, labels: { success: notificationTitle } });
-                playSound();
-            }
-
-            // Log the custom data for debugging or further processing
-            console.log(`Notification Type: ${notificationType}`);
-            console.log(`Sender: ${sender}`);
-            console.log(`Sender Location: ${senderLocation}`);
-        });
-
+        // Log the custom data for debugging or further processing
+        console.log(`Notification Type: ${notificationType}`);
+        console.log(`Sender: ${sender}`);
+        console.log(`Sender Location: ${senderLocation}`);
+      });
     </script>
 
     <div id="">
-        <header class="bg-[#015EB8] text-white p-4 flex justify-between items-center">
-            <div class="flex items-center">
-                <a href="/user"><img src="../assets/logo.png" alt="Campus Safety Logo" class="h-8 mr-2"></a>
-                <a href="/user" class="text-xl font-semibold md:block">Campus Safety</a>
-            </div>
-            <div class="flex items-center space-x-4">
-                <div class="relative inline-flex" id="panicContainer">
+      <header class="bg-[#015EB8] text-white p-4">
+        <div class="flex justify-between items-center">
+          <div class="flex items-center">
+            <a href="/user"
+              ><img
+                src="../assets/logo.png"
+                alt="Campus Safety Logo"
+                class="h-8 mr-2"
+            /></a>
+            <a href="/user" class="text-xl font-semibold hidden sm:block"
+              >Campus Safety</a
+            >
+          </div>
+          <div class="flex items-center space-x-2 sm:space-x-4">
+            <button
+              id="panicButton"
+              class="flex rounded-md bg-red-600 py-2 px-4 border border-transparent text-center text-sm text-white transition-all shadow-md hover:shadow-lg focus:bg-slate-700 focus:shadow-none active:bg-slate-700 hover:bg-slate-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+              >
+              Panic
+              <img
+                src="../assets/danger.png"
+                alt="Danger"
+                class="h-4 ml-1 sm:h-5 sm:ml-2"
+              />
+            </button>
+            <div class="relative inline-flex" id="notificationContainer">
+              <button
+                id="notificationButton"
+                class="flex rounded-md bg-[#FDB913] py-2 px-4 border border-transparent text-center text-sm text-white transition-all shadow-md hover:shadow-lg focus:bg-slate-700 focus:shadow-none active:bg-slate-700 hover:bg-slate-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+                type="button"
+              >
+                <span class="hidden sm:inline">Notifications</span>
+                <img
+                  src="../assets/bell-ring.png"
+                  alt="Notifications"
+                  class="h-5 md:h-6 md:mr-2"
+                />
+              </button>
 
-                    <button id="panicButton"
-                        class="flex rounded-md bg-red-600 py-2 px-4 border border-transparent text-center text-sm text-white transition-all shadow-md hover:shadow-lg focus:bg-slate-700 focus:shadow-none active:bg-slate-700 hover:bg-slate-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
-                        type="button">
-                        Panic
-                        <img src="../assets/danger.png" alt="Notifications" class="h-5 md:h-6 md:mr-2">
-                    </button>
-
-                    <div id="dropdownMenupanic"
-                        class="absolute right-0 mt-2 w-64 bg-white rounded-md shadow-lg z-10 border border-gray-200 hidden">
-
-                    </div>
+              <span
+                id="notificationBadge"
+                class="absolute top-0.5 right-0.5 grid min-h-[24px] min-w-[24px] translate-x-2/4 -translate-y-2/4 place-items-center rounded-full bg-[white] py-1 px-1 text-xs text-black"
+              >
+              </span>
+              <div
+                id="dropdownMenu"
+                class="absolute right-0 mt-2 w-64 bg-white rounded-md shadow-lg z-10 border border-gray-200 hidden"
+              >
+                <div class="py-2" id="notificationList">
+                  <!-- Notifications will be inserted here -->
                 </div>
-
-                <div class="relative inline-flex" id="notificationContainer">
-
-                    <button id="notificationButton"
-                        class="flex rounded-md bg-[#FDB913] py-2 px-4 border border-transparent text-center text-sm text-white transition-all shadow-md hover:shadow-lg focus:bg-slate-700 focus:shadow-none active:bg-slate-700 hover:bg-slate-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
-                        type="button">
-                        Notifications
-                        <img src="../assets/bell-ring.png" alt="Notifications" class="h-5 md:h-6 md:mr-2">
-                    </button>
-
-                    <span id="notificationBadge"
-                        class="absolute top-0.5 right-0.5 grid min-h-[24px] min-w-[24px] translate-x-2/4 -translate-y-2/4 place-items-center rounded-full bg-[white] py-1 px-1 text-xs text-black">
-                        
-                    </span>
-                    <div id="dropdownMenu"
-                        class="absolute right-0 mt-2 w-64 bg-white rounded-md shadow-lg z-10 border border-gray-200 hidden">
-                        <div class="py-2" id="notificationList">
-                            <!-- Notifications will be inserted here -->
-                        </div>
-                    </div>
-                </div>
-
-                <a id="profileBtn" href="/user/profileManagement" class="rounded-full flex items-center">
-                    <div class="w-10 h-10 rounded-full overflow-hidden border-2 border-white">
-                        <img src="../assets/user-profile.png" alt="User Profile" class="w-full h-full object-cover"
-                            id="headerProfilePic">
-                    </div>
-                </a>
+              </div>
             </div>
-        </header>
+            <a
+              id="profileBtn"
+              href="/user/profileManagement"
+              class="rounded-full flex items-center"
+            >
+              <div
+                class="w-8 h-8 sm:w-10 sm:h-10 rounded-full overflow-hidden border-2 border-white"
+              >
+                <img
+                  src="../assets/user-profile.png"
+                  alt="User Profile"
+                  class="w-full h-full object-cover"
+                  id="headerProfilePic"
+                />
+              </div>
+            </a>
+          </div>
+        </div>
+      </header>
     </div>
 
     <!-- PANIC MODAL -->
     <div id="panicModal" class="modal hidden">
-        <div class="modal-content">
-            <span class="close" id="closeModalBtn">&times;</span>
+      <div class="modal-content">
+        <span class="close" id="closeModalBtn">&times;</span>
 
-            <h2 class="text-center text-2xl font-bold mb-4 text-red-700">Emergency Alert</h2>
-            <h3 class="text-center text-lg font-semibold mb-6">Send an SOS alert to Campus Control. Your live location
-                will be shared.</h3>
+        <h2 class="text-center text-2xl font-bold mb-4 text-red-700">
+          Emergency Alert
+        </h2>
+        <h3 class="text-center text-lg font-semibold mb-6">
+          Send an SOS alert to Campus Control. Your live location will be
+          shared.
+        </h3>
 
-            <div class="alert-box mb-4" id="alert" role="alert">Test Error</div>
+        <div class="alert-box mb-4" id="alert" role="alert">Test Error</div>
 
-            <form id="alertForm" class="flex flex-col px-6 py-4">
-                <input id="title"
-                    class="p-3 mb-4 rounded-lg border border-gray-300 text-gray-700 focus:outline-none focus:ring-2 focus:ring-red-600"
-                    type="text" placeholder="Title - Optional">
+        <form id="alertForm" class="flex flex-col px-6 py-4">
+          <input
+            id="title"
+            class="p-3 mb-4 rounded-lg border border-gray-300 text-gray-700 focus:outline-none focus:ring-2 focus:ring-red-600"
+            type="text"
+            placeholder="Title - Optional"
+          />
 
-                <textarea
-                    class="p-3 mb-4 rounded-lg border border-gray-300 text-gray-700 focus:outline-none focus:ring-2 focus:ring-red-600"
-                    placeholder="Description - Optional" rows="3" id="description"></textarea>
-                <button id="submitAlert"
-                    class="bg-red-600 text-white py-2 px-4 rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-600">
-                    <span class="flex items-center text-center justify-center">
-                        Send Alert
-                        <svg aria-hidden="true" class="w-4 h-4 ml-2 animate-spin hidden" viewBox="0 0 100 101"
-                            fill="none" xmlns="http://www.w3.org/2000/svg" id="submitLoader">
-                            <path
-                                d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
-                                fill="currentColor" />
-                            <path
-                                d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
-                                fill="currentFill" />
-                        </svg>
-                    </span>
-                </button>
-            </form>
-        </div>
+          <textarea
+            class="p-3 mb-4 rounded-lg border border-gray-300 text-gray-700 focus:outline-none focus:ring-2 focus:ring-red-600"
+            placeholder="Description - Optional"
+            rows="3"
+            id="description"
+          ></textarea>
+          <button
+            id="submitAlert"
+            class="bg-red-600 text-white py-2 px-4 rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-600"
+          >
+            <span class="flex items-center text-center justify-center">
+              Send Alert
+              <svg
+                aria-hidden="true"
+                class="w-4 h-4 ml-2 animate-spin hidden"
+                viewBox="0 0 100 101"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                id="submitLoader"
+              >
+                <path
+                  d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
+                  fill="currentColor"
+                />
+                <path
+                  d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
+                  fill="currentFill"
+                />
+              </svg>
+            </span>
+          </button>
+        </form>
+      </div>
     </div>
 
     <div class="flex flex-1">
-        <div id="">
-            <nav class="hidden h-full md:flex bg-white w-64 p-4 flex-col shadow-md">
-                <ul class="flex-1 space-y-2">
-                    <li>
-                        <a href="/user" class="flex items-center text-gray-700 hover:bg-gray-300 p-2 rounded-md">
-                            <img src="../assets/dashboard.png" alt="Dashboard" class="h-6 w-6 mr-3">
-                            <span class="font-medium">Dashboard</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="/user/reportIncident"
-                            class="flex items-center text-gray-700 hover:bg-gray-300 p-2 rounded-md">
-                            <img src="../assets/report.png" alt="Report Incident" class="h-6 w-6 mr-3">
-                            <span class="font-medium">Report Incident</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="/user/emergencyAlerts"
-                            class="flex items-center text-gray-700 hover:bg-gray-300 p-2 rounded-md">
-                            <img src="../assets/alert.png" alt="Emergency Alerts" class="h-6 w-6 mr-3">
-                            <span class="font-medium">Emergency Alerts</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="/user/safetyResources"
-                            class="flex items-center text-gray-700 hover:bg-gray-300 p-2 rounded-md">
-                            <img src="../assets/resources.png" alt="Safety Resources" class="h-6 w-6 mr-3">
-                            <span class="font-medium">Safety Resources</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="/user/campusNavigation"
-                            class="flex items-center text-gray-700 hover:bg-gray-300 p-2 rounded-md">
-                            <img src="../assets/location.png" alt="Safety Resources" class="h-6 w-6 mr-3">
-                            <span class="font-medium">Campus Navigation</span>
-                        </a>
-                    </li>
-                </ul>
-                <div class="border-t border-gray-200 pt-4 mt-4">
-                    <a href="/auth/logout" class="flex items-center text-gray-700 hover:bg-gray-300 p-2 rounded-md"
-                        id="logoutButton">
-                        <img src="../assets/logout-solid.png" alt="Logout" class="h-6 w-6 mr-3">
-                        <span class="font-medium">Logout</span>
-                    </a>
-                </div>
-            </nav>
+      <div id="">
+        <nav class="hidden h-full md:flex bg-white w-64 p-4 flex-col shadow-md">
+          <ul class="flex-1 space-y-2">
+            <li>
+              <a
+                href="/user"
+                class="flex items-center text-gray-700 hover:bg-gray-300 p-2 rounded-md"
+              >
+                <img
+                  src="../assets/dashboard.png"
+                  alt="Dashboard"
+                  class="h-6 w-6 mr-3"
+                />
+                <span class="font-medium">Dashboard</span>
+              </a>
+            </li>
+            <li>
+              <a
+                href="/user/reportIncident"
+                class="flex items-center text-gray-700 hover:bg-gray-300 p-2 rounded-md"
+              >
+                <img
+                  src="../assets/report.png"
+                  alt="Report Incident"
+                  class="h-6 w-6 mr-3"
+                />
+                <span class="font-medium">Report Incident</span>
+              </a>
+            </li>
+            <li>
+              <a
+                href="/user/emergencyAlerts"
+                class="flex items-center text-gray-700 hover:bg-gray-300 p-2 rounded-md"
+              >
+                <img
+                  src="../assets/alert.png"
+                  alt="Emergency Alerts"
+                  class="h-6 w-6 mr-3"
+                />
+                <span class="font-medium">Emergency Alerts</span>
+              </a>
+            </li>
+            <li>
+              <a
+                href="/user/safetyResources"
+                class="flex items-center text-gray-700 hover:bg-gray-300 p-2 rounded-md"
+              >
+                <img
+                  src="../assets/resources.png"
+                  alt="Safety Resources"
+                  class="h-6 w-6 mr-3"
+                />
+                <span class="font-medium">Safety Resources</span>
+              </a>
+            </li>
+            <li>
+              <a
+                href="/user/campusNavigation"
+                class="flex items-center text-gray-700 hover:bg-gray-300 p-2 rounded-md"
+              >
+                <img
+                  src="../assets/location.png"
+                  alt="Safety Resources"
+                  class="h-6 w-6 mr-3"
+                />
+                <span class="font-medium">Campus Navigation</span>
+              </a>
+            </li>
+          </ul>
+          <div class="border-t border-gray-200 pt-4 mt-4">
+            <a
+              href="/auth/logout"
+              class="flex items-center text-gray-700 hover:bg-gray-300 p-2 rounded-md"
+              id="logoutButton"
+            >
+              <img
+                src="../assets/logout-solid.png"
+                alt="Logout"
+                class="h-6 w-6 mr-3"
+              />
+              <span class="font-medium">Logout</span>
+            </a>
+          </div>
+        </nav>
 
-            <!-- Mobile Navigation -->
-            <nav
-                class="fixed inset-x-0 bottom-0 bg-[#015EB8] text-white p-4 flex justify-around items-center md:hidden z-50">
-                <a href="/user/reportIncident" class="flex flex-col items-center">
-                    <img src="../assets/report-mobile.png" alt="Report Incident" class="h-8 w-8">
-                    <span class="text-xs mt-1">Report</span>
-                </a>
-                <a href="/user/emergencyAlerts" class="flex flex-col items-center">
-                    <img src="../assets/alert-mobile.png" alt="Emergency Alerts" class="h-8 w-8">
-                    <span class="text-xs mt-1">Alerts</span>
-                </a>
-                <a href="/user" class="flex flex-col items-center">
-                    <img src="../assets/dashboard-mobile.png" alt="Dashboard" class="h-8 w-8">
-                    <span class="text-xs mt-1">Dashboard</span>
-                </a>
-                <a href="/user/safetyResources" class="flex flex-col items-center">
-                    <img src="../assets/resources-mobile.png" alt="Safety Resources" class="h-8 w-8">
-                    <span class="text-xs mt-1">Resources</span>
-                </a>
-                <a href="/user/campusNavigation" class="flex flex-col items-center">
-                    <img src="../assets/location-mobile.png" alt="Campus Navigation" class="h-8 w-8">
-                    <span class="text-xs mt-1">Navigation</span>
-                </a>
-            </nav>
-        </div>
+        <!-- Mobile Navigation -->
+        <nav
+          class="fixed inset-x-0 bottom-0 bg-[#015EB8] text-white p-4 flex justify-around items-center md:hidden z-50"
+        >
+          <a href="/user/reportIncident" class="flex flex-col items-center">
+            <img
+              src="../assets/report-mobile.png"
+              alt="Report Incident"
+              class="h-8 w-8"
+            />
+            <span class="text-xs mt-1">Report</span>
+          </a>
+          <a href="/user/emergencyAlerts" class="flex flex-col items-center">
+            <img
+              src="../assets/alert-mobile.png"
+              alt="Emergency Alerts"
+              class="h-8 w-8"
+            />
+            <span class="text-xs mt-1">Alerts</span>
+          </a>
+          <a href="/user" class="flex flex-col items-center">
+            <img
+              src="../assets/dashboard-mobile.png"
+              alt="Dashboard"
+              class="h-8 w-8"
+            />
+            <span class="text-xs mt-1">Dashboard</span>
+          </a>
+          <a href="/user/safetyResources" class="flex flex-col items-center">
+            <img
+              src="../assets/resources-mobile.png"
+              alt="Safety Resources"
+              class="h-8 w-8"
+            />
+            <span class="text-xs mt-1">Resources</span>
+          </a>
+          <a href="/user/campusNavigation" class="flex flex-col items-center">
+            <img
+              src="../assets/location-mobile.png"
+              alt="Campus Navigation"
+              class="h-8 w-8"
+            />
+            <span class="text-xs mt-1">Navigation</span>
+          </a>
+        </nav>
+      </div>
 
-        <main class="flex-1 p-6 overflow-auto max-sm:px-0 max-sm:py-0">
-            <div class="flex flex-col bg-gray-200 rounded-lg border border-gray-400 p-4 mx-10 max-sm:m-2">
-                <h2 class="text-center text-2xl font-bold mb-2 max-sm:text-xl">Reported Incidents</h2>
-                <h3 class="text-center text-lg font-semibold mb-4 max-sm:text-sm">View the details of incidents you've
-                    reported</h3>
+      <main class="flex-1 p-6 overflow-auto max-sm:px-0 max-sm:py-0">
+        <div
+          class="flex flex-col bg-gray-200 rounded-lg border border-gray-400 p-4 mx-10 max-sm:m-2"
+        >
+          <h2 class="text-center text-2xl font-bold mb-2 max-sm:text-xl">
+            Reported Incidents
+          </h2>
+          <h3 class="text-center text-lg font-semibold mb-4 max-sm:text-sm">
+            View the details of incidents you've reported
+          </h3>
 
-                <!-- Filtering -->
+          <!-- Filtering -->
 
-                <div class="flex gap-3 mb-6">
-                    <label>
-                        <input type="checkbox" class="status-filter" value="Pending"> Pending
-                    </label>
-                    <label>
-                        <input type="checkbox" class="status-filter" value="In Progress"> In Progress
-                    </label>
-                    <label>
-                        <input type="checkbox" class="status-filter" value="Resolved"> Resolved
-                    </label>
-                </div>
+          <div class="flex gap-3 mb-6">
+            <label>
+              <input type="checkbox" class="status-filter" value="Pending" />
+              Pending
+            </label>
+            <label>
+              <input
+                type="checkbox"
+                class="status-filter"
+                value="In Progress"
+              />
+              In Progress
+            </label>
+            <label>
+              <input type="checkbox" class="status-filter" value="Resolved" />
+              Resolved
+            </label>
+          </div>
 
-                <div class="alert-box" id="pageAlert" role="alert"></div>
+          <div class="alert-box" id="pageAlert" role="alert"></div>
 
-                <svg aria-hidden="true"
-                    class="w-10 h-10 mx-auto text-gray-200 animate-spin dark:text-gray-600 fill-[#fbfbfb] hidden"
-                    viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg" id="loader">
-                    <path
-                        d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
-                        fill="currentColor" />
-                    <path
-                        d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
-                        fill="currentFill" />
-                </svg>
+          <svg
+            aria-hidden="true"
+            class="w-10 h-10 mx-auto text-gray-200 animate-spin dark:text-gray-600 fill-[#fbfbfb] hidden"
+            viewBox="0 0 100 101"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            id="loader"
+          >
+            <path
+              d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
+              fill="currentColor"
+            />
+            <path
+              d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
+              fill="currentFill"
+            />
+          </svg>
 
-                <div id="allIncidents" class="max-h-[420px] overflow-y-auto pr-5 ">
-
-                    <!-- <div id="incident" class="mb-6">
+          <div id="allIncidents" class="max-h-[420px] overflow-y-auto pr-5">
+            <!-- <div id="incident" class="mb-6">
                                 <div class="border border-black rounded-lg p-2 flex flex-col bg-white">
                                     <div class="flex justify-between">
                                         <div class="flex items-center max-sm:text-xs text-sm">
@@ -396,21 +520,15 @@
         
                                 </div>
                             </div> -->
-
-                </div>
-            </div>
-
-        </main>
+          </div>
+        </div>
+      </main>
     </div>
     <footer class="bg-[#015EB8] text-white p-4 text-center">
-        <p>&copy; 2024 Campus Safety App. All rights reserved.</p>
+      <p>&copy; 2024 Campus Safety App. All rights reserved.</p>
     </footer>
 
     <script src="../javascript/userViewIncidents.js"></script>
     <script src="../javascript/headerFunctionality.js" defer></script>
-
-</body>
-
-
-
+  </body>
 </html>

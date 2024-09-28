@@ -99,11 +99,9 @@ messaging.onBackgroundMessage(async (payload) => {
 
   if (role === "admin" && recipient === "admin") {
     showNotification = true;
-  } else if (role === "student" && recipient === "everyone") {
+  } else if (role === "student" && (recipient === "everyone" || recipient === "student")) {
     showNotification = true;
-  } else if (
-    role === "staff" &&
-    (recipient === "everyone" || recipient === "staff")
+  } else if (role === "staff" && (recipient === "everyone" || recipient === "staff")
   ) {
     showNotification = true;
   } else if (recipient === email) {
@@ -142,5 +140,4 @@ messaging.onBackgroundMessage(async (payload) => {
 
     self.registration.showNotification(notificationTitle, notificationOptions);
   }
-  return Promise.resolve(null);
 });

@@ -120,13 +120,18 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   /*Panic Button */
 
-document.getElementById('panicButton').addEventListener('click', function() {
-    document.getElementById('panicModal').classList.remove('hidden');
-});
-
-document.getElementById('closeModalBtn').addEventListener('click', function() {
-    document.getElementById('panicModal').classList.add('hidden');
-});
+  const panicButton = document.getElementById('panicButton');
+  const panicModal = document.getElementById('panicModal');
+  const closeModalBtn = document.getElementById('closeModalBtn');
+  
+  if (panicButton && panicModal && closeModalBtn) {
+      panicButton.addEventListener('click', function() {
+          panicModal.classList.remove('hidden');
+      });
+      closeModalBtn.addEventListener('click', function() {
+          panicModal.classList.add('hidden');
+      });
+  }
 
 
 function showpanicloader(){
@@ -137,8 +142,10 @@ function hidepanicloader(){
   document.getElementById('submitLoader').classList.add('hidden');
 }
 
+const submitAlert = document.getElementById('submitAlert');
 
-document.getElementById('submitAlert').addEventListener('click', function (event) {
+if(submitAlert){
+submitAlert.addEventListener('click', function (event) {
   event.preventDefault();
 
   showpanicloader();
@@ -208,6 +215,8 @@ document.getElementById('submitAlert').addEventListener('click', function (event
       hidepanicloader();
   }
 });
+
+}
 
 
 // Optional: Close the modal when clicking outside of the modal content

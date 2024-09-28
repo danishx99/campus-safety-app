@@ -33,6 +33,10 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function showModal(){
+  //Clear form
+  document.getElementById('title').value = "";
+  document.getElementById('description').value = "";
+
   document.getElementById('sendUpdateModal').classList.remove('hidden');
 }
 
@@ -44,10 +48,18 @@ function hideModal(){
 function showErrorMessage(message){
   document.getElementById('alertSendNotification').innerText = message;
   document.getElementById('alertSendNotification').classList.add('block');
+
+  //Make the styling red
+  document.getElementById('alertSendNotification').classList.remove('border-green-400');
+  document.getElementById('alertSendNotification').classList.add('border-red-400');
+  document.getElementById('alertSendNotification').classList.remove('text-green-700');
+  document.getElementById('alertSendNotification').classList.add('text-red-700');
+  document.getElementById('alertSendNotification').classList.remove('bg-green-100');
+  document.getElementById('alertSendNotification').classList.add('bg-red-100');
+
+  
 }
-//.alert-box {
-//   @apply bg-red-100 border hidden border-red-400 text-red-700 px-2 py-2 rounded-2xl text-center mb-[4%]
-// }
+
 function showSuccessMessage(message){
   document.getElementById('alertSendNotification').innerText = message;
   document.getElementById('alertSendNotification').classList.add('block');
@@ -80,8 +92,12 @@ function sendNotificationUpdate(e){
 
    //Get the values to be sent
    let title = document.getElementById('title').value;
+   title = "Incident Update: " + title;
    let message = document.getElementById('description').value;
    let email = document.getElementById('userEmail').value;
+   email = email.split(":")[1].trim().toLowerCase();
+   
+  //  alert("email: " + email);
    
   //  alert("Sending notification to " + email + " with title: " + title + " and message: " + message);
 
@@ -110,7 +126,7 @@ function sendNotificationUpdate(e){
   .then(response => response.json())
   .then(data => {
     hideLoader();
-    if(data.response === 200){  
+    if(data.message === "Notification sent successfully"){  
       showSuccessMessage("Incident update sent successfully.");
     }else{
       showErrorMessage("An error occurred while sending out your incident update.");
@@ -126,11 +142,21 @@ function sendNotificationUpdate(e){
 }
 
 
-function populateEmailField(userEmail){
+function populateEmailField(userEmail, group){
   //Show the modal
   showModal();
   let emailField = document.getElementById('userEmail');
-  emailField.value = userEmail;
+  emailField.value ="To: "+ userEmail;
+
+  if(group === "everyone"){
+  let modalSubheading = document.getElementById('modalSubheading');
+  modalSubheading.innerText = "Update all users on this incident";
+  }else{
+    let modalSubheading = document.getElementById('modalSubheading');
+    modalSubheading.innerText = `Update ${group} on this incident`;
+  }
+
+
 }
 
 
@@ -264,10 +290,10 @@ function addIncidentToDOM(incident, index) {
         <p class="mt-1 text-sm max-sm:text-xs">${incident.description}</p>
       </div>
       <div class="flex mt-3 text-sm">
-        <button onclick="populateEmailField('${incident.userDetails.email}')" class="bg-[#015EB8] text-white py-2 px-4 rounded-lg max-sm:text-xs hover:opacity-80 mx-3 max-sm:px-2">
-          Send notification to <span>${incident.firstName}</span>
+        <button onclick="populateEmailField('${incident.userDetails.email}','${incident.firstName}')" class="bg-[#015EB8] text-white py-2 px-4 rounded-lg max-sm:text-xs hover:opacity-80 mx-3 max-sm:px-2">
+          Send an update to <span>${incident.firstName}</span>
         </button>
-        <button class="bg-[#015EB8] text-white py-2 px-4 rounded-lg max-sm:text-xs hover:opacity-80 mr-3 max-sm:px-2">
+        <button onclick="populateEmailField('Everyone','everyone')" class="bg-[#015EB8] text-white py-2 px-4 rounded-lg max-sm:text-xs hover:opacity-80 mr-3 max-sm:px-2">
           Send announcement to all users
         </button>
       </div>

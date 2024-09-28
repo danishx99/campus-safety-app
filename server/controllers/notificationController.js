@@ -77,6 +77,8 @@ exports.sendNotification = async (req, res) => {
       senderLocation: req.body.senderLocation, // [latitude, longitude]
     });
 
+    console.log("the recpient is ", req.body.recipient);
+
     let recipient = req.body.recipient;
 
     let fcmTokens = [];

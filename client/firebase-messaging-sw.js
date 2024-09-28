@@ -99,10 +99,13 @@ messaging.onBackgroundMessage(async (payload) => {
 
   if (role === "admin" && recipient === "admin") {
     showNotification = true;
-  } else if (role === "student" && (recipient === "everyone" || recipient === "student")) {
+  } else if (role === "student" && recipient === "student") {
     showNotification = true;
-  } else if (role === "staff" && (recipient === "everyone" || recipient === "staff")
-  ) {
+  } else if (role === "student" && recipient === "everyone") {
+    showNotification = true;
+  } else if (role === "staff" && recipient === "staff") {
+    showNotification = true;
+  } else if (role === "staff" && recipient === "everyone") {
     showNotification = true;
   } else if (recipient === email) {
     showNotification = true;

@@ -113,6 +113,9 @@ exports.sendNotification = async (req, res) => {
 
     //savedNotification.title, savedNotification.message,
 
+    console.log("title" + savedNotification.title);
+    console.log("message" + savedNotification.message);
+
     //Send notification
     await _sendNotification(fcmTokens, {
       title: savedNotification.title,

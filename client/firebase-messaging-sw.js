@@ -88,7 +88,7 @@ messaging.onBackgroundMessage(async (payload) => {
   const notificationBody = payload.data?.body || "No Message";
 
   // Base notification message format including notificationType
-  let detailedMessage = `Type: ${notificationType}\nFrom: ${sender}\nMessage: ${notificationBody}`;
+  let detailedMessage = `From: ${sender}\nMessage: ${notificationBody}`;
 
   // Get the user's data from IndexedDB
   const userData = await getUserData();

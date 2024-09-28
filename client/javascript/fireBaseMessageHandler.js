@@ -51,9 +51,8 @@ export function handleIncomingMessages(notifier) {
     console.log("the title is", notificationTitle);
 
     // Base notification message format including notificationType
-    let detailedMessage = `<strong>Type:</strong> ${notificationType} <br/>
-                               <strong>From:</strong> ${sender} <br/>
-                               <strong>Message:</strong> ${notificationBody}`;
+    let detailedMessage = `<strong>From:</strong> ${sender} <br/>
+                            <strong>Message:</strong> ${notificationBody}`;
 
     //Get the users role and email address from browser cookies
     const role = getCookie("role");

@@ -58,7 +58,7 @@ async function fetchAndDisplayIncidents() {
     loader.style.display = "block";
     incidentsContainer.style.display = "none";
 
-    const response = await fetch("/incidentReporting/getIncidentsByUser");
+    const response = await fetch("/incidentReporting/getIncidents");
 
     // Ensure the response is JSON and not HTML or other content
     const contentType = response.headers.get("content-type");
@@ -114,7 +114,6 @@ async function fetchAndDisplayIncidents() {
   }
 }
 
-
 // Add incidents to DOM
 function addIncidentToDOM(incident, index) {
   const incidentsContainer = document.getElementById("allIncidents");
@@ -125,7 +124,9 @@ function addIncidentToDOM(incident, index) {
 
   // format the date of this format (2024-09-26T21:17)
   const date = new Date(incident.date);
-  incident.date = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()} ${date.getHours()}:${date.getMinutes()}`;
+  incident.date = `${date.getFullYear()}-${
+    date.getMonth() + 1
+  }-${date.getDate()} ${date.getHours()}:${date.getMinutes()}`;
 
   const options = ["Pending", "In Progress", "Resolved"];
   const optionsHTML = options

@@ -114,9 +114,7 @@ exports.reportIncident = async (req, res) => {
     await _sendNotification(fcmTokens, {
       title: "Incident Reported",
       body:
-        "A new incident has been reported by " +
-        email +
-        " , please check the incident tab for more details",
+        "A new incident has been reported. Please check the incident tab for more details.",
       notificationType: "Incident reported",
       sender: email,
       senderLocation: location,

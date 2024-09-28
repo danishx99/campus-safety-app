@@ -113,8 +113,7 @@ exports.reportIncident = async (req, res) => {
     //Send notification
     await _sendNotification(fcmTokens, {
       title: "Incident Reported",
-      body:
-        "A new incident has been reported. Please check the incident tab for more details.",
+      body: "A new incident has been reported. Please check the incident tab for more details.",
       notificationType: "Incident reported",
       sender: email,
       senderLocation: location,
@@ -155,6 +154,50 @@ exports.deleteAllIncidents = async (req, res) => {
 
 exports.updateIncidentStatus = async (req, res) => {
   const { incidents } = req.body; // Expecting an array of { incidentId, status }
+
+  //fetch all incident
+  const allIncidents = await Incident.find();
+
+  //compare allIncidents with incidents to find the incidents whose incidents whose statuses have been changed, where incidents is array of { incidentId, status }
+  const changedIncidents = incidents.filter((incident) => {
+    const foundIncident = allIncidents.find(
+      (inc) => inc._id.toString() === incident.incidentId
+    );
+    return foundIncident.status !== incident.status;
+  });
+
+  const fcmTokens = [];
+
+  console.log(changedIncidents);
+
+  //send notification to the user whose incident status has been changed
+
+  for (const incident of changedIncidents) {
+    try {
+      // Find the incident by its ID
+      const myIncident = await Incident.findById(incident.incidentId);
+      if (!myIncident) {
+        console.log("Incident not found");
+        continue; // Skip to the next iteration if incident is not found
+      }
+      // Find the user who reported the incident
+      const user = await User.findOne({ email: myIncident.reportedBy });
+      if (user && !fcmTokens.includes(user.FCMtoken)) {
+        fcmTokens.push(user.FCMtoken);
+        //send notification
+        await _sendNotification([user.FCMtoken], {
+          title: "Incident Status Update",
+          body: "The status of one or more of your incidents has been updated. Please check the incident tab for more details.",
+          notificationType: "Incident status update",
+          sender: "admin",
+          recipient: user.email,
+        });
+      }
+    } catch (error) {
+      console.error("Error processing incident:", error);
+    }
+  }
+
   try {
     // Loop through each incident and update the status
     for (const { incidentId, status } of incidents) {

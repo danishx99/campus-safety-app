@@ -56,9 +56,11 @@ export function handleIncomingMessages(notifier) {
 
     //Get the users role and email address from browser cookies
     const role = getCookie("role");
-    const email = getCookie("email");
+    const email = decodeURIComponent(getCookie("email"));
     const firstname = getCookie("firstname");
     const lastname = getCookie("lastname");
+
+    console
 
     // console.log(`The user is a ${role} with email ${email} and name ${firstname} ${lastname}`);
     // alert("The user is a "+role+" with email "+email+" and name "+firstname+" "+lastname);

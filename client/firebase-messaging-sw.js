@@ -132,4 +132,7 @@ messaging.onBackgroundMessage(async (payload) => {
 
     self.registration.showNotification(notificationTitle, notificationOptions);
   }
+
+  return Promise.resolve(null);
+  
 });

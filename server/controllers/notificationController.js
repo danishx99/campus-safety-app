@@ -83,34 +83,45 @@ exports.sendNotification = async (req, res) => {
 
     const savedNotification = await newNotification.save();
 
-        if(recipient === 'everyone') {
-            // Get all FCM tokens , exlcuding admins
-            const users = await User.find({role: {$ne: 'admin'}});
-            fcmTokens = users.map(user => user.FCMtoken);
-        }else if(recipient === 'staff') {
-            // Get all staff FCM tokens
-            const users = await User.find({role: 'staff'});
-            fcmTokens = users.map(user => user.FCMtoken);
-        } else if(recipient === 'student') {
-            // Get all student FCM tokens
-            const users = await User.find({role: 'student'});
-            fcmTokens = users.map(user => user.FCMtoken);
-        } else if(recipient === 'admin') {
-            // Get specific user FCM token
-            const users = await User.find({role: 'admin'});
-            fcmTokens = users.map(user => user.FCMtoken);
-        }else{
-            // Get specific user FCM token
-            const user = await User.findOne({email: recipient});
-            fcmTokens = [user.FCMtoken];
-        }
+    if (recipient === "everyone") {
+      // Get all FCM tokens , exlcuding admins
+      const users = await User.find({ role: { $ne: "admin" } });
+      fcmTokens = users.map((user) => user.FCMtoken);
+    } else if (recipient === "staff") {
+      // Get all staff FCM tokens
+      const users = await User.find({ role: "staff" });
+      fcmTokens = users.map((user) => user.FCMtoken);
+    } else if (recipient === "student") {
+      // Get all student FCM tokens
+      const users = await User.find({ role: "student" });
+      fcmTokens = users.map((user) => user.FCMtoken);
+    } else if (recipient === "admin") {
+      // Get specific user FCM token
+      const users = await User.find({ role: "admin" });
+      fcmTokens = users.map((user) => user.FCMtoken);
+    } else {
+      // Get specific user FCM token
+      const user = await User.findOne({ email: recipient });
+      fcmTokens = [user.FCMtoken];
+    }
 
-        if(fcmTokens.length === 0) {
-            return res.status(200).json({ message: "Notification sent successfully" });
-        }
+    if (fcmTokens.length === 0) {
+      return res
+        .status(200)
+        .json({ message: "Notification sent successfully" });
+    }
 
-        //Send notification
-        await _sendNotification(fcmTokens, savedNotification.title, savedNotification.message, { notificationType: savedNotification.notificationType, sender: savedNotification.sender, senderLocation: savedNotification.senderLocation, recipient: savedNotification.recipient });
+    //savedNotification.title, savedNotification.message,
+
+    //Send notification
+    await _sendNotification(fcmTokens, {
+      title: savedNotification.title,
+      body: savedNotification.message,
+      notificationType: savedNotification.notificationType,
+      sender: savedNotification.sender,
+      senderLocation: savedNotification.senderLocation,
+      recipient: savedNotification.recipient,
+    });
 
     res.status(200).json({ message: "Notification sent successfully" });
   } catch (error) {

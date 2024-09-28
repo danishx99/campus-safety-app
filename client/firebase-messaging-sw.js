@@ -1,6 +1,10 @@
 // firebase-messaging-sw.js
-importScripts('https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js');
-importScripts('https://www.gstatic.com/firebasejs/9.22.0/firebase-messaging-compat.js');
+importScripts(
+  "https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"
+);
+importScripts(
+  "https://www.gstatic.com/firebasejs/9.22.0/firebase-messaging-compat.js"
+);
 
 const firebaseConfig = {
   apiKey: "AIzaSyBA-red8RszDmGY3YGELrunZQxFmg7r04Y",
@@ -9,7 +13,7 @@ const firebaseConfig = {
   storageBucket: "campus-safety-fcm.appspot.com",
   messagingSenderId: "221773083535",
   appId: "1:221773083535:web:0500a94bbb7a9dd6b891fa",
-  measurementId: "G-8BZHJT3BRY"
+  measurementId: "G-8BZHJT3BRY",
 };
 
 // Initialize Firebase
@@ -18,8 +22,8 @@ firebase.initializeApp(firebaseConfig);
 const messaging = firebase.messaging();
 
 // IndexedDB setup
-const DB_NAME = 'UserDataDB';
-const STORE_NAME = 'userData';
+const DB_NAME = "UserDataDB";
+const STORE_NAME = "userData";
 const DB_VERSION = 1;
 
 let db;
@@ -34,7 +38,7 @@ function openDB() {
     request.onupgradeneeded = (event) => {
       const db = event.target.result;
       if (!db.objectStoreNames.contains(STORE_NAME)) {
-        db.createObjectStore(STORE_NAME, { keyPath: 'key' });
+        db.createObjectStore(STORE_NAME, { keyPath: "key" });
       }
     };
   });
@@ -45,7 +49,7 @@ async function getData(key) {
     db = await openDB();
   }
   return new Promise((resolve, reject) => {
-    const transaction = db.transaction([STORE_NAME], 'readonly');
+    const transaction = db.transaction([STORE_NAME], "readonly");
     const store = transaction.objectStore(STORE_NAME);
     const request = store.get(key);
 
@@ -56,32 +60,35 @@ async function getData(key) {
 
 async function getUserData() {
   try {
-    const role = await getData('role');
-    const email = await getData('email');
-    const firstname = await getData('firstname');
-    const lastname = await getData('lastname');
+    const role = await getData("role");
+    const email = await getData("email");
+    const firstname = await getData("firstname");
+    const lastname = await getData("lastname");
     return { role, email, firstname, lastname };
   } catch (error) {
-    console.error('Failed to retrieve user data:', error);
+    console.error("Failed to retrieve user data:", error);
     return null;
   }
 }
 
 messaging.onBackgroundMessage(async (payload) => {
-  console.log('[firebase-messaging-sw.js] Received background message ', payload);
+  console.log(
+    "[firebase-messaging-sw.js] Received background message ",
+    payload
+  );
 
   // Access custom data
-  const notificationType = payload.data?.notificationType || "General Notification";
+  const notificationType =
+    payload.data?.notificationType || "General Notification";
   const sender = payload.data?.sender || "Unknown Sender";
   const recipient = payload.data?.recipient;
 
   // Access notification payload
-  const notificationTitle = payload.notification?.title || "No Title";
-  const notificationBody = payload.notification?.body || "No Message";
+  const notificationTitle = payload.data?.title || "No Title";
+  const notificationBody = payload.data?.body || "No Message";
 
   // Base notification message format including notificationType
   let detailedMessage = `Type: ${notificationType}\nFrom: ${sender}\nMessage: ${notificationBody}`;
-
 
   // Get the user's data from IndexedDB
   const userData = await getUserData();
@@ -94,42 +101,46 @@ messaging.onBackgroundMessage(async (payload) => {
     showNotification = true;
   } else if (role === "student" && recipient === "everyone") {
     showNotification = true;
-  } else if (role === "staff" && (recipient === "everyone" || recipient === "staff")) {
+  } else if (
+    role === "staff" &&
+    (recipient === "everyone" || recipient === "staff")
+  ) {
     showNotification = true;
   } else if (recipient === email) {
     showNotification = true;
   }
 
   if (showNotification) {
-    let icon = '/default-icon.png';
-    let tag = 'default';
+    let icon = "/default-icon.png";
+    let tag = "default";
 
     // Customize notification based on notificationType
     switch (notificationType) {
       case "emergency-alert":
-        icon = '/emergency-icon.png';
-        tag = 'emergency';
+        icon = "/emergency-icon.png";
+        tag = "emergency";
         break;
       case "announcement":
-        icon = '/announcement-icon.png';
-        tag = 'announcement';
+        icon = "/announcement-icon.png";
+        tag = "announcement";
         break;
       case "incidentReported":
-        icon = '/incident-icon.png';
-        tag = 'incident';
+        icon = "/incident-icon.png";
+        tag = "incident";
         break;
       case "incidentUpdate":
-        icon = '/update-icon.png';
-        tag = 'update';
+        icon = "/update-icon.png";
+        tag = "update";
         break;
     }
 
     const notificationOptions = {
       body: detailedMessage,
       icon: icon,
-      tag: tag
+      tag: tag,
     };
 
     self.registration.showNotification(notificationTitle, notificationOptions);
   }
+  return Promise.resolve(null);
 });

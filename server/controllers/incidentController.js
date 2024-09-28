@@ -7,11 +7,13 @@ const notification = require("../schemas/notification");
 const _sendNotification = require("../utils/sendNotification");
 
 exports.getIncidents = async (req, res) => {
+  console.time("getIncidents"); // Start timing
+
   try {
     const incidents = await Incident.aggregate([
       {
         $lookup: {
-          from: "users", // Make sure this matches the name of your users collection
+          from: "users", 
           localField: "reportedBy",
           foreignField: "email",
           as: "userDetails",
@@ -20,7 +22,7 @@ exports.getIncidents = async (req, res) => {
       {
         $unwind: {
           path: "$userDetails",
-          preserveNullAndEmptyArrays: true, // Preserve incidents without user details
+          preserveNullAndEmptyArrays: true,
         },
       },
       {
@@ -31,8 +33,8 @@ exports.getIncidents = async (req, res) => {
       },
       {
         $sort: {
-          status: 1, // Sort by status
-          createdAt: -1, // Then by createdAt
+          status: 1, 
+          createdAt: -1,
         },
       },
     ]);
@@ -45,7 +47,10 @@ exports.getIncidents = async (req, res) => {
     console.log(error);
     res.status(500).json({ error: "Error fetching incidents" });
   }
+
+  console.timeEnd("getIncidents"); // End timing and log the result
 };
+
 
 // exports.getIncidents = async (req, res) => {
 //   try {
@@ -128,6 +133,68 @@ exports.reportIncident = async (req, res) => {
     console.log(error);
   }
 };
+
+exports.getIncidentImage = async (req, res) => {
+
+  const { incidentId } = req.params;
+  console.log("Incident ID: ", incidentId);
+
+  // Return an HTML page with the image
+  try {
+    const incident = await Incident
+      .findById(incidentId)
+      .select("image");
+
+    if (!incident) {
+      return res.status(404).send("<h1>Incident not found</h1>");
+    }
+
+    if (!incident.image) {
+      return res.status(404).send("<h1>Image not found</h1>");
+    }
+
+    let imageSrc = `data:image/png;base64,${incident.image}`;
+
+    // Return HTML page with the base64 image taking up the entire page
+    const html = `
+      <!DOCTYPE html>
+      <html lang="en">
+        <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <style>
+            body, html {
+              margin: 0;
+              padding: 0;
+              height: 100%;
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              background-color: #f4f4f4;
+            }
+            img {
+              max-width: 100%;
+              max-height: 100%;
+              object-fit: cover;
+            }
+          </style>
+          <title>Incident Image</title>
+        </head>
+        <body>
+          <img src="${imageSrc}" alt="Incident Image">
+        </body>
+      </html>
+    `;
+
+    res.status(200).send(html);
+
+  } catch (error) {
+    console.log(error);
+    res.status(500).send("<h1>Error fetching image</h1>");
+  }
+};
+
+
 
 exports.getUserDetails = async (req, res) => {
   const { email } = req.body;

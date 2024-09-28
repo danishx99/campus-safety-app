@@ -38,4 +38,10 @@ router.delete(
   incidentController.deleteAllIncidents
 );
 
+router.get(
+  "/getIncidentImage/:incidentId",
+  //authMiddleware.verifyToken,
+ incidentController.getIncidentImage
+);
+
 module.exports = router;

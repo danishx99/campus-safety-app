@@ -19,24 +19,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const saveButton = document.getElementById("save");
   saveButton.addEventListener("click", updateIncidentsStatus);
 
-  document.addEventListener("click", (event) => {
-    if (event.target.matches(".show-image")) {
-      const imageData = event.target.getAttribute("data-image");
-      if (imageData) {
-        const imageWindow = window.open("", "_blank");
-        imageWindow.document.open();
-        imageWindow.document.write(`
-          <html>
-            <head><title>Image</title></head>
-            <body style="margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; background: #000;">
-              <img src="${imageData}" style="max-width: 100%; height: auto;">
-            </body>
-          </html>
-        `);
-        imageWindow.document.close();
-      }
-    }
-  });
+
 });
 
 // Fetch and display incidents from the server
@@ -154,11 +137,10 @@ function addIncidentToDOM(incident, index) {
               <span class="font-bold">${incident.title}</span>
               (${incident.date})
             </p>
-            <img src="../assets/locationPick.png" alt="" height="20" width="20"
-              class="mx-2 cursor-pointer locationPick max-sm:h-4 max-sm:w-4" data-lat="${latitude}" data-lng="${longitude}">
+            <img src="../assets/locationPick.png" alt="" height="20" width="20" class="mx-2 cursor-pointer locationPick max-sm:h-4 max-sm:w-4" data-lat="${latitude}" data-lng="${longitude}">
             ${
               incident.image
-                ? `<img src="../assets/image.png" alt="" height="20" width="20" class="mx-2 cursor-pointer show-image max-sm:h-4 max-sm:w-4" data-image="data:image/png;base64,${incident.image}">`
+                ? `<a href='/incidentReporting/getIncidentImage/${incident._id}' target='_blank'><img src="../assets/image.png" alt="" height="20" width="20" class="mx-2 cursor-pointer show-image max-sm:h-4 max-sm:w-4"></a>`
                 : ""
             }
           </div>

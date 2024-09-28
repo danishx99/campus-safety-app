@@ -93,7 +93,8 @@ messaging.onBackgroundMessage(async (payload) => {
   // Get the user's data from IndexedDB
   const userData = await getUserData();
   const role = userData?.role;
-  const email = userData?.email;
+  const email = decodeURIComponent(userData?.email);
+  
 
   let showNotification = false;
 

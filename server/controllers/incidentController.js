@@ -155,6 +155,11 @@ exports.deleteAllIncidents = async (req, res) => {
 exports.updateIncidentStatus = async (req, res) => {
   const { incidents } = req.body; // Expecting an array of { incidentId, status }
 
+  //get jwt token from cookies
+  const token = req.cookies.token;
+  const decoded = jwt.verify(token, process.env.JWT_SECRET);
+  const adminEmail = decoded.userEmail;
+
   //fetch all incident
   const allIncidents = await Incident.find();
 
@@ -184,12 +189,25 @@ exports.updateIncidentStatus = async (req, res) => {
       const user = await User.findOne({ email: myIncident.reportedBy });
       if (user && !fcmTokens.includes(user.FCMtoken)) {
         fcmTokens.push(user.FCMtoken);
+
+        const newNotification = new notification({
+          recipient: user.email,
+          sender: adminEmail,
+          read: false,
+          message:
+            "The status of one or more incidents has been updated. Please check the incident tab for more details",
+          title: "Incident Status Update",
+          notificationType: "incidentUpdate",
+        });
+
+        const savedNotification = await newNotification.save();
+
         //send notification
         await _sendNotification([user.FCMtoken], {
           title: "Incident Status Update",
           body: "The status of one or more of your incidents has been updated. Please check the incident tab for more details.",
           notificationType: "Incident status update",
-          sender: "admin",
+          sender: adminEmail,
           recipient: user.email,
         });
       }

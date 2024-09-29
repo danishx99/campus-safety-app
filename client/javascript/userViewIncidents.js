@@ -136,10 +136,13 @@ function addIncidentToDOM(incident, index) {
     <div class="border border-black rounded-lg p-2 flex flex-col bg-white">
       <div class="flex justify-between">
         <div class="flex items-center text-sm">
-          <img src="../assets/profileIcon.png" class="mr-2" alt="">
+          ${
+            incident.userDetails.profilePicture ? `<img src="${incident.userDetails.profilePicture}" class="mr-2 h-5 w-5 rounded-full" alt="Profile">` :
+          `<img src="../assets/user-profile.png" class="mr-2 h-5 w-5 rounded-full" alt="Profile">`
+         }
           <p> 
             <span class="font-bold">
-              ${incident.firstName + " " + incident.lastName}
+              ${incident.userDetails.firstName + " " + incident.userDetails.lastName}
             </span> reported an incident:
             <span class="font-bold">${incident.title}</span>
             (${incident.date})

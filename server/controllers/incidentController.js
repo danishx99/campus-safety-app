@@ -10,38 +10,40 @@ exports.getIncidents = async (req, res) => {
   console.time("getIncidents"); // Start timing
 
   try {
-    const incidents = await Incident.aggregate([
-      {
-        $lookup: {
-          from: "users", 
-          localField: "reportedBy",
-          foreignField: "email",
-          as: "userDetails",
+    // Fetch all incidents first
+    const incidents = await Incident.find().sort({ status: 1, createdAt: -1 });
+
+    // Extract all unique reportedBy emails from the incidents
+    const reportedByEmails = [...new Set(incidents.map(incident => incident.reportedBy))];
+
+    // Fetch user details for the reportedBy emails
+    const users = await User.find({ email: { $in: reportedByEmails } });
+
+    // Create a lookup map for users by email for efficient merging
+    const userMap = users.reduce((acc, user) => {
+      acc[user.email] = user;
+      return acc;
+    }, {});
+
+    // Attach user details to each incident
+    const incidentsWithUserDetails = incidents.map(incident => {
+      const user = userMap[incident.reportedBy] || {};
+      return {
+        ...incident._doc, // Spread incident data
+        userDetails: {
+          firstName: user.firstName || "Unknown", // Accessing firstName
+          lastName: user.lastName || "User", // Accessing lastName
+          email: user.email || "Not provided", // Accessing email
+          phone: user.phone || "Not provided", // Accessing phone
+          role: user.role || "Not specified", // Accessing role
+          profilePicture: user.profilePicture || '../assets/user-profile.png' // Accessing profile picture
         },
-      },
-      {
-        $unwind: {
-          path: "$userDetails",
-          preserveNullAndEmptyArrays: true,
-        },
-      },
-      {
-        $addFields: {
-          firstName: { $ifNull: ["$userDetails.firstName", "Unknown"] },
-          lastName: { $ifNull: ["$userDetails.lastName", "User"] },
-        },
-      },
-      {
-        $sort: {
-          status: 1, 
-          createdAt: -1,
-        },
-      },
-    ]);
+      };
+    });
 
     res.status(200).json({
       message: "Incidents fetched successfully",
-      incidents: incidents,
+      incidents: incidentsWithUserDetails,
     });
   } catch (error) {
     console.log(error);
@@ -300,43 +302,40 @@ exports.getIncidentByUser = async (req, res) => {
   try {
     const token = req.cookies.token;
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const email = decoded.userEmail;
+    const email = decoded.userEmail; // Get the email from the decoded token
 
-    const incidents = await Incident.aggregate([
-      {
-        $match: { reportedBy: email },
-      },
-      {
-        $lookup: {
-          from: "users",
-          localField: "reportedBy",
-          foreignField: "email",
-          as: "userDetails",
+    // Fetch all incidents reported by the user
+    const incidents = await Incident.find({ reportedBy: email }).sort({ status: 1, createdAt: -1 });
+
+    // Fetch user details based on the email
+    const users = await User.find({ email }); // Fetch user by email
+
+    // Create a lookup map for the user details
+    const userMap = users.reduce((acc, user) => {
+      acc[user.email] = user; // Store user by email
+      return acc;
+    }, {});
+
+    // Attach user details to each incident
+    const incidentsWithUserDetails = incidents.map(incident => {
+      const user = userMap[email] || {}; // Get user details or empty object
+
+      return {
+        ...incident._doc, // Spread incident data
+        userDetails: {
+          firstName: user.firstName || "Unknown", // Accessing firstName
+          lastName: user.lastName || "User", // Accessing lastName
+          email: user.email || "Not provided", // Accessing email
+          phone: user.phone || "Not provided", // Accessing phone
+          role: user.role || "Not specified", // Accessing role
+          profilePicture: user.profilePicture || '../assets/user-profile.png' // Accessing profile picture
         },
-      },
-      {
-        $unwind: {
-          path: "$userDetails",
-          preserveNullAndEmptyArrays: true,
-        },
-      },
-      {
-        $addFields: {
-          firstName: { $ifNull: ["$userDetails.firstName", "Unknown"] },
-          lastName: { $ifNull: ["$userDetails.lastName", "User"] },
-        },
-      },
-      {
-        $sort: {
-          status: 1,
-          createdAt: -1,
-        },
-      },
-    ]);
+      };
+    });
 
     res.status(200).json({
       message: "Incidents fetched successfully",
-      incidents: incidents,
+      incidents: incidentsWithUserDetails,
     });
   } catch (error) {
     console.log(error);

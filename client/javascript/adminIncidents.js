@@ -267,10 +267,15 @@ function addIncidentToDOM(incident, index) {
       <div class="border border-black rounded-lg p-2 flex flex-col bg-white">
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center">
           <div class="flex flex-wrap items-center max-sm:text-xs text-sm mb-2 sm:mb-0">
-            <img src="../assets/profileIcon.png" class="mr-2 h-5 w-5" alt="Profile">
+
+          ${
+            incident.userDetails.profilePicture ? `<img src="${incident.userDetails.profilePicture}" class="mr-2 h-5 w-5 rounded-full" alt="Profile">` :
+          `<img src="../assets/user-profile.png" class="mr-2 h-5 w-5 rounded-full" alt="Profile">`
+        }
+
             <p class="max-sm:text-xs mr-2"> 
               <span class="font-bold">
-                ${incident.firstName + " " + incident.lastName}
+                ${incident.userDetails.firstName + " " + incident.userDetails.lastName}
               </span> reported:
             </p>
             <p class="max-sm:text-xs font-bold mr-2">${incident.title}</p>
@@ -292,8 +297,8 @@ function addIncidentToDOM(incident, index) {
         <p class="mt-1 text-sm max-sm:text-xs">${incident.description}</p>
       </div>
       <div class="flex mt-3 text-sm">
-        <button onclick="populateEmailField('${incident.userDetails.email}','${incident.firstName}')" class="bg-[#015EB8] text-white py-2 px-4 rounded-lg max-sm:text-xs hover:opacity-80 mx-3 max-sm:px-2">
-          Send an update to <span>${incident.firstName}</span>
+        <button onclick="populateEmailField('${incident.userDetails.email}','${incident.userDetails.firstName}')" class="bg-[#015EB8] text-white py-2 px-4 rounded-lg max-sm:text-xs hover:opacity-80 mx-3 max-sm:px-2">
+          Send an update to <span>${incident.userDetails.firstName}</span>
         </button>
         <button onclick="populateEmailField('Everyone','everyone')" class="bg-[#015EB8] text-white py-2 px-4 rounded-lg max-sm:text-xs hover:opacity-80 mr-3 max-sm:px-2">
           Send announcement to all users

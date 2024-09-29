@@ -118,13 +118,13 @@ router.get("/user/viewNotifications", isUser, (req, res) => {
 
 router.get("/admin/viewSafetyResources", isAdmin, (req, res) => {
   res.sendFile(
-    path.join(__dirname, "../../client/html", "adminSafetyResources2.html")
+    path.join(__dirname, "../../client/html", "viewSafetyResources.html")
   );
 });
 
 router.get("/admin/updateSafetyResources", isAdmin, (req, res) => {
   res.sendFile(
-    path.join(__dirname, "../../client/html", "adminSafetyResources3.html")
+    path.join(__dirname, "../../client/html", "editSafetyResources.html")
   );
 });
 

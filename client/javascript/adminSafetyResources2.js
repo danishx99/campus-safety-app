@@ -69,7 +69,7 @@ function createResource(resource) {
     editButton.onclick = () => {
         const resourceId = resource._id; 
         localStorage.setItem('resourceId', resourceId);
-        window.location.href = `/admin/updateSafetyResources`
+        window.location.href = `http://localhost:3000/admin/updateSafetyResources`
     };
 
     const deleteButton = document.createElement('button');

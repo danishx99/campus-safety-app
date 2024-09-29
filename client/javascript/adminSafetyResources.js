@@ -58,7 +58,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   viewBtn.addEventListener("click", function (event) {
     console.log("View resource button clicked");
-    window.location.href = "/admin/viewSafetyResources";
+    window.location.href = "http://localhost:3000/admin/viewSafetyResources";
   });
 
   /*async function deleteAllResources() {

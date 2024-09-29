@@ -154,57 +154,45 @@ exports.sendNotification = async (req, res) => {
 function deg2rad(deg) {
   return deg * (Math.PI / 180);
 }
-
     
 
-if (targetLocation) {
-  console.log("Target location before parsing:", targetLocation);
-  targetLocation = JSON.parse(targetLocation);
-  console.log("Parsed target location:", targetLocation);
+    if(targetLocation){
 
-  console.log("Total number of users:", users.length);
+      console.log("Because target location is non null, this line got called")
 
-  const nearbyUsers = users.filter((user) => {
-    console.log("Checking user:", user);
-    if (user.lastLocation) {
-      console.log("User last location:", user.lastLocation);
-      const R = 6371; // Radius of the earth in km
-      const [targetLat, targetLon] = targetLocation;
-      let userLat, userLon;
-      
-      try {
-        [userLat, userLon] = JSON.parse(user.lastLocation);
-      } catch (error) {
-        console.error("Error parsing user location:", error);
-        return false;
-      }
-      
-      console.log(`Target: ${targetLat}, ${targetLon}, User: ${userLat}, ${userLon}`);
-      
-      const dLat = deg2rad(userLat - targetLat);
-      const dLon = deg2rad(userLon - targetLon);
-      const a =
-          Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-          Math.cos(deg2rad(targetLat)) * Math.cos(deg2rad(userLat)) *
-          Math.sin(dLon / 2) * Math.sin(dLon / 2);
-      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-      const d = R * c; // Distance in km
-      
-      console.log(`User distance: ${d} km`);
-      
-      return d <= 5; // Return locations within 5 km radius
+      //Change targetLocation to array
+      targetLocation = JSON.parse(targetLocation);
+
+      //Filter through the users and send notification to those within 5km of the target location
+      const nearbyUsers = users.filter((user) => {
+       
+        if(user.lastLocation){
+           
+        const R = 6371; // Radius of the earth in km
+        const [targetLon, targetLat] = [targetLocation[1], targetLocation[0]];
+        const [userLon, userLat] = [JSON.parse(user.lastLocation)[1], JSON.parse(user.lastLocation)[0]];
+        
+        const dLat = deg2rad(userLat - targetLat);
+        const dLon = deg2rad(userLon - targetLon);
+        const a =
+            Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+            Math.cos(deg2rad(targetLat)) * Math.cos(deg2rad(userLat)) *
+            Math.sin(dLon / 2) * Math.sin(dLon / 2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        const d = R * c; // Distance in km
+        return d <= 0.25; // Return locations within certain radius(in km)
+        }
+
+      });
+
+      console.log("nearbyUsers", nearbyUsers);
+
+      //Overwrite fcmTokens with the nearbyUsers FCM tokens
+      fcmTokens = nearbyUsers.map((user) => user.FCMtoken);
+
+  
     }
-    console.log("User has no last location");
-    return false;
-  });
 
-  console.log("Number of nearby users found:", nearbyUsers.length);
-  console.log("Nearby users:", nearbyUsers);
-
-  fcmTokens = nearbyUsers.map((user) => user.FCMtoken);
-} else {
-  console.log("Target location is null or undefined");
-}
     if (fcmTokens.length === 0) {
       return res
         .status(200)

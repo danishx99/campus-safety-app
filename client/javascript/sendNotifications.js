@@ -54,7 +54,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Create a circle with a radius of 500 meters around the marker
         circle = new google.maps.Circle({
           map: map,
-          radius: 200, // Radius in meters
+          radius: 250, // Radius in meters
           fillColor: "blue", // Fill color for the circle
           fillOpacity: 0.3, // Opacity of the fill
           strokeColor: "black", // Stroke color for the circle
@@ -71,6 +71,10 @@ document.addEventListener('DOMContentLoaded', function() {
           const selectedLocation = document.getElementById("selectedLocation");
           selectedLocation.value = "other";
 
+          //make the map scroll to the new marker position
+            map.panTo(marker.getPosition());
+
+
         });
 
         google.maps.event.addListener(map, "click", function (event) {
@@ -79,6 +83,9 @@ document.addEventListener('DOMContentLoaded', function() {
           //update the select to the value "other"
           const selectedLocation = document.getElementById("selectedLocation");
           selectedLocation.value = "other";
+
+          //make the map scroll to the new marker position
+            map.panTo(marker.getPosition());
         });
 
         // Start checking for map initialization

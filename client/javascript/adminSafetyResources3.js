@@ -26,7 +26,7 @@ document.addEventListener("DOMContentLoaded", async function (){
     }
 
     btnCancel.addEventListener("click", function(event) {
-        window.location.href = '/admin/viewSafetyResources';
+        window.location.href = 'http://localhost:3000/admin/viewSafetyResources';
     });
 
     btnSave.addEventListener("click", async function(event) {
@@ -67,7 +67,7 @@ document.addEventListener("DOMContentLoaded", async function (){
     
             if (response.ok) {
                 // Redirect back to some other page, e.g., the resources list
-                window.location.href = '/admin/viewSafetyResources';
+                window.location.href = 'http://localhost:3000/admin/viewSafetyResources';
             } else {
                 alert('Failed to update resource');
             }

@@ -355,11 +355,18 @@
                     <!-- Dropdown for selecting Incident Type -->
                     <label for="notificationType" class="block text-sm font-medium m-2">Select Notification
                         Type:</label>
+
                     <select class="p-2 rounded-xl mb-4 bg-white max-sm:text-sm" name="incidentType"
                         id="notificationType">
                         <option value="announcement" selected>Announcement</option>
                         <option value="emergency-alert">Emergency Alert</option>
                     </select>
+
+                                  <!-- Checkbox for selecting location-specific alert -->
+                <div class="flex items-center p-2 mb-2">
+                  <input type="checkbox" id="locationSpecific" name="locationSpecific" value="locationSpecific" class="mr-2 accent-blue-600">
+                  <label for="locationSpecific" class="text-sm font-medium text-gray-700">Location Specific Notification</label>
+                </div>
 
                     <!-- Dropdown for selecting the Target Audience -->
                     <label for="recepient" class="block text-sm font-medium m-2">Send To:</label>

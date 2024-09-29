@@ -227,116 +227,70 @@ window.addEventListener('click', function(event) {
 });
 
 
-/*document.getElementById('submitAlert').addEventListener('click', function (event) {
-  console.log("submitAlert clicked");
+function UpdateUserLocation(latitude, longitude){
 
-    event.preventDefault();
-    showpanicloader();
+  // Send the location to the server
+  fetch('/location/update', {
+      method: 'POST',
+      headers: {
+          'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ latitude, longitude })
+  })
+  .then(response =>{
 
-    // Collect the necessary data
-    const title = document.getElementById('title').value;
-    const message = document.getElementById('description').value;
-
-    if(!title || !message){
-        var alert = document.getElementById('alert');
-        alert.classList.remove('hidden');
-        alert.textContent = "Please fill in all fields";
-        setTimeout(function(){
-            alert.classList.add('hidden');
-        }
-        , 3000);
-        hidepanicloader();
-        return;
+    if(response.status == 200){
+      console.log("Status code 200 received");
+    }else{
+      console.log("Error updating location, server responded not okay! ", response.status);
     }
-    
 
-    // Get the user's location (latitude and longitude)
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(function(position) {
-            const latitude = position.coords.latitude;
-            const longitude = position.coords.longitude;
+    return response.json();
 
-            // Send a request to the server to send a panic alert
-            fetch('/notifications/sendNotification', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                credentials: 'include',
-                body: JSON.stringify({
-                    recipient: 'admin', // You might need to adjust this based on your use case
-                    message: message,
-                    title: title,
-                    notificationType: "emergency-alert",
-                    senderLocation: [latitude, longitude] 
-                })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.message === "Notification sent successfully") {
-                   var alert = document.getElementById('alert');
-                     alert.classList.remove('hidden');
-                    alert.textContent = "Emergency alert sent successfully";
-                    // Redirect to panic page after success
-                    window.location.href = "/user/emergencyAlerts";
-                    setTimeout(function(){
-                        alert.classList.add('hidden');
-                    }
-                    , 3000);
-                } else {
-                    var alert = document.getElementById('alert');
-                     alert.classList.remove('hidden');
-                    alert.textContent = "An error occurred while sending the panic alert.";
-                    setTimeout(function(){
-                        alert.classList.add('hidden');
-                    }
-                    , 3000);
-                }
-                hidepanicloader();
-                closeToastBtn.style.display = 'inline-block';
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                var alert = document.getElementById('alert');
-                alert.classList.remove('hidden');
-                alert.textContent = "An error occurred while sending the panic alert.";
-                setTimeout(function(){
-                    alert.classList.add('hidden');
-                }
-                , 3000);
+  } )
+  .then(data => {
+      console.log(data.message);
+  })
+  .catch((error) => {
+      console.error('Error sending location details from Geolocation API to server:', error);
+  });
 
-                hidepanicloader();
-            });
-        }, function(error) {
-            console.error('Geolocation error:', error);
-            var alert = document.getElementById('alert');
-            alert.classList.remove('hidden');
-            alert.textContent = "An error occurred while sending the panic alert.";
-            setTimeout(function(){
-                alert.classList.add('hidden');
-            }
-            , 3000);
+}
 
-            hidepanicloader();
-        });
-    } else {
-        console.error('Geolocation is not supported by this browser.');
-       
-        var alert = document.getElementById('alert');
-        alert.classList.remove('hidden');
-        alert.textContent = "An error occurred while sending the panic alert.";
-        setTimeout(function(){
-            alert.classList.add('hidden');
-        }
-        , 3000);
+// Function to get the current location
+function getCurrentLocation() {
+  console.log("2 seconds have passed")
+  // Check if the Geolocation API is available
+  if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(
+          (position) => {
+              const currentLatitude = position.coords.latitude;
+              const currentLongitude = position.coords.longitude;
 
-        hidepanicloader();
-    }
-});*/
+              console.log('Latitude:', currentLatitude);
+              console.log('Longitude:', currentLongitude);
+              console.log('Accuracy (meters):', position.coords.accuracy);
+
+              // Update the user location on the server
+              UpdateUserLocation(currentLatitude, currentLongitude);
+          },
+          (error) => {
+              console.log("Error getting location:", error);
+          },
+          {
+              enableHighAccuracy: true, // Get more accurate readings (uses more battery)
+              timeout: 10000,           // Wait up to 10 seconds for a location
+              maximumAge: 0             // Don't use cached position data
+          }
+      );
+  } else {
+      console.log("Geolocation is not available in this browser.");
+  }
+}
 
 
+// Call getCurrentLocation every 2 seconds
+setInterval(getCurrentLocation, 2000);
 
-
-/*Modal */
 
 });

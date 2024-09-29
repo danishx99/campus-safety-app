@@ -19,6 +19,7 @@ const profileRoutes = require("./server/routes/profileRoutes.js");
 const incidentReportingRoutes = require("./server/routes/incidentReportingRoutes.js");
 const emergencyAlertRoutes = require("./server/routes/emergencyAlertRoutes.js");
 const notificationRoutes = require("./server/routes/notificationRoutes.js");
+const locationRoutes = require("./server/routes/locationRoutes.js");
 
 // Load environment variables from .env file
 dotenv.config();
@@ -42,6 +43,7 @@ app.use("/incidentReporting", incidentReportingRoutes);
 app.use("/emergency", emergencyAlertRoutes);
 app.use("/user", userRoutes);
 app.use("/notifications", notificationRoutes);
+app.use("/location", locationRoutes);
 
 //catch all other routes
 app.get("*", (req, res) => {

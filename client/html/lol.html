@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Geolocation API Demo</title>
+</head>
+<body>
+    <h1>Geolocation API Demo</h1>
+    <p>Open the console to see your real-time location updates.</p>
+    <!--Three p tags-->
+    <p>Latitude: <span id="latitude">?</span></p>
+    <p>Longitude: <span id="longitude">?</span></p>
+    <p>Accuracy (meters): <span id="accuracy">?</span></p>
+
+
+    <script>
+        // Check if the Geolocation API is available
+        if ("geolocation" in navigator) {
+            // Request the user's permission and start tracking their location
+            navigator.geolocation.watchPosition(
+                (position) => {
+                    // Called each time the position updates
+                    console.log('Latitude:', position.coords.latitude);
+                    console.log('Longitude:', position.coords.longitude);
+                    console.log('Accuracy (meters):', position.coords.accuracy);
+
+                    // Update the latitude, longitude, and accuracy elements in the DOM
+                    document.getElementById('latitude').textContent = position.coords.latitude;
+                    document.getElementById('longitude').textContent = position.coords.longitude;
+                    document.getElementById('accuracy').textContent = position.coords.accuracy;
+
+                    
+                },
+                (error) => {
+                    console.error("Error getting location:", error);
+                },
+                {
+                    enableHighAccuracy: true, // Get more accurate readings (uses more battery)
+                    timeout: 10000,           // Wait up to 10 seconds for a location
+                    maximumAge: 0             // Don't use cached position data
+                }
+            );
+        } else {
+            console.log("Geolocation is not available in this browser.");
+        }
+    </script>
+</body>
+</html>

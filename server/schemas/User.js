@@ -44,7 +44,14 @@ const userSchema = new Schema({
   profilePicture: {
     type: String,
     default: '../assets/user-profile.png'
-  }
+  },
+
+  lastLocation: {// [lat, long]
+    type: String,
+    required: false
+  } 
+  
+
 }, {
   timestamps: true // This will automatically add createdAt and updatedAt fields
 });

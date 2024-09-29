@@ -14,26 +14,6 @@ document.addEventListener("DOMContentLoaded", () => {
   statusFilters.forEach((checkbox) => {
     checkbox.addEventListener("change", filterIncidentsByStatus);
   });
-
-  // Add event listeners to location images
-  document.addEventListener("click", (event) => {
-    if (event.target.matches(".show-image")) {
-      const imageData = event.target.getAttribute("data-image");
-      if (imageData) {
-        const imageWindow = window.open("", "_blank");
-        imageWindow.document.open();
-        imageWindow.document.write(`
-          <html>
-            <head><title>Image</title></head>
-            <body style="margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; background: #000;">
-              <img src="${imageData}" style="max-width: 100%; height: auto;">
-            </body>
-          </html>
-        `);
-        imageWindow.document.close();
-      }
-    }
-  });
 });
 
 // Fetch and display incidents from the server
@@ -137,12 +117,17 @@ function addIncidentToDOM(incident, index) {
       <div class="flex justify-between">
         <div class="flex items-center text-sm">
           ${
-            incident.userDetails.profilePicture ? `<img src="${incident.userDetails.profilePicture}" class="mr-2 h-5 w-5 rounded-full" alt="Profile">` :
-          `<img src="../assets/user-profile.png" class="mr-2 h-5 w-5 rounded-full" alt="Profile">`
-         }
+            incident.userDetails.profilePicture
+              ? `<img src="${incident.userDetails.profilePicture}" class="mr-2 h-5 w-5 rounded-full" alt="Profile">`
+              : `<img src="../assets/user-profile.png" class="mr-2 h-5 w-5 rounded-full" alt="Profile">`
+          }
           <p> 
             <span class="font-bold">
-              ${incident.userDetails.firstName + " " + incident.userDetails.lastName}
+              ${
+                incident.userDetails.firstName +
+                " " +
+                incident.userDetails.lastName
+              }
             </span> reported an incident:
             <span class="font-bold">${incident.title}</span>
             (${incident.date})
@@ -150,8 +135,8 @@ function addIncidentToDOM(incident, index) {
           <img src="../assets/locationPick.png" alt="" height="20" width="20"
             class="mx-2 cursor-pointer locationPick" data-lat="${latitude}" data-lng="${longitude}">
           ${
-            incident.image
-              ? `<img src="../assets/image.png" alt="" height="20" width="20" class="mx-2 cursor-pointer show-image" data-image="data:image/png;base64,${incident.image}">`
+            incident.imageTrue
+              ? `<a href='/incidentReporting/getIncidentImage/${incident._id}' target='_blank' class="mr-2"><img src="../assets/image.png" alt="Image" class="h-5 w-5 cursor-pointer show-image"></a>`
               : ""
           }
         </div>

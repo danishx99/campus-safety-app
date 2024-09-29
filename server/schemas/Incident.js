@@ -14,6 +14,11 @@ const incidentSchema = new Schema(
     image: {
       type: String,
     },
+    imageTrue: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
     description: {
       type: String,
       required: true,

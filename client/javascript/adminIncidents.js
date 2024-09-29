@@ -1,5 +1,3 @@
-
-
 document.addEventListener("DOMContentLoaded", () => {
   // Ensure default checkboxes are checked
   document.querySelectorAll(".status-filter").forEach((checkbox) => {
@@ -20,145 +18,158 @@ document.addEventListener("DOMContentLoaded", () => {
   // Other event listeners for buttons and images
   const saveButton = document.getElementById("save");
   saveButton.addEventListener("click", updateIncidentsStatus);
-  
-  //Button for closing the modal
-  document.getElementById('closeModalBtn').addEventListener('click', function() {
-    hideModal();
-  });
 
- //Add event listener to the submit button(send notification form)
-  const submitIncidentUpdate = document.getElementById('submitIncidentUpdate');
-  submitIncidentUpdate.addEventListener('click',sendNotificationUpdate )
-  
+  //Button for closing the modal
+  document
+    .getElementById("closeModalBtn")
+    .addEventListener("click", function () {
+      hideModal();
+    });
+
+  //Add event listener to the submit button(send notification form)
+  const submitIncidentUpdate = document.getElementById("submitIncidentUpdate");
+  submitIncidentUpdate.addEventListener("click", sendNotificationUpdate);
 });
 
-function showModal(){
+function showModal() {
   //Clear form
-  document.getElementById('title').value = "";
-  document.getElementById('description').value = "";
+  document.getElementById("title").value = "";
+  document.getElementById("description").value = "";
 
-  document.getElementById('sendUpdateModal').classList.remove('hidden');
+  document.getElementById("sendUpdateModal").classList.remove("hidden");
 }
 
-function hideModal(){
-  document.getElementById('sendUpdateModal').classList.add('hidden');
+function hideModal() {
+  document.getElementById("sendUpdateModal").classList.add("hidden");
   hideErrorMessage();
 }
 
-function showErrorMessage(message){
-  document.getElementById('alertSendNotification').innerText = message;
-  document.getElementById('alertSendNotification').classList.add('block');
+function showErrorMessage(message) {
+  document.getElementById("alertSendNotification").innerText = message;
+  document.getElementById("alertSendNotification").classList.add("block");
 
   //Make the styling red
-  document.getElementById('alertSendNotification').classList.remove('border-green-400');
-  document.getElementById('alertSendNotification').classList.add('border-red-400');
-  document.getElementById('alertSendNotification').classList.remove('text-green-700');
-  document.getElementById('alertSendNotification').classList.add('text-red-700');
-  document.getElementById('alertSendNotification').classList.remove('bg-green-100');
-  document.getElementById('alertSendNotification').classList.add('bg-red-100');
-
-  
+  document
+    .getElementById("alertSendNotification")
+    .classList.remove("border-green-400");
+  document
+    .getElementById("alertSendNotification")
+    .classList.add("border-red-400");
+  document
+    .getElementById("alertSendNotification")
+    .classList.remove("text-green-700");
+  document
+    .getElementById("alertSendNotification")
+    .classList.add("text-red-700");
+  document
+    .getElementById("alertSendNotification")
+    .classList.remove("bg-green-100");
+  document.getElementById("alertSendNotification").classList.add("bg-red-100");
 }
 
-function showSuccessMessage(message){
-  document.getElementById('alertSendNotification').innerText = message;
-  document.getElementById('alertSendNotification').classList.add('block');
+function showSuccessMessage(message) {
+  document.getElementById("alertSendNotification").innerText = message;
+  document.getElementById("alertSendNotification").classList.add("block");
 
   //Make the styling green
-  document.getElementById('alertSendNotification').classList.remove('border-red-400');
-  document.getElementById('alertSendNotification').classList.add('border-green-400');
-  document.getElementById('alertSendNotification').classList.remove('text-red-700');
-  document.getElementById('alertSendNotification').classList.add('text-green-700');
-  document.getElementById('alertSendNotification').classList.remove('bg-red-100');
-  document.getElementById('alertSendNotification').classList.add('bg-green-100');
-
+  document
+    .getElementById("alertSendNotification")
+    .classList.remove("border-red-400");
+  document
+    .getElementById("alertSendNotification")
+    .classList.add("border-green-400");
+  document
+    .getElementById("alertSendNotification")
+    .classList.remove("text-red-700");
+  document
+    .getElementById("alertSendNotification")
+    .classList.add("text-green-700");
+  document
+    .getElementById("alertSendNotification")
+    .classList.remove("bg-red-100");
+  document
+    .getElementById("alertSendNotification")
+    .classList.add("bg-green-100");
 }
 
-function hideErrorMessage(){
-  document.getElementById('alertSendNotification').classList.remove('block');
+function hideErrorMessage() {
+  document.getElementById("alertSendNotification").classList.remove("block");
 }
 
-function showLoader(){
-  document.getElementById('submitLoader').classList.remove('hidden');
+function showLoader() {
+  document.getElementById("submitLoader").classList.remove("hidden");
 }
 
-function hideLoader(){
-  document.getElementById('submitLoader').classList.add('hidden');
+function hideLoader() {
+  document.getElementById("submitLoader").classList.add("hidden");
 }
 
-
-function sendNotificationUpdate(e){
+function sendNotificationUpdate(e) {
   e.preventDefault();
 
-   //Get the values to be sent
-   let title = document.getElementById('title').value;
-   title = "Incident Update: " + title;
-   let message = document.getElementById('description').value;
-   let email = document.getElementById('userEmail').value;
-   email = email.split(":")[1].trim().toLowerCase();
-   
+  //Get the values to be sent
+  let title = document.getElementById("title").value;
+  title = "Incident Update: " + title;
+  let message = document.getElementById("description").value;
+  let email = document.getElementById("userEmail").value;
+  email = email.split(":")[1].trim().toLowerCase();
+
   //  alert("email: " + email);
-   
+
   //  alert("Sending notification to " + email + " with title: " + title + " and message: " + message);
 
-
-  if(!title || !message || !email){
+  if (!title || !message || !email) {
     showErrorMessage("Please fill in all fields");
     return;
   }
 
   showLoader();
 
-
   //Send the notification
-  fetch('/notifications/sendNotification',{
-    method: 'POST',
+  fetch("/notifications/sendNotification", {
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json'
+      "Content-Type": "application/json",
     },
     body: JSON.stringify({
       title: title,
       message: message,
       recipient: email,
       notificationType: "incidentMessage",
+    }),
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      hideLoader();
+      if (data.message === "Notification sent successfully") {
+        showSuccessMessage("Incident update sent successfully.");
+      } else {
+        showErrorMessage(
+          "An error occurred while sending out your incident update."
+        );
+      }
     })
-  })
-  .then(response => response.json())
-  .then(data => {
-    hideLoader();
-    if(data.message === "Notification sent successfully"){  
-      showSuccessMessage("Incident update sent successfully.");
-    }else{
-      showErrorMessage("An error occurred while sending out your incident update.");
-    }
-  })
-  .catch(error => {
-    hideLoader();
-    console.log("Error sending notification:", error);
-    showErrorMessage("An error occurred while sending notification");
-  })
-  
-
+    .catch((error) => {
+      hideLoader();
+      console.log("Error sending notification:", error);
+      showErrorMessage("An error occurred while sending notification");
+    });
 }
 
-
-function populateEmailField(userEmail, group){
+function populateEmailField(userEmail, group) {
   //Show the modal
   showModal();
-  let emailField = document.getElementById('userEmail');
-  emailField.value ="To: "+ userEmail;
+  let emailField = document.getElementById("userEmail");
+  emailField.value = "To: " + userEmail;
 
-  if(group === "everyone"){
-  let modalSubheading = document.getElementById('modalSubheading');
-  modalSubheading.innerText = "Update all users on this incident";
-  }else{
-    let modalSubheading = document.getElementById('modalSubheading');
+  if (group === "everyone") {
+    let modalSubheading = document.getElementById("modalSubheading");
+    modalSubheading.innerText = "Update all users on this incident";
+  } else {
+    let modalSubheading = document.getElementById("modalSubheading");
     modalSubheading.innerText = `Update ${group} on this incident`;
   }
-
-
 }
-
 
 // Fetch and display incidents from the server
 async function fetchAndDisplayIncidents() {
@@ -269,13 +280,18 @@ function addIncidentToDOM(incident, index) {
           <div class="flex flex-wrap items-center max-sm:text-xs text-sm mb-2 sm:mb-0">
 
           ${
-            incident.userDetails.profilePicture ? `<img src="${incident.userDetails.profilePicture}" class="mr-2 h-5 w-5 rounded-full" alt="Profile">` :
-          `<img src="../assets/user-profile.png" class="mr-2 h-5 w-5 rounded-full" alt="Profile">`
-        }
+            incident.userDetails.profilePicture
+              ? `<img src="${incident.userDetails.profilePicture}" class="mr-2 h-5 w-5 rounded-full" alt="Profile">`
+              : `<img src="../assets/user-profile.png" class="mr-2 h-5 w-5 rounded-full" alt="Profile">`
+          }
 
             <p class="max-sm:text-xs mr-2"> 
               <span class="font-bold">
-                ${incident.userDetails.firstName + " " + incident.userDetails.lastName}
+                ${
+                  incident.userDetails.firstName +
+                  " " +
+                  incident.userDetails.lastName
+                }
               </span> reported:
             </p>
             <p class="max-sm:text-xs font-bold mr-2">${incident.title}</p>
@@ -284,7 +300,7 @@ function addIncidentToDOM(incident, index) {
           <div class="flex items-center">
             <img src="../assets/locationPick.png" alt="Location" class="h-5 w-5 cursor-pointer locationPick mr-2" data-lat="${latitude}" data-lng="${longitude}">
             ${
-              incident.image
+              incident.imageTrue
                 ? `<a href='/incidentReporting/getIncidentImage/${incident._id}' target='_blank' class="mr-2"><img src="../assets/image.png" alt="Image" class="h-5 w-5 cursor-pointer show-image"></a>`
                 : ""
             }
@@ -297,7 +313,9 @@ function addIncidentToDOM(incident, index) {
         <p class="mt-1 text-sm max-sm:text-xs">${incident.description}</p>
       </div>
       <div class="flex mt-3 text-sm">
-        <button onclick="populateEmailField('${incident.userDetails.email}','${incident.userDetails.firstName}')" class="bg-[#015EB8] text-white py-2 px-4 rounded-lg max-sm:text-xs hover:opacity-80 mx-3 max-sm:px-2">
+        <button onclick="populateEmailField('${incident.userDetails.email}','${
+    incident.userDetails.firstName
+  }')" class="bg-[#015EB8] text-white py-2 px-4 rounded-lg max-sm:text-xs hover:opacity-80 mx-3 max-sm:px-2">
           Send an update to <span>${incident.userDetails.firstName}</span>
         </button>
         <button onclick="populateEmailField('Everyone','everyone')" class="bg-[#015EB8] text-white py-2 px-4 rounded-lg max-sm:text-xs hover:opacity-80 mr-3 max-sm:px-2">

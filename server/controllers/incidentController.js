@@ -10,23 +10,37 @@ exports.getIncidents = async (req, res) => {
   console.time("getIncidents"); // Start timing
 
   try {
-    // Fetch all incidents first
-    const incidents = await Incident.find().sort({ status: 1, createdAt: -1 });
+    console.time("fetchIncidents"); // Start timing
+    // Fetch all incidents exlcuding the image field
+    const incidents = await Incident.find().select("-image").sort({
+      status: 1,
+      date: -1,
+    });
+    console.timeEnd("fetchIncidents"); // End timing and log the result
 
+    console.time("fetchUsers"); // Start timing
     // Extract all unique reportedBy emails from the incidents
-    const reportedByEmails = [...new Set(incidents.map(incident => incident.reportedBy))];
+    const reportedByEmails = [
+      ...new Set(incidents.map((incident) => incident.reportedBy)),
+    ];
+    console.timeEnd("fetchUsers"); // End timing and log the result
 
+    console.time("fetchUserDetails"); // Start timing
     // Fetch user details for the reportedBy emails
     const users = await User.find({ email: { $in: reportedByEmails } });
+    console.timeEnd("fetchUserDetails"); // End timing and log the result
 
+    console.time("mergeIncidentsAndUsers"); // Start timing
     // Create a lookup map for users by email for efficient merging
     const userMap = users.reduce((acc, user) => {
       acc[user.email] = user;
       return acc;
     }, {});
+    console.timeEnd("mergeIncidentsAndUsers"); // End timing and log the result
 
+    console.time("attachUserDetails"); // Start timing
     // Attach user details to each incident
-    const incidentsWithUserDetails = incidents.map(incident => {
+    const incidentsWithUserDetails = incidents.map((incident) => {
       const user = userMap[incident.reportedBy] || {};
       return {
         ...incident._doc, // Spread incident data
@@ -36,10 +50,11 @@ exports.getIncidents = async (req, res) => {
           email: user.email || "Not provided", // Accessing email
           phone: user.phone || "Not provided", // Accessing phone
           role: user.role || "Not specified", // Accessing role
-          profilePicture: user.profilePicture || '../assets/user-profile.png' // Accessing profile picture
+          profilePicture: user.profilePicture || "../assets/user-profile.png", // Accessing profile picture
         },
       };
     });
+    console.timeEnd("attachUserDetails"); // End timing and log the result
 
     res.status(200).json({
       message: "Incidents fetched successfully",
@@ -52,7 +67,6 @@ exports.getIncidents = async (req, res) => {
 
   console.timeEnd("getIncidents"); // End timing and log the result
 };
-
 
 // exports.getIncidents = async (req, res) => {
 //   try {
@@ -76,9 +90,12 @@ exports.reportIncident = async (req, res) => {
   try {
     const { title, type, description, location, image, date } = req.body;
 
+    let imageTrue = false;
+
     //only use image if it is not null
     let imageBase64 = null;
     if (image) {
+      imageTrue = true;
       imageBase64 = image;
     }
 
@@ -90,6 +107,7 @@ exports.reportIncident = async (req, res) => {
       description,
       location,
       image: imageBase64 || null,
+      imageTrue,
       reportedBy: email,
       date,
     });
@@ -137,15 +155,12 @@ exports.reportIncident = async (req, res) => {
 };
 
 exports.getIncidentImage = async (req, res) => {
-
   const { incidentId } = req.params;
   console.log("Incident ID: ", incidentId);
 
   // Return an HTML page with the image
   try {
-    const incident = await Incident
-      .findById(incidentId)
-      .select("image");
+    const incident = await Incident.findById(incidentId).select("image");
 
     if (!incident) {
       return res.status(404).send("<h1>Incident not found</h1>");
@@ -189,14 +204,11 @@ exports.getIncidentImage = async (req, res) => {
     `;
 
     res.status(200).send(html);
-
   } catch (error) {
     console.log(error);
     res.status(500).send("<h1>Error fetching image</h1>");
   }
 };
-
-
 
 exports.getUserDetails = async (req, res) => {
   const { email } = req.body;
@@ -305,7 +317,12 @@ exports.getIncidentByUser = async (req, res) => {
     const email = decoded.userEmail; // Get the email from the decoded token
 
     // Fetch all incidents reported by the user
-    const incidents = await Incident.find({ reportedBy: email }).sort({ status: 1, createdAt: -1 });
+    const incidents = await Incident.find({ reportedBy: email })
+      .select("-image")
+      .sort({
+        status: 1,
+        date: -1,
+      });
 
     // Fetch user details based on the email
     const users = await User.find({ email }); // Fetch user by email
@@ -317,7 +334,7 @@ exports.getIncidentByUser = async (req, res) => {
     }, {});
 
     // Attach user details to each incident
-    const incidentsWithUserDetails = incidents.map(incident => {
+    const incidentsWithUserDetails = incidents.map((incident) => {
       const user = userMap[email] || {}; // Get user details or empty object
 
       return {
@@ -328,7 +345,7 @@ exports.getIncidentByUser = async (req, res) => {
           email: user.email || "Not provided", // Accessing email
           phone: user.phone || "Not provided", // Accessing phone
           role: user.role || "Not specified", // Accessing role
-          profilePicture: user.profilePicture || '../assets/user-profile.png' // Accessing profile picture
+          profilePicture: user.profilePicture || "../assets/user-profile.png", // Accessing profile picture
         },
       };
     });

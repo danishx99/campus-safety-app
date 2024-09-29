@@ -43,7 +43,7 @@ const userSchema = new Schema({
    }, // Expiration time for the token
   profilePicture: {
     type: String,
-    default: '../assets/user-profile.png'
+    default: '../assets/profileIcon.png'
   },
 
   lastLocation: {// [lat, long]

@@ -113,40 +113,32 @@ function addIncidentToDOM(incident, index) {
 
   incidentDiv.innerHTML = `
   <div id="incident-${index}" class="mb-6">
-    <div class="border border-black rounded-lg p-2 flex flex-col bg-white">
-      <div class="flex justify-between">
-        <div class="flex items-center text-sm">
-          ${
-            incident.userDetails.profilePicture
-              ? `<img src="${incident.userDetails.profilePicture}" class="mr-2 h-5 w-5 rounded-full" alt="Profile">`
-              : `<img src="../assets/user-profile.png" class="mr-2 h-5 w-5 rounded-full" alt="Profile">`
-          }
-          <p> 
-            <span class="font-bold">
-              ${
-                incident.userDetails.firstName +
-                " " +
-                incident.userDetails.lastName
-              }
-            </span> reported an incident:
-            <span class="font-bold">${incident.title}</span>
-            (${incident.date})
+  <div class="border border-black rounded-lg p-4 flex flex-col bg-white shadow-md">
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center">
+      <div class="flex items-center text-sm w-full sm:w-auto mb-2 sm:mb-0">
+        <img src="${incident.userDetails.profilePicture ? incident.userDetails.profilePicture : '../assets/user-profile.png'}" 
+             class="mr-2 h-8 w-8 rounded-full flex-shrink-0" alt="Profile">
+        <div class="flex-grow min-w-0">
+          <p class="font-bold truncate">
+            ${incident.userDetails.firstName} ${incident.userDetails.lastName}
           </p>
-          <img src="../assets/locationPick.png" alt="" height="20" width="20"
-            class="mx-2 cursor-pointer locationPick" data-lat="${latitude}" data-lng="${longitude}">
-          ${
-            incident.imageTrue
-              ? `<a href='/incidentReporting/getIncidentImage/${incident._id}' target='_blank' class="mr-2"><img src="../assets/image.png" alt="Image" class="h-5 w-5 cursor-pointer show-image"></a>`
-              : ""
-          }
+          <p class="truncate">
+            Reported: <span class="font-bold">${incident.title}</span>
+          </p>
+          <p class="text-xs text-gray-500">${incident.date}</p>
         </div>
-        <p class="bg-[#E3E5E9] rounded-full flex items-center justify-center font-bold ${statusColor} w-40 max-w-40">
+      </div>
+      <div class="flex items-center mt-2 sm:mt-0">
+        <img src="../assets/locationPick.png" alt="Location" class="h-5 w-5 mr-2 cursor-pointer locationPick" data-lat="${latitude}" data-lng="${longitude}">
+        ${incident.imageTrue ? `<a href='/incidentReporting/getIncidentImage/${incident._id}' target='_blank' class="mr-2"><img src="../assets/image.png" alt="Image" class="h-5 w-5 cursor-pointer show-image"></a>` : ""}
+        <p class="bg-[#E3E5E9] rounded-full flex items-center justify-center font-bold ${statusColor} px-3 py-1 text-xs">
           ${incident.status}
         </p>
       </div>
-      <p class="mt-1 text-sm">${incident.description}</p>
     </div>
+    <p class="mt-2 text-sm">${incident.description}</p>
   </div>
+</div>
 `;
 
   incidentsContainer.appendChild(incidentDiv);

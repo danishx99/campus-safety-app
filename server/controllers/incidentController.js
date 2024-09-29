@@ -56,6 +56,8 @@ exports.getIncidents = async (req, res) => {
     });
     console.timeEnd("attachUserDetails"); // End timing and log the result
 
+    console.log("bruhhhhhhhh", incidentsWithUserDetails.length); // Start timing
+
     res.status(200).json({
       message: "Incidents fetched successfully",
       incidents: incidentsWithUserDetails,
@@ -234,56 +236,45 @@ exports.deleteAllIncidents = async (req, res) => {
 };
 
 exports.updateIncidentStatus = async (req, res) => {
-  const { incidents } = req.body; // Expecting an array of { incidentId, status }
+  const { incidents } = req.body; // Array of { incidentId, status }
 
-  //get jwt token from cookies
+  // Get JWT token from cookies
   const token = req.cookies.token;
   const decoded = jwt.verify(token, process.env.JWT_SECRET);
   const adminEmail = decoded.userEmail;
 
-  //fetch all incident
-  const allIncidents = await Incident.find();
-
-  //compare allIncidents with incidents to find the incidents whose incidents whose statuses have been changed, where incidents is array of { incidentId, status }
-  const changedIncidents = incidents.filter((incident) => {
-    const foundIncident = allIncidents.find(
-      (inc) => inc._id.toString() === incident.incidentId
-    );
-    return foundIncident.status !== incident.status;
-  });
+  console.time("updateIncidentStatus"); // Start timing
 
   const fcmTokens = [];
 
-  console.log(changedIncidents);
-
-  //send notification to the user whose incident status has been changed
-
-  for (const incident of changedIncidents) {
+  // Send notification to the users whose incident status has been changed
+  for (const incident of incidents) {
     try {
       // Find the incident by its ID
       const myIncident = await Incident.findById(incident.incidentId);
       if (!myIncident) {
-        console.log("Incident not found");
-        continue; // Skip to the next iteration if incident is not found
+        console.log(`Incident with ID ${incident.incidentId} not found`);
+        continue; // Skip to the next iteration if the incident is not found
       }
+
       // Find the user who reported the incident
       const user = await User.findOne({ email: myIncident.reportedBy });
       if (user && !fcmTokens.includes(user.FCMtoken)) {
         fcmTokens.push(user.FCMtoken);
 
+        // Create and save a new notification
         const newNotification = new notification({
           recipient: user.email,
           sender: adminEmail,
           read: false,
-          message:
-            "The status of one or more incidents has been updated. Please check the incident tab for more details",
+          message: "The status of one or more incidents has been updated. Please check the incident tab for more details.",
           title: "Incident Status Update",
           notificationType: "incidentUpdate",
         });
 
-        const savedNotification = await newNotification.save();
+        await newNotification.save();
 
-        //send notification
+        // Send notification
         await _sendNotification([user.FCMtoken], {
           title: "Incident Status Update",
           body: "The status of one or more of your incidents has been updated. Please check the incident tab for more details.",
@@ -291,6 +282,8 @@ exports.updateIncidentStatus = async (req, res) => {
           sender: adminEmail,
           recipient: user.email,
         });
+
+        
       }
     } catch (error) {
       console.error("Error processing incident:", error);
@@ -298,17 +291,26 @@ exports.updateIncidentStatus = async (req, res) => {
   }
 
   try {
-    // Loop through each incident and update the status
-    for (const { incidentId, status } of incidents) {
-      await Incident.findByIdAndUpdate(incidentId, { status });
-    }
+    // Perform a bulk update for all the incident statuses
+    const bulkOps = incidents.map(({ incidentId, status }) => ({
+      updateOne: {
+        filter: { _id: incidentId },
+        update: { status },
+      },
+    }));
 
+    // Execute the bulk update
+    await Incident.bulkWrite(bulkOps);
+
+    
+  
     res.status(200).json({ message: "Incident statuses updated successfully" });
   } catch (error) {
-    console.log(error);
+    console.error(error);
     res.status(500).json({ error: "Error updating incident statuses" });
   }
 };
+
 
 exports.getIncidentByUser = async (req, res) => {
   try {

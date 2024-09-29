@@ -171,6 +171,8 @@ function populateEmailField(userEmail, group) {
   }
 }
 
+let fetchedIncidents;
+
 // Fetch and display incidents from the server
 async function fetchAndDisplayIncidents() {
   const errorMessage = document.getElementById("pageAlert");
@@ -192,6 +194,8 @@ async function fetchAndDisplayIncidents() {
 
     const response = await fetch("/incidentReporting/getIncidents");
 
+
+
     // Ensure the response is JSON and not HTML or other content
     const contentType = response.headers.get("content-type");
     if (!contentType || !contentType.includes("application/json")) {
@@ -208,6 +212,12 @@ async function fetchAndDisplayIncidents() {
     }
 
     const incidents = data.incidents;
+
+    console.log("the length of the incidents is: " + incidents.length);
+
+    //store the fetched incidents so that we can use them later for comparison when sending updates
+    fetchedIncidents = incidents;
+
 
     // Clear existing content
     incidentsContainer.innerHTML = "";
@@ -274,55 +284,43 @@ function addIncidentToDOM(incident, index) {
   incidentDiv.className = "mb-6";
 
   incidentDiv.innerHTML = `
-    <div id="incident-${index}" class="mb-6">
-      <div class="border border-black rounded-lg p-2 flex flex-col bg-white">
-        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center">
-          <div class="flex flex-wrap items-center max-sm:text-xs text-sm mb-2 sm:mb-0">
-
-          ${
-            incident.userDetails.profilePicture
-              ? `<img src="${incident.userDetails.profilePicture}" class="mr-2 h-5 w-5 rounded-full" alt="Profile">`
-              : `<img src="../assets/user-profile.png" class="mr-2 h-5 w-5 rounded-full" alt="Profile">`
-          }
-
-            <p class="max-sm:text-xs mr-2"> 
-              <span class="font-bold">
-                ${
-                  incident.userDetails.firstName +
-                  " " +
-                  incident.userDetails.lastName
-                }
-              </span> reported:
-            </p>
-            <p class="max-sm:text-xs font-bold mr-2">${incident.title}</p>
-            <p class="max-sm:text-xs">(${incident.date})</p>
-          </div>
-          <div class="flex items-center">
-            <img src="../assets/locationPick.png" alt="Location" class="h-5 w-5 cursor-pointer locationPick mr-2" data-lat="${latitude}" data-lng="${longitude}">
-            ${
-              incident.imageTrue
-                ? `<a href='/incidentReporting/getIncidentImage/${incident._id}' target='_blank' class="mr-2"><img src="../assets/image.png" alt="Image" class="h-5 w-5 cursor-pointer show-image"></a>`
-                : ""
-            }
-            <select class="status-select bg-gray-300 rounded-lg px-2 py-1 text-sm"
-              data-incident-id="${incident._id}">
-              ${optionsHTML}
-            </select>
-          </div>
+   <div id="incident-${index}" class="mb-6">
+  <div class="border border-black rounded-lg p-4 flex flex-col bg-white shadow-md">
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center">
+      <div class="flex items-center text-sm w-full sm:w-auto mb-2 sm:mb-0">
+        ${incident.userDetails.profilePicture
+          ? `<img src="${incident.userDetails.profilePicture}" class="mr-2 h-8 w-8 rounded-full flex-shrink-0" alt="Profile">`
+          : `<img src="../assets/profileIcon.png" class="mr-2 h-8 w-8 rounded-full flex-shrink-0" alt="Profile">`}
+        <div class="flex-grow min-w-0">
+          <p class="font-bold truncate">
+            ${incident.userDetails.firstName} ${incident.userDetails.lastName}
+          </p>
+          <p class="truncate">
+            Reported: <span class="font-bold">${incident.title}</span>
+          </p>
+          <p class="text-xs text-gray-500">(${incident.date})</p>
         </div>
-        <p class="mt-1 text-sm max-sm:text-xs">${incident.description}</p>
       </div>
-      <div class="flex mt-3 text-sm">
-        <button onclick="populateEmailField('${incident.userDetails.email}','${
-    incident.userDetails.firstName
-  }')" class="bg-[#015EB8] text-white py-2 px-4 rounded-lg max-sm:text-xs hover:opacity-80 mx-3 max-sm:px-2">
-          Send an update to <span>${incident.userDetails.firstName}</span>
-        </button>
-        <button onclick="populateEmailField('Everyone','everyone')" class="bg-[#015EB8] text-white py-2 px-4 rounded-lg max-sm:text-xs hover:opacity-80 mr-3 max-sm:px-2">
-          Send announcement to all users
-        </button>
+      <div class="flex items-center mt-2 sm:mt-0">
+        <img src="../assets/locationPick.png" alt="Location" class="h-5 w-5 mr-2 cursor-pointer locationPick" data-lat="${latitude}" data-lng="${longitude}">
+        ${incident.imageTrue ? `<a href='/incidentReporting/getIncidentImage/${incident._id}' target='_blank' class="mr-2"><img src="../assets/image.png" alt="Image" class="h-5 w-5 cursor-pointer show-image"></a>` : ""}
+        <select class="status-select bg-gray-300 rounded-lg px-2 py-1 text-sm" data-incident-id="${incident._id}">
+          ${optionsHTML}
+        </select>
       </div>
     </div>
+    <p class="mt-2 text-sm">${incident.description}</p>
+    <div class="flex mt-3 text-sm">
+  <button onclick="populateEmailField('${incident.userDetails.email}', '${incident.userDetails.firstName}')" class="bg-[#015EB8] text-white py-1 px-2 rounded-lg hover:opacity-80 mx-3 text-xs sm:py-2 sm:px-4 sm:text-sm">
+    Send an update to <span>${incident.userDetails.firstName}</span>
+  </button>
+  <button onclick="populateEmailField('Everyone','everyone')" class="bg-[#015EB8] text-white py-1 px-2 rounded-lg hover:opacity-80 mr-3 text-xs sm:py-2 sm:px-4 sm:text-sm">
+    Send announcement to all users
+  </button>
+</div>
+  </div>
+</div>
+
   `;
   incidentsContainer.appendChild(incidentDiv);
 }
@@ -358,10 +356,32 @@ async function updateIncidentsStatus() {
   saveButton.disabled = true;
 
   const selectElements = document.querySelectorAll(".status-select");
-  const updatedStatuses = Array.from(selectElements).map((select) => ({
-    incidentId: select.getAttribute("data-incident-id"),
-    status: select.value,
-  }));
+const updatedStatuses = Array.from(selectElements).map((select) => ({
+  incidentId: select.getAttribute("data-incident-id"),
+  status: select.value,
+}));
+
+const oldIncidents = fetchedIncidents; // From the DB
+const newIncidents = updatedStatuses; // From the UI
+const IncidentsToUpdate = [];
+
+// Create a map of oldIncidents for quick lookup by incidentId
+const oldIncidentMap = oldIncidents.reduce((map, incident) => {
+  map[incident._id] = incident.status; // Use _id as the key and status as the value
+  return map;
+}, {});
+
+// Compare each new incident's status with its old status using the map
+for (const newIncident of newIncidents) {
+  const oldStatus = oldIncidentMap[newIncident.incidentId]; // Get the old status using the incidentId
+  if (oldStatus !== newIncident.status) {
+    IncidentsToUpdate.push(newIncident); // Add to the list if the status has changed
+  }
+}
+
+console.log(IncidentsToUpdate); // Incidents that have had their status changed
+
+  
 
   try {
     const response = await fetch("/incidentReporting/updateIncident", {
@@ -369,7 +389,7 @@ async function updateIncidentsStatus() {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ incidents: updatedStatuses }),
+      body: JSON.stringify({ incidents: IncidentsToUpdate }),
     });
 
     if (response.ok) {

@@ -2,397 +2,491 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Campus Safety App</title>
-    <link rel="icon" type="image/svg+xml" href="../../assets/logo.png" />
-    <link href="../styles/output.css" rel="stylesheet" />
-    <link href="../styles/styles.css" rel="stylesheet" />
-    <!--Awsome notifications-->
-    <script src="../javascript/index.var.js"></script>
-    <link rel="stylesheet" href="../styles/style.css">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- <script src="../javascript/loadComponents.js" defer></script> -->
-    <style>
-        /* Loader styles */
-        #loader {
-            border: 4px solid #f3f3f3;
-            border-radius: 50%;
-            border-top: 4px solid #3498db;
-            width: 25px;
-            height: 25px;
-            animation: spin 1s linear infinite;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Campus Safety App</title>
+  <link rel="icon" type="image/svg+xml" href="../../assets/logo.png" />
+  <link href="../styles/output.css" rel="stylesheet" />
+  <link href="../styles/styles.css" rel="stylesheet" />
+  <!--Awsome notifications-->
+  <script src="../javascript/index.var.js"></script>
+  <link rel="stylesheet" href="../styles/style.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- <script src="../javascript/loadComponents.js" defer></script> -->
+  <style>
+    #map {
+      height: 400px;
+      width: 100%;
+      display: none;
+    }
 
-        @keyframes spin {
-            0% {
-                transform: rotate(0deg);
-            }
+    /* Loader styles */
+    #mapLoader {
+      display: none;
+      border: 4px solid #f3f3f3;
+      border-radius: 50%;
+      border-top: 4px solid #3498db;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+    }
 
-            100% {
-                transform: rotate(360deg);
-            }
-        }
-    </style>
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    /* Loader styles */
+    #loader {
+      border: 4px solid #f3f3f3;
+      border-radius: 50%;
+      border-top: 4px solid #3498db;
+      width: 25px;
+      height: 25px;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+  </style>
 </head>
 
 
 <body class="flex flex-col min-h-screen bg-gray-100">
-    <script type="module">
-        import { handleIncomingMessages } from '../javascript/fireBaseMessageHandler.js';
-        
-        // ADMINS ONLY
-        let notifier = new AWN();
-    
-        // Call the handler to manage incoming messages
-        handleIncomingMessages(notifier);
-    </script>
+  <script type="module">
+    import { handleIncomingMessages } from '../javascript/fireBaseMessageHandler.js';
 
-    <div id="header-placeholder">
-        <header class="bg-[#015EB8] text-white p-4 flex justify-between items-center">
-            <div class="flex items-center">
-                <a href="/admin"><img src="../assets/logo.png" alt="Campus Safety Logo" class="h-8 mr-2"></a>
-                <a href="/admin" class="text-xl font-semibold hidden sm:block">Campus Safety</a>
-            </div>
-            <div class="flex items-center space-x-4">
+    // ADMINS ONLY
+    let notifier = new AWN();
 
-                <div class="relative inline-flex" id="notificationContainer">
+    // Call the handler to manage incoming messages
+    handleIncomingMessages(notifier);
+  </script>
 
-                    <button id="notificationButton"
-                        class="flex rounded-md bg-[#FDB913] py-2 px-4 border border-transparent text-center text-sm text-white transition-all shadow-md hover:shadow-lg focus:bg-slate-700 focus:shadow-none active:bg-slate-700 hover:bg-slate-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
-                        type="button">
-                        Notifications
-                        <img src="../assets/bell-ring.png" alt="Notifications" class="h-5 md:h-6 md:mr-2">
-                    </button>
-                    <span id="notificationBadge"
-                        class="absolute top-0.5 right-0.5 grid min-h-[24px] min-w-[24px] translate-x-2/4 -translate-y-2/4 place-items-center rounded-full bg-[white] py-1 px-1 text-xs text-black">
-                        
-                    </span>
-                    <div id="dropdownMenu"
-                        class="absolute right-0 mt-2 w-64 bg-white rounded-md shadow-lg z-10 border border-gray-200 hidden">
-                        <div class="py-2" id="notificationList">
-                            <!-- Notifications will be inserted here -->
-                        </div>
-                    </div>
-                </div>
+  <div id="header-placeholder">
+    <header class="bg-[#015EB8] text-white p-4 flex justify-between items-center">
+      <div class="flex items-center">
+        <a href="/admin"><img src="../assets/logo.png" alt="Campus Safety Logo" class="h-8 mr-2"></a>
+        <a href="/admin" class="text-xl font-semibold hidden sm:block">Campus Safety</a>
+      </div>
+      <div class="flex items-center space-x-4">
 
-                <a id="profileBtn" href="/admin/profileManagement" class="rounded-full flex items-center">
-                    <div class="w-10 h-10 rounded-full overflow-hidden border-2 border-white">
-                        <img src="../assets/user-profile.png" alt="User Profile" class="w-full h-full object-cover"
-                            id="headerProfilePic">
-                    </div>
-                </a>
-            </div>
-        </header>
+        <div class="relative inline-flex" id="notificationContainer">
 
+          <button id="notificationButton"
+            class="flex rounded-md bg-[#FDB913] py-2 px-4 border border-transparent text-center text-sm text-white transition-all shadow-md hover:shadow-lg focus:bg-slate-700 focus:shadow-none active:bg-slate-700 hover:bg-slate-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+            type="button">
+            Notifications
+            <img src="../assets/bell-ring.png" alt="Notifications" class="h-5 md:h-6 md:mr-2">
+          </button>
+          <span id="notificationBadge"
+            class="absolute top-0.5 right-0.5 grid min-h-[24px] min-w-[24px] translate-x-2/4 -translate-y-2/4 place-items-center rounded-full bg-[white] py-1 px-1 text-xs text-black">
 
-    </div>
-    <div class="flex flex-1">
-        <div id="navbar-placeholder">
-            <script>
-
-                function logout() {
-                    // localStorage.removeItem('token');
-                    window.location.href = '/auth/logout';
-                }
-            </script>
-
-
-            <!-- Desktop Navigation -->
-        <nav class="hidden h-full md:flex bg-white w-64 p-4 flex-col shadow-md">
-            <ul class="flex-1 space-y-2">
-              <li>
-                <a
-                  href="/admin"
-                  class="flex items-center text-gray-700 hover:bg-gray-300 p-2 rounded-md"
-                >
-                  <img
-                    src="../assets/dashboard.png"
-                    alt="Dashboard"
-                    class="h-6 w-6 mr-3"
-                  />
-                  <span class="font-medium">Dashboard</span>
-                </a>
-              </li>
-              <li>
-                <a
-                  href="/admin/viewIncidents"
-                  class="flex items-center text-gray-700 hover:bg-gray-300 p-2 rounded-md"
-                >
-                  <img
-                    src="../assets/report.png"
-                    alt="View Incidents"
-                    class="h-6 w-6 mr-3"
-                  />
-                  <span class="font-medium">View Incidents</span>
-                </a>
-              </li>
-              <li>
-                <a
-                  href="/admin/sendNotifications"
-                  class="flex items-center text-gray-700 hover:bg-gray-300 p-2 rounded-md"
-                >
-                  <img
-                    src="../assets/alert.png"
-                    alt="Send Notifications"
-                    class="h-6 w-6 mr-3"
-                  />
-                  <span class="font-medium">Send Notifications</span>
-                </a>
-              </li>
-              <li>
-                <a
-                  href="/admin/safetyResources"
-                  class="flex items-center text-gray-700 hover:bg-gray-300 p-2 rounded-md"
-                >
-                  <img
-                    src="../assets/resources.png"
-                    alt="Safety Resources"
-                    class="h-6 w-6 mr-3"
-                  />
-                  <span class="font-medium">Safety Resources</span>
-                </a>
-              </li>
-              <li>
-                <a
-                  href="/admin/generateCode"
-                  class="flex items-center text-gray-700 hover:bg-gray-300 p-2 rounded-md"
-                >
-                  <img
-                    src="../assets/password-entry.png"
-                    alt="Generate Code"
-                    class="h-6 w-6 mr-3"
-                  />
-                  <span class="font-medium">Generate Code</span>
-                </a>
-              </li>
-              <li>
-                <a
-                  href="/admin/emergencyAlerts"
-                  class="flex items-center text-gray-700 hover:bg-gray-300 p-2 rounded-md"
-                >
-                  <img
-                    src="../assets/caution.png"
-                    alt="Generate Code"
-                    class="h-6 w-6 mr-3"
-                  />
-                  <span class="font-medium">Manage Emergencies</span>
-                </a>
-              </li>
-              <li>
-                <a
-                  href="/admin/getUpcomingEvents"
-                  class="flex items-center text-gray-700 hover:bg-gray-300 p-2 rounded-md"
-                >
-                  <img
-                    src="../assets/calendar.png"
-                    alt="Get Upcoming Events"
-                    class="h-6 w-6 mr-3"
-                  />
-                  <span class="font-medium">Get Upcoming Events</span>
-                </a>
-              </li>
-              <li>
-                <a
-                  href="/admin/transportationManagement"
-                  class="flex items-center text-gray-700 hover:bg-gray-300 p-2 rounded-md"
-                >
-                  <img
-                    src="../assets/location.png"
-                    alt="Transportation Management"
-                    class="h-6 w-6 mr-3"
-                  />
-                  <span class="font-medium">Transportation Management</span>
-                </a>
-              </li>
-            </ul>
-            <div class="border-t border-gray-200 pt-4 mt-4">
-              <a
-                href="/auth/logout"
-                class="flex items-center text-gray-700 hover:bg-gray-300 p-2 rounded-md"
-                id="logoutButton"
-              >
-                <img
-                  src="../assets/logout-solid.png"
-                  alt="Logout"
-                  class="h-6 w-6 mr-3"
-                />
-                <span class="font-medium">Logout</span>
-              </a>
-            </div>
-          </nav>
-  
-          <!-- Mobile Navigation -->
-          <nav
-            class="fixed inset-x-0 bottom-0 bg-[#015EB8] text-white p-4 flex justify-around items-center md:hidden z-50"
-          >
-            <a href="/admin/viewIncidents" class="flex flex-col items-center">
-              <img
-                src="../assets/report-mobile.png"
-                alt="View Incidents"
-                class="h-7 w-7"
-              />
-              <span class="text-xs mt-1">Incidents</span>
-            </a>
-            <a href="/admin/sendNotifications" class="flex flex-col items-center">
-              <img
-                src="../assets/alert-mobile.png"
-                alt="Send Notifications"
-                class="h-7 w-7"
-              />
-              <span class="text-xs mt-1">Notify</span>
-            </a>
-            <a href="/admin" class="flex flex-col items-center">
-              <img
-                src="../assets/dashboard-mobile.png"
-                alt="Dashboard"
-                class="h-7 w-7"
-              />
-              <span class="text-xs mt-1">Dashboard</span>
-            </a>
-            <a href="/admin/emergencyAlerts" class="flex flex-col items-center">
-              <img
-                src="../assets/caution-white.png"
-                alt="Generate Code"
-                class="h-7 w-7"
-              />
-              <span class="text-xs mt-1">Emergencies</span>
-            </a>
-            <button id="moreButton" class="flex flex-col items-center">
-              <img src="../assets/menu.png" alt="More" class="h-7 w-7" />
-              <span class="text-xs mt-1">More</span>
-            </button>
-          </nav>
-          <!-- More menu (hidden by default) -->
-          <div
-            id="moreMenu"
-            class="fixed inset-0 bg-black bg-opacity-50 flex items-end justify-center md:hidden z-50 hidden transition-all duration-300 ease-in-out"
-          >
-            <div
-              class="bg-white w-full max-w-md rounded-t-xl shadow-lg transform translate-y-full transition-transform duration-300 ease-in-out"
-            >
-              <div class="py-2">
-                <a
-                  href="/admin/generateCode"
-                  class="flex items-center px-4 py-3 hover:bg-gray-100 transition-colors duration-200"
-                >
-                  <img
-                    src="../assets/password-entry.png"
-                    alt="Generate Code"
-                    class="h-7 w-7 mr-3"
-                  />
-                  <span class="text-base font-medium text-gray-700"
-                    >Generate Code</span
-                  >
-                </a>
-                <a
-                  href="/admin/safetyResources"
-                  class="flex items-center px-4 py-3 hover:bg-gray-100 transition-colors duration-200"
-                >
-                  <img
-                    src="../assets/resources.png"
-                    alt="Generate Code"
-                    class="h-7 w-7 mr-3"
-                  />
-                  <span class="text-base font-medium text-gray-700"
-                    >Safety Resources</span
-                  >
-                </a>
-                <a
-                  href="/admin/getUpcomingEvents"
-                  class="flex items-center px-4 py-3 hover:bg-gray-100 transition-colors duration-200"
-                >
-                  <img
-                    src="../assets/calendar.png"
-                    alt="Get Upcoming Events"
-                    class="h-7 w-7 mr-3"
-                  />
-                  <span class="text-base font-medium text-gray-700"
-                    >Get Upcoming Events</span
-                  >
-                </a>
-                <a
-                  href="/admin/transportationManagement"
-                  class="flex items-center px-4 py-3 hover:bg-gray-100 transition-colors duration-200"
-                >
-                  <img
-                    src="../assets/location.png"
-                    alt="Transportation Management"
-                    class="h-7 w-7 mr-3"
-                  />
-                  <span class="text-base font-medium text-gray-700"
-                    >Transportation Management</span
-                  >
-                </a>
-              </div>
-              <button
-                id="closeMoreMenu"
-                class="w-full p-3 text-center text-white font-medium bg-[#015EB8] hover:bg-[#014c93] transition-colors duration-200"
-              >
-                Close
-              </button>
+          </span>
+          <div id="dropdownMenu"
+            class="absolute right-0 mt-2 w-64 bg-white rounded-md shadow-lg z-10 border border-gray-200 hidden">
+            <div class="py-2" id="notificationList">
+              <!-- Notifications will be inserted here -->
             </div>
           </div>
         </div>
 
-        <!-- Main Content -->
-        <main class="flex-1 p-6 overflow-auto bg-gray-200">
-            <h2 class="text-center text-2xl font-bold mb-2 text-gray-800 sm:text-3xl">Send notifications</h2>
-            <h3 class="text-center text-lg font-semibold mb-4 text-gray-700 sm:text-xl">Send instant, real-time notifications to users.</h3>
+        <a id="profileBtn" href="/admin/profileManagement" class="rounded-full flex items-center">
+          <div class="w-10 h-10 rounded-full overflow-hidden border-2 border-white">
+            <img src="../assets/user-profile.png" alt="User Profile" class="w-full h-full object-cover"
+              id="headerProfilePic">
+          </div>
+        </a>
+      </div>
+    </header>
 
-            <form id="notificationForm" class="flex flex-col max-w-2xl mx-auto">
-                <div class="alert-box" id="alert" role="alert">Test Error</div>
 
-                <input id="notificationTitle" class="p-2 rounded-xl mb-4 text-black text-sm sm:text-base" type="text" placeholder="Title">
+  </div>
+  <div class="flex flex-1">
+    <div id="navbar-placeholder">
+      <script>
 
-                    <!-- Dropdown for selecting Incident Type -->
-                    <label for="notificationType" class="block text-sm font-medium m-2">Select Notification
-                        Type:</label>
+        function logout() {
+          // localStorage.removeItem('token');
+          window.location.href = '/auth/logout';
+        }
+      </script>
 
-                    <select class="p-2 rounded-xl mb-4 bg-white max-sm:text-sm" name="incidentType"
-                        id="notificationType">
-                        <option value="announcement" selected>Announcement</option>
-                        <option value="emergency-alert">Emergency Alert</option>
-                    </select>
 
-                                  <!-- Checkbox for selecting location-specific alert -->
-                <div class="flex items-center p-2 mb-2">
-                  <input type="checkbox" id="locationSpecific" name="locationSpecific" value="locationSpecific" class="mr-2 accent-blue-600">
-                  <label for="locationSpecific" class="text-sm font-medium text-gray-700">Location Specific Notification</label>
-                </div>
+      <!-- Desktop Navigation -->
+      <nav class="hidden h-full md:flex bg-white w-64 p-4 flex-col shadow-md">
+        <ul class="flex-1 space-y-2">
+          <li>
+            <a href="/admin" class="flex items-center text-gray-700 hover:bg-gray-300 p-2 rounded-md">
+              <img src="../assets/dashboard.png" alt="Dashboard" class="h-6 w-6 mr-3" />
+              <span class="font-medium">Dashboard</span>
+            </a>
+          </li>
+          <li>
+            <a href="/admin/viewIncidents" class="flex items-center text-gray-700 hover:bg-gray-300 p-2 rounded-md">
+              <img src="../assets/report.png" alt="View Incidents" class="h-6 w-6 mr-3" />
+              <span class="font-medium">View Incidents</span>
+            </a>
+          </li>
+          <li>
+            <a href="/admin/sendNotifications" class="flex items-center text-gray-700 hover:bg-gray-300 p-2 rounded-md">
+              <img src="../assets/alert.png" alt="Send Notifications" class="h-6 w-6 mr-3" />
+              <span class="font-medium">Send Notifications</span>
+            </a>
+          </li>
+          <li>
+            <a href="/admin/safetyResources" class="flex items-center text-gray-700 hover:bg-gray-300 p-2 rounded-md">
+              <img src="../assets/resources.png" alt="Safety Resources" class="h-6 w-6 mr-3" />
+              <span class="font-medium">Safety Resources</span>
+            </a>
+          </li>
+          <li>
+            <a href="/admin/generateCode" class="flex items-center text-gray-700 hover:bg-gray-300 p-2 rounded-md">
+              <img src="../assets/password-entry.png" alt="Generate Code" class="h-6 w-6 mr-3" />
+              <span class="font-medium">Generate Code</span>
+            </a>
+          </li>
+          <li>
+            <a href="/admin/emergencyAlerts" class="flex items-center text-gray-700 hover:bg-gray-300 p-2 rounded-md">
+              <img src="../assets/caution.png" alt="Generate Code" class="h-6 w-6 mr-3" />
+              <span class="font-medium">Manage Emergencies</span>
+            </a>
+          </li>
+          <li>
+            <a href="/admin/getUpcomingEvents" class="flex items-center text-gray-700 hover:bg-gray-300 p-2 rounded-md">
+              <img src="../assets/calendar.png" alt="Get Upcoming Events" class="h-6 w-6 mr-3" />
+              <span class="font-medium">Get Upcoming Events</span>
+            </a>
+          </li>
+          <li>
+            <a href="/admin/transportationManagement"
+              class="flex items-center text-gray-700 hover:bg-gray-300 p-2 rounded-md">
+              <img src="../assets/location.png" alt="Transportation Management" class="h-6 w-6 mr-3" />
+              <span class="font-medium">Transportation Management</span>
+            </a>
+          </li>
+        </ul>
+        <div class="border-t border-gray-200 pt-4 mt-4">
+          <a href="/auth/logout" class="flex items-center text-gray-700 hover:bg-gray-300 p-2 rounded-md"
+            id="logoutButton">
+            <img src="../assets/logout-solid.png" alt="Logout" class="h-6 w-6 mr-3" />
+            <span class="font-medium">Logout</span>
+          </a>
+        </div>
+      </nav>
 
-                <label for="recipient" class="block text-sm font-medium mb-2 text-gray-700">Send To:</label>
-                <select class="p-2 rounded-xl mb-4 bg-white text-sm sm:text-base" name="targetAudience" id="recipient">
-                    <option value="everyone" selected>Everyone</option>
-                    <option value="staff">Staff</option>
-                    <option value="student">Students</option>
-                </select>
-
-                <textarea class="p-2 rounded-lg mb-4 text-black text-sm sm:text-base" placeholder="Message" rows="5" id="notificationMessage"></textarea>
-
-                <button id="sendNotificationBtn" class="bg-[#015EB8] text-white flex justify-center items-center py-2 mt-2 px-4 rounded-lg text-sm sm:text-base hover:opacity-80">
-                    <span class="flex items-center">
-                        Send notification
-                        <div id="loader" class="m-2 p-2 hidden"></div>
-                    </span>
-                </button>
-
-                <a href="/admin/notificationhistory" class="bg-[#015EB8] text-white flex justify-center items-center py-2 mt-2 px-4 rounded-lg text-sm sm:text-base hover:opacity-80">
-                    View Notification History
-                </a>
-            </form>
-        </main>
+      <!-- Mobile Navigation -->
+      <nav class="fixed inset-x-0 bottom-0 bg-[#015EB8] text-white p-4 flex justify-around items-center md:hidden z-50">
+        <a href="/admin/viewIncidents" class="flex flex-col items-center">
+          <img src="../assets/report-mobile.png" alt="View Incidents" class="h-7 w-7" />
+          <span class="text-xs mt-1">Incidents</span>
+        </a>
+        <a href="/admin/sendNotifications" class="flex flex-col items-center">
+          <img src="../assets/alert-mobile.png" alt="Send Notifications" class="h-7 w-7" />
+          <span class="text-xs mt-1">Notify</span>
+        </a>
+        <a href="/admin" class="flex flex-col items-center">
+          <img src="../assets/dashboard-mobile.png" alt="Dashboard" class="h-7 w-7" />
+          <span class="text-xs mt-1">Dashboard</span>
+        </a>
+        <a href="/admin/emergencyAlerts" class="flex flex-col items-center">
+          <img src="../assets/caution-white.png" alt="Generate Code" class="h-7 w-7" />
+          <span class="text-xs mt-1">Emergencies</span>
+        </a>
+        <button id="moreButton" class="flex flex-col items-center">
+          <img src="../assets/menu.png" alt="More" class="h-7 w-7" />
+          <span class="text-xs mt-1">More</span>
+        </button>
+      </nav>
+      <!-- More menu (hidden by default) -->
+      <div id="moreMenu"
+        class="fixed inset-0 bg-black bg-opacity-50 flex items-end justify-center md:hidden z-50 hidden transition-all duration-300 ease-in-out">
+        <div
+          class="bg-white w-full max-w-md rounded-t-xl shadow-lg transform translate-y-full transition-transform duration-300 ease-in-out">
+          <div class="py-2">
+            <a href="/admin/generateCode"
+              class="flex items-center px-4 py-3 hover:bg-gray-100 transition-colors duration-200">
+              <img src="../assets/password-entry.png" alt="Generate Code" class="h-7 w-7 mr-3" />
+              <span class="text-base font-medium text-gray-700">Generate Code</span>
+            </a>
+            <a href="/admin/safetyResources"
+              class="flex items-center px-4 py-3 hover:bg-gray-100 transition-colors duration-200">
+              <img src="../assets/resources.png" alt="Generate Code" class="h-7 w-7 mr-3" />
+              <span class="text-base font-medium text-gray-700">Safety Resources</span>
+            </a>
+            <a href="/admin/getUpcomingEvents"
+              class="flex items-center px-4 py-3 hover:bg-gray-100 transition-colors duration-200">
+              <img src="../assets/calendar.png" alt="Get Upcoming Events" class="h-7 w-7 mr-3" />
+              <span class="text-base font-medium text-gray-700">Get Upcoming Events</span>
+            </a>
+            <a href="/admin/transportationManagement"
+              class="flex items-center px-4 py-3 hover:bg-gray-100 transition-colors duration-200">
+              <img src="../assets/location.png" alt="Transportation Management" class="h-7 w-7 mr-3" />
+              <span class="text-base font-medium text-gray-700">Transportation Management</span>
+            </a>
+          </div>
+          <button id="closeMoreMenu"
+            class="w-full p-3 text-center text-white font-medium bg-[#015EB8] hover:bg-[#014c93] transition-colors duration-200">
+            Close
+          </button>
+        </div>
+      </div>
     </div>
 
-    <!--Footer-->
-    <footer class="bg-[#015EB8] text-white p-4 text-center">
-        <p>&copy; 2024 Campus Safety App. All rights reserved.</p>
-    </footer>
+    <!-- Main Content -->
+    <main class="flex-1 p-6 overflow-auto bg-gray-200">
+      <h2 class="text-center text-2xl font-bold mb-2 text-gray-800 sm:text-3xl">Send notifications</h2>
+      <h3 class="text-center text-lg font-semibold mb-4 text-gray-700 sm:text-xl">Send instant, real-time notifications
+        to users.</h3>
+
+      <form id="notificationForm" class="flex flex-col max-w-2xl mx-auto">
+        <div class="alert-box" id="alert" role="alert">Test Error</div>
+
+        <input id="notificationTitle" class="p-2 rounded-xl mb-4 text-black text-sm sm:text-base" type="text"
+          placeholder="Title">
+
+        <!-- Dropdown for selecting Incident Type -->
+        <label for="notificationType" class="block text-sm font-medium m-2">Select Notification
+          Type:</label>
+
+        <select class="p-2 rounded-xl mb-4 bg-white max-sm:text-sm" name="incidentType" id="notificationType">
+          <option value="announcement" selected>Announcement</option>
+          <option value="emergency-alert">Emergency Alert</option>
+        </select>
+
+        <!-- Checkbox for selecting location-specific alert -->
+        <div class="flex items-center p-2 mb-2">
+          <input type="checkbox" id="locationSpecific" name="locationSpecific" value="locationSpecific"
+            class="mr-2 accent-blue-600">
+          <label for="locationSpecific" class="text-sm font-medium text-gray-700">Location Specific Notification</label>
+        </div>
+
+        <select class="p-2 rounded-xl mb-4 bg-white max-sm:text-sm hidden" name="selectedLocation"
+          id="selectedLocation">
+          <option value="[-26.191170236653846, 28.02840292453766]">Wits Inter Campus Bus Service</option>
+          <option value="[-26.192847775992607, 28.03059294819832]">The Great Hall</option>
+          <option value="[-26.190934368353346, 28.026815056800842]">Counselling and Careers Development Unit</option>
+          <option value="[-26.189605795127147, 28.029293417930603]">Old Mutual Sports Hall</option>
+          <option value="[-26.189779088146377, 28.030672073364258]">The Matrix</option>
+          <option value="[-26.18655387026529, 28.026176691055298]">Hall 29 (Wits - West Campus)</option>
+          <option disabled value="other">Other</option>
+        </select>
+
+        <!-- Loader and Map -->
+        <div class="mx-auto" id="mapLoader"></div>
+        <div class="mb-4" id="map"></div>
 
 
-    <script src="../javascript/sendNotifications.js"></script>
-    <script src="../javascript/headerFunctionality.js"></script>
-    <script src="../javascript/navbarFunctionality.js"></script>
+        <label for="recipient" class="block text-sm font-medium mb-2 text-gray-700">Send To:</label>
+        <select class="p-2 rounded-xl mb-4 bg-white text-sm sm:text-base" name="targetAudience" id="recipient">
+          <option value="everyone" selected>Everyone</option>
+          <option value="staff">Staff</option>
+          <option value="student">Students</option>
+        </select>
+
+        <textarea class="p-2 rounded-lg mb-4 text-black text-sm sm:text-base" placeholder="Message" rows="5"
+          id="notificationMessage"></textarea>
+
+        <button id="sendNotificationBtn"
+          class="bg-[#015EB8] text-white flex justify-center items-center py-2 mt-2 px-4 rounded-lg text-sm sm:text-base hover:opacity-80">
+          <span class="flex items-center">
+            Send notification
+            <div id="loader" class="m-2 p-2 hidden"></div>
+          </span>
+        </button>
+
+        <a href="/admin/notificationhistory"
+          class="bg-[#015EB8] text-white flex justify-center items-center py-2 mt-2 px-4 rounded-lg text-sm sm:text-base hover:opacity-80">
+          View Notification History
+        </a>
+      </form>
+    </main>
+  </div>
+
+  <!--Footer-->
+  <footer class="bg-[#015EB8] text-white p-4 text-center">
+    <p>&copy; 2024 Campus Safety App. All rights reserved.</p>
+  </footer>
+
+  <script>
+    let map;
+    let marker;
+    let circle;
+    let mapInitialized = false;
+    let initCheckInterval;
+
+    function initMap() {
+
+      const selectedLocation = document.getElementById("selectedLocation");
+      const selectedLocationValue = selectedLocation.value;
+      //split [lat, lng] string into 2 values
+      const location = selectedLocationValue.split(",")
+      let lat = parseFloat(location[0].replace("[", ""));
+      let lng = parseFloat(location[1].replace("]", ""));
+
+      let locationObj = {
+        lat: lat,
+        lng: lng
+      };
+
+      initializeMap(locationObj);
+
+    }
+
+    function initializeMap(location) {
+      console.log("InitializeMap called with location:", location);
+      if (mapInitialized) {
+        console.log("Map already initialized, returning");
+        return;
+      }
+
+      if (typeof google === 'undefined' || typeof google.maps === 'undefined') {
+        console.error("Google Maps API not loaded");
+        alert("Google Maps API not loaded. Please check your API key and script inclusion.");
+        return;
+      }
+
+      try {
+        map = new google.maps.Map(document.getElementById("map"), {
+          zoom: 16,
+          center: location,
+        });
+
+        marker = new google.maps.Marker({
+          position: location,
+          map: map,
+          draggable: true,
+        });
+
+        // Create a circle with a radius of 500 meters around the marker
+        circle = new google.maps.Circle({
+          map: map,
+          radius: 200, // Radius in meters
+          fillColor: "blue", // Fill color for the circle
+          fillOpacity: 0.3, // Opacity of the fill
+          strokeColor: "black", // Stroke color for the circle
+          strokeOpacity: 0.8, // Opacity of the stroke
+          strokeWeight: 2, // Thickness of the stroke
+        });
+
+        // Attach the circle to the marker's location
+        circle.bindTo("center", marker, "position");
+
+        google.maps.event.addListener(marker, "dragend", function (event) {
+          console.log("Marker dragged to:", event.latLng.toString());
+          //update the select to the value "other"
+          const selectedLocation = document.getElementById("selectedLocation");
+          selectedLocation.value = "other";
+
+        });
+
+        google.maps.event.addListener(map, "click", function (event) {
+          marker.setPosition(event.latLng);
+          console.log("Map clicked at:", event.latLng.toString());
+          //update the select to the value "other"
+          const selectedLocation = document.getElementById("selectedLocation");
+          selectedLocation.value = "other";
+        });
+
+        // Start checking for map initialization
+        initCheckInterval = setInterval(checkMapInitialized, 100);
+
+      } catch (error) {
+        console.error("Error initializing map:", error);
+        alert("Error initializing map. Please check the console for details.");
+      }
+    }
+
+    function checkMapInitialized() {
+      if (map && map.getZoom() !== 0) {
+        console.log("Map initialized (zoom != 0)");
+        clearInterval(initCheckInterval);
+        mapInitialized = true;
+        updateMapVisibility();
+      } else {
+        console.log("Map not yet initialized, checking again...");
+      }
+    }
+
+    function updateMapVisibility() {
+      console.log("Updating map visibility");
+      const checkbox = document.getElementById("locationSpecific");
+      const mapDiv = document.getElementById("map");
+      const loader = document.getElementById("mapLoader");
+      const selectedLocation = document.getElementById("selectedLocation");
+
+      if (checkbox.checked) {
+        //show checkbox
+        selectedLocation.style.display = "block";
+        if (mapInitialized) {
+          console.log("Map initialized, showing map and hiding loader");
+          loader.style.display = "none";
+          mapDiv.style.display = "block";
+        } else {
+          console.log("Map not initialized, showing loader and hiding map");
+          loader.style.display = "block";
+          mapDiv.style.display = "none";
+        }
+      } else {
+        console.log("Checkbox unchecked, hiding map and loader");
+        mapDiv.style.display = "none";
+        loader.style.display = "none";
+        selectedLocation.style.display = "none";
+      }
+    }
+
+    function onCheckboxChange() {
+      console.log("Checkbox changed");
+      if (!mapInitialized) {
+        console.log("Map not initialized, calling initMap");
+        initMap();
+      }
+      updateMapVisibility();
+    }
+
+    // Initialize the map when the page loads, but keep it hidden
+    window.onload = function () {
+      console.log("Window loaded");
+      const checkbox = document.getElementById("locationSpecific");
+      checkbox.addEventListener('change', onCheckboxChange);
+      updateMapVisibility();
+      const selectedLocation = document.getElementById("selectedLocation");
+      selectedLocation.addEventListener('change', () => {
+        const selectedLocationValue = selectedLocation.value;
+        //split [lat, lng] string into 2 values
+        const location = selectedLocationValue.split(",")
+        let lat = parseFloat(location[0].replace("[", ""));
+        let lng = parseFloat(location[1].replace("]", ""));
+        let locationObj = {
+          lat: lat,
+          lng: lng
+        };
+        // move map marker to new location
+        marker.setPosition(locationObj);
+        circle.bindTo("center", marker, "position");
+
+      });
+    };
+  </script>
+
+
+  <script async
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAmnz9yP1MewDeyOE-OV92JrAclq18JzZ4&loading=async&callback=initMap"></script>
+  <script src="../javascript/sendNotifications.js"></script>
+  <script src="../javascript/headerFunctionality.js"></script>
+  <script src="../javascript/navbarFunctionality.js"></script>
 
 </body>
 

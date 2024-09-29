@@ -65,6 +65,9 @@ exports.sendNotification = async (req, res) => {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const sender = decoded.userEmail;
 
+    //check if location is provided
+    
+
     console.log("re", req.body.recipient);
 
     const newNotification = new notification({
@@ -75,6 +78,7 @@ exports.sendNotification = async (req, res) => {
       title: req.body.title,
       notificationType: req.body.notificationType,
       senderLocation: req.body.senderLocation, // [latitude, longitude]
+      //targetLocation: req.body.targetLocation,(view on map when shown in notifications)
     });
 
     console.log("the recpient is ", req.body.recipient);
@@ -85,9 +89,15 @@ exports.sendNotification = async (req, res) => {
 
     const savedNotification = await newNotification.save();
 
+    const targetLocation = req.body.targetLocation;
+
+
     if (recipient === "everyone") {
       // Get all FCM tokens , exlcuding admins
       const users = await User.find({ role: { $ne: "admin" } });
+      if(targetLocation){
+        
+      }
       fcmTokens = users.map((user) => user.FCMtoken);
     } else if (recipient === "staff") {
       // Get all staff FCM tokens

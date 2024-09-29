@@ -1,102 +1,419 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Admin Safety Resources</title>
     <link rel="icon" type="image/svg+xml" href="../../assets/logo.png" />
-    <link href="../styles/styles.css" rel="stylesheet">
-    <link href="../styles/output.css" rel="stylesheet">
+    <link href="../styles/styles.css" rel="stylesheet" />
+    <link href="../styles/output.css" rel="stylesheet" />
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="../javascript/loadComponents.js" defer></script>
-</head>
-
-<body>
-    <div id="header-placeholder"></div>
-    <style>:root {
-        --background: 0 0% 100%;
-        --foreground: 240 10% 3.9%;
-        --card: 0 0% 100%;
-        --card-foreground: 240 10% 3.9%;
-        --popover: 0 0% 100%;
-        --popover-foreground: 240 10% 3.9%;
-        --primary: 240 5.9% 10%;
-        --primary-foreground: 0 0% 98%;
-        --secondary: 240 4.8% 95.9%;
-        --secondary-foreground: 240 5.9% 10%;
-        --muted: 240 4.8% 95.9%;
-        --muted-foreground: 240 3.8% 45%;
-        --accent: 240 4.8% 95.9%;
-        --accent-foreground: 240 5.9% 10%;
-        --destructive: 0 72% 51%;
-        --destructive-foreground: 0 0% 98%;
-        --border: 240 5.9% 90%;
-        --input: 240 5.9% 90%;
-        --ring: 240 5.9% 10%;
-        --chart-1: 173 58% 39%;
-        --chart-2: 12 76% 61%;
-        --chart-3: 197 37% 24%;
-        --chart-4: 43 74% 66%;
-        --chart-5: 27 87% 67%;
-        --radius: 0.5rem;
-    }
-
-    img[src="/placeholder.svg"],
-    img[src="/placeholder-user.jpg"] {
-        filter: sepia(.3) hue-rotate(-60deg) saturate(.5) opacity(0.8)
-    }</style>
+    <!-- <script src="../javascript/loadComponents.js" defer></script> -->
+    <!--Awsome notifications-->
+    <script src="../javascript/index.var.js"></script>
+    <link rel="stylesheet" href="../styles/style.css" />
 
     <style>
-        h1,
-        h2,
-        h3,
-        h4,
-        h5,
-        h6 { 
-            font-family: 'Inter', sans-serif;
-            --font-sans-serif: 'Inter';
-        }
-    </style>
+      .token-wrap {
+        word-wrap: break-word;
+        max-width: 100%;
+      }
 
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            --font-sans-serif: 'Inter';
-        }
-    </style>
+      /* Loader styles */
+      #loader {
+        border: 4px solid #f3f3f3;
+        border-radius: 50%;
+        border-top: 4px solid #3498db;
+        width: 25px;
+        height: 25px;
+        animation: spin 1s linear infinite;
+      }
 
-    <div class="flex flex-col min-h-screen">
-        <div class="flex flex-1">
-            <div id="navbar-placeholder"></div>
-            <main class="flex-1 p-8 bg-white">
-                <div class="alert-box" id="alert" role="alert"></div>
-                <h2 class="text-2xl font-semibold mb-4">Safety Resources</h2>
-                <p class="mb-6">Upload Safety Resources for the users to see.</p>
-                <form>
-                    <div class="mb-4">
-                        <label class="block text-lg mb-2" for="title">Title</label>
-                        <input type="text" id="title" class="w-full p-2 border rounded">
-                    </div>
-                    <div class="mb-4">
-                        <label class="block text-lg mb-2" for="resource-type">Safety Resource Type</label>
-                        <select id="resource-type" class="w-full p-2 border rounded">
-                            <option>Emergency Contact</option>
-                            <option>Safety Tip</option>
-                            <option>Campus Safety Policy</option>
-                        </select>
-                    </div>
-                    <div class="mb-4">
-                        <label class="block text-lg mb-2" for="description">Description</label>
-                        <textarea id="description" class="w-full p-2 border rounded"></textarea>
-                    </div>
-                    <button id="btnSave" type="button" class="bg-[#015EB8] text-white py-2 px-4 rounded">Save</button>
-                    <button id="cancel" type="button" class="bg-[#015EB8] text-white py-2 px-4 rounded">Cancel</button>
-                </form>
-            </main>
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+    </style>
+  </head>
+
+  <body class="flex flex-col min-h-screen">
+    <script type="module">
+      import { handleIncomingMessages } from "../javascript/fireBaseMessageHandler.js";
+
+      // ADMINS ONLY
+      let notifier = new AWN();
+
+      // Call the handler to manage incoming messages
+      handleIncomingMessages(notifier);
+    </script>
+
+    <div class="flex flex-col flex-grow">
+      <div>
+        <header
+          class="bg-[#015EB8] text-white p-4 flex justify-between items-center"
+        >
+          <div class="flex items-center">
+            <a href="/admin"
+              ><img
+                src="../assets/logo.png"
+                alt="Campus Safety Logo"
+                class="h-8 mr-2"
+            /></a>
+            <a href="/admin" class="text-xl font-semibold hidden sm:block"
+              >Campus Safety</a
+            >
+          </div>
+          <div class="flex items-center space-x-4">
+            <div class="relative inline-flex" id="notificationContainer">
+              <button
+                id="notificationButton"
+                class="flex rounded-md bg-[#FDB913] py-2 px-4 border border-transparent text-center text-sm text-white transition-all shadow-md hover:shadow-lg focus:bg-slate-700 focus:shadow-none active:bg-slate-700 hover:bg-slate-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+                type="button"
+              >
+                Notifications
+                <img
+                  src="../assets/bell-ring.png"
+                  alt="Notifications"
+                  class="h-5 md:h-6 md:mr-2"
+                />
+              </button>
+              <span
+                id="notificationBadge"
+                class="absolute top-0.5 right-0.5 grid min-h-[24px] min-w-[24px] translate-x-2/4 -translate-y-2/4 place-items-center rounded-full bg-[white] py-1 px-1 text-xs text-black"
+              >
+              </span>
+              <div
+                id="dropdownMenu"
+                class="absolute right-0 mt-2 w-64 bg-white rounded-md shadow-lg z-10 border border-gray-200 hidden"
+              >
+                <div class="py-2" id="notificationList">
+                  <!-- Notifications will be inserted here -->
+                </div>
+              </div>
+            </div>
+
+            <a
+              id="profileBtn"
+              href="/admin/profileManagement"
+              class="rounded-full flex items-center"
+            >
+              <div
+                class="w-10 h-10 rounded-full overflow-hidden border-2 border-white"
+              >
+                <img
+                  src="../assets/user-profile.png"
+                  alt="User Profile"
+                  class="w-full h-full object-cover"
+                  id="headerProfilePic"
+                />
+              </div>
+            </a>
+          </div>
+        </header>
+      </div>
+      <div class="flex flex-grow overflow-hidden">
+        <div>
+          <!-- Desktop Navigation -->
+          <nav
+            class="hidden h-full md:flex bg-white w-64 p-4 flex-col shadow-md"
+          >
+            <ul class="flex-1 space-y-2">
+              <li>
+                <a
+                  href="/admin"
+                  class="flex items-center text-gray-700 hover:bg-gray-300 p-2 rounded-md"
+                >
+                  <img
+                    src="../assets/dashboard.png"
+                    alt="Dashboard"
+                    class="h-6 w-6 mr-3"
+                  />
+                  <span class="font-medium">Dashboard</span>
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/admin/viewIncidents"
+                  class="flex items-center text-gray-700 hover:bg-gray-300 p-2 rounded-md"
+                >
+                  <img
+                    src="../assets/report.png"
+                    alt="View Incidents"
+                    class="h-6 w-6 mr-3"
+                  />
+                  <span class="font-medium">View Incidents</span>
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/admin/sendNotifications"
+                  class="flex items-center text-gray-700 hover:bg-gray-300 p-2 rounded-md"
+                >
+                  <img
+                    src="../assets/alert.png"
+                    alt="Send Notifications"
+                    class="h-6 w-6 mr-3"
+                  />
+                  <span class="font-medium">Send Notifications</span>
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/admin/safetyResources"
+                  class="flex items-center text-gray-700 hover:bg-gray-300 p-2 rounded-md"
+                >
+                  <img
+                    src="../assets/resources.png"
+                    alt="Safety Resources"
+                    class="h-6 w-6 mr-3"
+                  />
+                  <span class="font-medium">Safety Resources</span>
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/admin/generateCode"
+                  class="flex items-center text-gray-700 hover:bg-gray-300 p-2 rounded-md"
+                >
+                  <img
+                    src="../assets/password-entry.png"
+                    alt="Generate Code"
+                    class="h-6 w-6 mr-3"
+                  />
+                  <span class="font-medium">Generate Code</span>
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/admin/emergencyAlerts"
+                  class="flex items-center text-gray-700 hover:bg-gray-300 p-2 rounded-md"
+                >
+                  <img
+                    src="../assets/caution.png"
+                    alt="Generate Code"
+                    class="h-6 w-6 mr-3"
+                  />
+                  <span class="font-medium">Manage Emergencies</span>
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/admin/getUpcomingEvents"
+                  class="flex items-center text-gray-700 hover:bg-gray-300 p-2 rounded-md"
+                >
+                  <img
+                    src="../assets/calendar.png"
+                    alt="Get Upcoming Events"
+                    class="h-6 w-6 mr-3"
+                  />
+                  <span class="font-medium">Get Upcoming Events</span>
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/admin/transportationManagement"
+                  class="flex items-center text-gray-700 hover:bg-gray-300 p-2 rounded-md"
+                >
+                  <img
+                    src="../assets/location.png"
+                    alt="Transportation Management"
+                    class="h-6 w-6 mr-3"
+                  />
+                  <span class="font-medium">Transportation Management</span>
+                </a>
+              </li>
+            </ul>
+            <div class="border-t border-gray-200 pt-4 mt-4">
+              <a
+                href="/auth/logout"
+                class="flex items-center text-gray-700 hover:bg-gray-300 p-2 rounded-md"
+                id="logoutButton"
+              >
+                <img
+                  src="../assets/logout-solid.png"
+                  alt="Logout"
+                  class="h-6 w-6 mr-3"
+                />
+                <span class="font-medium">Logout</span>
+              </a>
+            </div>
+          </nav>
+
+          <!-- Mobile Navigation -->
+          <nav
+            class="fixed inset-x-0 bottom-0 bg-[#015EB8] text-white p-4 flex justify-around items-center md:hidden z-50"
+          >
+            <a href="/admin/viewIncidents" class="flex flex-col items-center">
+              <img
+                src="../assets/report-mobile.png"
+                alt="View Incidents"
+                class="h-7 w-7"
+              />
+              <span class="text-xs mt-1">Incidents</span>
+            </a>
+            <a
+              href="/admin/sendNotifications"
+              class="flex flex-col items-center"
+            >
+              <img
+                src="../assets/alert-mobile.png"
+                alt="Send Notifications"
+                class="h-7 w-7"
+              />
+              <span class="text-xs mt-1">Notify</span>
+            </a>
+            <a href="/admin" class="flex flex-col items-center">
+              <img
+                src="../assets/dashboard-mobile.png"
+                alt="Dashboard"
+                class="h-7 w-7"
+              />
+              <span class="text-xs mt-1">Dashboard</span>
+            </a>
+            <a href="/admin/emergencyAlerts" class="flex flex-col items-center">
+              <img
+                src="../assets/caution-white.png"
+                alt="Generate Code"
+                class="h-7 w-7"
+              />
+              <span class="text-xs mt-1">Emergencies</span>
+            </a>
+            <button id="moreButton" class="flex flex-col items-center">
+              <img src="../assets/menu.png" alt="More" class="h-7 w-7" />
+              <span class="text-xs mt-1">More</span>
+            </button>
+          </nav>
+          <!-- More menu (hidden by default) -->
+          <div
+            id="moreMenu"
+            class="fixed inset-0 bg-black bg-opacity-50 flex items-end justify-center md:hidden z-50 hidden transition-all duration-300 ease-in-out"
+          >
+            <div
+              class="bg-white w-full max-w-md rounded-t-xl shadow-lg transform translate-y-full transition-transform duration-300 ease-in-out"
+            >
+              <div class="py-2">
+                <a
+                  href="/admin/generateCode"
+                  class="flex items-center px-4 py-3 hover:bg-gray-100 transition-colors duration-200"
+                >
+                  <img
+                    src="../assets/password-entry.png"
+                    alt="Generate Code"
+                    class="h-7 w-7 mr-3"
+                  />
+                  <span class="text-base font-medium text-gray-700"
+                    >Generate Code</span
+                  >
+                </a>
+                <a
+                  href="/admin/safetyResources"
+                  class="flex items-center px-4 py-3 hover:bg-gray-100 transition-colors duration-200"
+                >
+                  <img
+                    src="../assets/resources.png"
+                    alt="Generate Code"
+                    class="h-7 w-7 mr-3"
+                  />
+                  <span class="text-base font-medium text-gray-700"
+                    >Safety Resources</span
+                  >
+                </a>
+                <a
+                  href="/admin/getUpcomingEvents"
+                  class="flex items-center px-4 py-3 hover:bg-gray-100 transition-colors duration-200"
+                >
+                  <img
+                    src="../assets/calendar.png"
+                    alt="Get Upcoming Events"
+                    class="h-7 w-7 mr-3"
+                  />
+                  <span class="text-base font-medium text-gray-700"
+                    >Get Upcoming Events</span
+                  >
+                </a>
+                <a
+                  href="/admin/transportationManagement"
+                  class="flex items-center px-4 py-3 hover:bg-gray-100 transition-colors duration-200"
+                >
+                  <img
+                    src="../assets/location.png"
+                    alt="Transportation Management"
+                    class="h-7 w-7 mr-3"
+                  />
+                  <span class="text-base font-medium text-gray-700"
+                    >Transportation Management</span
+                  >
+                </a>
+              </div>
+              <button
+                id="closeMoreMenu"
+                class="w-full p-3 text-center text-white font-medium bg-[#015EB8] hover:bg-[#014c93] transition-colors duration-200"
+              >
+                Close
+              </button>
+            </div>
+          </div>
         </div>
+
+        <!--Main Content-->
+        <main class="flex-1 p-8 bg-white">
+          <div class="alert-box" id="alert" role="alert"></div>
+          <h2 class="text-2xl font-semibold mb-4">Safety Resources</h2>
+          <p class="mb-6">Upload Safety Resources for the users to see.</p>
+          <form>
+            <div class="mb-4">
+              <label class="block text-lg mb-2" for="title">Title</label>
+              <input type="text" id="title" class="w-full p-2 border rounded" />
+            </div>
+            <div class="mb-4">
+              <label class="block text-lg mb-2" for="resource-type"
+                >Safety Resource Type</label
+              >
+              <select id="resource-type" class="w-full p-2 border rounded">
+                <option>Emergency Contact</option>
+                <option>Safety Tip</option>
+                <option>Campus Safety Policy</option>
+              </select>
+            </div>
+            <div class="mb-4">
+              <label class="block text-lg mb-2" for="description"
+                >Description</label
+              >
+              <textarea
+                id="description"
+                class="w-full p-2 border rounded"
+              ></textarea>
+            </div>
+            <button
+              id="btnSave"
+              type="button"
+              class="bg-[#015EB8] text-white py-2 px-4 rounded"
+            >
+              Save
+            </button>
+            <button
+              id="cancel"
+              type="button"
+              class="bg-[#015EB8] text-white py-2 px-4 rounded"
+            >
+              Cancel
+            </button>
+          </form>
+        </main>
+      </div>
     </div>
-    <div id="footer-placeholder"></div>
-</body>
-<script src="../javascript/adminSafetyResources3.js"></script>
+
+    <footer class="bg-[#015EB8] text-white p-4 text-center">
+      <p>&copy; 2024 Campus Safety App. All rights reserved.</p>
+    </footer>
+
+    <script src="../javascript/adminSafetyResources2.js"></script>
+    <script src="../javascript/headerFunctionality.js"></script>
+    <script src="../javascript/navbarFunctionality.js"></script>
+  </body>
 </html>

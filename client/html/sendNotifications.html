@@ -15,7 +15,6 @@
     <!-- <script src="../javascript/loadComponents.js" defer></script> -->
     <style>
         /* Loader styles */
-        /* Loader styles */
         #loader {
             border: 4px solid #f3f3f3;
             border-radius: 50%;
@@ -337,62 +336,45 @@
         </div>
 
         <!-- Main Content -->
-        <main class="flex-1 p-6 overflow-auto">
+        <main class="flex-1 p-6 overflow-auto bg-gray-200">
+            <h2 class="text-center text-2xl font-bold mb-2 text-gray-800 sm:text-3xl">Send notifications</h2>
+            <h3 class="text-center text-lg font-semibold mb-4 text-gray-700 sm:text-xl">Send instant, real-time notifications to users.</h3>
 
-            <div class="flex flex-col bg-gray-200 rounded-lg border border-gray-400 p-4 mx-20 max-sm:mx-0">
-                <h2 class="text-center text-2xl font-bold mb-2 max-sm:text-xl">Send notifications</h2>
-                <h3 class="text-center text-lg font-semibold mb-4 max-sm:text-sm">Send insant, real time notifications
-                    to users.</h3>
+            <form id="notificationForm" class="flex flex-col max-w-2xl mx-auto">
+                <div class="alert-box" id="alert" role="alert">Test Error</div>
 
+                <input id="notificationTitle" class="p-2 rounded-xl mb-4 text-black text-sm sm:text-base" type="text" placeholder="Title">
 
+                <label for="notificationType" class="block text-sm font-medium mb-2 text-gray-700">Select Notification Type:</label>
+                <select class="p-2 rounded-xl mb-4 bg-white text-sm sm:text-base" name="incidentType" id="notificationType">
+                    <option value="announcement" selected>Announcement</option>
+                    <option value="emergency-alert">Emergency Alert</option>
+                </select>
 
-                <form id="notificationForm" class="flex flex-col px-8 max-sm:px-4">
-                    <div class="alert-box" id="alert" role="alert">Test Error</div>
+                <label for="recipient" class="block text-sm font-medium mb-2 text-gray-700">Send To:</label>
+                <select class="p-2 rounded-xl mb-4 bg-white text-sm sm:text-base" name="targetAudience" id="recipient">
+                    <option value="everyone" selected>Everyone</option>
+                    <option value="staff">Staff</option>
+                    <option value="student">Students</option>
+                </select>
 
-                    <input id="notificationTitle" class="p-2 rounded-xl mb-4 text-black max-sm:text-sm" type="text"
-                        placeholder="Title">
+                <textarea class="p-2 rounded-lg mb-4 text-black text-sm sm:text-base" placeholder="Message" rows="5" id="notificationMessage"></textarea>
 
-                    <!-- Dropdown for selecting Incident Type -->
-                    <label for="notificationType" class="block text-sm font-medium m-2">Select Notification
-                        Type:</label>
-                    <select class="p-2 rounded-xl mb-4 bg-white max-sm:text-sm" name="incidentType"
-                        id="notificationType">
-                        <option value="announcement" selected>Announcement</option>
-                        <option value="emergency-alert">Emergency Alert</option>
-                    </select>
+                <button id="sendNotificationBtn" class="bg-[#015EB8] text-white flex justify-center items-center py-2 mt-2 px-4 rounded-lg text-sm sm:text-base hover:opacity-80">
+                    <span class="flex items-center">
+                        Send notification
+                        <div id="loader" class="m-2 p-2 hidden"></div>
+                    </span>
+                </button>
 
-                    <!-- Dropdown for selecting the Target Audience -->
-                    <label for="recepient" class="block text-sm font-medium m-2">Send To:</label>
-                    <select class="p-2 rounded-xl mb-4 bg-white max-sm:text-sm" name="targetAudience" id="recipient">
-                        <option value="everyone" selected>Everyone</option>
-                        <option value="staff">Staff</option>
-                        <option value="student">Students</option>
-                    </select>
-
-
-
-
-                    <textarea class="p-2 rounded-lg mb-4 text-black max-sm:text-sm" placeholder="Message" rows="5"
-                        id="notificationMessage"></textarea>
-
-
-                    <button id="sendNotificationBtn"
-                        class="bg-[#015EB8] text-white flex justify-center items-center py-2 mt-2 px-4 rounded-lg max-sm:text-sm hover:opacity-80">
-                        <span class="flex items-center">
-                            Send notification
-                            <div id="loader" class="m-2 p-2 hidden">
-                        </span>
-                    </button>
-
-                    <!-- Link to view notification history -->
-                    <a href="/admin/notificationhistory"
-                        class="bg-[#015EB8] text-white flex justify-center items-center py-2 mt-2 px-4 rounded-lg max-sm:text-sm hover:opacity-80">
-                        View Notification History
-                    </a>
-                </form>
-            </div>
+                <a href="/admin/notificationhistory" class="bg-[#015EB8] text-white flex justify-center items-center py-2 mt-2 px-4 rounded-lg text-sm sm:text-base hover:opacity-80">
+                    View Notification History
+                </a>
+            </form>
         </main>
     </div>
+
+    <!--Footer-->
     <footer class="bg-[#015EB8] text-white p-4 text-center">
         <p>&copy; 2024 Campus Safety App. All rights reserved.</p>
     </footer>

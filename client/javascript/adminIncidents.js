@@ -265,27 +265,29 @@ function addIncidentToDOM(incident, index) {
   incidentDiv.innerHTML = `
     <div id="incident-${index}" class="mb-6">
       <div class="border border-black rounded-lg p-2 flex flex-col bg-white">
-        <div class="flex justify-between">
-          <div class="flex items-center max-sm:text-xs text-sm">
-            <img src="../assets/profileIcon.png" class="mr-2" alt="">
-            <p class="max-sm:text-xs"> 
-              <span class="font-bold ">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center">
+          <div class="flex flex-wrap items-center max-sm:text-xs text-sm mb-2 sm:mb-0">
+            <img src="../assets/profileIcon.png" class="mr-2 h-5 w-5" alt="Profile">
+            <p class="max-sm:text-xs mr-2"> 
+              <span class="font-bold">
                 ${incident.firstName + " " + incident.lastName}
-              </span> reported an incident:
-              <span class="font-bold">${incident.title}</span>
-              (${incident.date})
+              </span> reported:
             </p>
-            <img src="../assets/locationPick.png" alt="" height="20" width="20" class="mx-2 cursor-pointer locationPick max-sm:h-4 max-sm:w-4" data-lat="${latitude}" data-lng="${longitude}">
+            <p class="max-sm:text-xs font-bold mr-2">${incident.title}</p>
+            <p class="max-sm:text-xs">(${incident.date})</p>
+          </div>
+          <div class="flex items-center">
+            <img src="../assets/locationPick.png" alt="Location" class="h-5 w-5 cursor-pointer locationPick mr-2" data-lat="${latitude}" data-lng="${longitude}">
             ${
               incident.image
-                ? `<a href='/incidentReporting/getIncidentImage/${incident._id}' target='_blank'><img src="../assets/image.png" alt="" height="20" width="20" class="mx-2 cursor-pointer show-image max-sm:h-4 max-sm:w-4"></a>`
+                ? `<a href='/incidentReporting/getIncidentImage/${incident._id}' target='_blank' class="mr-2"><img src="../assets/image.png" alt="Image" class="h-5 w-5 cursor-pointer show-image"></a>`
                 : ""
             }
+            <select class="status-select bg-gray-300 rounded-lg px-2 py-1 text-sm"
+              data-incident-id="${incident._id}">
+              ${optionsHTML}
+            </select>
           </div>
-          <select class="status-select bg-gray-300 rounded-lg px-4 max-sm:text-xs max-sm:px-1 max-h-8 text-sm"
-            data-incident-id="${incident._id}">
-            ${optionsHTML}
-          </select>
         </div>
         <p class="mt-1 text-sm max-sm:text-xs">${incident.description}</p>
       </div>

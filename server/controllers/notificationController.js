@@ -58,6 +58,36 @@ exports.getNotificationHistory = async (req, res) => {
   }
 };
 
+
+/*
+
+Method to find locations within certain radius of a location
+
+ 
+        //Get all the locations, exlude the user with the email address
+        const locations = await Location.find({email: {$ne: email}});
+        
+        console.log("All the locations that were found: ", locations);
+
+        // Filter the locations to get the nearby locations using the Haversine formula
+        const nearbyLocations = locations.filter((loc) => {
+            const R = 6371; // Radius of the earth in km
+            const [userLon, userLat] = userLocation;
+            const [locLon, locLat] = loc.location;
+            
+            const dLat = deg2rad(locLat - userLat);
+            const dLon = deg2rad(locLon - userLon);
+            const a =
+                Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                Math.cos(deg2rad(userLat)) * Math.cos(deg2rad(locLat)) *
+                Math.sin(dLon / 2) * Math.sin(dLon / 2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+            const d = R * c; // Distance in km
+            return d <= 20; // Return locations within 5km radius
+        });
+
+*/
+
 exports.sendNotification = async (req, res) => {
   try {
     //Find the sender by decoding the jwt cookie token
@@ -85,48 +115,107 @@ exports.sendNotification = async (req, res) => {
 
     let recipient = req.body.recipient;
 
+    let users;
+
     let fcmTokens = [];
 
     const savedNotification = await newNotification.save();
 
-    const targetLocation = req.body.targetLocation;
-
-
     if (recipient === "everyone") {
       // Get all FCM tokens , exlcuding admins
-      const users = await User.find({ role: { $ne: "admin" } });
-      if(targetLocation){
-        
-      }
+       users = await User.find({ role: { $ne: "admin" } });
       fcmTokens = users.map((user) => user.FCMtoken);
     } else if (recipient === "staff") {
       // Get all staff FCM tokens
-      const users = await User.find({ role: "staff" });
+       users = await User.find({ role: "staff" });
       fcmTokens = users.map((user) => user.FCMtoken);
     } else if (recipient === "student") {
       // Get all student FCM tokens
-      const users = await User.find({ role: "student" });
+     users = await User.find({ role: "student" });
       fcmTokens = users.map((user) => user.FCMtoken);
     } else if (recipient === "admin") {
       // Get specific user FCM token
-      const users = await User.find({ role: "admin" });
+     users = await User.find({ role: "admin" });
       fcmTokens = users.map((user) => user.FCMtoken);
     } else {
       // Get specific user FCM token
-      const user = await User.findOne({ email: recipient });
-      fcmTokens = [user.FCMtoken];
+      users = await User.findOne({ email: recipient });
+      fcmTokens = [users.FCMtoken];
     }
 
+    
+
+
+    let targetLocation = req.body.targetLocation;
+
+    console.log("targetLocation", targetLocation);
+
+    
+function deg2rad(deg) {
+  return deg * (Math.PI / 180);
+}
+
+    
+
+if (targetLocation) {
+  console.log("Target location before parsing:", targetLocation);
+  targetLocation = JSON.parse(targetLocation);
+  console.log("Parsed target location:", targetLocation);
+
+  console.log("Total number of users:", users.length);
+
+  const nearbyUsers = users.filter((user) => {
+    console.log("Checking user:", user);
+    if (user.lastLocation) {
+      console.log("User last location:", user.lastLocation);
+      const R = 6371; // Radius of the earth in km
+      const [targetLat, targetLon] = targetLocation;
+      let userLat, userLon;
+      
+      try {
+        [userLat, userLon] = JSON.parse(user.lastLocation);
+      } catch (error) {
+        console.error("Error parsing user location:", error);
+        return false;
+      }
+      
+      console.log(`Target: ${targetLat}, ${targetLon}, User: ${userLat}, ${userLon}`);
+      
+      const dLat = deg2rad(userLat - targetLat);
+      const dLon = deg2rad(userLon - targetLon);
+      const a =
+          Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+          Math.cos(deg2rad(targetLat)) * Math.cos(deg2rad(userLat)) *
+          Math.sin(dLon / 2) * Math.sin(dLon / 2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+      const d = R * c; // Distance in km
+      
+      console.log(`User distance: ${d} km`);
+      
+      return d <= 5; // Return locations within 5 km radius
+    }
+    console.log("User has no last location");
+    return false;
+  });
+
+  console.log("Number of nearby users found:", nearbyUsers.length);
+  console.log("Nearby users:", nearbyUsers);
+
+  fcmTokens = nearbyUsers.map((user) => user.FCMtoken);
+} else {
+  console.log("Target location is null or undefined");
+}
     if (fcmTokens.length === 0) {
       return res
         .status(200)
         .json({ message: "Notification sent successfully" });
     }
 
-    //savedNotification.title, savedNotification.message,
 
     console.log("title" + savedNotification.title);
     console.log("message" + savedNotification.message);
+
+
 
     //Send notification
     await _sendNotification(fcmTokens, {
@@ -137,6 +226,9 @@ exports.sendNotification = async (req, res) => {
       senderLocation: savedNotification.senderLocation,
       recipient: savedNotification.recipient,
     });
+
+    //Console log the names of all the users it 
+    
 
     res.status(200).json({ message: "Notification sent successfully" });
   } catch (error) {

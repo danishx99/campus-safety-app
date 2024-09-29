@@ -8,7 +8,7 @@ exports.updateLocation = async (req, res) => {
         // Find the user by email and update the location
         const user = await User.findOneAndUpdate(
             { email: req.userEmail },
-            { location: [longitude, latitude] },
+            { lastLocation: `[${latitude}, ${longitude}]` },
             { new: true } // Return the modified document
         );
 

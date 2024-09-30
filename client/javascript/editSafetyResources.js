@@ -20,6 +20,9 @@ document.addEventListener("DOMContentLoaded", async function (){
         document.getElementById('title').value = resource.title;
         document.getElementById('description').value = resource.description;
         document.getElementById('resource-type').value = resource.type;
+        if (resource.link !== null){
+            document.getElementById('link').value = resource.link;
+        }
     } catch (error) {
         console.error('Error fetching resource data:', error);
         alert('Error loading resource data');
@@ -39,6 +42,7 @@ document.addEventListener("DOMContentLoaded", async function (){
         title= document.getElementById("title").value;
         type = document.getElementById("resource-type").value;
         desc= document.getElementById("description").value;
+        link= document.getElementById("link").value;
         if (
             !title ||
             !type ||
@@ -54,7 +58,8 @@ document.addEventListener("DOMContentLoaded", async function (){
           const updatedResource = {
             title: title,
             type: type,
-            description: desc
+            description: desc,
+            link: link
             };
           try {
             const response = await fetch(`http://localhost:3000/safetyResources/updateSafetyResource/${resourceId}`, {

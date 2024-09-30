@@ -16,6 +16,10 @@ const safetyResourcesSchema = new Schema(
       required: true,
       unique: true,
     },
+    link: {
+      type: String,
+      required: false,
+    },
   },
   {
     timestamps: true, // Automatically add createdAt and updatedAt timestamps

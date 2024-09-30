@@ -9,6 +9,7 @@ document.addEventListener("DOMContentLoaded", function () {
     title = document.getElementById("title").value;
     type = document.getElementById("resource-type").value;
     desc = document.getElementById("description").value;
+    link = document.getElementById("link").value;
 
     if (
       !title ||
@@ -27,6 +28,8 @@ document.addEventListener("DOMContentLoaded", function () {
     document.getElementById("title").value = null;
     document.getElementById("resource-type").value = null;
     document.getElementById("description").value = null;
+    document.getElementById("link").value = null;
+    console.log("Link value:", link);
     fetch("http://localhost:3000/safetyResources/adminSafetyResources", {
       method: "POST",
       headers: {
@@ -36,6 +39,7 @@ document.addEventListener("DOMContentLoaded", function () {
         title: title,
         type: type,
         description: desc,
+        link: link,
       }),
     })
       .then((response) => response.json())

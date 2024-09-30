@@ -823,26 +823,6 @@ video {
   max-height: calc(100vh - 300px);
 }
 
-.max-h-screen {
-  max-height: 100vh;
-}
-
-.max-h-full {
-  max-height: 100%;
-}
-
-.max-h-\[500\] {
-  max-height: 500;
-}
-
-.max-h-\[200\] {
-  max-height: 200;
-}
-
-.max-h-\[200px\] {
-  max-height: 200px;
-}
-
 .min-h-\[24px\] {
   min-height: 24px;
 }
@@ -1364,10 +1344,6 @@ video {
 
 .pb-1 {
   padding-bottom: 0.25rem;
-}
-
-.pr-2 {
-  padding-right: 0.5rem;
 }
 
 .pr-3 {

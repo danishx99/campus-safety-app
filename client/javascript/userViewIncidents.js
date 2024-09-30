@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-  // Ensure default checkboxes are checked
+  // Ensure default checkboxes are checked (e.g., Pending and In Progress)
   document.querySelectorAll(".status-filter").forEach((checkbox) => {
     if (checkbox.value === "Pending" || checkbox.value === "In Progress") {
       checkbox.checked = true;
@@ -15,6 +15,8 @@ document.addEventListener("DOMContentLoaded", () => {
     checkbox.addEventListener("change", filterIncidentsByStatus);
   });
 });
+
+let fetchedIncidents; // Holds all incidents
 
 // Fetch and display incidents from the server
 async function fetchAndDisplayIncidents() {
@@ -35,12 +37,15 @@ async function fetchAndDisplayIncidents() {
     loader.style.display = "block";
     incidentsContainer.style.display = "none";
 
+    // Fetch incidents from the server
     const response = await fetch("/incidentReporting/getIncidentByUser");
     const data = await response.json();
     const incidents = data.incidents;
 
-    console.log(incidents);
+    // Cache the incidents in the fetchedIncidents variable
+    fetchedIncidents = incidents;
 
+    // Check for errors in the response
     if (response.status !== 200) {
       errorMessage.innerText =
         "An internal server error occurred while fetching incidents";
@@ -48,24 +53,17 @@ async function fetchAndDisplayIncidents() {
       return;
     }
 
-    // Clear existing content
-    incidentsContainer.innerHTML = "";
-
-    // Check if there are no incidents
+    // Check if no incidents exist
     if (incidents.length === 0) {
       errorMessage.innerText = "No incidents reported yet";
       errorMessage.classList.add("block");
       return;
     }
 
-    // Display incidents based on the currently checked statuses
-    incidents
-      .filter((incident) => checkedStatuses.includes(incident.status))
-      .forEach((incident, index) => {
-        addIncidentToDOM(incident, index);
-      });
+    // Filter and display incidents based on the currently checked statuses
+    displayFilteredIncidents(checkedStatuses);
 
-    // Add event listeners to location images
+    // Add event listeners to location images for Google Maps links
     document.querySelectorAll(".locationPick").forEach((img) => {
       img.addEventListener("click", (event) => {
         const lat = event.target.getAttribute("data-lat");
@@ -80,9 +78,34 @@ async function fetchAndDisplayIncidents() {
     errorMessage.innerText = "An error occurred while fetching incidents";
     errorMessage.classList.add("block");
   } finally {
+    // Hide loader and show the incidents container
     loader.style.display = "none";
     incidentsContainer.style.display = "block";
   }
+}
+
+// Filter incidents and display them in the DOM
+function filterIncidentsByStatus() {
+  // Get the selected statuses from the checkboxes
+  const checkedStatuses = Array.from(
+    document.querySelectorAll(".status-filter:checked")
+  ).map((checkbox) => checkbox.value);
+
+  // Filter and display incidents based on the selected statuses
+  displayFilteredIncidents(checkedStatuses);
+}
+
+// Display incidents based on the filtered statuses
+function displayFilteredIncidents(checkedStatuses) {
+  const incidentsContainer = document.getElementById("allIncidents");
+  incidentsContainer.innerHTML = ""; // Clear existing content
+
+  // Filter the cached incidents and display them in the DOM
+  fetchedIncidents
+    .filter((incident) => checkedStatuses.includes(incident.status))
+    .forEach((incident, index) => {
+      addIncidentToDOM(incident, index);
+    });
 }
 
 // Add incidents to DOM
@@ -107,7 +130,7 @@ function addIncidentToDOM(incident, index) {
     statusColor = "text-red-500"; // red for "Pending"
   } else if (incident.status === "In Progress") {
     statusColor = "text-orange-500"; // Orange for "In Progress"
-  } else if (incident.status === "Complete") {
+  } else if (incident.status === "Resolved") {
     statusColor = "text-green-500"; // Green for "Complete"
   }
 
@@ -129,7 +152,11 @@ function addIncidentToDOM(incident, index) {
         </div>
       </div>
       <div class="flex items-center mt-2 sm:mt-0">
-        <img src="../assets/locationPick.png" alt="Location" class="h-5 w-5 mr-2 cursor-pointer locationPick" data-lat="${latitude}" data-lng="${longitude}">
+       ${
+          incident.location
+            ? `<img src="../assets/locationPick.png" alt="Location" class="h-5 w-5 mr-2 cursor-pointer locationPick" data-lat="${latitude}" data-lng="${longitude}">`
+            : ""
+        }
         ${incident.imageTrue ? `<a href='/incidentReporting/getIncidentImage/${incident._id}' target='_blank' class="mr-2"><img src="../assets/image.png" alt="Image" class="h-5 w-5 cursor-pointer show-image"></a>` : ""}
         <p class="bg-[#E3E5E9] rounded-full flex items-center justify-center font-bold ${statusColor} px-3 py-1 text-xs">
           ${incident.status}
@@ -142,11 +169,4 @@ function addIncidentToDOM(incident, index) {
 `;
 
   incidentsContainer.appendChild(incidentDiv);
-}
-
-// Filter incidents based on selected statuses
-function filterIncidentsByStatus() {
-  fetchAndDisplayIncidents().catch((error) =>
-    console.error("Error filtering incidents:", error)
-  );
 }

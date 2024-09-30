@@ -11,6 +11,16 @@ async function sendNotificationn(fcmTokens, data = {}) {
   const message = {
     data: stringifiedData,
     tokens: fcmTokens,
+
+    // Add Android and Web Push configurations with high priority
+    android: {
+      priority: 'high', // High priority for Android devices
+    },
+    webpush: {
+      headers: {
+        Urgency: 'high', // High urgency for Web Push notifications
+      }
+    }
   };
 
   try {

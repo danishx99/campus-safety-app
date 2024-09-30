@@ -27,7 +27,7 @@ document.addEventListener("DOMContentLoaded", function () {
     document.getElementById("title").value = null;
     document.getElementById("resource-type").value = null;
     document.getElementById("description").value = null;
-    fetch("http://localhost:3000/admin/adminSafetyResources", {
+    fetch("http://localhost:3000/safetyResources/adminSafetyResources", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -45,14 +45,36 @@ document.addEventListener("DOMContentLoaded", function () {
           alert.style.display = "block";
           alert.style.color = "green";
           alert.style.backgroundColor = "#ddffdd";
-          alert.style.border = "green";
+          alert.style.border = "1px solid green";
           alert.innerText = "Resource added successfully";
-          console.log(data);
+          // Set a timeout to hide the alert after 3 seconds
+          setTimeout(() => {
+            alert.style.display = "none";
+          }, 3000);
+        } else {
+          alert.style.display = "block";
+          alert.style.color = "red";
+          alert.style.backgroundColor = "#ffdddd";
+          alert.style.border = "1px solid red";
+          alert.innerText = "Failed to add resource";
+          // Set a timeout to hide the alert after 3 seconds
+          setTimeout(() => {
+            alert.style.display = "none";
+          }, 3000);
         }
       })
       .catch((error) => {
         // Handle any errors here
         console.error(error);
+        alert.style.display = "block";
+        alert.style.color = "red";
+        alert.style.backgroundColor = "#ffdddd";
+        alert.style.border = "1px solid red";
+        alert.innerText = "Error adding resource";
+        // Set a timeout to hide the alert after 3 seconds
+        setTimeout(() => {
+          alert.style.display = "none";
+        }, 3000);
       });
   });
 

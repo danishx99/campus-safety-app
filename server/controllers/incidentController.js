@@ -7,38 +7,27 @@ const notification = require("../schemas/notification");
 const _sendNotification = require("../utils/sendNotification");
 
 exports.getIncidents = async (req, res) => {
-  console.time("getIncidents"); // Start timing
-
   try {
-    console.time("fetchIncidents"); // Start timing
     // Fetch all incidents exlcuding the image field
     const incidents = await Incident.find().select("-image").sort({
       status: 1,
       date: -1,
     });
-    console.timeEnd("fetchIncidents"); // End timing and log the result
 
-    console.time("fetchUsers"); // Start timing
     // Extract all unique reportedBy emails from the incidents
     const reportedByEmails = [
       ...new Set(incidents.map((incident) => incident.reportedBy)),
     ];
-    console.timeEnd("fetchUsers"); // End timing and log the result
 
-    console.time("fetchUserDetails"); // Start timing
     // Fetch user details for the reportedBy emails
     const users = await User.find({ email: { $in: reportedByEmails } });
-    console.timeEnd("fetchUserDetails"); // End timing and log the result
 
-    console.time("mergeIncidentsAndUsers"); // Start timing
     // Create a lookup map for users by email for efficient merging
     const userMap = users.reduce((acc, user) => {
       acc[user.email] = user;
       return acc;
     }, {});
-    console.timeEnd("mergeIncidentsAndUsers"); // End timing and log the result
 
-    console.time("attachUserDetails"); // Start timing
     // Attach user details to each incident
     const incidentsWithUserDetails = incidents.map((incident) => {
       const user = userMap[incident.reportedBy] || {};
@@ -54,7 +43,6 @@ exports.getIncidents = async (req, res) => {
         },
       };
     });
-    console.timeEnd("attachUserDetails"); // End timing and log the result
 
     console.log("bruhhhhhhhh", incidentsWithUserDetails.length); // Start timing
 
@@ -66,8 +54,6 @@ exports.getIncidents = async (req, res) => {
     console.log(error);
     res.status(500).json({ error: "Error fetching incidents" });
   }
-
-  console.timeEnd("getIncidents"); // End timing and log the result
 };
 
 // exports.getIncidents = async (req, res) => {

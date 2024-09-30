@@ -1,5 +1,5 @@
 async function loadSafetyResources() {
-    const response = await fetch('http://localhost:3000/user/userSafetyResources'); // Use the correct route
+    const response = await fetch('http://localhost:3000/safetyResources/userSafetyResources'); // Use the correct route
     const data = await response.json();
 
     return data.data;
@@ -87,18 +87,49 @@ function createResource(resource) {
     deleteButton.onclick = async () => {
         const resourceId = resource._id;
         try {
-            const response = await fetch(`http://localhost:3000/admin/deleteSafetyResources/${resourceId}`, {
+            const response = await fetch(`http://localhost:3000/safetyResources/deleteSafetyResources/${resourceId}`, {
                 method: 'DELETE',
             });
             if (response.ok) {
                 // Successfully deleted, now remove the bubble from the DOM
                 resourceDiv.remove();
-                alert('Resource deleted successfully!');
+                const alert = document.getElementById("alert");
+                alert.style.display = "block";
+                alert.style.color = "green";
+                alert.style.backgroundColor = "#ddffdd";
+                alert.style.border = "1px solid green";
+                alert.innerText = "Resource deleted successfully";
+                
+                // Set a timeout to hide the alert after 3 seconds
+                setTimeout(() => {
+                    alert.style.display = "none";
+                }, 3000);
             } else {
-                alert('Failed to delete resource');
+                const alert = document.getElementById("alert");
+                alert.style.display = "block";
+                alert.style.color = "red";
+                alert.style.backgroundColor = "#ffdddd";
+                alert.style.border = "1px solid red";
+                alert.innerText = "Failed to delete resource";
+                
+                // Set a timeout to hide the alert after 3 seconds
+                setTimeout(() => {
+                    alert.style.display = "none";
+                }, 3000);
             }
         } catch (error) {
             console.error('Error deleting resource:', error);
+            const alert = document.getElementById("alert");
+            alert.style.display = "block";
+            alert.style.color = "red";
+            alert.style.backgroundColor = "#ffdddd";
+            alert.style.border = "1px solid red";
+            alert.innerText = "Error deleting resource";
+            
+            // Set a timeout to hide the alert after 3 seconds
+            setTimeout(() => {
+                alert.style.display = "none";
+            }, 3000);
         }
     };
 

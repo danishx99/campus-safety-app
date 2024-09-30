@@ -291,6 +291,81 @@ function getCurrentLocation() {
 
 // Call getCurrentLocation every 2 seconds
 setInterval(getCurrentLocation, 2000);
+// Global variable to hold the geocoder
+// let geocoder;
 
+// // Function to load the Google Maps API script
+// function loadGoogleMapsScript() {
+//   const script = document.createElement('script');
+//   script.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyAmnz9yP1MewDeyOE-OV92JrAclq18JzZ4&libraries=places,geometry&callback=initGoogleMaps';
+//   script.async = true;
+//   script.defer = true;
+//   document.head.appendChild(script);
+// }
 
+// // Initialize Google Maps services
+// function initGoogleMaps() {
+//   geocoder = new google.maps.Geocoder();
+  
+//   // Start getting location every 2 seconds
+//   setInterval(getUserLocation, 2000);
+// }
+
+// // Function to get the user's location and address
+// function getUserLocation() {
+//   console.log("10 seconds have passed");
+  
+//   const locationRequest = {
+//     enableHighAccuracy: true,
+//     timeout: 5000,
+//     maximumAge: 0
+//   };
+
+//   if (navigator.geolocation) {
+//     navigator.geolocation.getCurrentPosition(
+//       (position) => {
+//         const latitude = position.coords.latitude;
+//         const longitude = position.coords.longitude;
+        
+//         console.log('Latitude:', latitude);
+//         console.log('Longitude:', longitude);
+//         console.log('Accuracy (meters):', position.coords.accuracy);
+        
+//         // Use Google Maps Geocoder to get address
+//         const latlng = new google.maps.LatLng(latitude, longitude);
+        
+//         geocoder.geocode({ 'location': latlng }, (results, status) => {
+//           if (status === 'OK') {
+//             if (results[0]) {
+//               console.log('Formatted Address:', results[0].formatted_address);
+              
+//               // Log detailed address components
+//               const addressComponents = results[0].address_components;
+//               for (let component of addressComponents) {
+//                 console.log(component.types[0] + ': ' + component.long_name);
+//               }
+              
+//               // Update the user location on the server
+//               // UpdateUserLocation(latitude, longitude, results[0].formatted_address);
+//             }
+//           } else {
+//             console.log('Geocoder failed due to: ' + status);
+//           }
+//         });
+//       },
+//       (error) => {
+//         console.log("Error getting location:", error);
+//       },
+//       locationRequest
+//     );
+//   } else {
+//     console.log("Geolocation is not supported by this browser.");
+//   }
+// }
+
+// // Call this function to load the Google Maps script and start the location tracking
+// loadGoogleMapsScript();
+
+// // Make sure initGoogleMaps is available globally
+// window.initGoogleMaps = initGoogleMaps;
 });

@@ -365,42 +365,45 @@
           <p class="mb-6">Upload Safety Resources for the users to see.</p>
           <form>
             <div class="mb-4">
-              <label class="block text-lg mb-2" for="title">Title</label>
-              <input type="text" id="title" class="w-full p-2 border rounded" />
+              <label class="block text-sm font-medium mb-2" for="title">Title</label>
+              <input type="text" id="title" class="w-full p-2 rounded-xl text-black text-sm sm:text-base" />
             </div>
             <div class="mb-4">
-              <label class="block text-lg mb-2" for="resource-type"
+              <label class="block text-sm font-medium mb-2" for="resource-type"
                 >Safety Resource Type</label
               >
-              <select id="resource-type" class="w-full p-2 border rounded">
+              <select id="resource-type" class="w-full p-2 rounded-xl bg-white text-sm sm:text-base">
                 <option>Emergency Contact</option>
                 <option>Safety Tip</option>
                 <option>Campus Safety Policy</option>
               </select>
             </div>
             <div class="mb-4">
-              <label class="block text-lg mb-2" for="description"
+              <label class="block text-sm font-medium mb-2" for="description"
                 >Description</label
               >
               <textarea
                 id="description"
-                class="w-full p-2 border rounded"
+                class="w-full p-2 rounded-lg text-black text-sm sm:text-base"
+                rows="5"
               ></textarea>
             </div>
-            <button
-              id="btnResource"
-              type="button"
-              class="bg-[#015EB8] text-white py-2 px-4 rounded"
-            >
-              Upload
-            </button>
-            <button
-              id="viewResources"
-              type="button"
-              class="bg-[#015EB8] text-white py-2 px-4 rounded"
-            >
-              View Safety Resources
-            </button>
+            <div class="flex">
+              <button
+                id="btnResource"
+                type="button"
+                class="bg-[#015EB8] text-white flex justify-center items-center py-2 px-4 rounded-lg text-sm sm:text-base hover:opacity-80 mr-2"
+              >
+                Upload
+              </button>
+              <button
+                id="viewResources"
+                type="button"
+                class="bg-[#015EB8] text-white flex justify-center items-center py-2 px-4 rounded-lg text-sm sm:text-base hover:opacity-80"
+              >
+                View Safety Resources
+              </button>
+            </div>
           </form>
         </main>
       </div>

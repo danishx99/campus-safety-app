@@ -361,48 +361,51 @@
         </div>
 
         <!--Main Content-->
-        <main class="flex-1 p-8 bg-white">
+        <main class="flex-grow p-6 overflow-auto bg-gray-200">
           <div class="alert-box" id="alert" role="alert"></div>
-          <h2 class="text-2xl font-semibold mb-4">Safety Resources</h2>
-          <p class="mb-6">Upload Safety Resources for the users to see.</p>
+          <h2 class="text-2xl font-semibold mb-4">Edit Safety Resource</h2>
+          <p class="mb-6">Update the Safety Resource information below.</p>
           <form>
             <div class="mb-4">
-              <label class="block text-lg mb-2" for="title">Title</label>
-              <input type="text" id="title" class="w-full p-2 border rounded" />
+              <label class="block text-sm font-medium mb-2" for="title">Title</label>
+              <input type="text" id="title" class="w-full p-2 rounded-xl text-black text-sm sm:text-base" />
             </div>
             <div class="mb-4">
-              <label class="block text-lg mb-2" for="resource-type"
+              <label class="block text-sm font-medium mb-2" for="resource-type"
                 >Safety Resource Type</label
               >
-              <select id="resource-type" class="w-full p-2 border rounded">
+              <select id="resource-type" class="w-full p-2 rounded-xl bg-white text-sm sm:text-base">
                 <option>Emergency Contact</option>
                 <option>Safety Tip</option>
                 <option>Campus Safety Policy</option>
               </select>
             </div>
             <div class="mb-4">
-              <label class="block text-lg mb-2" for="description"
+              <label class="block text-sm font-medium mb-2" for="description"
                 >Description</label
               >
               <textarea
                 id="description"
-                class="w-full p-2 border rounded"
+                class="w-full p-2 rounded-lg text-black text-sm sm:text-base"
+                rows="5"
               ></textarea>
             </div>
-            <button
-              id="btnSave"
-              type="button"
-              class="bg-[#015EB8] text-white py-2 px-4 rounded"
-            >
-              Save
-            </button>
-            <button
-              id="cancel"
-              type="button"
-              class="bg-[#015EB8] text-white py-2 px-4 rounded"
-            >
-              Cancel
-            </button>
+            <div class="flex">
+              <button
+                id="btnSave"
+                type="button"
+                class="bg-[#015EB8] text-white flex justify-center items-center py-2 px-4 rounded-lg text-sm sm:text-base hover:opacity-80 mr-2"
+              >
+                Save
+              </button>
+              <button
+                id="cancel"
+                type="button"
+                class="bg-red-500 text-white flex justify-center items-center py-2 px-4 rounded-lg text-sm sm:text-base hover:opacity-80"
+              >
+                Cancel
+              </button>
+            </div>
           </form>
         </main>
       </div>

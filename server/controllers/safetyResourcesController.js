@@ -3,11 +3,12 @@ const ObjectId = require("mongodb").ObjectId;
 
 exports.adminSafetyResources = async (req, res) => {
   try {
-    const { title, type, description } = req.body;
+    const { title, type, description, link} = req.body;
     const newResource = new safetyResources({
       title,
       type,
       description,
+      link,
     });
     await newResource.save();
     res.status(201).json({ message: "Resource added successfully" });
@@ -78,7 +79,7 @@ exports.getSafetyResource = async (req, res) => {
 exports.userSafetyResources = async (req, res) => {
   try {
     // Fetch all safety resources from the database
-    const resources = await safetyResources.find({}, 'title type description');
+    const resources = await safetyResources.find({}, 'title type description link');
     res.status(200).json({
       message: "Resources fetched successfully",
       data: resources

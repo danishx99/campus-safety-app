@@ -13,8 +13,7 @@ const PORT = process.env.PORT || 3000;
 // Import routes
 const frontendRoutes = require("./server/routes/frontendRoutes.js");
 const authRoutes = require("./server/routes/authRoutes.js");
-const adminRoutes = require("./server/routes/adminRoutes.js");
-const userRoutes = require("./server/routes/userRoutes.js");
+const safetyResourcesRoutes = require("./server/routes/safetyResourcesRoutes.js");
 const profileRoutes = require("./server/routes/profileRoutes.js");
 const incidentReportingRoutes = require("./server/routes/incidentReportingRoutes.js");
 const emergencyAlertRoutes = require("./server/routes/emergencyAlertRoutes.js");
@@ -37,11 +36,10 @@ app.use(express.static("client"));
 // Route middleware
 app.use("", frontendRoutes);
 app.use("/auth", authRoutes);
-app.use("/admin", adminRoutes);
 app.use("/profile", profileRoutes);
 app.use("/incidentReporting", incidentReportingRoutes);
 app.use("/emergency", emergencyAlertRoutes);
-app.use("/user", userRoutes);
+app.use("/safetyResources", safetyResourcesRoutes);
 app.use("/notifications", notificationRoutes);
 app.use("/location", locationRoutes);
 

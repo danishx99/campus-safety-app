@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", async function (){
     }
     try {
         // Fetch the resource data using the resourceId
-        const response = await fetch(`http://localhost:3000/admin/getSafetyResource/${resourceId}`);
+        const response = await fetch(`http://localhost:3000/safetyResources/getSafetyResource/${resourceId}`);
         const resource = await response.json();
 
         if (!response.ok) {
@@ -57,7 +57,7 @@ document.addEventListener("DOMContentLoaded", async function (){
             description: desc
             };
           try {
-            const response = await fetch(`http://localhost:3000/admin/updateSafetyResource/${resourceId}`, {
+            const response = await fetch(`http://localhost:3000/safetyResources/updateSafetyResource/${resourceId}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',

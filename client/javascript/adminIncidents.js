@@ -237,15 +237,15 @@ async function fetchAndDisplayIncidents() {
       });
 
     // Add event listeners to location images
-    document.querySelectorAll(".locationPick").forEach((img) => {
-      img.addEventListener("click", (event) => {
-        const lat = event.target.getAttribute("data-lat");
-        const lng = event.target.getAttribute("data-lng");
-        if (lat && lng) {
-          window.open(`https://www.google.com/maps?q=${lat},${lng}`, "_blank");
-        }
-      });
-    });
+    // document.querySelectorAll(".locationPick").forEach((img) => {
+    //   img.addEventListener("click", (event) => {
+    //     const lat = event.target.getAttribute("data-lat");
+    //     const lng = event.target.getAttribute("data-lng");
+    //     if (lat && lng) {
+    //       window.open(`https://www.google.com/maps?q=${lat},${lng}`, "_blank");
+    //     }
+    //   });
+    // });
   } catch (error) {
     console.error("Error fetching incidents:", error);
     errorMessage.innerText = "An error occurred while fetching incidents";
@@ -304,7 +304,7 @@ function addIncidentToDOM(incident, index) {
       <div class="flex items-center mt-2 sm:mt-0">
        ${
           incident.location
-            ? `<img src="../assets/locationPick.png" alt="Location" class="h-5 w-5 mr-2 cursor-pointer locationPick" data-lat="${latitude}" data-lng="${longitude}">`
+            ? `<a href='https://www.google.com/maps?q=${latitude},${longitude}' target='_blank' class="mr-2"><img src="../assets/locationPick.png" alt="Location" class="h-5 w-5 mr-2 cursor-pointer locationPick" data-lat="${latitude}" data-lng="${longitude}"></a>`
             : ""
        }
         ${incident.imageTrue ? `<a href='/incidentReporting/getIncidentImage/${incident._id}' target='_blank' class="mr-2"><img src="../assets/image.png" alt="Image" class="h-5 w-5 cursor-pointer show-image"></a>` : ""}
@@ -319,7 +319,7 @@ function addIncidentToDOM(incident, index) {
     Send an update to <span>${incident.userDetails.firstName}</span>
   </button>
   <button onclick="populateEmailField('Everyone','everyone')" class="bg-[#015EB8] text-white py-1 px-2 rounded-lg hover:opacity-80 mr-3 text-xs sm:py-2 sm:px-4 sm:text-sm">
-    Send announcement to all users
+    Send update to all users
   </button>
 </div>
   </div>

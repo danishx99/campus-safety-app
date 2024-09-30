@@ -237,15 +237,15 @@ async function fetchAndDisplayIncidents() {
       });
 
     // Add event listeners to location images
-    document.querySelectorAll(".locationPick").forEach((img) => {
-      img.addEventListener("click", (event) => {
-        const lat = event.target.getAttribute("data-lat");
-        const lng = event.target.getAttribute("data-lng");
-        if (lat && lng) {
-          window.open(`https://www.google.com/maps?q=${lat},${lng}`, "_blank");
-        }
-      });
-    });
+    // document.querySelectorAll(".locationPick").forEach((img) => {
+    //   img.addEventListener("click", (event) => {
+    //     const lat = event.target.getAttribute("data-lat");
+    //     const lng = event.target.getAttribute("data-lng");
+    //     if (lat && lng) {
+    //       window.open(`https://www.google.com/maps?q=${lat},${lng}`, "_blank");
+    //     }
+    //   });
+    // });
   } catch (error) {
     console.error("Error fetching incidents:", error);
     errorMessage.innerText = "An error occurred while fetching incidents";
@@ -302,7 +302,11 @@ function addIncidentToDOM(incident, index) {
         </div>
       </div>
       <div class="flex items-center mt-2 sm:mt-0">
-        <img src="../assets/locationPick.png" alt="Location" class="h-5 w-5 mr-2 cursor-pointer locationPick" data-lat="${latitude}" data-lng="${longitude}">
+       ${
+          incident.location
+            ? `<a href='https://www.google.com/maps?q=${latitude},${longitude}' target='_blank' class="mr-2"><img src="../assets/locationPick.png" alt="Location" class="h-5 w-5 mr-2 cursor-pointer locationPick" data-lat="${latitude}" data-lng="${longitude}"></a>`
+            : ""
+       }
         ${incident.imageTrue ? `<a href='/incidentReporting/getIncidentImage/${incident._id}' target='_blank' class="mr-2"><img src="../assets/image.png" alt="Image" class="h-5 w-5 cursor-pointer show-image"></a>` : ""}
         <select class="status-select bg-gray-300 rounded-lg px-2 py-1 text-sm" data-incident-id="${incident._id}">
           ${optionsHTML}
@@ -315,7 +319,7 @@ function addIncidentToDOM(incident, index) {
     Send an update to <span>${incident.userDetails.firstName}</span>
   </button>
   <button onclick="populateEmailField('Everyone','everyone')" class="bg-[#015EB8] text-white py-1 px-2 rounded-lg hover:opacity-80 mr-3 text-xs sm:py-2 sm:px-4 sm:text-sm">
-    Send announcement to all users
+    Send update to all users
   </button>
 </div>
   </div>
@@ -325,63 +329,83 @@ function addIncidentToDOM(incident, index) {
   incidentsContainer.appendChild(incidentDiv);
 }
 
-// Filter incidents based on selected statuses
+// // Filter incidents based on selected statuses
+// function filterIncidentsByStatus() {
+//   const checkedStatuses = Array.from(
+//     document.querySelectorAll(".status-filter:checked")
+//   ).map((checkbox) => checkbox.value);
+
+//   fetchAndDisplayIncidents()
+//     .then(() => {
+//       const incidentDivs = document.querySelectorAll("[id^=incident-]");
+//       incidentDivs.forEach((div) => {
+//         const selectElement = div.querySelector(".status-select");
+//         if (!checkedStatuses.includes(selectElement.value)) {
+//           div.style.display = "none";
+//         } else {
+//           div.style.display = "block";
+//         }
+//       });
+//     })
+//     .catch((error) => console.error("Error filtering incidents:", error));
+// }
+
+// Filter incidents based on selected statuses without making backend requests
 function filterIncidentsByStatus() {
+  // Get the selected statuses from the checkboxes
   const checkedStatuses = Array.from(
     document.querySelectorAll(".status-filter:checked")
   ).map((checkbox) => checkbox.value);
 
-  fetchAndDisplayIncidents()
-    .then(() => {
-      const incidentDivs = document.querySelectorAll("[id^=incident-]");
-      incidentDivs.forEach((div) => {
-        const selectElement = div.querySelector(".status-select");
-        if (!checkedStatuses.includes(selectElement.value)) {
-          div.style.display = "none";
-        } else {
-          div.style.display = "block";
-        }
-      });
-    })
-    .catch((error) => console.error("Error filtering incidents:", error));
+  // Filter the already fetched incidents stored in fetchedIncidents
+  const incidentsContainer = document.getElementById("allIncidents");
+  incidentsContainer.innerHTML = ""; // Clear existing content
+
+  // Filter and display incidents based on the selected statuses
+  fetchedIncidents
+    .filter((incident) => checkedStatuses.includes(incident.status))
+    .forEach((incident, index) => {
+      addIncidentToDOM(incident, index);
+    });
+  
 }
+
+
 
 // Update incidents' statuses and re-filter based on current filters
 async function updateIncidentsStatus() {
   const saveButton = document.getElementById("save");
   const saveLoader = document.getElementById("saveLoader");
-  const message = document.getElementById("alert");
+  const message = document.getElementById("pageAlert");
 
   saveLoader.classList.remove("hidden");
   saveButton.disabled = true;
 
   const selectElements = document.querySelectorAll(".status-select");
-const updatedStatuses = Array.from(selectElements).map((select) => ({
-  incidentId: select.getAttribute("data-incident-id"),
-  status: select.value,
-}));
+  const updatedStatuses = Array.from(selectElements).map((select) => ({
+    incidentId: select.getAttribute("data-incident-id"),
+    status: select.value,
+  }));
 
-const oldIncidents = fetchedIncidents; // From the DB
-const newIncidents = updatedStatuses; // From the UI
-const IncidentsToUpdate = [];
+  const oldIncidents = fetchedIncidents; // From the DB
+  const newIncidents = updatedStatuses; // From the UI
+  const IncidentsToUpdate = [];
 
-// Create a map of oldIncidents for quick lookup by incidentId
-const oldIncidentMap = oldIncidents.reduce((map, incident) => {
-  map[incident._id] = incident.status; // Use _id as the key and status as the value
-  return map;
-}, {});
+  // Create a map of oldIncidents for quick lookup by incidentId
+  const oldIncidentMap = oldIncidents.reduce((map, incident) => {
+    map[incident._id] = incident.status; // Use _id as the key and status as the value
+    return map;
+  }, {});
 
-// Compare each new incident's status with its old status using the map
-for (const newIncident of newIncidents) {
-  const oldStatus = oldIncidentMap[newIncident.incidentId]; // Get the old status using the incidentId
-  if (oldStatus !== newIncident.status) {
-    IncidentsToUpdate.push(newIncident); // Add to the list if the status has changed
+  // Compare each new incident's status with its old status using the map
+  for (const newIncident of newIncidents) {
+    const oldStatus = oldIncidentMap[newIncident.incidentId]; // Get the old status using the incidentId
+    if (oldStatus !== newIncident.status) {
+      IncidentsToUpdate.push(newIncident); // Add to the list if the status has changed
+    }
   }
-}
 
-console.log(IncidentsToUpdate); // Incidents that have had their status changed
-
-  
+  console.log(IncidentsToUpdate); // Incidents that have had their status changed
 
   try {
     const response = await fetch("/incidentReporting/updateIncident", {
@@ -393,8 +417,19 @@ console.log(IncidentsToUpdate); // Incidents that have had their status changed
     });
 
     if (response.ok) {
-      // Re-fetch and filter incidents after status update
-      await fetchAndDisplayIncidents();
+      // Update the fetchedIncidents array with new statuses
+      for (const updatedIncident of IncidentsToUpdate) {
+        // Find the incident in the fetchedIncidents array and update its status
+        const incident = fetchedIncidents.find(
+          (incident) => incident._id === updatedIncident.incidentId
+        );
+        if (incident) {
+          incident.status = updatedIncident.status; // Update the status in fetchedIncidents
+        }
+      }
+
+      // Re-filter and update the incidents displayed in the UI based on the current filters
+      filterIncidentsByStatus(); // This will automatically refresh the UI based on checked statuses
 
       message.innerText = "Incident statuses updated successfully";
       message.classList.add(

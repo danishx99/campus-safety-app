@@ -35,7 +35,7 @@ document.addEventListener("DOMContentLoaded", () => {
     //console.log(title, incidentType, description, location, dateTime);
 
     // Validate the form data
-    if (!title || !incidentType || !description || !location || !dateTime) {
+    if (!title || !incidentType || !description || !dateTime) {
       alert.textContent = "Please fill in all fields";
       alert.style.display = "block";
       return;

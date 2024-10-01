@@ -44,7 +44,7 @@ exports.getIncidents = async (req, res) => {
       };
     });
 
-    console.log("bruhhhhhhhh", incidentsWithUserDetails.length); // Start timing
+    // console.log("bruhhhhhhhh", incidentsWithUserDetails.length); // Start timing
 
     res.status(200).json({
       message: "Incidents fetched successfully",

@@ -161,15 +161,14 @@ require("dotenv").config(); // Load environment variables from .env file
 const admin = require("firebase-admin");
 
 console.log("Starting Firebase initialization process...");
-console.log("Node environment:", process.env.NODE_ENV);
 
 // Debug: Log all environment variables (be cautious with sensitive data)
-console.log("Environment variables:");
-Object.keys(process.env).forEach(key => {
-  if (key.startsWith('FIREBASE_')) {
-    console.log(`${key}: ${key.includes('KEY') ? '[REDACTED]' : process.env[key]}`);
-  }
-});
+// console.log("Environment variables:");
+// Object.keys(process.env).forEach(key => {
+//   if (key.startsWith('FIREBASE_')) {
+//     console.log(`${key}: ${key.includes('KEY') ? '[REDACTED]' : process.env[key]}`);
+//   }
+// });
 
 // Function to clean and format the private key
 function formatPrivateKey(key) {
@@ -203,11 +202,11 @@ const serviceAccount = {
 };
 
 // Debug log to ensure environment variables are being loaded
-console.log("Service Account Details:");
-console.log(JSON.stringify({
-  ...serviceAccount,
-  private_key: serviceAccount.private_key ? '[REDACTED]' : undefined
-}, null, 2));
+// console.log("Service Account Details:");
+// console.log(JSON.stringify({
+//   ...serviceAccount,
+//   private_key: serviceAccount.private_key ? '[REDACTED]' : undefined
+// }, null, 2));
 
 // Validate critical fields
 if (!serviceAccount.private_key) {

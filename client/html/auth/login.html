@@ -76,7 +76,7 @@ window.initFireBaseFCM = function() {
         const messaging = getMessaging(app);
 
         // Function to register a specific service worker and wait for it to be ready and activated
-        function registerReady(swScript, options, timeout = 5000) { 
+        function registerReady(swScript, options, timeout = 15000) { 
             console.log('Registering service worker...');
             return navigator.serviceWorker.register(swScript, options).then(reg => { 
                 var incomingSw = reg.installing || reg.waiting;

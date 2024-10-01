@@ -7,6 +7,34 @@ const _sendNotification = require("../utils/sendNotification");
 
 //placeholder logic for the handling the back end of the emergency alert system
 
+exports.tempUpdateEmergency = async (req, res) => {
+  try {
+    const emergencyAlertId = req.params.emergencyAlertId;
+    const assignedTo = "2544233@students.wits.ac.za";
+
+    const token = req.cookies.token;
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const sender = decoded.userEmail;
+    const user = await User.findOne({ email: sender });
+
+    _sendNotification([user.FCMtoken], {
+      emergencyAlertId,
+      status: "Assigned",
+    });
+
+    //update the emergency alert with the assignedTo field and its status to "Assigned"
+    await Emergency.findByIdAndUpdate(emergencyAlertId, {
+      assignedTo,
+      status: "Assigned",
+    });
+
+    res.status(200).json({ message: "Emergency alert assigned successfully" });
+
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "Error updating emergency alert" });
+  }
+};
 
 exports.sendPanic = async (req, res) => {
   try {
@@ -14,13 +42,13 @@ exports.sendPanic = async (req, res) => {
     const token = req.cookies.token;
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const email = decoded.userEmail;
-    
+
     const newEmergency = new Emergency({
       title,
       description,
       location,
       reportedBy: email,
-      radiusBeingSearched: 200,
+      // radiusBeingSearched: 200,
     });
     await newEmergency.save();
 
@@ -47,25 +75,21 @@ exports.sendPanic = async (req, res) => {
     //   senderLocation: location,
     //   recipient: "admin",
     // });
-    
-    
 
     //Return the emergency object details to be stored as a cookie(the emergencyAlertId below thats returned was initialy so that a user can be redirected based on the alertID )
     res.cookie(`emergency-${newEmergency._id}`, JSON.stringify(newEmergency), {
       maxAge: 1000 * 60 * 60 * 24 * 7,
     });
-    
-      
-    res.status(200).json({
-      message: "Emergency alert sent successfully", emergencyAlertId: newEmergency._id
-    });
 
+    res.status(200).json({
+      message: "Emergency alert sent successfully",
+      emergencyAlertId: newEmergency._id,
+    });
   } catch (error) {
     console.log(error);
     res.status(500).json({ error: "Error sending emergency alert" });
   }
 };
-
 
 exports.getEmergencyAlertDetails = async (req, res) => {
   try {
@@ -78,41 +102,44 @@ exports.getEmergencyAlertDetails = async (req, res) => {
   }
 };
 
-
 function deg2rad(deg) {
   return deg * (Math.PI / 180);
 }
 
 function getUsersWithinRadius(users, baseLocation, radiusInKM) {
-
-     //Filter through the users and store all of them that are in proximity in nearbyUsers array
-     const nearbyUsers = users.filter((user) => {
-       
-      if(user.lastLocation){
-         
+  //Filter through the users and store all of them that are in proximity in nearbyUsers array
+  const nearbyUsers = users.filter((user) => {
+    if (user.lastLocation) {
       const R = 6371; // Radius of the earth in km
-      const [targetLon, targetLat] = [baseLocation.longitude, baseLocation.latitude];//Base location
-      const [userLon, userLat] = [JSON.parse(user.lastLocation)[1], JSON.parse(user.lastLocation)[0]];//User location that will be checked to be in the radius
-      
+      const [targetLon, targetLat] = [
+        baseLocation.longitude,
+        baseLocation.latitude,
+      ]; //Base location
+      const [userLon, userLat] = [
+        JSON.parse(user.lastLocation)[1],
+        JSON.parse(user.lastLocation)[0],
+      ]; //User location that will be checked to be in the radius
+
       const dLat = deg2rad(userLat - targetLat);
       const dLon = deg2rad(userLon - targetLon);
       const a =
-          Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-          Math.cos(deg2rad(targetLat)) * Math.cos(deg2rad(userLat)) *
-          Math.sin(dLon / 2) * Math.sin(dLon / 2);
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(deg2rad(targetLat)) *
+          Math.cos(deg2rad(userLat)) *
+          Math.sin(dLon / 2) *
+          Math.sin(dLon / 2);
       const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
       const d = R * c; // Distance in km
       return d <= radiusInKM; // Return locations within certain radius(in km)
-      }
-
-    });
-    return nearbyUsers;
+    }
+  });
+  return nearbyUsers;
 }
 
 async function checkIfAdminHasBeenAssigned(emergencyAlertId) {
-let emergency = await Emergency.findById(emergencyAlertId);
-console.log("the emergency is assigned to : ", emergency.assignedTo);
-return emergency.assignedTo;
+  let emergency = await Emergency.findById(emergencyAlertId);
+  console.log("the emergency is assigned to : ", emergency.assignedTo);
+  return emergency.assignedTo;
 }
 
 // exports.findAndNotifyAdmins = async (req, res) => {
@@ -128,7 +155,7 @@ return emergency.assignedTo;
 
 //   //Find the user associated with the emergency alert
 //   const user = await User.findOne({ email: sender });
-   
+
 //   //This notifies the frontend(FCM listener) that they can be redirected to the emergency alert since this function may take a while to complete
 //   _sendNotification([user.FCMtoken], { emergencyAlertId: emergencyAlertId, redirect: true });
 
@@ -142,12 +169,11 @@ return emergency.assignedTo;
 //   const users = await User.find({ role: "admin" });
 
 //   //While assignedToAdmin is false, loop through the proximities array and find the admins within the radius(if no admins found within proximity, notify the next proximity),
-//   // then notify them, wait 30 seconds(giving them a chance to respond) before finding 
+//   // then notify them, wait 30 seconds(giving them a chance to respond) before finding
 //   //out if an admin has been assigned, if one has been assigned, break out of the loop. If one hasnt
 //   //been assigned, notify the next set of admins in the next proximity radius. Do tis for all proximities, at the end
 //   //if no admin has been assigned, notify all admins
 //   // Loop through proximity ranges and notify nearby admins
-
 
 //   for (let i = 0; i < proximities.length; i++) {
 //     const radius = proximities[i];
@@ -155,8 +181,6 @@ return emergency.assignedTo;
 //     //Update the radius being searched in the emergency alert
 //     await Emergency.findByIdAndUpdate(emergencyAlertId, { radiusBeingSearched: radius });
 
-  
-    
 //     const nearbyAdmins = getUsersWithinRadius(users, location, radius);
 
 //     console.log("Nearby admins length: ", nearbyAdmins.length);
@@ -173,7 +197,6 @@ return emergency.assignedTo;
 
 //     console.log("Just notified the client of proximity: ", radius);
 
-    
 //     if(nearbyAdmins.length === 0){
 //       console.log("No admins found within proximity: ", radius);
 //     }
@@ -181,7 +204,6 @@ return emergency.assignedTo;
 //     if (nearbyAdmins.length > 0) {
 //       const fcmTokens = nearbyAdmins.map(admin => admin.FCMtoken);
 
-      
 //       // Send notification to admins within the current proximity range
 //       await _sendNotification(fcmTokens, {
 //         title: "Emergency Alert",
@@ -192,8 +214,6 @@ return emergency.assignedTo;
 //         recipient: "admin",
 //         emergencyAlertId: emergencyAlertId,
 //       });
-
-      
 
 //       // Wait for 30 seconds before checking if an admin has been assigned
 //       await new Promise(resolve => setTimeout(resolve, 10000));
@@ -209,7 +229,7 @@ return emergency.assignedTo;
 //       _sendNotification([user.FCMtoken], { emergencyAlertId: emergencyAlertId, status: "Assigned" });
 //         break;
 //       }
-      
+
 //     }
 //   }
 
@@ -226,11 +246,10 @@ return emergency.assignedTo;
 //       recipient: "admin",
 //       emergencyAlertId: emergencyAlertId,
 //     });
-    
 
-//     //Wait for 30 seconds 
+//     //Wait for 30 seconds
 //     await new Promise(resolve => setTimeout(resolve, 10000));
-    
+
 //     //Check if an admin has been assigned
 //     assignedToAdmin = await checkIfAdminHasBeenAssigned(emergencyAlertId);
 
@@ -246,14 +265,11 @@ return emergency.assignedTo;
 //     _sendNotification([user.FCMtoken], { emergencyAlertId: emergencyAlertId, status: "No Admin Assigned" });
 //     }
 
-    
 //   }
 
 //   res.status(200).json({ message: "Admins notified successfully" });
 
-
 //   //Check logic above
-  
 
 // }
 
@@ -272,27 +288,36 @@ exports.findAndNotifyAdmins = async (req, res) => {
     }
 
     // Notify frontend to redirect
-    await _sendNotification([user.FCMtoken], { emergencyAlertId, redirect: true });
+    await _sendNotification([user.FCMtoken], {
+      emergencyAlertId,
+      redirect: true,
+    });
 
     const proximities = [0.2, 0.5, 1, 1.5];
     const users = await User.find({ role: "admin" });
 
     for (const radius of proximities) {
       //3 second delay
-      await new Promise(resolve => setTimeout(resolve, 3000));
+      await new Promise((resolve) => setTimeout(resolve, 3000));
 
-      
-      await Emergency.findByIdAndUpdate(emergencyAlertId, { radiusBeingSearched: radius });
-      
+      await Emergency.findByIdAndUpdate(emergencyAlertId, {
+        radiusBeingSearched: radius,
+      });
+
       console.log(`Searching within radius: ${radius}`);
-      await _sendNotification([user.FCMtoken], { emergencyAlertId, proximity: radius });
+      await _sendNotification([user.FCMtoken], {
+        emergencyAlertId,
+        proximity: radius,
+      });
 
       const nearbyAdmins = getUsersWithinRadius(users, parsedLocation, radius);
-      console.log(`Found ${nearbyAdmins.length} nearby admins for radius ${radius}`);
+      console.log(
+        `Found ${nearbyAdmins.length} nearby admins for radius ${radius}`
+      );
 
       if (nearbyAdmins.length > 0) {
-        const fcmTokens = nearbyAdmins.map(admin => admin.FCMtoken);
-        
+        const fcmTokens = nearbyAdmins.map((admin) => admin.FCMtoken);
+
         await _sendNotification(fcmTokens, {
           title: "Emergency Alert",
           body: "Emergency Alert received, click for more details",
@@ -303,20 +328,27 @@ exports.findAndNotifyAdmins = async (req, res) => {
           emergencyAlertId,
         });
 
-        await new Promise(resolve => setTimeout(resolve, 10000));
-        
-        const assignedToAdmin = await checkIfAdminHasBeenAssigned(emergencyAlertId);
+        await new Promise((resolve) => setTimeout(resolve, 10000));
+
+        const assignedToAdmin = await checkIfAdminHasBeenAssigned(
+          emergencyAlertId
+        );
         console.log(`Assigned to admin: ${assignedToAdmin}`);
 
         if (assignedToAdmin) {
-          await _sendNotification([user.FCMtoken], { emergencyAlertId, status: "Assigned" });
-          return res.status(200).json({ message: "Admin assigned successfully" });
+          await _sendNotification([user.FCMtoken], {
+            emergencyAlertId,
+            status: "Assigned",
+          });
+          return res
+            .status(200)
+            .json({ message: "Admin assigned successfully" });
         }
       }
     }
 
     // If no admin was assigned after all proximity ranges
-    const allAdminTokens = users.map(admin => admin.FCMtoken);
+    const allAdminTokens = users.map((admin) => admin.FCMtoken);
     await _sendNotification(allAdminTokens, {
       title: "Emergency Alert",
       body: "Emergency Alert received, click for more details",
@@ -327,25 +359,39 @@ exports.findAndNotifyAdmins = async (req, res) => {
       emergencyAlertId,
     });
 
-    await new Promise(resolve => setTimeout(resolve, 10000));
-    
-    const finalAssignmentCheck = await checkIfAdminHasBeenAssigned(emergencyAlertId);
+    //update the value of radiusBeingSearched in the emergency alert to -1 to indicate that all admins have been notified
+    await Emergency.findByIdAndUpdate(emergencyAlertId, {
+      radiusBeingSearched: 999,
+    });
+
+    //send a notification to the client to notify them that the radius now includes everyone
+    await _sendNotification([user.FCMtoken], {
+      emergencyAlertId,
+      proximity: 999,
+    });
+
+    await new Promise((resolve) => setTimeout(resolve, 10000));
+
+    const finalAssignmentCheck = await checkIfAdminHasBeenAssigned(
+      emergencyAlertId
+    );
     const status = finalAssignmentCheck ? "Assigned" : "No Admin Assigned";
     await _sendNotification([user.FCMtoken], { emergencyAlertId, status });
+    //update the value of assignedTo in the db to "No Admin Assigned" if no admin has been assigned
+    if (!finalAssignmentCheck) {
+      await Emergency.findByIdAndUpdate(emergencyAlertId, {
+        assignedTo: "No Admin Assigned",
+      });
+    }
 
     return res.status(200).json({ message: "Process completed", status });
   } catch (error) {
     console.error("Error in findAndNotifyAdmins:", error);
-    return res.status(500).json({ message: "Internal server error", error: error.message });
+    return res
+      .status(500)
+      .json({ message: "Internal server error", error: error.message });
   }
 };
-
-
-
-
-
-
-
 
 // exports.getPanicStatus = async (req, res) => {
 //   try {

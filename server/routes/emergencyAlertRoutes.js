@@ -3,10 +3,7 @@ const router = express.Router();
 const emergencyAlertController = require("../controllers/emergencyController");
 
 // User Incident Reporting
-router.post(
-  "/sendPanic",
-  emergencyAlertController.sendPanic
-);
+router.post("/sendPanic", emergencyAlertController.sendPanic);
 
 //Get the current emergency alert details
 router.get(
@@ -20,5 +17,10 @@ router.post(
   emergencyAlertController.findAndNotifyAdmins
 );
 
+//Assign an emergency alert to an admin tempUpdateEmergency
+router.get(
+  "/assign/:emergencyAlertId",
+  emergencyAlertController.tempUpdateEmergency
+);
 
 module.exports = router;

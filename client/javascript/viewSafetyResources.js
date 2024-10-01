@@ -1,5 +1,5 @@
 async function loadSafetyResources() {
-    const response = await fetch('http://localhost:3000/safetyResources/userSafetyResources'); // Use the correct route
+    const response = await fetch('/safetyResources/userSafetyResources'); // Use the correct route
     const data = await response.json();
 
     return data.data;
@@ -129,7 +129,7 @@ function createResource(resource) {
         editButton.onclick = () => {
             const resourceId = resource._id; 
             localStorage.setItem('resourceId', resourceId);
-            window.location.href = "http://localhost:3000/admin/updateSafetyResources";
+            window.location.href = "/admin/updateSafetyResources";
         };
 
         const deleteButton = document.createElement('button');
@@ -147,7 +147,7 @@ function createResource(resource) {
         deleteButton.onclick = async () => {
             const resourceId = resource._id;
             try {
-                const response = await fetch(`http://localhost:3000/safetyResources/deleteSafetyResources/${resourceId}`, {
+                const response = await fetch(`/safetyResources/deleteSafetyResources/${resourceId}`, {
                     method: 'DELETE',
                 });
                 if (response.ok) {
@@ -252,7 +252,7 @@ function createResource(resource) {
       editButton.onclick = () => {
           const resourceId = resource._id; 
           localStorage.setItem('resourceId', resourceId);
-          window.location.href = "http://localhost:3000/admin/updateSafetyResources";
+          window.location.href = "/admin/updateSafetyResources";
       };
 
       const deleteButton = document.createElement('button');
@@ -270,7 +270,7 @@ function createResource(resource) {
       deleteButton.onclick = async () => {
           const resourceId = resource._id;
           try {
-              const response = await fetch(`http://localhost:3000/safetyResources/deleteSafetyResources/${resourceId}`, {
+              const response = await fetch(`/safetyResources/deleteSafetyResources/${resourceId}`, {
                   method: 'DELETE',
               });
               if (response.ok) {
@@ -375,7 +375,7 @@ function createResource(resource) {
       editButton.onclick = () => {
           const resourceId = resource._id; 
           localStorage.setItem('resourceId', resourceId);
-          window.location.href = "http://localhost:3000/admin/updateSafetyResources";
+          window.location.href = "/admin/updateSafetyResources";
       };
 
       const deleteButton = document.createElement('button');
@@ -393,7 +393,7 @@ function createResource(resource) {
       deleteButton.onclick = async () => {
           const resourceId = resource._id;
           try {
-              const response = await fetch(`http://localhost:3000/safetyResources/deleteSafetyResources/${resourceId}`, {
+              const response = await fetch(`/safetyResources/deleteSafetyResources/${resourceId}`, {
                   method: 'DELETE',
               });
               if (response.ok) {

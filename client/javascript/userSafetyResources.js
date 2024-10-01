@@ -1,5 +1,5 @@
 async function loadSafetyResources() {
-    const response = await fetch('http://localhost:3000/safetyResources/userSafetyResources'); // Use the correct route
+    const response = await fetch('/safetyResources/userSafetyResources'); // Use the correct route
     const data = await response.json();
 
     return data.data;

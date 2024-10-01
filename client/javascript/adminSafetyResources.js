@@ -30,7 +30,7 @@ document.addEventListener("DOMContentLoaded", function () {
     document.getElementById("description").value = null;
     document.getElementById("link").value = null;
     console.log("Link value:", link);
-    fetch("http://localhost:3000/safetyResources/adminSafetyResources", {
+    fetch("/safetyResources/adminSafetyResources", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -84,7 +84,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   viewBtn.addEventListener("click", function (event) {
     console.log("View resource button clicked");
-    window.location.href = "http://localhost:3000/admin/viewSafetyResources";
+    window.location.href = "/admin/viewSafetyResources";
   });
 
   /*async function deleteAllResources() {

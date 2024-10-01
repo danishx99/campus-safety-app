@@ -4,6 +4,47 @@
 //     getMessaging,
 //     onMessage,
 // } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-messaging.js";
+window.initMap = function() {
+  const emergencyDetails = JSON.parse(getCookieDetails());
+
+  const location = JSON.parse(emergencyDetails.location);
+  const lat = location.latitude;
+  const lng = location.longitude;
+
+  const locationObj = { lat: lat, lng: lng };
+
+  // Initialize the map and set the location
+  map = new google.maps.Map(document.getElementById("map"), {
+    zoom: getZoomLevelFromRadius(baseRadius),
+    center: locationObj,
+  });
+
+  // Initialize the marker and circle
+  const marker = new google.maps.Marker({
+    position: locationObj,
+    map: map,
+    draggable: false,
+  });
+
+  // Create the circle with an initial radius
+  circle = new google.maps.Circle({
+    map: map,
+    radius: baseRadius, // Initial radius in meters
+    fillColor: "blue", // Fill color for the circle
+    fillOpacity: 0.3, // Opacity of the fill
+    strokeColor: "black", // Stroke color for the circle
+    strokeOpacity: 0.8, // Opacity of the stroke
+    strokeWeight: 2, // Thickness of the stroke
+  });
+
+  // Attach the circle to the marker's location
+  circle.bindTo("center", marker, "position");
+
+  // Start the pulse animation
+  pulseCircle();
+}
+
+
 
 //Get a reference to all the circles
 let searchingCircle = document.getElementById("searchingCircle");
@@ -187,45 +228,7 @@ function pulseCircle() {
 let map;
 let circle;
 
-function initMap() {
-  const emergencyDetails = JSON.parse(getCookieDetails());
 
-  const location = JSON.parse(emergencyDetails.location);
-  const lat = location.latitude;
-  const lng = location.longitude;
-
-  const locationObj = { lat: lat, lng: lng };
-
-  // Initialize the map and set the location
-  map = new google.maps.Map(document.getElementById("map"), {
-    zoom: getZoomLevelFromRadius(baseRadius),
-    center: locationObj,
-  });
-
-  // Initialize the marker and circle
-  const marker = new google.maps.Marker({
-    position: locationObj,
-    map: map,
-    draggable: false,
-  });
-
-  // Create the circle with an initial radius
-  circle = new google.maps.Circle({
-    map: map,
-    radius: baseRadius, // Initial radius in meters
-    fillColor: "blue", // Fill color for the circle
-    fillOpacity: 0.3, // Opacity of the fill
-    strokeColor: "black", // Stroke color for the circle
-    strokeOpacity: 0.8, // Opacity of the stroke
-    strokeWeight: 2, // Thickness of the stroke
-  });
-
-  // Attach the circle to the marker's location
-  circle.bindTo("center", marker, "position");
-
-  // Start the pulse animation
-  pulseCircle();
-}
 // Function to get the current emergency alert details
 async function getEmergencyAlertDetails(emergencyAlertId) {
   try {

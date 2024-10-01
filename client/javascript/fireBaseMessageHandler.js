@@ -20,10 +20,10 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const messaging = getMessaging(app);
 
-// //If firebase is initialized successfully, log the message by CHECKING IF IT IS INITIALIZED
-// if(app && app.name){
-//   console.log(`Firebase initialized successfully. App name: ${app.name}`);
-// }
+//If firebase is initialized successfully, log the message by CHECKING IF IT IS INITIALIZED
+if(app && app.name){
+  console.log(`Firebase initialized successfully. App name: ${app.name}`);
+}
 
 function playSound() {
   const audio = new Audio("../assets/notification.mp3");
@@ -86,8 +86,12 @@ export function handleIncomingMessages(notifier) {
     // Access status data to check for redirect
     const emergencyAlertIdPayload = payload.data.emergencyAlertId;
     const redirect = payload.data.redirect;
+    const userToBeRedirected = payload.data.userToBeRedirected;
+    const currentUser = decodeURIComponent(getCookie("email"));
 
-    if(redirect){
+  
+
+    if(redirect && userToBeRedirected === currentUser){
       window.location.href = `/user/emergencyalerts/track/${emergencyAlertIdPayload}`;
     }
 

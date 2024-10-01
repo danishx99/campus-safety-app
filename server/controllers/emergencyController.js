@@ -291,6 +291,7 @@ exports.findAndNotifyAdmins = async (req, res) => {
     await _sendNotification([user.FCMtoken], {
       emergencyAlertId,
       redirect: true,
+      userToBeRedirected: sender,
     });
 
     const proximities = [0.2, 0.5, 1, 1.5];

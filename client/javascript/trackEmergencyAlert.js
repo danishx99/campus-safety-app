@@ -229,6 +229,12 @@ document.addEventListener("DOMContentLoaded", async function () {
     document.getElementById(
       "INFO"
     ).textContent = `Expanded search radius to include all admins`;
+
+    baseRadius = currentRadiusOfEmergencyAlert * 1000;
+    maxRadius = currentRadiusOfEmergencyAlert * 1000 + 10;
+    minRadius = currentRadiusOfEmergencyAlert * 1000 - 10;
+
+
   }
 
   if (currentAssignedTo === "No Admin Assigned") {

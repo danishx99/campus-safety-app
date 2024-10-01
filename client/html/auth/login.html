@@ -137,7 +137,8 @@ window.initFireBaseFCM = function() {
                     });
                 })
                 .catch((err) => {
-                    console.error('Service Worker registration failed: ', err);
+                    alert("Service Worker registration failed: " + err);
+                    console.log('Service Worker registration failed: ', err);
                     reject('Service Worker registration failed.'); // Reject with service worker registration error
                 });
         } else {

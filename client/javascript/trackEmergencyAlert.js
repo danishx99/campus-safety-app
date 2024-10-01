@@ -46,6 +46,7 @@ window.initMap = function() {
 
 
 
+
 //Get a reference to all the circles
 let searchingCircle = document.getElementById("searchingCircle");
 let searchingText = document.getElementById("searchingText");
@@ -54,100 +55,6 @@ let assignedText = document.getElementById("assignedText");
 let resolvedCircle = document.getElementById("resolvedCircle");
 let resolvedText = document.getElementById("resolvedText");
 
-function intializeFirebaseForUpdates() {
-  // Get the current emergency alert id from browser url
-  const url = window.location.href;
-  const urlParts = url.split("/");
-  const emergencyAlertId = urlParts[urlParts.length - 1];
-
-  const firebaseConfig = {
-    apiKey: "AIzaSyBA-red8RszDmGY3YGELrunZQxFmg7r04Y",
-    authDomain: "campus-safety-fcm.firebaseapp.com",
-    projectId: "campus-safety-fcm",
-    storageBucket: "campus-safety-fcm.appspot.com",
-    messagingSenderId: "221773083535",
-    appId: "1:221773083535:web:0500a94bbb7a9dd6b891fa",
-    measurementId: "G-8BZHJT3BRY",
-  };
-
-  // Initialize Firebase
-  firebase.initializeApp(firebaseConfig);
-  const messaging = firebase.messaging();
-
-  // Handle incoming messages when the app is in the foreground
-  messaging.onMessage((payload) => {
-    console.log("Message received: ", payload);
-
-    // Access status data
-    const emergencyAlertIdPayload = payload.data.emergencyAlertId;
-    const status = payload.data.status;
-    const proximity = payload.data.proximity;
-
-    if (emergencyAlertIdPayload === emergencyAlertId) {
-      if (status === "Assigned") {
-        //Change the color of the assigned circle to blue
-        assignedCircle.classList.remove("bg-gray-300");
-        assignedCircle.classList.add("bg-blue-500");
-        assignedText.classList.remove("text-gray-300");
-        assignedText.classList.add("text-blue-500");
-
-        //Remove animation from the searching circle
-        searchingCircle.classList.remove("animationOn");
-
-        //Add animation to the assigned circle
-        assignedCircle.classList.add("animationOn");
-      }
-
-      if (status === "Resolved") {
-        //Remove animation from the searching circle
-        searchingCircle.classList.remove("animationOn");
-
-        //Make the assigned text and circle blue
-        assignedCircle.classList.remove("bg-gray-300");
-        assignedCircle.classList.add("bg-blue-500");
-        assignedText.classList.remove("text-gray-300");
-        assignedText.classList.add("text-blue-500");
-
-        //Make resvolved text and circle green
-        resolvedCircle.classList.remove("bg-gray-300");
-        resolvedCircle.classList.add("bg-green-500");
-        resolvedText.classList.remove("text-gray-300");
-        resolvedText.classList.add("text-green-500");
-
-        //Hide the map since its resolved
-        document.getElementById("map").style.display = "none";
-      }
-
-      if (status === "No Admin Assigned") {
-        document.getElementById(
-          "INFO"
-        ).textContent = `All admins have been notified but none have accepted the alert yet. Please be patient.`;
-      }
-
-      if (proximity && proximity !== "999") {
-        document.getElementById(
-          "INFO"
-        ).textContent = `Searching for admins within radius  : ${proximity} km`;
-        //Update the radius of the circle
-        circle.setRadius(proximity * 1000);
-
-        //Update the pulse animation
-        baseRadius = proximity * 1000;
-        maxRadius = proximity * 1000 + 10;
-        minRadius = proximity * 1000 - 10;
-
-        //update the zoom based on the radius
-        map.setZoom(getZoomLevelFromRadius(proximity * 1000));
-      }
-
-      if (proximity === "999") {
-        document.getElementById(
-          "INFO"
-        ).textContent = `Expanded search radius to include all admins`;
-      }
-    }
-  });
-}
 
 /*
 HELPER FUNCTIONS
@@ -245,7 +152,7 @@ async function getEmergencyAlertDetails(emergencyAlertId) {
 
 //When dom loads
 document.addEventListener("DOMContentLoaded", async function () {
-  intializeFirebaseForUpdates();
+  // intializeFirebaseForUpdates();
 
   // Populate the details of the emergency alert
   const emergencyDetails = JSON.parse(getCookieDetails());

@@ -3,6 +3,7 @@ const {
   deleteOneSafetyResources,
   updateSafetyResource,
   userSafetyResources,
+  getSafetyResource,
 } = require("../controllers/safetyResourcesController"); // Adjust the path as needed
 const safetyResources = require("../schemas/safetyResources");
 const { ObjectId } = require("mongodb");
@@ -19,6 +20,7 @@ describe("Admin Safety Resources Controller", () => {
           title: "Safety Guide",
           type: "Guide",
           description: "Description of the safety guide",
+          link: "https://example.com/safety-guide",
         },
       };
 
@@ -162,8 +164,67 @@ describe("Admin Safety Resources Controller", () => {
       expect(res.send).toHaveBeenCalledWith("Error updating the resource");
     });
   });
-});
 
+  describe("getSafetyResource", () => {
+    let req, res;
+
+    beforeEach(() => {
+      req = {
+        params: { id: "6139c12f9f1b2c001f8b4567" }, // Mock ObjectId
+      };
+
+      res = {
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn(),
+        send: jest.fn(),
+      };
+
+      safetyResources.findOne = jest.fn(); // Mock findOne method
+    });
+
+    afterEach(() => {
+      jest.clearAllMocks();
+    });
+
+    it("should fetch a single safety resource successfully", async () => {
+      const mockResource = {
+        _id: "6139c12f9f1b2c001f8b4567",
+        title: "Resource 1",
+        type: "Type 1",
+        description: "Description 1",
+        link: "https://example.com/resource1",
+      };
+      safetyResources.findOne.mockResolvedValue(mockResource);
+
+      await getSafetyResource(req, res);
+
+      expect(safetyResources.findOne).toHaveBeenCalledWith({
+        _id: new ObjectId(req.params.id),
+      });
+      expect(res.status).toHaveBeenCalledWith(200);
+      expect(res.json).toHaveBeenCalledWith(mockResource);
+    });
+
+    it("should return 404 if the resource is not found", async () => {
+      safetyResources.findOne.mockResolvedValue(null);
+
+      await getSafetyResource(req, res);
+
+      expect(res.status).toHaveBeenCalledWith(404);
+      expect(res.send).toHaveBeenCalledWith("Resource not found");
+    });
+
+    it("should handle errors when fetching a safety resource", async () => {
+      const error = new Error("Fetch error");
+      safetyResources.findOne.mockRejectedValue(error);
+
+      await getSafetyResource(req, res);
+
+      expect(res.status).toHaveBeenCalledWith(500);
+      expect(res.send).toHaveBeenCalledWith("Error fetching resource");
+    });
+  });
+});
 
 describe("User Safety Resources Controller", () => {
   let req, res;
@@ -182,10 +243,9 @@ describe("User Safety Resources Controller", () => {
 
   describe("userSafetyResources", () => {
     it("should fetch all safety resources successfully", async () => {
-      // Mock the resolved value for safetyResources.find
       const mockResources = [
-        { title: "Resource 1", type: "Type 1", description: "Description 1" },
-        { title: "Resource 2", type: "Type 2", description: "Description 2" },
+        { title: "Resource 1", type: "Type 1", description: "Description 1", link: "https://example.com/resource1" },
+        { title: "Resource 2", type: "Type 2", description: "Description 2", link: "https://example.com/resource2" },
       ];
       safetyResources.find.mockResolvedValue(mockResources);
 
@@ -193,7 +253,7 @@ describe("User Safety Resources Controller", () => {
 
       expect(safetyResources.find).toHaveBeenCalledWith(
         {},
-        "title type description"
+        "title type description link"
       );
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.json).toHaveBeenCalledWith({
@@ -210,7 +270,7 @@ describe("User Safety Resources Controller", () => {
 
       expect(safetyResources.find).toHaveBeenCalledWith(
         {},
-        "title type description"
+        "title type description link"
       );
       expect(res.status).toHaveBeenCalledWith(500);
       expect(res.json).toHaveBeenCalledWith({

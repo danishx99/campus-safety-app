@@ -1,56 +1,84 @@
 const jwt = require("jsonwebtoken");
-const { authMiddleware } = require("../middlewares/authMiddleware"); // Adjust the path as needed
+const { authMiddleware } = require("../middlewares/authMiddleware");
 
-jest.mock("jsonwebtoken"); // Mock the jwt module
+jest.mock("jsonwebtoken");
 
 describe("authMiddleware", () => {
   let req, res, next;
 
   beforeEach(() => {
     req = {
-      cookies: {}, // Mock cookies object
+      cookies: {},
     };
     res = {
-      redirect: jest.fn(), // Mock redirect function
-      status: jest.fn().mockReturnThis(), // Mock status and chaining
-      json: jest.fn(), // Mock json function for sending responses
+      redirect: jest.fn(),
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn(),
     };
-    next = jest.fn(); // Mock next function
+    next = jest.fn();
   });
 
   it("should redirect to login if no token is provided", () => {
-    // Call the middleware without a token
     authMiddleware(req, res, next);
 
-    // Assert that res.redirect was called with '/login'
     expect(res.redirect).toHaveBeenCalledWith("/login");
-    expect(next).not.toHaveBeenCalled(); // next() should not be called
+    expect(next).not.toHaveBeenCalled();
   });
 
   it("should call next if token is valid", () => {
-    // Provide a valid token in cookies
     req.cookies.token = "validToken";
 
-    // Mock jwt.verify to return a decoded token
     jwt.verify.mockReturnValue({
       userEmail: "test@example.com",
       role: "user",
     });
 
-    // Call the middleware
     authMiddleware(req, res, next);
 
-    // Assert that jwt.verify was called with the correct arguments
     expect(jwt.verify).toHaveBeenCalledWith(
       "validToken",
       process.env.JWT_SECRET
     );
 
-    // Assert that the email and role were added to the request object
     expect(req.userEmail).toBe("test@example.com");
     expect(req.role).toBe("user");
 
-    // Assert that next() was called
     expect(next).toHaveBeenCalled();
+  });
+
+  it("should redirect to login if token is invalid", () => {
+    req.cookies.token = "invalidToken";
+
+    jwt.verify.mockImplementation(() => {
+      throw new Error("Invalid token");
+    });
+
+    authMiddleware(req, res, next);
+
+    expect(jwt.verify).toHaveBeenCalledWith(
+      "invalidToken",
+      process.env.JWT_SECRET
+    );
+
+    expect(res.redirect).toHaveBeenCalledWith("/login");
+    expect(next).not.toHaveBeenCalled();
+  });
+
+  it("should log error message when token verification fails", () => {
+    req.cookies.token = "invalidToken";
+    const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
+
+    jwt.verify.mockImplementation(() => {
+      throw new Error("Token verification failed");
+    });
+
+    authMiddleware(req, res, next);
+
+    expect(consoleErrorSpy).toHaveBeenCalledWith(
+      "Error authenticating user:",
+      expect.any(Error)
+    );
+
+    consoleErrorSpy.mockRestore();
   });
 });

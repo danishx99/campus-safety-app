@@ -1,4 +1,50 @@
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+import {
+  getMessaging,
+  onMessage,
+} from "https://www.gstatic.com/firebasejs/9.22.0/firebase-messaging.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBA-red8RszDmGY3YGELrunZQxFmg7r04Y",
+  authDomain: "campus-safety-fcm.firebaseapp.com",
+  projectId: "campus-safety-fcm",
+  storageBucket: "campus-safety-fcm.appspot.com",
+  messagingSenderId: "221773083535",
+  appId: "1:221773083535:web:0500a94bbb7a9dd6b891fa",
+  measurementId: "G-8BZHJT3BRY",
+};
+
+
+function intializeFirebaseForUpdates() {
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const messaging = getMessaging(app);
+
+
+ 
+
+  // Handle incoming messages when the app is in the foreground
+  onMessage(messaging, (payload) => {
+      console.log("Message received: ", payload);
+
+      // Access status data
+      const emergencyAlertIdPayload = payload.data.emergencyAlertId;
+      const redirect = payload.data.redirect;
+
+      if(redirect){
+        window.location.href = `/user/emergencyalerts/track/${emergencyAlertIdPayload}`;
+      }
+
+  });
+}
+
 document.addEventListener("DOMContentLoaded", async () => {
+
+  intializeFirebaseForUpdates();
+
+  // Function to show the loader
   function showloader() {
     document.getElementById("loader").classList.remove("hidden");
   }
@@ -182,12 +228,33 @@ submitAlert.addEventListener('click', function (event) {
               console.log(data);
               if (data.message === "Emergency alert sent successfully") {
                   alert.style.display = "block";
-                  alert.innerText = "Emergency alert sent successfully";
+                  alert.innerText = "Emergency alert sent successfully. Redirecting in a moment...";
                   alert.style.color = 'green';
                   alert.style.backgroundColor = '#ddffdd';
                   alert.style.border = 'green';
-                  // Redirect to panic page after success
-                  window.location.href = "/user/emergencyAlerts";
+
+                  //Start the notify admins by proximity function(This will run in the background, but once it starts,
+                  //we will be redirected because an FCM notificaiton will be sent)
+                fetch('/emergency/notifyAdminsByProximity', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ emergencyAlertId: data.emergencyAlertId, location: JSON.stringify(userLocation)})
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data);
+                })
+                .catch((error) => {
+                    console.log('Function to notify admins by proximity failed:', error);
+                });
+
+                  // setTimeout(() => {
+                  //      // Redirect to panic page after success
+                  // window.location.href = `/user/emergencyalerts/track/${data.emergencyAlertId}`;
+                  // }, 1500);
+                   
               } else if(data.error === "Error sending emergency alert") {
                   alert.style.display = "block";
                   alert.innerText = "Error sending emergency alert";

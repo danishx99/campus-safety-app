@@ -44,4 +44,9 @@ async function sendNotificationn(fcmTokens, data = {}) {
 
 module.exports = sendNotificationn;
 
-// _sendNotification(['eyWaTGlD-3v5cRW3k5BkON:APA91bHCVTn3PWsrepRC-NGrpulN4dq2C_wME2eFjVl7YPm2ua7Z7jK069VkIPp6E9Hisj-_lhLKpzfsmS8RGaqSgLT041peiXeeh-9RGrRhpBvc2cO4kAJ0-TGqJ82EMdK4uWHXgTxr'], 'Hi there!', 'sending custome message!', { key1: 'value1', key2: 'value2' });
+// sendNotificationn(
+//   ['cQAXp12Tf8QWe7DA2omD_m:APA91bHJKrgRDYT1QTs64Wz91HPM6AXBSWfIJmcZ-xGccOi5gyWGvM-zzu3E8do2Mqpddl7V0F4R0iDjGJRam6CyBU-7qY0cs7WdOl5se8UaeCIq-RSs80aFWxewGWN_Q145F9IRzbxu'],
+  
+  
+//   { emergencyAlertId: '66fafebc1803524f2120da43', status: 'Assigned'}
+// );

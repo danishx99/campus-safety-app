@@ -8,9 +8,17 @@ router.post(
   emergencyAlertController.sendPanic
 );
 
+//Get the current emergency alert details
 router.get(
-  "/getPanicStatus",
-  emergencyAlertController.getPanicStatus
+  "/getEmergencyAlert/:emergencyAlertId",
+  emergencyAlertController.getEmergencyAlertDetails
 );
+
+//Find and notify admins
+router.post(
+  "/notifyAdminsByProximity",
+  emergencyAlertController.findAndNotifyAdmins
+);
+
 
 module.exports = router;

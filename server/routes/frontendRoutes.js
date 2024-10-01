@@ -164,4 +164,9 @@ router.get("/user/emergencyAlerts", (req, res) =>{
   res.sendFile(path.join(__dirname, "../../client/html", "userEmergencyAlerts.html"));    
 });
 
+
+router.get("/user/emergencyalerts/track/:emergencyId", (req, res) =>{
+  res.sendFile(path.join(__dirname, "../../client/html", "trackEmergencyAlert.html"));    
+});
+
 module.exports = router;

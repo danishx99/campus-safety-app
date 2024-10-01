@@ -17,11 +17,23 @@ const emergencySchema = new Schema(
       type: String,
       required: true,
     },
+    radiusBeingSearched: {
+      type: Number,
+      required: false,
+     
+    },
+
+    assignedTo: {
+      type: String,
+      required: false,
+    },
+    
+
     status: {
       type: String,
       required: false,
-      enum: ["Received", "Admin Assigned", "Help on the Way"],
-      default: "Received",
+      enum: ["Searching", "Assigned", "Resolved"],
+      default: "Searching",
     },
 },  
 );

@@ -109,10 +109,8 @@ const serviceAccount = {
 
 // Debug log to ensure environment variables are being loaded
 console.log("Service Account Details:");
-console.log(JSON.stringify({
-  ...serviceAccount,
-  private_key: serviceAccount.private_key ? '[REDACTED]' : undefined
-}, null, 2));
+console.log(JSON.stringify(serviceAccount, null, 2)); // Pretty print for easy reading
+
 
 // Validate critical fields
 if (!serviceAccount.private_key) {

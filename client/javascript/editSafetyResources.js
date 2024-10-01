@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", async function (){
     }
     try {
         // Fetch the resource data using the resourceId
-        const response = await fetch(`http://localhost:3000/safetyResources/getSafetyResource/${resourceId}`);
+        const response = await fetch(`/safetyResources/getSafetyResource/${resourceId}`);
         const resource = await response.json();
 
         if (!response.ok) {
@@ -29,7 +29,7 @@ document.addEventListener("DOMContentLoaded", async function (){
     }
 
     btnCancel.addEventListener("click", function(event) {
-        window.location.href = 'http://localhost:3000/admin/viewSafetyResources';
+        window.location.href = '/admin/viewSafetyResources';
     });
 
     btnSave.addEventListener("click", async function(event) {
@@ -62,7 +62,7 @@ document.addEventListener("DOMContentLoaded", async function (){
             link: link
             };
           try {
-            const response = await fetch(`http://localhost:3000/safetyResources/updateSafetyResource/${resourceId}`, {
+            const response = await fetch(`/safetyResources/updateSafetyResource/${resourceId}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -72,7 +72,7 @@ document.addEventListener("DOMContentLoaded", async function (){
     
             if (response.ok) {
                 // Redirect back to some other page, e.g., the resources list
-                window.location.href = 'http://localhost:3000/admin/viewSafetyResources';
+                window.location.href = '/admin/viewSafetyResources';
             } else {
                 alert('Failed to update resource');
             }

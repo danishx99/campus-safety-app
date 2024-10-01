@@ -36,7 +36,14 @@ function getCookie(name) {
 export function handleIncomingMessages(notifier) {
   // Handle incoming messages when the app is in the foreground
   onMessage(messaging, (payload) => {
+    try {
+     
     console.log("Message received: ", payload);
+
+    
+    console.log("this is printed after message received");
+
+    console.log("the payload data object is", payload.data);
 
     // Access custom data
     const notificationType =
@@ -60,7 +67,14 @@ export function handleIncomingMessages(notifier) {
     const firstname = getCookie("firstname");
     const lastname = getCookie("lastname");
 
-    console
+    // Access status data to check for redirect
+    const emergencyAlertIdPayload = payload.data.emergencyAlertId;
+    const redirect = payload.data.redirect;
+
+    if(redirect){
+      window.location.href = `/user/emergencyalerts/track/${emergencyAlertIdPayload}`;
+    }
+
 
     // console.log(`The user is a ${role} with email ${email} and name ${firstname} ${lastname}`);
     // alert("The user is a "+role+" with email "+email+" and name "+firstname+" "+lastname);
@@ -351,5 +365,12 @@ export function handleIncomingMessages(notifier) {
     // Log custom data for debugging
     console.log(`Notification Type: ${notificationType}`);
     console.log(`Sender: ${sender}`);
+
+  } catch (error) {
+    console.error("Error handling message: ", error);
+  }
+
   });
+
+  
 }

@@ -87,6 +87,8 @@ exports.reportIncident = async (req, res) => {
       imageBase64 = image;
     }
 
+   
+
     //console.log("Image: ", imageBase64);
 
     const incident = new Incident({
@@ -141,6 +143,116 @@ exports.reportIncident = async (req, res) => {
     console.log(error);
   }
 };
+
+exports.reportExternalIncident = async (req, res) => {
+  try {
+
+    const token = req.params.token;
+
+    if (token !== process.env.EXTERNAL_GROUP_TOKEN) {
+      return res.status(401).json({ error: "You are not authorized to report incidents. Please get a valid token" });
+    }
+
+
+
+    const { title, description, location, image, date, reportedBy, firstName, lastName, group } = req.body;
+
+    let imageTrue = false;
+
+    //only use image if it is not null
+    let imageBase64 = null;
+    if (image) {
+      imageTrue = true;
+      imageBase64 = image;
+    }
+
+    const incident = new Incident({
+      title,
+      description,
+      location,
+      image: imageBase64 || null,
+      imageTrue,
+      reportedBy,
+      firstName,
+      lastName,
+      group,
+      date,
+    });
+
+    //
+
+    await incident.save();
+
+    //Create a notification for the incident
+    const newNotification = new notification({
+      recipient: "admin",
+      sender: reportedBy,
+      read: false,
+      message:
+        "A new external incident has been reported by " +
+        reportedBy +
+        " , please check the incident tab for more details",
+      title: "External Incident Reported",
+      notificationType: "incidentReported",
+    });
+
+    await newNotification.save();
+
+    //Send notification to all admins
+    const users = await User.find({ role: "admin" });
+    fcmTokens = users.map((user) => user.FCMtoken);
+
+    //Send notification
+    await _sendNotification(fcmTokens, {
+      title: "External Incident Reported",
+      body: "A new external incident has been reported. Please check the incident tab for more details.",
+      notificationType: "Incident reported",
+      sender: reportedBy,
+      senderLocation: location,
+      recipient: "admin",
+    });
+
+
+    //Send success response
+    res.status(200).json({ message: "Incident reported successfully" });
+
+  } catch (error) {
+    res.status(500).json({ error: "Internal server error while reporting incident" });
+    console.log(error);
+  }
+};
+exports.getIncidentsByGroup = async (req, res) => {
+  try {
+    const token = req.params.token;
+    const group = req.params.group;
+
+    // Debugging: log the token and group
+    console.log("Received token:", token);
+    console.log("Environment token:", process.env.EXTERNAL_GROUP_TOKEN);
+    console.log("Received group:", group);
+
+    if (token.trim() !== process.env.EXTERNAL_GROUP_TOKEN.trim()) {
+      return res.status(401).json({ error: "You are not authorized to view incidents. Please get a valid token" });
+    }
+
+    // Fetch incidents by group
+    const incidents = await Incident.find({ group });
+
+    // Debugging: log the incidents fetched
+    console.log("Incidents fetched:", incidents);
+
+    res.status(200).json({ message: "Incidents fetched successfully", incidents });
+
+  } catch (error) {
+    res.status(500).json({ error: "Internal server error while fetching incidents" });
+    console.log(error);
+  }
+};
+
+
+
+
+
 
 exports.getIncidentImage = async (req, res) => {
   const { incidentId } = req.params;

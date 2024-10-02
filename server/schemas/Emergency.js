@@ -31,7 +31,7 @@ const emergencySchema = new Schema(
     status: {
       type: String,
       required: false,
-      enum: ["Searching", "Assigned", "Resolved"],
+      enum: ["Searching", "Assigned", "Resolved", "Cancelled"],
       default: "Searching",
     },
 

@@ -10,6 +10,13 @@ router.post(
   incidentController.reportIncident
 );
 
+//Report incident external group
+router.post("/reportExternalIncident/:token", incidentController.reportExternalIncident);
+
+//Get all incidents by group
+router.get("/getIncidentsByGroup/:group/:token", incidentController.getIncidentsByGroup);
+
+
 router.get(
   "/getIncidents",
   //authMiddleware.verifyToken,

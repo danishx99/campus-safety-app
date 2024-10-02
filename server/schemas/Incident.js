@@ -8,10 +8,10 @@ const incidentSchema = new Schema(
       required: true,
     },
     type: {
-      type: String,
+      type: String, //e.g Theft, Assualt, Harassment, Vandalism, Other
       required: true,
     },
-    image: {
+    image: { //BASE64 string (optional)
       type: String,
     },
     imageTrue: {
@@ -25,21 +25,34 @@ const incidentSchema = new Schema(
     },
     location: {
       type: String,
-      required: false,
+      required: false, 
     },
     status: {
       type: String,
       required: false,
-      enum: ["Pending", "In progress", "Resolved", "Cancelled"],
+      enum: ["Pending", "In progress", "Resolved"],
       default: "Pending",
     },
     reportedBy: {
       type: String,
       required: true,
     },
-    date: {
+    firstName: { //For external group
+      type: String,
+    },
+    lastName: { //For external group
+      type: String,
+    },
+
+    date: {//Date event occured
       type: String,
       required: true,
+    },
+    group: {
+      type: String,
+      required: false,
+      enum: ["events", "transportation", ""],
+      default: "",
     },
   },
   {

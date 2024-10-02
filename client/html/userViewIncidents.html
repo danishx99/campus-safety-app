@@ -89,7 +89,7 @@
       // Call the handler to manage incoming messages
       handleIncomingMessages(notifier);
     </script>
-    
+
     <div id="">
       <header class="bg-[#015EB8] text-white p-4">
         <div class="flex justify-between items-center">
@@ -108,7 +108,7 @@
             <button
               id="panicButton"
               class="flex rounded-md bg-red-600 py-2 px-4 border border-transparent text-center text-sm text-white transition-all shadow-md hover:shadow-lg focus:bg-slate-700 focus:shadow-none active:bg-slate-700 hover:bg-slate-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
-              >
+            >
               Panic
               <img
                 src="../assets/danger.png"
@@ -311,56 +311,77 @@
 
         <!-- Mobile Navigation -->
         <nav
-          class="fixed inset-x-0 bottom-0 bg-[#015EB8] text-white p-4 flex justify-around items-center md:hidden z-50"
+          class="fixed inset-x-0 bottom-0 bg-[#015EB8] text-white p-4 flex justify-between items-center md:hidden z-50"
         >
-          <a href="/user/reportIncident" class="flex flex-col items-center">
+          <a
+            href="/user/reportIncident"
+            class="flex flex-col items-center justify-center w-1/5"
+          >
             <img
-              src="../assets/report-mobile.png"
+              src="/assets/report-mobile.png"
               alt="Report Incident"
-              class="h-8 w-8"
+              class="h-6 w-6 mb-1"
             />
-            <span class="text-xs mt-1">Report</span>
+            <span class="text-[10px]">Report</span>
           </a>
-          <a href="/user/emergencyAlerts" class="flex flex-col items-center">
+          <a
+            href="/user/emergencyAlerts"
+            class="flex flex-col items-center justify-center w-1/5"
+          >
             <img
-              src="../assets/alert-mobile.png"
+              src="/assets/alert-mobile.png"
               alt="Emergency Alerts"
-              class="h-8 w-8"
+              class="h-6 w-6 mb-1"
             />
-            <span class="text-xs mt-1">Alerts</span>
+            <span class="text-[10px]">Alerts</span>
           </a>
-          <a href="/user" class="flex flex-col items-center">
+          <a
+            href="/user"
+            class="flex flex-col items-center justify-center w-1/5"
+          >
             <img
-              src="../assets/dashboard-mobile.png"
+              src="/assets/dashboard-mobile.png"
               alt="Dashboard"
-              class="h-8 w-8"
+              class="h-6 w-6 mb-1"
             />
-            <span class="text-xs mt-1">Dashboard</span>
+            <span class="text-[10px]">Dashboard</span>
           </a>
-          <a href="/user/safetyResources" class="flex flex-col items-center">
+          <a
+            href="/user/safetyResources"
+            class="flex flex-col items-center justify-center w-1/5"
+          >
             <img
-              src="../assets/resources-mobile.png"
+              src="/assets/resources-mobile.png"
               alt="Safety Resources"
-              class="h-8 w-8"
+              class="h-6 w-6 mb-1"
             />
-            <span class="text-xs mt-1">Resources</span>
+            <span class="text-[10px]">Resources</span>
           </a>
-          <a href="/user/campusNavigation" class="flex flex-col items-center">
+          <a
+            href="/user/campusNavigation"
+            class="flex flex-col items-center justify-center w-1/5"
+          >
             <img
-              src="../assets/location-mobile.png"
+              src="/assets/location-mobile.png"
               alt="Campus Navigation"
-              class="h-8 w-8"
+              class="h-6 w-6 mb-1"
             />
-            <span class="text-xs mt-1">Navigation</span>
+            <span class="text-[10px]">Navigation</span>
           </a>
         </nav>
       </div>
 
-      <main class="flex-1 p-6 overflow-auto max-sm:px-4 max-sm:py-4 bg-gray-200">
-        <h2 class="text-center text-2xl font-bold mb-2 text-gray-800 max-sm:text-xl">
+      <main
+        class="flex-1 p-6 overflow-auto max-sm:px-4 max-sm:py-4 bg-gray-200"
+      >
+        <h2
+          class="text-center text-2xl font-bold mb-2 text-gray-800 max-sm:text-xl"
+        >
           Reported Incidents
         </h2>
-        <h3 class="text-center text-lg font-semibold mb-4 text-gray-700 max-sm:text-sm">
+        <h3
+          class="text-center text-lg font-semibold mb-4 text-gray-700 max-sm:text-sm"
+        >
           View the details of incidents you've reported
         </h3>
 
@@ -371,11 +392,19 @@
             Pending
           </label>
           <label class="flex items-center text-sm">
-            <input type="checkbox" class="status-filter mr-2" value="In Progress" />
+            <input
+              type="checkbox"
+              class="status-filter mr-2"
+              value="In Progress"
+            />
             In Progress
           </label>
           <label class="flex items-center text-sm">
-            <input type="checkbox" class="status-filter mr-2" value="Resolved" />
+            <input
+              type="checkbox"
+              class="status-filter mr-2"
+              value="Resolved"
+            />
             Resolved
           </label>
         </div>
@@ -399,9 +428,12 @@
             fill="currentFill"
           />
         </svg>
-        
 
-        <div id="allIncidents" class="overflow-y-auto pr-5 space-y-4" style="max-height: calc(100vh - 18rem);">
+        <div
+          id="allIncidents"
+          class="overflow-y-auto pr-5 space-y-4"
+          style="max-height: calc(100vh - 18rem)"
+        >
           <!-- Your incident items will go here -->
         </div>
       </main>
@@ -411,6 +443,10 @@
     </footer>
 
     <script src="../javascript/userViewIncidents.js"></script>
-    <script type="module" src="../javascript/headerFunctionality.js" defer></script>
+    <script
+      type="module"
+      src="../javascript/headerFunctionality.js"
+      defer
+    ></script>
   </body>
 </html>

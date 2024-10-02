@@ -130,6 +130,9 @@ export function handleIncomingMessages(notifier) {
         //Remove animation from the searching circle
         searchingCircle.classList.remove("animationOn");
 
+        //Remove animation from the assigned circle
+        assignedCircle.classList.remove("animationOn");
+
         //Make the assigned text and circle blue
         assignedCircle.classList.remove("bg-gray-300");
         assignedCircle.classList.add("bg-blue-500");

@@ -29,7 +29,6 @@ exports.tempUpdateEmergency = async (req, res) => {
     });
 
     res.status(200).json({ message: "Emergency alert assigned successfully" });
-
   } catch (error) {
     console.log(error);
     res.status(500).json({ error: "Error updating emergency alert" });
@@ -43,18 +42,19 @@ exports.sendPanic = async (req, res) => {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const email = decoded.userEmail;
 
-    //Check if the user has an active emergency alert(so an emergency alert that doesnt have a status of "resolved")
+    //Check if the user has an active emergency alert(so an emergency alert that doesnt have a status of "resolved" or "cancelled")
     const activeEmergency = await Emergency.findOne({
       reportedBy: email,
-      status: { $ne: "Resolved" },
+      status: { $nin: ["Resolved", "Cancelled"] },
     });
 
     if (activeEmergency) {
       return res.status(400).json({
-        error: "You already have an active emergency alert. Please cancel it or wait for it to be resolved before issuing another one.",
+        error:
+          "You already have an active emergency alert. Please cancel it or wait for it to be resolved before issuing another one.",
       });
     }
-    
+
     const newEmergency = new Emergency({
       title,
       description,
@@ -154,7 +154,6 @@ async function checkIfAdminHasBeenAssigned(emergencyAlertId) {
   return emergency.assignedTo;
 }
 
-
 exports.findAndNotifyAdmins = async (req, res) => {
   try {
     const { emergencyAlertId, location } = req.body;
@@ -179,11 +178,9 @@ exports.findAndNotifyAdmins = async (req, res) => {
       currentSessionToken: token,
     });
 
-     console.log(`User notified to redirect for the ${count} time`);
+    console.log(`User notified to redirect for the ${count} time`);
 
-     count++;
-
-   
+    count++;
 
     const proximities = [0.2, 0.5, 1, 1.5];
     const users = await User.find({ role: "admin" });
@@ -286,31 +283,61 @@ exports.findAndNotifyAdmins = async (req, res) => {
 };
 
 exports.getEmergencyAlertsByUser = async (req, res) => {
-
   try {
     const token = req.cookies.token;
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const email = decoded.userEmail;
 
     const user = await User.findOne({ email });
-    
+
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
 
-    const emergencies = await Emergency.find({ reportedBy: email }).sort({ createdAt: -1 });
+    const emergencies = await Emergency.find({ reportedBy: email }).sort({
+      createdAt: -1,
+    });
 
     res.status(200).json({ emergencies });
-
-  }
-  catch (error) {
+  } catch (error) {
     console.log("Error in getEmergencyAlertsByUser:", error);
     return res
       .status(500)
       .json({ message: "Internal server error", error: error.message });
   }
+};
 
+exports.cancelEmergency = async (req, res) => {
+  try {
+    const emergencyAlertId = req.params.emergencyAlertId;
+    const token = req.cookies.token;
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const email = decoded.userEmail;
 
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const emergency = await Emergency.findById(emergencyAlertId);
+
+    console.log(emergencyAlertId);
+
+    if (!emergency) {
+      return res.status(404).json({ message: "Emergency alert not found" });
+    }
+    await Emergency.findByIdAndUpdate(emergencyAlertId, {
+      status: "Cancelled",
+    });
+
+    res.status(200).json({ message: "Emergency alert cancelled successfully" });
+  } catch (error) {
+    console.log("Error cancelling emergency:", error);
+    return res
+      .status(500)
+      .json({ message: "Internal server error", error: error.message });
+  }
 };
 
 exports.clearEmergencyAlerts = async (req, res) => {
@@ -319,8 +346,7 @@ exports.clearEmergencyAlerts = async (req, res) => {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const email = decoded.userEmail;
 
-    const user = await User
-      .findOne({ email });
+    const user = await User.findOne({ email });
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });
@@ -329,13 +355,10 @@ exports.clearEmergencyAlerts = async (req, res) => {
     await Emergency.deleteMany({ reportedBy: email });
 
     res.status(200).json({ message: "Emergency alerts cleared successfully" });
-
   } catch (error) {
     console.log("Error in clearEmergencyAlerts:", error);
     return res
       .status(500)
       .json({ message: "Internal server error", error: error.message });
   }
-
-
-}
+};

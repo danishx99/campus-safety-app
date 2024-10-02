@@ -88,7 +88,11 @@ export function handleIncomingMessages(notifier) {
     const redirect = payload.data.redirect;
     const userToBeRedirected = payload.data.userToBeRedirected;
     const currentUser = decodeURIComponent(getCookie("email"));
-
+   
+    //If im logged in as a student on both browsers(phone and PC), if i send an emergency alert(panic) on the phone
+    // for example, then the PC cant send panic alerts anymore and vice versa.
+    //I figured out the ISSUE, FCM TOKEN IS BEING UPDATED WHEN LOGGING INTO ANOTHER DEVICE, THIS IMMEDIALTELY STOPS THE OTHER DEVICE FROM RECEIVING FCM PAYLOADS, SINCE TECHNICALLY
+    //THAT USERS TOKEN IS NO LONGER VALIID. THIIIISSS WAS THE ISSSSUEEEEEEEEEEEEEEEEEEEEE
   
 
     if(redirect && userToBeRedirected === currentUser){

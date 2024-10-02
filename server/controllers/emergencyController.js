@@ -292,6 +292,7 @@ exports.findAndNotifyAdmins = async (req, res) => {
       emergencyAlertId,
       redirect: true,
       userToBeRedirected: sender,
+      currentSessionToken: token,
     });
 
     const proximities = [0.2, 0.5, 1, 1.5];

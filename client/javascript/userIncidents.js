@@ -95,8 +95,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
       console.log(result);
       console.log(response.status);
+      window.scrollTo(0, 0);
 
       if (response.status === 200) {
+        
         console.log("Incident submitted successfully");
         // Show success message
         alert.innerText = "Incident reported successfully";
@@ -121,6 +123,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     } catch (error) {
       console.error("Error submitting incident:", error);
+      window.scrollTo(0, 0);
       // Handle network errors
       alert.textContent = "An error occurred while submitting the incident";
       alert.style.display = "block";

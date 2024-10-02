@@ -53,113 +53,19 @@
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
-    import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-messaging.js";
+import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-messaging.js";
 
-//      window.initFireBaseFCM = async function(){
-//     // Import the functions you need from the SDKs you need
-
-
-//     // Your web app's Firebase configuration
-//     const firebaseConfig = {
-//         apiKey: "AIzaSyBA-red8RszDmGY3YGELrunZQxFmg7r04Y",
-//         authDomain: "campus-safety-fcm.firebaseapp.com",
-//         projectId: "campus-safety-fcm",
-//         storageBucket: "campus-safety-fcm.appspot.com",
-//         messagingSenderId: "221773083535",
-//         appId: "1:221773083535:web:0500a94bbb7a9dd6b891fa",
-//         measurementId: "G-8BZHJT3BRY"
-//     };
-    
-    
-    
-
-//     // Initialize Firebase
-//     const app = initializeApp(firebaseConfig);
-//     const messaging = getMessaging(app);
-
-//     // Function to register a specific service worker and wait for it to be ready and activated
-//     function registerReady(swScript, options, timeout = 5000) { 
-//     console.log('Registering service worker...');
-//     return navigator.serviceWorker.register(swScript, options).then(reg => { 
-//         var incomingSw = reg.installing || reg.waiting;
-//         if (reg.active && !incomingSw) { 
-//             return Promise.resolve(reg); 
-//         }
-
-//         return new Promise((fulfill, reject) => { 
-//             const timer = setTimeout(() => {
-//                 reject(new Error('Service worker activation timed out'));
-//             }, timeout);
-
-//             incomingSw.onstatechange = evt => { 
-//                 if (evt.target.state === 'activated') { 
-//                     clearTimeout(timer);
-//                     incomingSw.onstatechange = null; 
-//                     fulfill(reg); 
-//                 } 
-//             }; 
-//         }); 
-//     }); 
-// }
-
-//     // Register the service worker using registerReady
-//     if ('serviceWorker' in navigator) {
-//         registerReady("/firebase-messaging-sw.js", { scope: "/" })
-//             .then(function (registration) {
-//                 console.log('Service Worker registered with scope:', registration.scope);
-//                 console.log('Service Worker is ready and active.');
-
-//                 // Request notification permission
-//                 Notification.requestPermission().then((permission) => {
-//                     if (permission === 'granted') {
-//                         console.log('Notification permission granted.');2
-
-//                         // Get the FCM token after the service worker is ready
-//                         getToken(messaging, { vapidKey: 'BF93pnwopvvA-b_z5xXp7K2LKqX3xOHmhYRLQ_8q6KFm6PTRxDgaaIU0Y-9JWrym7Hw7Ur0H-lodMr4OJvfzKys', serviceWorkerRegistration: registration })
-//                             .then((currentToken) => {
-//                                 if (currentToken) {
-//                                     console.log('FCM Token:', currentToken);
-//                                     document.getElementById('token').textContent = currentToken;
-//                                 } else {
-//                                     console.log('No registration token available.');
-//                                     document.getElementById('token').textContent = 'No registration token available. Request permission to generate one.';
-//                                 }
-//                             })
-//                             .catch((err) => {
-//                                 console.error('An error occurred while retrieving token. ', err);
-//                                 document.getElementById('token').textContent = 'An error occurred while retrieving token. ' + err;
-//                             });
-//                     } else {
-//                         console.log('Notification permission denied.');
-//                         document.getElementById('token').textContent = 'Notification permission denied. Request permission to generate FCM token.';
-//                     }
-//                 });
-//             })
-//             .catch((err) => {
-//                 console.error('Service Worker registration failed: ', err);
-//                 document.getElementById('token').textContent = 'Service Worker registration failed: ' + err;
-//             });
-//     }
-
-//     // Handle incoming messages when the app is in the foreground
-//     onMessage(messaging, (payload) => {
-//         console.log('Message received. ', payload);
-//         // Customize notification here
-//         const notificationTitle = payload.notification.title;
-//         const notificationOptions = {
-//             body: payload.notification.body,
-//             icon: '/firebase-logo.png'
-//         };
-
-//         alert("Message received: " + payload.notification.body);
-//         // new Notification(notificationTitle, notificationOptions);
-//     });
-//     }
+function unregisterServiceWorkers() {
+  if ('serviceWorker' in navigator) {
+    return navigator.serviceWorker.getRegistrations().then(function(registrations) {
+      return Promise.all(registrations.map(registration => registration.unregister()));
+    });
+  }
+  return Promise.resolve();
+}
 
 window.initFireBaseFCM = function() {
     return new Promise((resolve, reject) => {
-        // Import the functions you need from the SDKs you need
-
         // Your web app's Firebase configuration
         const firebaseConfig = {
             apiKey: "AIzaSyBA-red8RszDmGY3YGELrunZQxFmg7r04Y",
@@ -174,8 +80,6 @@ window.initFireBaseFCM = function() {
         // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const messaging = getMessaging(app);
-
-
 
         // Function to register a specific service worker and wait for it to be ready and activated
         function registerReady(swScript, options, timeout = 15000) { 
@@ -201,60 +105,57 @@ window.initFireBaseFCM = function() {
                 }); 
             }); 
         }
-        
-        function unregisterExistingServiceWorkers() {
-            return navigator.serviceWorker.getRegistrations()
-                .then(registrations => {
-                    return Promise.all(registrations.map(registration => registration.unregister()));
-                })
-                .then(() => {
-                    console.log('All existing service workers unregistered');
-                });
-        }
 
-        // Register the service worker using registerReady
-        if ('serviceWorker' in navigator) {
-            registerReady("/firebase-messaging-sw.js", { scope: "/" })
-                .then(function (registration) {
-                    console.log('Service Worker registered with scope:', registration.scope);
-                    console.log('Service Worker is ready and active.');
+        // First, unregister existing service workers
+        unregisterServiceWorkers().then(() => {
+            // Then, register the new service worker
+            if ('serviceWorker' in navigator) {
+                registerReady("/firebase-messaging-sw.js", { scope: "/" })
+                    .then(function (registration) {
+                        console.log('Service Worker registered with scope:', registration.scope);
+                        console.log('Service Worker is ready and active.');
 
-                    // Request notification permission
-                    Notification.requestPermission().then((permission) => {
-                        if (permission === 'granted') {
-                            console.log('Notification permission granted.');
+                        // Request notification permission
+                        Notification.requestPermission().then((permission) => {
+                            if (permission === 'granted') {
+                                console.log('Notification permission granted.');
 
-                            // Get the FCM token after the service worker is ready
-                            getToken(messaging, { 
-                                vapidKey: 'BF93pnwopvvA-b_z5xXp7K2LKqX3xOHmhYRLQ_8q6KFm6PTRxDgaaIU0Y-9JWrym7Hw7Ur0H-lodMr4OJvfzKys', 
-                                serviceWorkerRegistration: registration 
-                            })
-                            .then((currentToken) => {
-                                if (currentToken) {
-                                    console.log('FCM Token:', currentToken);
-                                    resolve(currentToken); // Resolve with the current token
-                                } else {
-                                    console.log('No registration token available.');
-                                    reject('No registration token available. Request permission to generate one.'); // Reject with appropriate message
-                                }
-                            })
-                            .catch((err) => {
-                                console.error('An error occurred while retrieving token. ', err);
-                                reject('An error occurred while retrieving token.'); // Reject with the error
-                            });
-                        } else {
-                            console.log('Notification permission denied.');
-                            reject('Notification permission denied. Request permission to generate FCM token.');
-                        }
+                                // Get the FCM token after the service worker is ready
+                                getToken(messaging, { 
+                                    vapidKey: 'BF93pnwopvvA-b_z5xXp7K2LKqX3xOHmhYRLQ_8q6KFm6PTRxDgaaIU0Y-9JWrym7Hw7Ur0H-lodMr4OJvfzKys', 
+                                    serviceWorkerRegistration: registration 
+                                })
+                                .then((currentToken) => {
+                                    if (currentToken) {
+                                        console.log('FCM Token:', currentToken);
+                                        resolve(currentToken);
+                                    } else {
+                                        console.log('No registration token available.');
+                                        reject('No registration token available. Request permission to generate one.');
+                                    }
+                                })
+                                .catch((err) => {
+                                    console.error('An error occurred while retrieving token. ', err);
+                                    reject('An error occurred while retrieving token.');
+                                });
+                            } else {
+                                console.log('Notification permission denied.');
+                                reject('Notification permission denied. Request permission to generate FCM token.');
+                            }
+                        });
+                    })
+                    .catch((err) => {
+                        alert("Service Worker registration failed: " + err);
+                        console.log('Service Worker registration failed: ', err);
+                        reject('Service Worker registration failed.');
                     });
-                })
-                .catch((err) => {
-                    console.error('Service Worker registration failed: ', err);
-                    reject('Service Worker registration failed.'); // Reject with service worker registration error
-                });
-        } else {
-            reject('Service worker not supported in this browser.');
-        }
+            } else {
+                reject('Service worker not supported in this browser.');
+            }
+        }).catch((err) => {
+            console.error('Error unregistering service workers:', err);
+            reject('Error unregistering service workers.');
+        });
 
         // Handle incoming messages when the app is in the foreground
         onMessage(messaging, (payload) => {
@@ -267,14 +168,10 @@ window.initFireBaseFCM = function() {
             };
 
             alert("Message received: " + payload.notification.body);
-            // new Notification(notificationTitle, notificationOptions);
         });
     });
 }
-
-    
-</script>
-
+  </script>
 
 
 

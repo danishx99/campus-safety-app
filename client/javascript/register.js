@@ -246,7 +246,7 @@ document.addEventListener("DOMContentLoaded", function () {
           alert.style.backgroundColor = "#ddffdd";
           alert.style.border = "green";
           alert.innerText =
-            "Registration successful! Please check your email to verify your account and login.";
+            "Registration successful! Check your email to verify your account. If you didn't receive it, you can log in and request a new verification email.";
 
           //Scroll to top of page
           window.scrollTo(0, 0);

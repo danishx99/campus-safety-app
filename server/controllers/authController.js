@@ -323,21 +323,27 @@ exports.forgotPassword = async (req, res) => {
 };
 
 exports.isVerified = async (req, res) => {
-  const token = req.cookies.token;
-  const decoded = jwt.verify(token, process.env.JWT_SECRET);
-  const email = decoded.userEmail;
-
   try {
+    const token = req.cookies.token;
+    if (!token) {
+      return res.status(401).json({ error: 'No token provided' });
+    }
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const email = decoded.userEmail;
+
     // find user by email
     const user = await User.findOne({ email });
 
     if (!user) {
-      return res
-        .status(401)
-        .json({ error: "A user with this email address does not exist." });
+      return res.status(401).json({ error: "A user with this email address does not exist." });
     }
+
+    // Send the verification status
+    res.json({ isVerified: user.isVerified });
   } catch (error) {
-    console.log("Error checking user verification status :", error);
+    console.log("Error checking user verification status:", error);
+    res.status(500).json({ error: 'Error checking verification status' });
   }
 };
 

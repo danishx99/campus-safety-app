@@ -8,6 +8,15 @@ document.addEventListener("DOMContentLoaded", function () {
   
     var form1 = document.getElementById("form-p1");
     var form2 = document.getElementById("form-p2");
+
+    
+  function showLoader() {
+    document.getElementById("loader").style.display = "block";
+  }
+
+  function hideLoader() {
+    document.getElementById("loader").style.display = "none";
+  }
   
     // Firebase configuration for Auth
     // const authFirebaseConfig = {
@@ -42,13 +51,16 @@ document.addEventListener("DOMContentLoaded", function () {
           displayCode.style.display = "none";
           account= this.value;
       }
-      console.log("Account value inside event listener:", account);
+
   });
+
+
 
   
     // // get account type and code of admin 
     // account = document.getElementById("acc-type2").value;
-    code = document.getElementById("code").value;
+    
+    
   
     // Initialize Firebase Auth App (using the named app "authApp")
     // const authApp = firebase.initializeApp(authFirebaseConfig, "authApp");
@@ -61,9 +73,27 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   
     proceedGoogle.addEventListener("click", function (event) {
+
       event.preventDefault();
-      console.log("button clickky");
-      console.log("Account value outside event listener:", account);
+      code = document.getElementById("googleCode").value;;
+
+      // console.log("button clickky");
+      // console.log("Account value outside event listener:", account);
+      // console.log("Code Length:", code.length);
+
+      if (account === "0") {
+        if (code !== "none") {
+          if (!code || code === "" || code.length !== 5) {
+            alert.style.display = "block";
+            alert.innerText =
+              "Invalid admin code. Please enter a valid 5-digit admin code.";
+            //Scroll to top of page
+            window.scrollTo(0, 0);
+            hideLoader();
+            return;
+          }
+        }
+      }
 
       // Check if the account has a value
       if (!account) {
@@ -116,6 +146,7 @@ document.addEventListener("DOMContentLoaded", function () {
               email,
               phone,
               account,
+              code,
             }),
           })
             .then((response) => {

@@ -157,7 +157,7 @@ exports.login = async (req, res) => {
 };
 
 exports.googleRegister = async (req, res) => {
-  const { name, surname, email, phone, account } = req.body;
+  const { name, surname, email, phone, account, code } = req.body;
 
   try {
     let role;
@@ -166,6 +166,19 @@ exports.googleRegister = async (req, res) => {
 
     if (account == 0) {
       role = "admin";
+      //Check if the user has a valid code
+      const codeCheck = await Code.findOne({ userCode: code });
+      if (!codeCheck) {
+        return res.status(400).json({
+          error:
+            "Invalid code. Please contact management for further assistance",
+        });
+      }
+      // check that code Check was not made more than 24 hours ago
+
+      if (Date.now() - codeCheck.createdAt > 86400000) {
+        return res.status(400).json({ error: "Registration code has expired" });
+      }
     } else if (account == 1) {
       role = "student";
     } else if (account == 2) {
@@ -190,6 +203,9 @@ exports.googleRegister = async (req, res) => {
       // FCMtoken,
       isVerified: true,
     });
+
+    //Delete the code because it has been used
+    await Code.deleteOne({ userCode: code });
 
     // Save the new user to the database
     await newUser.save();

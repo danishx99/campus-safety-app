@@ -157,7 +157,7 @@ exports.login = async (req, res) => {
 };
 
 exports.googleRegister = async (req, res) => {
-  const { name, surname, email, phone, account, code } = req.body;
+  const { name, surname, email, phone, account, code, photoURL } = req.body;
 
   try {
     let role;
@@ -199,6 +199,7 @@ exports.googleRegister = async (req, res) => {
       lastName: surname,
       email,
       phone,
+      profilePicture: photoURL,
       role,
       // FCMtoken,
       isVerified: true,

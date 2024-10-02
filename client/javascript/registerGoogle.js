@@ -121,6 +121,7 @@ document.addEventListener("DOMContentLoaded", function () {
           var phone = user.phoneNumber;
           var fname = user.displayName.split(" ")[0];
           var lname = user.displayName.split(" ")[1];
+          var photoURL = user.photoURL;
 
           if (!email.endsWith("@students.wits.ac.za") && !email.endsWith("@wits.ac.za")) {
             alert.style.display = "block";
@@ -144,6 +145,7 @@ document.addEventListener("DOMContentLoaded", function () {
               name: fname,
               surname: lname,
               email,
+              photoURL,
               phone,
               account,
               code,

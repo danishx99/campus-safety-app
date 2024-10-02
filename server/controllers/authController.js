@@ -157,7 +157,7 @@ exports.login = async (req, res) => {
 };
 
 exports.googleRegister = async (req, res) => {
-  const { name, surname, email, phone, account } = req.body;
+  const { name, surname, email, phone, account, code, photoURL } = req.body;
 
   try {
     let role;
@@ -166,6 +166,19 @@ exports.googleRegister = async (req, res) => {
 
     if (account == 0) {
       role = "admin";
+      //Check if the user has a valid code
+      const codeCheck = await Code.findOne({ userCode: code });
+      if (!codeCheck) {
+        return res.status(400).json({
+          error:
+            "Invalid code. Please contact management for further assistance",
+        });
+      }
+      // check that code Check was not made more than 24 hours ago
+
+      if (Date.now() - codeCheck.createdAt > 86400000) {
+        return res.status(400).json({ error: "Registration code has expired" });
+      }
     } else if (account == 1) {
       role = "student";
     } else if (account == 2) {
@@ -186,10 +199,14 @@ exports.googleRegister = async (req, res) => {
       lastName: surname,
       email,
       phone,
+      profilePicture: photoURL,
       role,
       // FCMtoken,
       isVerified: true,
     });
+
+    //Delete the code because it has been used
+    await Code.deleteOne({ userCode: code });
 
     // Save the new user to the database
     await newUser.save();
@@ -323,21 +340,27 @@ exports.forgotPassword = async (req, res) => {
 };
 
 exports.isVerified = async (req, res) => {
-  const token = req.cookies.token;
-  const decoded = jwt.verify(token, process.env.JWT_SECRET);
-  const email = decoded.userEmail;
-
   try {
+    const token = req.cookies.token;
+    if (!token) {
+      return res.status(401).json({ error: 'No token provided' });
+    }
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const email = decoded.userEmail;
+
     // find user by email
     const user = await User.findOne({ email });
 
     if (!user) {
-      return res
-        .status(401)
-        .json({ error: "A user with this email address does not exist." });
+      return res.status(401).json({ error: "A user with this email address does not exist." });
     }
+
+    // Send the verification status
+    res.json({ isVerified: user.isVerified });
   } catch (error) {
-    console.log("Error checking user verification status :", error);
+    console.log("Error checking user verification status:", error);
+    res.status(500).json({ error: 'Error checking verification status' });
   }
 };
 

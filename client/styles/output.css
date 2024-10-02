@@ -908,6 +908,14 @@ video {
   width: 100%;
 }
 
+.w-56 {
+  width: 14rem;
+}
+
+.w-1\/4 {
+  width: 25%;
+}
+
 .min-w-\[24px\] {
   min-width: 24px;
 }

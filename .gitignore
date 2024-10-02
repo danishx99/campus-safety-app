@@ -1,3 +1,4 @@
 .env
 node_modules/
 campus-safety-fcm-firebase-adminsdk-k3uhg-5fe8524d8f.json
+coverage

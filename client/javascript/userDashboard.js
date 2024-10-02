@@ -215,34 +215,34 @@ document.addEventListener("DOMContentLoaded", function () {
     toast.classList.add("hidden");
   });
 
-  const cards = document.querySelectorAll(".card-link");
+  // const cards = document.querySelectorAll(".card-link");
 
-  cards.forEach((card) => {
-    card.addEventListener("click", function (e) {
-      e.preventDefault();
+  // cards.forEach((card) => {
+  //   card.addEventListener("click", function (e) {
+  //     e.preventDefault();
 
-      if (!isEmailVerified) {
-        showToast("Please verify your email to access this feature.");
-        return;
-      }
+  //     if (!isEmailVerified) {
+  //       showToast("Please verify your email to access this feature.");
+  //       return;
+  //     }
 
-      // If email is verified, proceed with navigation
-      switch (this.id) {
-        case "report-incident-card":
-          window.location.href = "/user/reportIncident";
-          break;
-        case "view-notifications-card":
-          window.location.href = "/user/viewNotifications";
-          break;
-        case "location-services-card":
-          window.location.href = "/user/campusNavigation";
-          break;
-        case "safety-resources-card":
-          window.location.href = "/user/safetyResources";
-          break;
-      }
-    });
-  });
+  //     // If email is verified, proceed with navigation
+  //     switch (this.id) {
+  //       case "report-incident-card":
+  //         window.location.href = "/user/reportIncident";
+  //         break;
+  //       case "view-notifications-card":
+  //         window.location.href = "/user/viewNotifications";
+  //         break;
+  //       case "location-services-card":
+  //         window.location.href = "/user/campusNavigation";
+  //         break;
+  //       case "safety-resources-card":
+  //         window.location.href = "/user/safetyResources";
+  //         break;
+  //     }
+  //   });
+  // });
 
   reportCard.addEventListener("click", function (event) {
     event.preventDefault();

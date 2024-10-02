@@ -241,7 +241,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
         // Handle the response data here
         if (data.message === "Registration successful!") {
-
           alert.style.display = "block";
           alert.style.color = "green";
           alert.style.backgroundColor = "#ddffdd";

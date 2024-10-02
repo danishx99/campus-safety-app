@@ -21,10 +21,11 @@ exports.isAdmin = async (req, res, next) => {
 
     if (role !== "admin") {
       //return status 403 and send html file
-      return res.status(403).json({
-        error:
-          "You are not authorized to access this resource (Not an admin). This page will probs be replaced with a dedicated page for this error",
-      });
+      return res
+        .status(403)
+        .sendFile(
+          path.join(__dirname, "../../client/html/error/authorisation.html")
+        );
     }
 
     next();

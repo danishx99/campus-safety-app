@@ -14,9 +14,23 @@ function hideLoader(){
     document.getElementById("loader").style.display = "none";
 }
 
+function showResendEmailLoader(){
+  document.getElementById("resendEmailLoader").style.display = "block";
+}
+
+function hideResendEmailLoader(){
+  document.getElementById("resendEmailLoader").style.display = "none";
+}
+
 
 
 loginBtn.addEventListener("click", async function(event){
+
+    event.preventDefault();
+
+
+   
+
     console.log("Login button clicked");
 
     showLoader();
@@ -121,9 +135,85 @@ loginBtn.addEventListener("click", async function(event){
         hideLoader();
 
         console.log(data);
-        if(data.error){
+        if(data.error && data.error === "Your email is not verified"){
 
-          console.error("Error logging in:", data.error);
+        
+
+          console.log("Error logging in:", data.error);
+          alert.style.display = "block";
+          alert.style.color = '#4187CB';
+          alert.style.backgroundColor = 'white';
+          alert.style.borderColor = '#015EB8';
+          alert.innerHTML = `Your email is not verified. Please check your inbox for the verification email or <span id="resendEmailBtn" class="font-bold underline text-blue-600 hover:text-blue-800 cursor-pointer">request a new one</span>.`;
+
+           //Get the link to the resend email button and add event listener
+            var resendEmailBtn = document.getElementById("resendEmailBtn");
+
+            const email = data.email;
+
+            resendEmailBtn.addEventListener("click", function(event){
+              event.preventDefault();
+
+              //Show resend email loader
+              showResendEmailLoader();
+
+
+              //POST to server
+              fetch("/auth/sendVerification", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  email: email,
+                }),
+              })
+                .then(response => response.json())
+                .then(data => {
+                  console.log(data);
+
+                  hideResendEmailLoader();
+
+                  if(data.success){
+                    alert.style.display = "block";
+                    alert.style.color = '#4187CB';
+                    alert.style.backgroundColor = 'white';
+                    alert.style.borderColor = '#015EB8';
+                    alert.innerText = "Verification email sent successfully. Please check your inbox.";
+
+                    window.scrollTo(0, 0);
+                  }else if(data.error){
+                    alert.style.display = "block";
+                    alert.style.color = '#4187CB';
+                    alert.style.backgroundColor = 'white';
+                    alert.style.borderColor = '#015EB8';
+                    alert.innerText = data.error;
+                    window.scrollTo(0, 0);
+                  }
+                })
+                .catch((error) => {
+                  console.log("Error resending email:", error);
+                  alert.style.display = "block";
+                  alert.style.color = '#4187CB';
+                  alert.style.backgroundColor = 'white';
+                  alert.style.borderColor = '#015EB8';
+                  alert.innerText = `An error occurred while resending the verification email. Please try again.`;
+
+                  hideResendEmailLoader();
+
+                });
+
+
+            });
+
+              
+
+
+
+          window.scrollTo(0, 0);
+        }else if(data.error && data.error != "Your email is not verified"){
+
+          console.log("Error logging in:", data.error);
           alert.style.display = "block";
           alert.style.color = 'red';
           alert.style.backgroundColor = '#ffdddd';
@@ -167,7 +257,7 @@ loginBtn.addEventListener("click", async function(event){
         }
       })
       .catch((error) => {
-        console.error("Error logging in:", error);
+        console.log("Error logging in:", error);
         alert.style.display = "block";
         alert.style.color = 'red';
         alert.style.backgroundColor = '#ffdddd';

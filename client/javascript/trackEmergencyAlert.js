@@ -4,7 +4,7 @@
 //     getMessaging,
 //     onMessage,
 // } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-messaging.js";
-window.initMap = function() {
+window.initMap = function () {
   const emergencyDetails = JSON.parse(getCookieDetails());
 
   const location = JSON.parse(emergencyDetails.location);
@@ -42,10 +42,7 @@ window.initMap = function() {
 
   // Start the pulse animation
   pulseCircle();
-}
-
-
-
+};
 
 //Get a reference to all the circles
 let searchingCircle = document.getElementById("searchingCircle");
@@ -54,7 +51,6 @@ let assignedCircle = document.getElementById("assignedCircle");
 let assignedText = document.getElementById("assignedText");
 let resolvedCircle = document.getElementById("resolvedCircle");
 let resolvedText = document.getElementById("resolvedText");
-
 
 /*
 HELPER FUNCTIONS
@@ -134,7 +130,6 @@ function pulseCircle() {
 
 let map;
 let circle;
-
 
 // Function to get the current emergency alert details
 async function getEmergencyAlertDetails(emergencyAlertId) {
@@ -233,8 +228,6 @@ document.addEventListener("DOMContentLoaded", async function () {
     // baseRadius = currentRadiusOfEmergencyAlert * 1000;
     // maxRadius = currentRadiusOfEmergencyAlert * 1000 + 10;
     // minRadius = currentRadiusOfEmergencyAlert * 1000 - 10;
-
-
   }
 
   if (currentAssignedTo === "No Admin Assigned") {
@@ -243,5 +236,20 @@ document.addEventListener("DOMContentLoaded", async function () {
     ).textContent = `All admins have been notified but none have accepted the alert yet. Please be patient.`;
   }
 
-  //Todo , check proximity from the get request we sent to update it
+  // cancellation process
+  const cancelButton = document.getElementById("cancelRequest");
+  cancelButton.addEventListener("click", async function () {
+    const response = await fetch(
+      `/emergency/cancelEmergencyAlert/${emergencyAlertId}`
+    );
+    //const data = await response.json();
+    if (response.status === 200) {
+      window.location.href = "/user/emergencyAlerts";
+    } else {
+      let errorMessage = document.getElementById("cancelAlert");
+      errorMessage.textContent =
+        "Error cancelling the alert. Please try again.";
+      errorMessage.style.display = "block";
+    }
+  });
 });

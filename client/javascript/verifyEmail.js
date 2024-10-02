@@ -1,115 +1,48 @@
-document.addEventListener("DOMContentLoaded", function(){
+document.addEventListener("DOMContentLoaded", function () {
+  // Extract token from the URL
+  const urlParams = new URLSearchParams(window.location.search);
+  const token = urlParams.get("token");
 
-    // Extract token from the URL
-    const urlParams = new URLSearchParams(window.location.search);
-    const token = urlParams.get('token');
+  var alert = document.getElementById("alert");
 
-    var alert = document.getElementById("alert");
-
-    // Send token to verify endpoint
-    fetch("/auth/verifyEmail", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-            token: token,
-        }),
-    })
+  // Send token to verify endpoint
+  fetch("/auth/verifyEmail", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      token: token,
+    }),
+  })
     .then((response) => response.json())
     .then((data) => {
-        if (data.message === "Email verified successfully!") {
-            alert.style.display = "block";
-            alert.style.color = 'green';
-            alert.style.backgroundColor = '#ddffdd';
-            alert.style.border = 'green';
-            alert.innerText = "Email verified successfully!";
+      if (data.message === "Email verified successfully!") {
+        alert.style.display = "block";
+        alert.style.color = "green";
+        alert.style.backgroundColor = "#ddffdd";
+        alert.style.border = "green";
+        alert.innerText = "Email verified successfully!";
 
-            // Set email verified flag in local storage
-            localStorage.setItem('isEmailVerified', 'true');
-
-            // Check for data.redirect and redirect
-          if (data.redirect) {
-
-            if(data.redirect === "admin"){
-              setTimeout(() => {
-                window.location.href = "/admin";
-              }, 1000);
-            } else if(data.redirect === "student"){
-              setTimeout(() => {
-                window.location.href = "/user";
-              }, 1000);
-            } else if(data.redirect === "staff"){
-              setTimeout(() => {
-                window.location.href = "/user";
-              }, 1000);
-            }
-          }
-        } else if (data.error) {
-            console.error("Error verifying email:", data.error);
-            alert.style.display = "block";
-            alert.style.color = 'red';
-            alert.style.backgroundColor = '#ffdddd';
-            alert.style.border = 'red';
-            alert.innerText = data.error;
-        }
+        // Check for data.redirect and redirect
+      } else if (data.error) {
+        console.error("Error verifying email:", data.error);
+        alert.style.display = "block";
+        alert.style.color = "red";
+        alert.style.backgroundColor = "#ffdddd";
+        alert.style.border = "red";
+        alert.innerText = data.error;
+      }
     })
     .catch((error) => {
-        console.error(error);
+      console.error(error);
     });
 
-    var resendBtn = document.getElementById("resend-btn");
+  var resendBtn = document.getElementById("resend-btn");
 
-    resendBtn.addEventListener("click", function(event){
-        console.log("Resend button clicked");
-
-        // let email = document.getElementById("email").value;
-
-        // if (!email || email===""){
-        //     alert.style.display = "block";
-        //     alert.innerText = "Please fill in all fields";
-        //     return;
-        // }
-    
-        // //check format of email- must be wits email
-        // if (!email.endsWith(".wits.ac.za")) {
-        //     alert.style.display = "block";
-        //     alert.innerText = "Invalid email format. Please use a Wits email address.";
-        //     return;
-        // }
-
-        fetch("/auth/resendVerificationEmail", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                // email,
-            }),
-        })
-        .then((res) => res.json())
-        .then((data) => {
-            if(data.message ==="Verification email resent successfully!"){
-                alert.style.display = "block";
-                alert.style.color = 'green';
-                alert.style.backgroundColor = '#ddffdd';
-                alert.style.border='green';
-                alert.innerText = "Verification email resent successfully!";
-            }
-            else if(data.error){
-                console.error("Error with Resending Verification Email :", data.error);
-                alert.style.display = "block";
-                alert.style.color = 'red';
-                alert.style.backgroundColor = '#ffdddd';
-                alert.style.border = 'red';
-                alert.innerText = data.error;
-            }
-        })
-        .catch((error) => {
-            console.error("Error:", error);
-        });
-        
-    })
-
-
-})
+  resendBtn.addEventListener("click", function (event) {
+    console.log("Resend button clicked");
+    //redirect to login page
+    window.location.href = "/login";
+  });
+});

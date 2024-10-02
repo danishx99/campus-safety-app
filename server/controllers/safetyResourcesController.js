@@ -3,7 +3,7 @@ const ObjectId = require("mongodb").ObjectId;
 
 exports.adminSafetyResources = async (req, res) => {
   try {
-    const { title, type, description, link} = req.body;
+    const { title, type, description, link } = req.body;
     const newResource = new safetyResources({
       title,
       type,
@@ -63,26 +63,32 @@ exports.getSafetyResource = async (req, res) => {
   const resourceId = req.params.id;
 
   try {
-      const resource = await safetyResources.findOne({ _id: new ObjectId(resourceId) });
-      if (!resource) {
-          return res.status(404).send('Resource not found');
-      }
+    const resource = await safetyResources.findOne({
+      _id: new ObjectId(resourceId),
+    });
+    if (!resource) {
+      return res.status(404).send("Resource not found");
+    }
 
-      res.status(200).json(resource);  // Send the resource data as JSON
+    res.status(200).json(resource); // Send the resource data as JSON
   } catch (err) {
-      console.error('Error fetching resource:', err);
-      res.status(500).send('Error fetching resource');
+    console.error("Error fetching resource:", err);
+    res.status(500).send("Error fetching resource");
   }
 };
 
 // Get all safety resources
 exports.userSafetyResources = async (req, res) => {
   try {
+    console.log("Fetching all safety resources");
     // Fetch all safety resources from the database
-    const resources = await safetyResources.find({}, 'title type description link');
+    const resources = await safetyResources.find(
+      {},
+      "title type description link"
+    );
     res.status(200).json({
       message: "Resources fetched successfully",
-      data: resources
+      data: resources,
     });
   } catch (error) {
     console.log("Error fetching safety resources:", error);

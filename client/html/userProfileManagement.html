@@ -109,7 +109,7 @@
             <button
               id="panicButton"
               class="flex rounded-md bg-red-600 py-2 px-4 border border-transparent text-center text-sm text-white transition-all shadow-md hover:shadow-lg focus:bg-slate-700 focus:shadow-none active:bg-slate-700 hover:bg-slate-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
-              >
+            >
               Panic
               <img
                 src="../assets/danger.png"
@@ -312,47 +312,62 @@
 
         <!-- Mobile Navigation -->
         <nav
-          class="fixed inset-x-0 bottom-0 bg-[#015EB8] text-white p-4 flex justify-around items-center md:hidden z-50"
+          class="fixed inset-x-0 bottom-0 bg-[#015EB8] text-white p-4 flex justify-between items-center md:hidden z-50"
         >
-          <a href="/user/reportIncident" class="flex flex-col items-center">
+          <a
+            href="/user/reportIncident"
+            class="flex flex-col items-center justify-center w-1/5"
+          >
             <img
-              src="../assets/report-mobile.png"
+              src="/assets/report-mobile.png"
               alt="Report Incident"
-              class="h-8 w-8"
+              class="h-6 w-6 mb-1"
             />
-            <span class="text-xs mt-1">Report</span>
+            <span class="text-[10px]">Report</span>
           </a>
-          <a href="/user/emergencyAlerts" class="flex flex-col items-center">
+          <a
+            href="/user/emergencyAlerts"
+            class="flex flex-col items-center justify-center w-1/5"
+          >
             <img
-              src="../assets/alert-mobile.png"
+              src="/assets/alert-mobile.png"
               alt="Emergency Alerts"
-              class="h-8 w-8"
+              class="h-6 w-6 mb-1"
             />
-            <span class="text-xs mt-1">Alerts</span>
+            <span class="text-[10px]">Alerts</span>
           </a>
-          <a href="/user" class="flex flex-col items-center">
+          <a
+            href="/user"
+            class="flex flex-col items-center justify-center w-1/5"
+          >
             <img
-              src="../assets/dashboard-mobile.png"
+              src="/assets/dashboard-mobile.png"
               alt="Dashboard"
-              class="h-8 w-8"
+              class="h-6 w-6 mb-1"
             />
-            <span class="text-xs mt-1">Dashboard</span>
+            <span class="text-[10px]">Dashboard</span>
           </a>
-          <a href="/user/safetyResources" class="flex flex-col items-center">
+          <a
+            href="/user/safetyResources"
+            class="flex flex-col items-center justify-center w-1/5"
+          >
             <img
-              src="../assets/resources-mobile.png"
+              src="/assets/resources-mobile.png"
               alt="Safety Resources"
-              class="h-8 w-8"
+              class="h-6 w-6 mb-1"
             />
-            <span class="text-xs mt-1">Resources</span>
+            <span class="text-[10px]">Resources</span>
           </a>
-          <a href="/user/campusNavigation" class="flex flex-col items-center">
+          <a
+            href="/user/campusNavigation"
+            class="flex flex-col items-center justify-center w-1/5"
+          >
             <img
-              src="../assets/location-mobile.png"
+              src="/assets/location-mobile.png"
               alt="Campus Navigation"
-              class="h-8 w-8"
+              class="h-6 w-6 mb-1"
             />
-            <span class="text-xs mt-1">Navigation</span>
+            <span class="text-[10px]">Navigation</span>
           </a>
         </nav>
       </div>

@@ -113,6 +113,8 @@ function displayResources(resources, type) {
           carousel.appendChild(resourceElement);
       }
   });
+
+  hideLoader();
 }
 
 // Function to update active button styles
@@ -134,8 +136,22 @@ function updateActiveButton(activeButton) {
   });
 }
 
+function showLoader(){
+    const loader = document.getElementById("mapLoader");
+    loader.style.display = "block";
+}
+
+function hideLoader(){
+    const loader = document.getElementById("mapLoader");
+    loader.style.display = "none";
+}
+
 // Main function to initialize the page
 async function initPage() {
+  
+
+  showLoader();
+
   const resources = await loadSafetyResources();
 
   // Get buttons
@@ -143,6 +159,7 @@ async function initPage() {
   const btnViewTips = document.getElementById("btnViewtips");
   const btnViewPolicies = document.getElementById("btnViewPolicies");
 
+  
   // Add click event listeners
   btnViewContacts.addEventListener("click", () => {
       displayResources(resources, "Emergency Contact");
@@ -159,6 +176,8 @@ async function initPage() {
 
   // Initially display emergency contacts and set active button
   displayResources(resources, "Emergency Contact");
+
+
   updateActiveButton(btnViewContacts);
 }
 

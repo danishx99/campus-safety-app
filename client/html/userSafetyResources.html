@@ -12,6 +12,28 @@
     <script src="../javascript/index.var.js"></script>
     <link rel="stylesheet" href="../styles/style.css" />
     <style>
+      
+    /* Loader styles */
+    #mapLoader {
+      display: none;
+      border: 4px solid #f3f3f3;
+      border-radius: 50%;
+      border-top: 4px solid #3498db;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
       /* Modal styles */
       .modal {
         display: flex;
@@ -357,6 +379,8 @@
           Safety Policies
           </button>
         </div>
+
+        <div class="mx-auto mt-5" id="mapLoader"></div>
 
         <div class="relative w-full h-full overflow-y-auto py-6">
           <div id="carousel" class="flex flex-col space-y-6 items-center">

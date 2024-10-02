@@ -197,6 +197,7 @@ submitAlert.addEventListener('click', function (event) {
   showpanicloader();
 
   var alert = document.getElementById('alert');
+ 
   //alert.style.display = "block";
   //alert.innerText = "An unexpected error occurred. Please try again.";
   
@@ -250,14 +251,11 @@ submitAlert.addEventListener('click', function (event) {
                     console.log('Function to notify admins by proximity failed:', error);
                 });
 
-                  // setTimeout(() => {
-                  //      // Redirect to panic page after success
-                  // window.location.href = `/user/emergencyalerts/track/${data.emergencyAlertId}`;
-                  // }, 1500);
+                 
                    
-              } else if(data.error === "Error sending emergency alert") {
+              } else if(data.error) {
                   alert.style.display = "block";
-                  alert.innerText = "Error sending emergency alert";
+                  alert.innerText = data.error;
               }
 
               hidepanicloader();

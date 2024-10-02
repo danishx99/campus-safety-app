@@ -28,14 +28,17 @@ const emergencySchema = new Schema(
       required: false,
     },
     
-
     status: {
       type: String,
       required: false,
       enum: ["Searching", "Assigned", "Resolved"],
       default: "Searching",
     },
+
 },  
+{
+  timestamps: true,
+}
 );
 
 const emergency = mongoose.model("Emergency", emergencySchema);

@@ -28,5 +28,10 @@ router.get(
   emergencyAlertController.getEmergencyAlertsByUser
 );
 
+router.get(
+  "/clearEmergencyAlerts",
+  emergencyAlertController.clearEmergencyAlerts
+);
+
 
 module.exports = router;

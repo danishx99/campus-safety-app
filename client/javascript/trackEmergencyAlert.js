@@ -230,9 +230,9 @@ document.addEventListener("DOMContentLoaded", async function () {
       "INFO"
     ).textContent = `Expanded search radius to include all admins`;
 
-    baseRadius = currentRadiusOfEmergencyAlert * 1000;
-    maxRadius = currentRadiusOfEmergencyAlert * 1000 + 10;
-    minRadius = currentRadiusOfEmergencyAlert * 1000 - 10;
+    // baseRadius = currentRadiusOfEmergencyAlert * 1000;
+    // maxRadius = currentRadiusOfEmergencyAlert * 1000 + 10;
+    // minRadius = currentRadiusOfEmergencyAlert * 1000 - 10;
 
 
   }

@@ -14,6 +14,28 @@
     <link rel="stylesheet" href="../styles/style.css" />
 
     <style>
+      /* Loader styles */
+    #mapLoader {
+      display: none;
+      border: 4px solid #f3f3f3;
+      border-radius: 50%;
+      border-top: 4px solid #3498db;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    
       .token-wrap {
         word-wrap: break-word;
         max-width: 100%;
@@ -393,6 +415,9 @@
             View Safety Policies
             </button>
           </div>
+
+          
+        <div class="mx-auto mt-5" id="mapLoader"></div>
 
           <div class="relative w-full h-[60vh] sm:h-[65vh] md:h-[70vh] overflow-y-auto py-4 sm:py-6">
             <div id="carousel" class="flex flex-col space-y-4 sm:space-y-6 items-center max-w-3xl mx-auto">

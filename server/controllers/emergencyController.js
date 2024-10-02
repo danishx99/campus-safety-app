@@ -142,136 +142,6 @@ async function checkIfAdminHasBeenAssigned(emergencyAlertId) {
   return emergency.assignedTo;
 }
 
-// exports.findAndNotifyAdmins = async (req, res) => {
-
-//   //Get the emergency alert ID from the frontend
-//   let { emergencyAlertId, location } = req.body;
-//   location = JSON.parse(location);
-
-//   //Get the user email from the token
-//   const token = req.cookies.token;
-//   const decoded = jwt.verify(token, process.env.JWT_SECRET);
-//   const sender = decoded.userEmail;
-
-//   //Find the user associated with the emergency alert
-//   const user = await User.findOne({ email: sender });
-
-//   //This notifies the frontend(FCM listener) that they can be redirected to the emergency alert since this function may take a while to complete
-//   _sendNotification([user.FCMtoken], { emergencyAlertId: emergencyAlertId, redirect: true });
-
-//   //Add 2 second delay
-//   await new Promise(resolve => setTimeout(resolve, 3000));
-
-//   let assignedToAdmin = false;
-//   let proximities = [0.2, 0.5 ,1, 1.5];
-
-//   //Find all users with the role of admin
-//   const users = await User.find({ role: "admin" });
-
-//   //While assignedToAdmin is false, loop through the proximities array and find the admins within the radius(if no admins found within proximity, notify the next proximity),
-//   // then notify them, wait 30 seconds(giving them a chance to respond) before finding
-//   //out if an admin has been assigned, if one has been assigned, break out of the loop. If one hasnt
-//   //been assigned, notify the next set of admins in the next proximity radius. Do tis for all proximities, at the end
-//   //if no admin has been assigned, notify all admins
-//   // Loop through proximity ranges and notify nearby admins
-
-//   for (let i = 0; i < proximities.length; i++) {
-//     const radius = proximities[i];
-
-//     //Update the radius being searched in the emergency alert
-//     await Emergency.findByIdAndUpdate(emergencyAlertId, { radiusBeingSearched: radius });
-
-//     const nearbyAdmins = getUsersWithinRadius(users, location, radius);
-
-//     console.log("Nearby admins length: ", nearbyAdmins.length);
-
-//     //log the names of the nearby admins
-//     nearbyAdmins.forEach((admin) => {
-//       console.log("Admin email: ", admin.email);
-//       console.log("Admin name: ", admin.firstName);
-//     });
-
-//     console.log("About to send proximity to the client: ", radius);
-//     //Send notification to the client to notify them that the proximity has changed
-//     _sendNotification([user.FCMtoken], { emergencyAlertId: emergencyAlertId, proximity: radius });
-
-//     console.log("Just notified the client of proximity: ", radius);
-
-//     if(nearbyAdmins.length === 0){
-//       console.log("No admins found within proximity: ", radius);
-//     }
-//     //This if statement runs if there are admins within the current proximity range
-//     if (nearbyAdmins.length > 0) {
-//       const fcmTokens = nearbyAdmins.map(admin => admin.FCMtoken);
-
-//       // Send notification to admins within the current proximity range
-//       await _sendNotification(fcmTokens, {
-//         title: "Emergency Alert",
-//         body: "Emergency Alert received, click for more details",
-//         notificationType: "emergency-alert",
-//         sender: sender,
-//         senderLocation: location,
-//         recipient: "admin",
-//         emergencyAlertId: emergencyAlertId,
-//       });
-
-//       // Wait for 30 seconds before checking if an admin has been assigned
-//       await new Promise(resolve => setTimeout(resolve, 10000));
-
-//       // Check if any admin has been assigned
-//       assignedToAdmin = await checkIfAdminHasBeenAssigned(emergencyAlertId);
-
-//       console.log("Assigned to admin: ", assignedToAdmin);
-
-//       // If an admin has been assigned, break out of the loop
-//       if (assignedToAdmin) {
-//         //Send notification to the client to notify them that admin has been assigned
-//       _sendNotification([user.FCMtoken], { emergencyAlertId: emergencyAlertId, status: "Assigned" });
-//         break;
-//       }
-
-//     }
-//   }
-
-//   // If no admin was assigned after all proximity ranges, notify all remaining admins
-//   if (!assignedToAdmin) {
-
-//     const allAdminTokens = users.map(admin => admin.FCMtoken);
-//     await _sendNotification(allAdminTokens, {
-//       title: "Emergency Alert",
-//       body: "Emergency Alert received, click for more details",
-//       notificationType: "emergency-alert",
-//       sender: sender,
-//       senderLocation: location,
-//       recipient: "admin",
-//       emergencyAlertId: emergencyAlertId,
-//     });
-
-//     //Wait for 30 seconds
-//     await new Promise(resolve => setTimeout(resolve, 10000));
-
-//     //Check if an admin has been assigned
-//     assignedToAdmin = await checkIfAdminHasBeenAssigned(emergencyAlertId);
-
-//     console.log("Assigned to admin: ", assignedToAdmin);
-
-//     //If an admin has been assigned, notify the client
-//     if (assignedToAdmin) {
-//       //Send notification to the client to notify them that admin has been assigned
-//       _sendNotification([user.FCMtoken], { emergencyAlertId: emergencyAlertId, status: "Assigned" });
-//       //Return the request
-//     }else{
-//     //If no admin has been assigned, notify the client
-//     _sendNotification([user.FCMtoken], { emergencyAlertId: emergencyAlertId, status: "No Admin Assigned" });
-//     }
-
-//   }
-
-//   res.status(200).json({ message: "Admins notified successfully" });
-
-//   //Check logic above
-
-// }
 
 exports.findAndNotifyAdmins = async (req, res) => {
   try {
@@ -395,15 +265,30 @@ exports.findAndNotifyAdmins = async (req, res) => {
   }
 };
 
-// exports.getPanicStatus = async (req, res) => {
-//   try {
-//     const token = req.headers.authorization.split(" ")[1];
-//     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-//     const user = await User.findOne({ email: decoded.email });
-//     const emergencies = await Emergency.find({ status });
-//     res.status(200).json({ emergencies });
-//   } catch (error) {
-//     console.log(error);
-//     res.status(500).json({ error: "Error fetching emergency status" });
-//   }
-// };
+exports.getEmergencyAlertsByUser = async (req, res) => {
+
+  try {
+    const token = req.cookies.token;
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const email = decoded.userEmail;
+
+    const user = await User.findOne({ email });
+    
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const emergencies = await Emergency.find({ reportedBy: email });
+
+    res.status(200).json({ emergencies });
+
+  }
+  catch (error) {
+    console.log("Error in getEmergencyAlertsByUser:", error);
+    return res
+      .status(500)
+      .json({ message: "Internal server error", error: error.message });
+  }
+
+
+};

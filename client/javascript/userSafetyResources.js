@@ -1,3 +1,5 @@
+
+//USER SAFETY RESOURCES PAGE
 // Function to load safety resources
 async function loadSafetyResources() {
   try {

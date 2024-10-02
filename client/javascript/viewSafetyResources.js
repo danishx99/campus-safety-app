@@ -1,606 +1,229 @@
+// Function to load safety resources
 async function loadSafetyResources() {
-    const response = await fetch('/safetyResources/userSafetyResources'); // Use the correct route
-    const data = await response.json();
-
-    return data.data;
-};
-/*const resources = [
-    {
-      title: "Campus Control",
-      description: "Call +27 11 717 4444/6666 for emergency assistance",
-      type: "Emergency Contact"
-    },
-    {
-      title: "Medical Emergency",
-      description: "Call +27 11 717 5555 for medical assistance",
-      type: "Emergency Contact"
-    },
-    // Add more resources as needed
-];*/
-
-let emergencyContacts = false;
-let safetyTips = false;
-let safetyPolicy = false;
-
-// Get buttons
-var btnViewContacts = document.getElementById("btnViewContacts");
-var btnViewTips = document.getElementById("btnViewtips");
-var btnViewPolicies = document.getElementById("btnViewPolicies");
-
-// Save the state in localStorage when a button is clicked
-btnViewContacts.addEventListener("click", function(event) {
-  emergencyContacts = true;
-  safetyTips = false;
-  safetyPolicy = false;
-  localStorage.setItem("viewState", "contacts");
-  location.reload();
-});
-
-btnViewTips.addEventListener("click", function(event) {
-  emergencyContacts = false;
-  safetyTips = true;
-  safetyPolicy = false;
-  localStorage.setItem("viewState", "tips");
-  location.reload();
-});
-
-btnViewPolicies.addEventListener("click", function(event) {
-  emergencyContacts = false;
-  safetyTips = false;
-  safetyPolicy = true;
-  localStorage.setItem("viewState", "policies");
-  location.reload();
-});
-
-// On page load, check the stored state and apply it
-window.addEventListener("load", function() {
-  const viewState = localStorage.getItem("viewState");
-
-  if (viewState === "contacts") {
-    emergencyContacts = true;
-    safetyTips = false;
-    safetyPolicy = false;
-  } else if (viewState === "tips") {
-    emergencyContacts = false;
-    safetyTips = true;
-    safetyPolicy = false;
-  } else if (viewState === "policies") {
-    emergencyContacts = false;
-    safetyTips = false;
-    safetyPolicy = true;
-  } else {
-    // Default to emergency contacts if nothing is set
-    emergencyContacts = true;
-  }
-});
-
-(async () => {
-const resources = await loadSafetyResources(); // Wait for the resources to load
-
-
-function createResource(resource) {
-  let resourceDiv = null; // Initialize resourceDiv as null
-  if (emergencyContacts === true){
-    if (resource.type === "Emergency Contact"){
-        console.log("contact")
-        const resourceDiv = document.createElement('div');
-        resourceDiv.classList.add(
-        'bg-blue-100', 'rounded-full', 'py-6', 'px-8', 'text-center', 'flex', 'items-center', 'w-full', 'max-w-4xl', 'space-x-4', 'relative'  // Important: relative position added here
-        );
-  
-        const img = document.createElement('img');
-        img.src = "../assets/phoneS.png";
-        img.alt = resource.title;
-        img.classList.add('w-8', 'h-8', 'mr-4');
-
-        const textWrapper = document.createElement('div');
-        textWrapper.classList.add('text-center', 'flex-1');
-  
-        const title = document.createElement('p');
-        title.classList.add('font-semibold', 'text-blue-900');
-        title.innerHTML = `<strong>${resource.title}</strong>`;
-  
-        const description = document.createElement('p');
-        description.classList.add('text-sm', 'text-blue-900');
-        description.textContent = resource.description;
-
-        const link = document.createElement('a')
-        link.classList.add('text-sm', 'text-blue-900', 'font-semibold');
-        link.href = resource.link;
-        link.textContent = resource.link;
-        link.target = "_blank";
-        
-        textWrapper.appendChild(title);
-        textWrapper.appendChild(description);
-        textWrapper.appendChild(link);
-  
-        resourceDiv.appendChild(img);
-        resourceDiv.appendChild(textWrapper);
-
-        // Create the buttons wrapper (top-right corner)
-        const buttonsWrapper = document.createElement('div');
-        buttonsWrapper.classList.add('absolute', 'top-8', 'right-4', 'flex', 'space-x-2');  // Important: absolute position relative to resourceDiv
-        buttonsWrapper.style.right = '22px';
-
-        // Create Edit Button
-        const editButton = document.createElement('button');
-        editButton.textContent = 'Edit';
-        editButton.classList.add('bg-blue-500', 'text-white', 'rounded', 'px-2', 'py-1', 'text-sm');
-        editButton.onclick = () => {
-            const resourceId = resource._id; 
-            localStorage.setItem('resourceId', resourceId);
-            window.location.href = "/admin/updateSafetyResources";
-        };
-
-        const deleteButton = document.createElement('button');
-        deleteButton.classList.add('bg-red-500', 'rounded', 'px-2', 'py-1');
-    
-        // Create and append the image inside the delete button
-        const deleteIcon = document.createElement('img');
-        deleteIcon.src = '../assets/delete.png';
-        deleteIcon.alt = 'Delete';
-        deleteIcon.classList.add('w-4', 'h-4');
-    
-        deleteButton.appendChild(deleteIcon);
-    
-
-        deleteButton.onclick = async () => {
-            const resourceId = resource._id;
-            try {
-                const response = await fetch(`/safetyResources/deleteSafetyResources/${resourceId}`, {
-                    method: 'DELETE',
-                });
-                if (response.ok) {
-                    // Successfully deleted, now remove the bubble from the DOM
-                    resourceDiv.remove();
-                    const alert = document.getElementById("alert");
-                    alert.style.display = "block";
-                    alert.style.color = "green";
-                    alert.style.backgroundColor = "#ddffdd";
-                    alert.style.border = "1px solid green";
-                    alert.innerText = "Resource deleted successfully";
-                
-                    // Set a timeout to hide the alert after 3 seconds
-                    setTimeout(() => {
-                        alert.style.display = "none";
-                    }, 3000);
-                } else {
-                    const alert = document.getElementById("alert");
-                    alert.style.display = "block";
-                    alert.style.color = "red";
-                    alert.style.backgroundColor = "#ffdddd";
-                    alert.style.border = "1px solid red";
-                    alert.innerText = "Failed to delete resource";
-                
-                    // Set a timeout to hide the alert after 3 seconds
-                    setTimeout(() => {
-                        alert.style.display = "none";
-                    }, 3000);
-                }
-            } catch (error) {
-                console.error('Error deleting resource:', error);
-                const alert = document.getElementById("alert");
-                alert.style.display = "block";
-                alert.style.color = "red";
-                alert.style.backgroundColor = "#ffdddd";
-                alert.style.border = "1px solid red";
-                alert.innerText = "Error deleting resource";
-            
-                // Set a timeout to hide the alert after 3 seconds
-                setTimeout(() => {
-                    alert.style.display = "none";
-                }, 3000);
-            }
-        };
-
-        // Append buttons to the wrapper
-        buttonsWrapper.appendChild(editButton);
-        buttonsWrapper.appendChild(deleteButton);
-
-        // Add the buttons to the resourceDiv
-        resourceDiv.appendChild(buttonsWrapper);
-
-        return resourceDiv;
+    try {
+        const response = await fetch('/safetyResources/userSafetyResources');
+        const data = await response.json();
+        return data.data;
+    } catch (error) {
+        console.error('Error loading safety resources:', error);
+        return [];
     }
-  }
-  else if (safetyTips === true){
-    if (resource.type === "Safety Tip"){
-      console.log("tip")
-      const resourceDiv = document.createElement('div');
-      resourceDiv.classList.add(
-      'bg-blue-100', 'rounded-full', 'py-6', 'px-8', 'text-center', 'flex', 'items-center', 'w-full', 'max-w-4xl', 'space-x-4', 'relative'  // Important: relative position added here
-      );
-
-      const img = document.createElement('img');
-      img.src = "../assets/safetyTipS.png";
-      img.alt = resource.title;
-      img.classList.add('w-8', 'h-8', 'mr-4');
-
-      const textWrapper = document.createElement('div');
-      textWrapper.classList.add('text-center', 'flex-1');
-
-      const title = document.createElement('p');
-      title.classList.add('font-semibold', 'text-blue-900');
-      title.innerHTML = `<strong>${resource.title}</strong>`;
-
-      const description = document.createElement('p');
-      description.classList.add('text-sm', 'text-blue-900');
-      description.textContent = resource.description;
-
-      const link = document.createElement('a')
-      link.classList.add('text-sm', 'text-blue-900', 'font-semibold');
-      link.href = resource.link;
-      link.textContent = resource.link;
-      link.target = "_blank";
-      
-      textWrapper.appendChild(title);
-      textWrapper.appendChild(description);
-      textWrapper.appendChild(link);
-
-      resourceDiv.appendChild(img);
-      resourceDiv.appendChild(textWrapper);
-
-      // Create the buttons wrapper (top-right corner)
-      const buttonsWrapper = document.createElement('div');
-      buttonsWrapper.classList.add('absolute', 'top-8', 'right-4', 'flex', 'space-x-2');  // Important: absolute position relative to resourceDiv
-      buttonsWrapper.style.right = '22px';
-
-      // Create Edit Button
-      const editButton = document.createElement('button');
-      editButton.textContent = 'Edit';
-      editButton.classList.add('bg-blue-500', 'text-white', 'rounded', 'px-2', 'py-1', 'text-sm');
-      editButton.onclick = () => {
-          const resourceId = resource._id; 
-          localStorage.setItem('resourceId', resourceId);
-          window.location.href = "/admin/updateSafetyResources";
-      };
-
-      const deleteButton = document.createElement('button');
-      deleteButton.classList.add('bg-red-500', 'rounded', 'px-2', 'py-1');
-  
-      // Create and append the image inside the delete button
-      const deleteIcon = document.createElement('img');
-      deleteIcon.src = '../assets/delete.png';
-      deleteIcon.alt = 'Delete';
-      deleteIcon.classList.add('w-4', 'h-4');
-  
-      deleteButton.appendChild(deleteIcon);
-  
-
-      deleteButton.onclick = async () => {
-          const resourceId = resource._id;
-          try {
-              const response = await fetch(`/safetyResources/deleteSafetyResources/${resourceId}`, {
-                  method: 'DELETE',
-              });
-              if (response.ok) {
-                  // Successfully deleted, now remove the bubble from the DOM
-                  resourceDiv.remove();
-                  const alert = document.getElementById("alert");
-                  alert.style.display = "block";
-                  alert.style.color = "green";
-                  alert.style.backgroundColor = "#ddffdd";
-                  alert.style.border = "1px solid green";
-                  alert.innerText = "Resource deleted successfully";
-              
-                  // Set a timeout to hide the alert after 3 seconds
-                  setTimeout(() => {
-                      alert.style.display = "none";
-                  }, 3000);
-              } else {
-                  const alert = document.getElementById("alert");
-                  alert.style.display = "block";
-                  alert.style.color = "red";
-                  alert.style.backgroundColor = "#ffdddd";
-                  alert.style.border = "1px solid red";
-                  alert.innerText = "Failed to delete resource";
-              
-                  // Set a timeout to hide the alert after 3 seconds
-                  setTimeout(() => {
-                      alert.style.display = "none";
-                  }, 3000);
-              }
-          } catch (error) {
-              console.error('Error deleting resource:', error);
-              const alert = document.getElementById("alert");
-              alert.style.display = "block";
-              alert.style.color = "red";
-              alert.style.backgroundColor = "#ffdddd";
-              alert.style.border = "1px solid red";
-              alert.innerText = "Error deleting resource";
-          
-              // Set a timeout to hide the alert after 3 seconds
-              setTimeout(() => {
-                  alert.style.display = "none";
-              }, 3000);
-          }
-      };
-
-      // Append buttons to the wrapper
-      buttonsWrapper.appendChild(editButton);
-      buttonsWrapper.appendChild(deleteButton);
-
-      // Add the buttons to the resourceDiv
-      resourceDiv.appendChild(buttonsWrapper);
-
-      return resourceDiv;
-    }
-  }
-  else if (safetyPolicy === true){
-    if (resource.type === "Campus Safety Policy"){
-      console.log("policy")
-      const resourceDiv = document.createElement('div');
-      resourceDiv.classList.add(
-      'bg-blue-100', 'rounded-full', 'py-6', 'px-8', 'text-center', 'flex', 'items-center', 'w-full', 'max-w-4xl', 'space-x-4', 'relative'  // Important: relative position added here
-      );
-
-      const img = document.createElement('img');
-      img.src = "../assets/safetyPolicy.png";
-      img.alt = resource.title;
-      img.classList.add('w-8', 'h-8', 'mr-4');
-
-      const textWrapper = document.createElement('div');
-      textWrapper.classList.add('text-center', 'flex-1');
-
-      const title = document.createElement('p');
-      title.classList.add('font-semibold', 'text-blue-900');
-      title.innerHTML = `<strong>${resource.title}</strong>`;
-
-      const description = document.createElement('p');
-      description.classList.add('text-sm', 'text-blue-900');
-      description.textContent = resource.description;
-
-      const link = document.createElement('a')
-      link.classList.add('text-sm', 'text-blue-900', 'font-semibold');
-      link.href = resource.link;
-      link.textContent = resource.link;
-      link.target = "_blank";
-      
-      textWrapper.appendChild(title);
-      textWrapper.appendChild(description);
-      textWrapper.appendChild(link);
-
-      resourceDiv.appendChild(img);
-      resourceDiv.appendChild(textWrapper);
-
-      // Create the buttons wrapper (top-right corner)
-      const buttonsWrapper = document.createElement('div');
-      buttonsWrapper.classList.add('absolute', 'top-8', 'right-4', 'flex', 'space-x-2');  // Important: absolute position relative to resourceDiv
-      buttonsWrapper.style.right = '22px';
-
-      // Create Edit Button
-      const editButton = document.createElement('button');
-      editButton.textContent = 'Edit';
-      editButton.classList.add('bg-blue-500', 'text-white', 'rounded', 'px-2', 'py-1', 'text-sm');
-      editButton.onclick = () => {
-          const resourceId = resource._id; 
-          localStorage.setItem('resourceId', resourceId);
-          window.location.href = "/admin/updateSafetyResources";
-      };
-
-      const deleteButton = document.createElement('button');
-      deleteButton.classList.add('bg-red-500', 'rounded', 'px-2', 'py-1');
-  
-      // Create and append the image inside the delete button
-      const deleteIcon = document.createElement('img');
-      deleteIcon.src = '../assets/delete.png';
-      deleteIcon.alt = 'Delete';
-      deleteIcon.classList.add('w-4', 'h-4');
-  
-      deleteButton.appendChild(deleteIcon);
-  
-
-      deleteButton.onclick = async () => {
-          const resourceId = resource._id;
-          try {
-              const response = await fetch(`/safetyResources/deleteSafetyResources/${resourceId}`, {
-                  method: 'DELETE',
-              });
-              if (response.ok) {
-                  // Successfully deleted, now remove the bubble from the DOM
-                  resourceDiv.remove();
-                  const alert = document.getElementById("alert");
-                  alert.style.display = "block";
-                  alert.style.color = "green";
-                  alert.style.backgroundColor = "#ddffdd";
-                  alert.style.border = "1px solid green";
-                  alert.innerText = "Resource deleted successfully";
-              
-                  // Set a timeout to hide the alert after 3 seconds
-                  setTimeout(() => {
-                      alert.style.display = "none";
-                  }, 3000);
-              } else {
-                  const alert = document.getElementById("alert");
-                  alert.style.display = "block";
-                  alert.style.color = "red";
-                  alert.style.backgroundColor = "#ffdddd";
-                  alert.style.border = "1px solid red";
-                  alert.innerText = "Failed to delete resource";
-              
-                  // Set a timeout to hide the alert after 3 seconds
-                  setTimeout(() => {
-                      alert.style.display = "none";
-                  }, 3000);
-              }
-          } catch (error) {
-              console.error('Error deleting resource:', error);
-              const alert = document.getElementById("alert");
-              alert.style.display = "block";
-              alert.style.color = "red";
-              alert.style.backgroundColor = "#ffdddd";
-              alert.style.border = "1px solid red";
-              alert.innerText = "Error deleting resource";
-          
-              // Set a timeout to hide the alert after 3 seconds
-              setTimeout(() => {
-                  alert.style.display = "none";
-              }, 3000);
-          }
-      };
-
-      // Append buttons to the wrapper
-      buttonsWrapper.appendChild(editButton);
-      buttonsWrapper.appendChild(deleteButton);
-
-      // Add the buttons to the resourceDiv
-      resourceDiv.appendChild(buttonsWrapper);
-
-      return resourceDiv;
-    }
-  }
 }
 
-const carousel = document.getElementById('carousel');
-  
-// Dynamically add all resources to the carousel
-resources.forEach(resource => {
-    const resourceElement = createResource(resource);
-    if (resourceElement) {
-      carousel.appendChild(resourceElement);
-    }
-});
-})();
+let currentResourceType = "Emergency Contact";
 
-/*(async () => {
-const resources = await loadSafetyResources(); // Wait for the resources to load
-
+// Function to create resource element with enhanced styling and admin buttons
 function createResource(resource) {
+    if (resource.type !== currentResourceType) return null;
+
     const resourceDiv = document.createElement('div');
     resourceDiv.classList.add(
-      'bg-blue-100', 'rounded-full', 'py-6', 'px-8', 'text-center', 'flex', 'items-center', 'w-full', 'max-w-4xl', 'space-x-4', 'relative'  // Important: relative position added here
+        'bg-gradient-to-r', 'from-blue-100', 'to-blue-200',
+        'rounded-lg', 'shadow-md', 'p-4', 'mb-4',
+        'flex', 'items-start', 'w-full', 'max-w-4xl', 'mx-auto',
+        'transition-all', 'duration-300', 'hover:shadow-lg', 'hover:scale-105',
+        'sm:flex-row', 'flex-col', 'relative'
     );
-  
+
+    const imgWrapper = document.createElement('div');
+    imgWrapper.classList.add('flex-shrink-0', 'mr-4', 'mb-4', 'sm:mb-0');
+
     const img = document.createElement('img');
-    if (resource.type === "Emergency Contact") {
-        img.src = "../assets/phoneS.png";
-    }
-    else if (resource.type === "Safety Tip"){
-      img.src = "../assets/safetyTipS.png";
-    }
-    else if (resource.type === "Campus Safety Policy"){
-      img.src = "../assets/safetyPolicy.png";
-    }
+    img.src = getImageSource(resource.type);
     img.alt = resource.title;
-    img.classList.add('w-8', 'h-8', 'mr-4');
+    img.classList.add('w-10', 'h-10', 'object-contain', 'sm:w-12', 'sm:h-12');
+
+    imgWrapper.appendChild(img);
 
     const textWrapper = document.createElement('div');
-    textWrapper.classList.add('text-center', 'flex-1');
-  
-    const title = document.createElement('p');
-    title.classList.add('font-semibold', 'text-blue-900');
-    title.innerHTML = `<strong>${resource.title}</strong>`;
-  
+    textWrapper.classList.add('flex-grow');
+
+    const title = document.createElement('h3');
+    title.classList.add('text-lg', 'font-bold', 'text-blue-900', 'mb-1', 'sm:text-xl');
+    title.textContent = resource.title;
+
     const description = document.createElement('p');
-    description.classList.add('text-sm', 'text-blue-900');
+    description.classList.add('text-sm', 'text-blue-800', 'mb-2', 'sm:text-base');
     description.textContent = resource.description;
 
-    const link = document.createElement('a')
-    link.classList.add('text-sm', 'text-blue-900', 'font-semibold');
-    link.href = resource.link;
-    link.textContent = resource.link;
-    link.target = "_blank";
-        
     textWrapper.appendChild(title);
     textWrapper.appendChild(description);
-    textWrapper.appendChild(link);
-  
-    resourceDiv.appendChild(img);
+
+    // Only create and append the link if it exists and is not empty
+    if (resource.link && resource.link.trim() !== "") {
+        const link = document.createElement('a');
+        link.classList.add(
+            'text-sm', 'text-blue-600', 'hover:text-blue-800',
+            'underline', 'font-semibold'
+        );
+        link.href = resource.link;
+        link.textContent = "Learn More";
+        link.target = "_blank";
+        textWrapper.appendChild(link);
+    }
+
+    resourceDiv.appendChild(imgWrapper);
     resourceDiv.appendChild(textWrapper);
 
-    // Create the buttons wrapper (top-right corner)
+    // Add admin buttons
+    const buttonsWrapper = createAdminButtons(resource, resourceDiv);
+    resourceDiv.appendChild(buttonsWrapper);
+
+    return resourceDiv;
+}
+
+function createAdminButtons(resource, resourceDiv) {
     const buttonsWrapper = document.createElement('div');
-    buttonsWrapper.classList.add('absolute', 'top-8', 'right-4', 'flex', 'space-x-2');  // Important: absolute position relative to resourceDiv
-    buttonsWrapper.style.right = '22px';
+    buttonsWrapper.classList.add(
+        'flex', 'space-x-2', 'mt-2', 
+        'sm:absolute', 'sm:top-4', 'sm:right-4'
+    );
 
     // Create Edit Button
     const editButton = document.createElement('button');
     editButton.textContent = 'Edit';
-    editButton.classList.add('bg-blue-500', 'text-white', 'rounded', 'px-2', 'py-1', 'text-sm');
+    editButton.classList.add(
+        'bg-blue-500', 'text-white', 'rounded', 'px-3', 'py-1', 
+        'text-sm', 'hover:bg-blue-600', 'transition-colors'
+    );
     editButton.onclick = () => {
         const resourceId = resource._id; 
         localStorage.setItem('resourceId', resourceId);
-        window.location.href = "http://localhost:3000/admin/updateSafetyResources";
+        window.location.href = "/admin/updateSafetyResources";
     };
 
+    // Create Delete Button
     const deleteButton = document.createElement('button');
-    deleteButton.classList.add('bg-red-500', 'rounded', 'px-2', 'py-1');
+    deleteButton.classList.add(
+        'bg-red-500', 'hover:bg-red-600', 'rounded', 'px-3', 'py-1',
+        'transition-colors', 'flex', 'items-center', 'justify-center'
+    );
     
-    // Create and append the image inside the delete button
     const deleteIcon = document.createElement('img');
     deleteIcon.src = '../assets/delete.png';
     deleteIcon.alt = 'Delete';
     deleteIcon.classList.add('w-4', 'h-4');
     
     deleteButton.appendChild(deleteIcon);
-    
-
     deleteButton.onclick = async () => {
-        const resourceId = resource._id;
         try {
-            const response = await fetch(`http://localhost:3000/safetyResources/deleteSafetyResources/${resourceId}`, {
+            const response = await fetch(`/safetyResources/deleteSafetyResources/${resource._id}`, {
                 method: 'DELETE',
             });
             if (response.ok) {
-                // Successfully deleted, now remove the bubble from the DOM
                 resourceDiv.remove();
-                const alert = document.getElementById("alert");
-                alert.style.display = "block";
-                alert.style.color = "green";
-                alert.style.backgroundColor = "#ddffdd";
-                alert.style.border = "1px solid green";
-                alert.innerText = "Resource deleted successfully";
-                
-                // Set a timeout to hide the alert after 3 seconds
-                setTimeout(() => {
-                    alert.style.display = "none";
-                }, 3000);
+                showAlert("Resource deleted successfully", "success");
             } else {
-                const alert = document.getElementById("alert");
-                alert.style.display = "block";
-                alert.style.color = "red";
-                alert.style.backgroundColor = "#ffdddd";
-                alert.style.border = "1px solid red";
-                alert.innerText = "Failed to delete resource";
-                
-                // Set a timeout to hide the alert after 3 seconds
-                setTimeout(() => {
-                    alert.style.display = "none";
-                }, 3000);
+                showAlert("Failed to delete resource", "error");
             }
         } catch (error) {
             console.error('Error deleting resource:', error);
-            const alert = document.getElementById("alert");
-            alert.style.display = "block";
-            alert.style.color = "red";
-            alert.style.backgroundColor = "#ffdddd";
-            alert.style.border = "1px solid red";
-            alert.innerText = "Error deleting resource";
-            
-            // Set a timeout to hide the alert after 3 seconds
-            setTimeout(() => {
-                alert.style.display = "none";
-            }, 3000);
+            showAlert("Error deleting resource", "error");
         }
     };
 
-    // Append buttons to the wrapper
     buttonsWrapper.appendChild(editButton);
     buttonsWrapper.appendChild(deleteButton);
 
-    // Add the buttons to the resourceDiv
-    resourceDiv.appendChild(buttonsWrapper);
-
-    return resourceDiv;
+    return buttonsWrapper;
 }
 
+// Helper function to get image source based on resource type
+function getImageSource(type) {
+    const imageMap = {
+        'Emergency Contact': "../assets/phoneS.png",
+        'Safety Tip': "../assets/safetyTipS.png",
+        'Campus Safety Policy': "../assets/safetyPolicy.png"
+    };
+    return imageMap[type] || "";
+}
 
-const carousel = document.getElementById('carousel');
+function showAlert(message, type) {
+    const alert = document.getElementById("alert");
+    alert.classList.remove('hidden');
+    alert.className = `p-4 mb-4 rounded text-center ${type === "success" ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`;
+    alert.innerText = message;
 
-  
-// Dynamically add all resources to the carousel
-resources.forEach(resource => {
-    const resourceElement = createResource(resource);
-    carousel.appendChild(resourceElement);
-});
-})();*/
+    setTimeout(() => {
+        alert.classList.add('hidden');
+    }, 3000);
+}
+
+function showLoader() {
+    const loader = document.getElementById("mapLoader");
+    if (loader) loader.classList.remove('hidden');
+}
+
+function hideLoader() {
+    const loader = document.getElementById("mapLoader");
+    if (loader) loader.classList.add('hidden');
+}
+
+// Function to update active button styles
+function updateActiveButton(activeButton) {
+    const buttons = [
+        document.getElementById("btnViewContacts"),
+        document.getElementById("btnViewtips"),
+        document.getElementById("btnViewPolicies")
+    ];
+
+    buttons.forEach(button => {
+        if (button === activeButton) {
+            button.classList.add('bg-blue-600', 'text-white');
+            button.classList.remove('bg-blue-200', 'text-blue-800');
+        } else {
+            button.classList.add('bg-blue-200', 'text-blue-800');
+            button.classList.remove('bg-blue-600', 'text-white');
+        }
+    });
+}
+
+async function displayResources(resources, type) {
+    const carousel = document.getElementById('carousel');
+    carousel.innerHTML = '';
+    currentResourceType = type;
+
+    resources.forEach(resource => {
+        const resourceElement = createResource(resource);
+        if (resourceElement) {
+            carousel.appendChild(resourceElement);
+        }
+    });
+
+    hideLoader();
+}
+
+// Initialize page and add event listeners
+async function initPage() {
+    showLoader();
+    
+    const resources = await loadSafetyResources();
+    
+    // Get buttons
+    const btnViewContacts = document.getElementById("btnViewContacts");
+    const btnViewTips = document.getElementById("btnViewtips");
+    const btnViewPolicies = document.getElementById("btnViewPolicies");
+    
+    // Add click event listeners
+    btnViewContacts.addEventListener("click", () => {
+        displayResources(resources, "Emergency Contact");
+        updateActiveButton(btnViewContacts);
+    });
+    
+    btnViewTips.addEventListener("click", () => {
+        displayResources(resources, "Safety Tip");
+        updateActiveButton(btnViewTips);
+    });
+    
+    btnViewPolicies.addEventListener("click", () => {
+        displayResources(resources, "Campus Safety Policy");
+        updateActiveButton(btnViewPolicies);
+    });
+
+    // Initially display emergency contacts and set active button
+    displayResources(resources, "Emergency Contact");
+    updateActiveButton(btnViewContacts);
+}
+
+// Initialize the page when the DOM is fully loaded
+document.addEventListener('DOMContentLoaded', initPage);

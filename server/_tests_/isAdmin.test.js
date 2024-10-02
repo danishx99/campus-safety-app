@@ -1,85 +1,94 @@
 const jwt = require("jsonwebtoken");
-const { isAdmin } = require("../middlewares/isAdmin"); // Adjust the path as needed
+const path = require("path");
+const { isAdmin } = require("../middlewares/isAdmin");
+const User = require("../schemas/User");
 
-jest.mock("jsonwebtoken"); // Mock the jwt module
+jest.mock("jsonwebtoken");
+jest.mock("path");
+jest.mock("../schemas/User");
 
 describe("isAdmin middleware", () => {
   let req, res, next;
 
   beforeEach(() => {
     req = {
-      cookies: {}, // Mock cookies object
+      cookies: {},
     };
     res = {
-      redirect: jest.fn(), // Mock redirect function
-      status: jest.fn().mockReturnThis(), // Mock status and chaining
-      json: jest.fn(), // Mock json function for sending responses
+      redirect: jest.fn(),
+      status: jest.fn().mockReturnThis(),
+      sendFile: jest.fn(),
     };
-    next = jest.fn(); // Mock next function
+    next = jest.fn();
   });
 
   afterEach(() => {
-    jest.clearAllMocks(); // Clear mocks between tests
+    jest.clearAllMocks();
   });
 
   it("should redirect to login if no token is provided", async () => {
     await isAdmin(req, res, next);
 
-    // Assert that res.redirect was called with '/login'
     expect(res.redirect).toHaveBeenCalledWith("/login");
-    expect(next).not.toHaveBeenCalled(); // next() should not be called
+    expect(next).not.toHaveBeenCalled();
   });
 
   it("should redirect to login if token verification fails", async () => {
     req.cookies.token = "invalidToken";
 
-    // Mock jwt.verify to throw an error
     jwt.verify.mockImplementation(() => {
       throw new Error("Invalid token");
     });
 
     await isAdmin(req, res, next);
 
-    // Assert that res.redirect was called with '/login'
     expect(res.redirect).toHaveBeenCalledWith("/login");
     expect(next).not.toHaveBeenCalled();
   });
 
-  it("should return 403 if user is not an admin", async () => {
+  it("should return 403 and send authorization error HTML if user is not an admin", async () => {
     req.cookies.token = "validToken";
 
-    // Mock jwt.verify to return a decoded token with a non-admin role
     jwt.verify.mockReturnValue({
       userEmail: "user@example.com",
-      role: "user", // Not an admin
+      role: "user",
     });
+
+    path.join.mockReturnValue("/path/to/authorisation.html");
 
     await isAdmin(req, res, next);
 
-    // Assert that a 403 status is returned with the correct error message
     expect(res.status).toHaveBeenCalledWith(403);
-    expect(res.json).toHaveBeenCalledWith({
-      error:
-        "You are not authorized to access this resource (Not an admin). This page will probs be replaced with a dedicated page for this error",
-    });
-
-    expect(next).not.toHaveBeenCalled(); // next() should not be called
+    expect(res.sendFile).toHaveBeenCalledWith("/path/to/authorisation.html");
+    expect(next).not.toHaveBeenCalled();
   });
 
   it("should call next if the user is an admin", async () => {
     req.cookies.token = "validAdminToken";
 
-    // Mock jwt.verify to return a decoded token with an admin role
     jwt.verify.mockReturnValue({
       userEmail: "admin@example.com",
-      role: "admin", // Admin role
+      role: "admin",
     });
 
     await isAdmin(req, res, next);
 
-    // Assert that next() was called
     expect(next).toHaveBeenCalled();
     expect(res.status).not.toHaveBeenCalled();
     expect(res.redirect).not.toHaveBeenCalled();
+    expect(res.sendFile).not.toHaveBeenCalled();
+  });
+
+  it("should handle errors and redirect to login", async () => {
+    req.cookies.token = "validToken";
+
+    jwt.verify.mockImplementation(() => {
+      throw new Error("Some unexpected error");
+    });
+
+    await isAdmin(req, res, next);
+
+    expect(res.redirect).toHaveBeenCalledWith("/login");
+    expect(next).not.toHaveBeenCalled();
   });
 });

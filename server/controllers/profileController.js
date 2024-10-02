@@ -38,31 +38,31 @@ exports.updateUserDetails = async (req, res) => {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const email = decoded.userEmail;
 
-    const { phone, newPassword, profilePicture } = req.body;
+    let updateData = {};
+    if (req.body.phone) updateData.phone = req.body.phone;
+    if (req.body.profilePicture) updateData.profilePicture = req.body.profilePicture;
 
-    const updateData = {};
-    if (phone) updateData.phone = phone;
-    if (newPassword) {
-      updateData.password = await bcrypt.hash(newPassword, 10);
-    }
-    if (profilePicture) {
-      updateData.profilePicture = profilePicture;
+    if (req.body.newPassword) {
+      const hashedPassword = await bcrypt.hash(req.body.newPassword, 10);
+      updateData.password = hashedPassword;
     }
 
-    const user = await User.findOneAndUpdate(
+    const updatedUser = await User.findOneAndUpdate(
       { email },
       updateData,
       { new: true, runValidators: true }
-    ).select('-password');
+    );
 
-    if (!user) {
-      return res.status(404).json({ error: 'User not found' });
+    if (!updatedUser) {
+      return res.status(404).json({ error: "User not found" });
     }
 
-    res.status(200).json({ message: 'User updated successfully', user });
+    res.status(200).json({
+      message: "User updated successfully",
+      user: updatedUser,
+    });
   } catch (error) {
-    console.error('Error updating user details:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    console.error("Error updating user details:", error);
+    res.status(500).json({ error: "Internal server error" });
   }
 };
-

@@ -18,12 +18,31 @@ const Code = require('../schemas/Code');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const mailer = require('../utils/mailingTool');
+const crypto = require('crypto');
+const nodemailer = require('nodemailer');
 
+jest.mock('nodemailer');
 jest.mock('../schemas/User');
 jest.mock('../schemas/Code');
 jest.mock('bcryptjs');
 jest.mock('jsonwebtoken');
 jest.mock('../utils/mailingTool');
+jest.mock('crypto');
+
+// Mock the nodemailer createTransport function
+const mockTransporter = {
+  verify: jest.fn().mockResolvedValue(true),
+  sendMail: jest.fn().mockResolvedValue({ messageId: 'mockMessageId' })
+};
+nodemailer.createTransport.mockReturnValue(mockTransporter);
+
+// Mock the mailingTool
+jest.mock('../utils/mailingTool', () => ({
+  sendVerificationEmail: jest.fn().mockResolvedValue(),
+  sendRequest: jest.fn().mockResolvedValue(),
+  sendSuccess: jest.fn().mockResolvedValue(),
+  resendVerificationEmail: jest.fn().mockResolvedValue()
+}));
 
 describe('Auth Controller', () => {
   let req, res;
@@ -64,12 +83,16 @@ describe('Auth Controller', () => {
       bcrypt.hash.mockResolvedValue('hashedPassword');
       const mockSave = jest.fn().mockResolvedValue();
       User.prototype.save = mockSave;
+      crypto.randomBytes.mockReturnValue({
+        toString: jest.fn().mockReturnValue('verificationToken')
+      });
 
       await register(req, res);
 
       expect(User.findOne).toHaveBeenCalledWith({ email: 'test@example.com' });
       expect(bcrypt.hash).toHaveBeenCalledWith('password123', 10);
       expect(mockSave).toHaveBeenCalled();
+      expect(mailer.sendVerificationEmail).toHaveBeenCalled();
       expect(res.status).toHaveBeenCalledWith(201);
       expect(res.json).toHaveBeenCalledWith({ message: 'Registration successful!' });
     });
@@ -100,6 +123,7 @@ describe('Auth Controller', () => {
         role: 'user',
         firstName: 'John',
         lastName: 'Doe',
+        isVerified: true,
         save: jest.fn()
       };
 
@@ -125,6 +149,21 @@ describe('Auth Controller', () => {
 
       expect(res.status).toHaveBeenCalledWith(401);
       expect(res.json).toHaveBeenCalledWith({ error: 'Invalid credentials' });
+    });
+
+    it('should return error for unverified email', async () => {
+      req.body = { email: 'user@example.com', password: 'password123' };
+      User.findOne.mockResolvedValue({ 
+        email: 'user@example.com',
+        password: 'hashedPassword',
+        isVerified: false
+      });
+      bcrypt.compare.mockResolvedValue(true);
+
+      await login(req, res);
+
+      expect(res.status).toHaveBeenCalledWith(401);
+      expect(res.json).toHaveBeenCalledWith({ error: 'Your email is not verified', email: 'user@example.com' });
     });
   });
 
@@ -261,7 +300,7 @@ describe('Auth Controller', () => {
 
       expect(jwt.verify).toHaveBeenCalledWith('validToken', process.env.JWT_SECRET);
       expect(User.findOne).toHaveBeenCalledWith({ email: 'user@example.com' });
-      // Note: The current implementation doesn't return anything, so we can't test the response
+      expect(res.json).toHaveBeenCalledWith({ isVerified: true });
     });
 
     it('should handle error if user not found', async () => {
@@ -278,8 +317,7 @@ describe('Auth Controller', () => {
 
   describe('sendVerification', () => {
     it('should send verification email successfully', async () => {
-      req.cookies.token = 'validToken';
-      jwt.verify.mockReturnValue({ userEmail: 'user@example.com' });
+      req.body = { email: 'user@example.com' };
       const mockUser = {
         email: 'user@example.com',
         verificationToken: 'token',
@@ -287,18 +325,20 @@ describe('Auth Controller', () => {
         save: jest.fn()
       };
       User.findOne.mockResolvedValue(mockUser);
+      crypto.randomBytes.mockReturnValue({
+        toString: jest.fn().mockReturnValue('verificationToken')
+      });
 
       await sendVerification(req, res);
 
-      expect(jwt.verify).toHaveBeenCalledWith('validToken', process.env.JWT_SECRET);
       expect(User.findOne).toHaveBeenCalledWith({ email: 'user@example.com' });
       expect(mailer.sendVerificationEmail).toHaveBeenCalled();
-      expect(res.json).toHaveBeenCalledWith({ message: 'Verification Email Successfully Sent!' });
+      expect(res.status).toHaveBeenCalledWith(200);
+      expect(res.json).toHaveBeenCalledWith({ success: 'Verification Email Successfully Sent!' });
     });
 
     it('should handle error if user not found', async () => {
-      req.cookies.token = 'validToken';
-      jwt.verify.mockReturnValue({ userEmail: 'nonexistent@example.com' });
+      req.body = { email: 'nonexistent@example.com' };
       User.findOne.mockResolvedValue(null);
 
       await sendVerification(req, res);
@@ -347,8 +387,7 @@ describe('Auth Controller', () => {
 
   describe('resendVerificationEmail', () => {
     it('should resend verification email successfully', async () => {
-      req.cookies.token = 'validToken';
-      jwt.verify.mockReturnValue({ userEmail: 'user@example.com' });
+      req.body = { email: 'user@example.com' };
       const mockUser = {
         email: 'user@example.com',
         isVerified: false,
@@ -357,10 +396,12 @@ describe('Auth Controller', () => {
         save: jest.fn()
       };
       User.findOne.mockResolvedValue(mockUser);
+      crypto.randomBytes.mockReturnValue({
+        toString: jest.fn().mockReturnValue('newVerificationToken')
+      });
 
       await resendVerificationEmail(req, res);
 
-      expect(jwt.verify).toHaveBeenCalledWith('validToken', process.env.JWT_SECRET);
       expect(User.findOne).toHaveBeenCalledWith({ email: 'user@example.com' });
       expect(mailer.resendVerificationEmail).toHaveBeenCalled();
       expect(res.status).toHaveBeenCalledWith(200);
@@ -368,8 +409,7 @@ describe('Auth Controller', () => {
     });
 
     it('should return error if user is already verified', async () => {
-      req.cookies.token = 'validToken';
-      jwt.verify.mockReturnValue({ userEmail: 'user@example.com' });
+      req.body = { email: 'user@example.com' };
       User.findOne.mockResolvedValue({ email: 'user@example.com', isVerified: true });
 
       await resendVerificationEmail(req, res);

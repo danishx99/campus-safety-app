@@ -80,7 +80,7 @@ exports.register = async (req,res) =>{
 
 exports.login = async (req, res) => {
     try {
-        console.log("Login endpoint reached");
+        
         
         const { email, password, rememberMe, FCMtoken } = req.body;
 
@@ -100,6 +100,13 @@ exports.login = async (req, res) => {
 
         // Use rememberMe to set different token expiration times
         const tokenExpiration = rememberMe ? "7d" : "24h"; // 7 days or 24 hours
+
+        // check if user is verified
+        if (!user.isVerified) {
+            return res.status(401).json({ error: "Your email is not verified", email: email });
+        }
+
+       
 
         // sign JWT with email and role
         const token = jwt.sign(
@@ -346,9 +353,7 @@ exports.isVerified = async (req,res) =>{
 // send verification email
 exports.sendVerification= async (req,res)=>{
 
-  const token = req.cookies.token;
-  const decoded = jwt.verify(token, process.env.JWT_SECRET);
-  const email = decoded.userEmail;
+  const email = req.body.email;
 
   try {
 
@@ -373,11 +378,10 @@ exports.sendVerification= async (req,res)=>{
     await mailer.sendVerificationEmail(email,url,verificationToken);
 
     console.log("Verification Email Successfully Sent!");
-    res.json({message:"Verification Email Successfully Sent!"});
-
-    
+    res.status(200).json({success:"Verification Email Successfully Sent!"});
   } catch (error) {
     console.log("Error sending verification email :", error);
+    res.status(500).json({ error: "Error sending verification email" });
   }
 };
 
@@ -385,9 +389,7 @@ exports.sendVerification= async (req,res)=>{
 exports.verifyEmail = async (req,res) =>{
 
     const { token } = req.body;
-    // console.log("Token is: ",token);
-    
-
+   
     try {
         // Find user with the corresponding verification token
         const user = await User.findOne({
@@ -407,7 +409,6 @@ exports.verifyEmail = async (req,res) =>{
         await user.save();
         console.log("Email verified succesfully");
         
-
         res.status(200).json({ 
           message: 'Email verified successfully!',
           redirect: user.role // Include the user's role for redirection
@@ -421,11 +422,7 @@ exports.verifyEmail = async (req,res) =>{
 // Resend verification email (if token expires or email was missed)
 exports.resendVerificationEmail = async (req, res) => {
 
-    // const {email}=req.body;
-
-    const token = req.cookies.token;
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const email = decoded.userEmail;
+    const { email } = req.body;
   
     try {
 

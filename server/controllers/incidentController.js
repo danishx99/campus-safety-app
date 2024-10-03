@@ -249,11 +249,6 @@ exports.getIncidentsByGroup = async (req, res) => {
   }
 };
 
-
-
-
-
-
 exports.getIncidentImage = async (req, res) => {
   const { incidentId } = req.params;
   console.log("Incident ID: ", incidentId);
@@ -408,7 +403,6 @@ exports.updateIncidentStatus = async (req, res) => {
     res.status(500).json({ error: "Error updating incident statuses" });
   }
 };
-
 
 exports.getIncidentByUser = async (req, res) => {
   try {

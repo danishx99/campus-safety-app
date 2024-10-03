@@ -124,6 +124,35 @@ export function handleIncomingMessages(notifier) {
 
         //Add animation to the assigned circle
         assignedCircle.classList.add("animationOn");
+
+            //Hide the map + statusBox + Cancel button (SearchPhase Div)
+        document.getElementById("searchPhase").style.display = "none";
+
+        //Show the adminDiv with the assigned admin details
+        const adminDiv = document.getElementById("assignedPhase");
+
+        //Extract the admin details from the payload
+        const adminFirstName = payload.data.firstName;
+        const adminLastName = payload.data.lastName;
+        const adminPhone = payload.data.phone;
+        const adminEmail = payload.data.email;
+
+        
+        //Populate the admin details
+        let adminFirstNameId = document.getElementById("adminFirstName");
+        let adminLastNameId = document.getElementById("adminLastName");
+        let adminPhoneId = document.getElementById("adminCellphone");
+        let adminEmailId = document.getElementById("adminEmail");
+
+        adminFirstNameId.textContent = adminFirstName;
+        adminLastNameId.textContent = adminLastName;
+        adminPhoneId.textContent = adminPhone;
+        adminPhoneId.href = `tel:${adminPhone}`; 
+        adminEmailId.textContent = adminEmail;
+       
+        //Show the admin div
+        adminDiv.style.display = "block";
+
       }
 
       if (status === "Resolved") {

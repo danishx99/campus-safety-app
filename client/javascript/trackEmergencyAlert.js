@@ -164,11 +164,22 @@ document.addEventListener("DOMContentLoaded", async function () {
 
   // Await the emergency alert data and handle null case
   let emergencyAlertData = await getEmergencyAlertDetails(emergencyAlertId);
+  let adminData = emergencyAlertData.adminData;
+
   emergencyAlertData = emergencyAlertData.emergencyAlert;
+
+
+  
+  
 
   const currentStatusOfEmergencyAlert = emergencyAlertData.status;
   const currentRadiusOfEmergencyAlert = emergencyAlertData.radiusBeingSearched;
   const currentAssignedTo = emergencyAlertData.assignedTo;
+
+  if (currentStatusOfEmergencyAlert === "Searching") {
+    //Show the map + statusBox + Cancel button (SearchPhase Div)
+    document.getElementById("searchPhase").style.display = "block";
+  }
 
   if (currentStatusOfEmergencyAlert === "Assigned") {
     //Change the color of the assigned circle to blue
@@ -182,6 +193,35 @@ document.addEventListener("DOMContentLoaded", async function () {
 
     //Add animation to the assigned circle
     assignedCircle.classList.add("animationOn");
+
+
+    //Hide the map + statusBox + Cancel button (SearchPhase Div)
+    document.getElementById("searchPhase").style.display = "none";
+
+    //Show the adminDiv with the assigned admin details
+
+    //Extract the admin details
+    const adminFirstName = adminData.firstName;
+    const adminLastName = adminData.lastName;
+    const adminPhone = adminData.phone;
+    const adminEmail = adminData.email;
+
+    const adminDiv = document.getElementById("assignedPhase");
+    
+    //Show the admin div
+    adminDiv.style.display = "block";
+
+    //Populate the admin details
+    let adminFirstNameId = document.getElementById("adminFirstName");
+    let adminLastNameId = document.getElementById("adminLastName");
+    let adminPhoneId = document.getElementById("adminCellphone");
+    let adminEmailId = document.getElementById("adminEmail");
+
+    adminFirstNameId.textContent = adminFirstName;
+    adminLastNameId.textContent = adminLastName;
+    adminPhoneId.textContent = adminPhone;
+    adminPhoneId.href = `tel:${adminPhone}`; 
+    adminEmailId.textContent = adminEmail;
   }
 
   if (currentStatusOfEmergencyAlert === "Resolved") {

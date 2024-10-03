@@ -5,6 +5,7 @@ const jwt = require("jsonwebtoken");
 
 const _sendNotification = require("../utils/sendNotification");
 
+
 //placeholder logic for the handling the back end of the emergency alert system
 
 exports.tempUpdateEmergency = async (req, res) => {
@@ -17,11 +18,18 @@ exports.tempUpdateEmergency = async (req, res) => {
     const sender = decoded.userEmail;
     const user = await User.findOne({ email: sender });
 
+    const findAdmindDetails = await User.findOne({ email:assignedTo });
+
     _sendNotification([user.FCMtoken], {
       emergencyAlertId,
       status: "Assigned",
+      firstName: findAdmindDetails.firstName,
+      lastName: findAdmindDetails.lastName,
+      email: findAdmindDetails.email,
+      phone: findAdmindDetails.phone,
     });
 
+   
     //update the emergency alert with the assignedTo field and its status to "Assigned"
     await Emergency.findByIdAndUpdate(emergencyAlertId, {
       assignedTo,
@@ -107,6 +115,17 @@ exports.getEmergencyAlertDetails = async (req, res) => {
   try {
     const emergencyAlertId = req.params.emergencyAlertId;
     const emergency = await Emergency.findById(emergencyAlertId);
+
+    //Check if this emergency alert has been assigned to an admin , if it has , append the admin details to the response so that the client can display the admin details
+    //Maybe in the future(when we have time), when users go to "http://127.0.0.1:3000/user/emergencyalerts/track/66fdc83c1d5e9598640a19c6",
+    //and the emergency alert has been resolved, show the admin details that resolved the emergency alert, or just say this emergency alert has been resolved already
+    if (emergency.status ==="Assigned") {
+      const assignedToAdmin = await User.findOne({ email: emergency.assignedTo });
+      return res.status(200).json({ emergencyAlert: emergency, adminData: assignedToAdmin });
+    }
+
+
+
     res.status(200).json({ emergencyAlert: emergency });
   } catch (error) {
     console.log(error);
@@ -154,6 +173,12 @@ async function checkIfAdminHasBeenAssigned(emergencyAlertId) {
   return emergency.assignedTo;
 }
 
+async function checkIfCancelled(emergencyAlertId) {
+  let emergency = await Emergency.findById(emergencyAlertId);
+  return emergency.status === "Cancelled";
+}
+
+
 exports.findAndNotifyAdmins = async (req, res) => {
   try {
     const { emergencyAlertId, location } = req.body;
@@ -186,6 +211,20 @@ exports.findAndNotifyAdmins = async (req, res) => {
     const users = await User.find({ role: "admin" });
 
     for (const radius of proximities) {
+
+      //Check if the emergency alert has been cancelled
+      const cancelled = await checkIfCancelled(emergencyAlertId);
+      if (cancelled) {
+        // //Send notification to the client that the emergency alert has been cancelled(technically not needed because the client will be redirected to the home page when they cancel the alert)
+        // await _sendNotification([user.FCMtoken], {
+        //   emergencyAlertId,
+        //   status: "Cancelled",
+        // });
+        return res.status(200).json({ message: "Emergency alert cancelled" });
+      }
+
+
+
       //3 second delay
       await new Promise((resolve) => setTimeout(resolve, 3000));
 
@@ -219,22 +258,32 @@ exports.findAndNotifyAdmins = async (req, res) => {
 
         await new Promise((resolve) => setTimeout(resolve, 10000));
 
+        
+
         const assignedToAdmin = await checkIfAdminHasBeenAssigned(
           emergencyAlertId
         );
         console.log(`Assigned to admin: ${assignedToAdmin}`);
 
         if (assignedToAdmin) {
-          await _sendNotification([user.FCMtoken], {
-            emergencyAlertId,
-            status: "Assigned",
-          });
+          //This will eventually be removed beacause when an admin is assigned, we will notify the client from the admin side controller
+          // await _sendNotification([user.FCMtoken], {
+          //   emergencyAlertId,
+          //   status: "Assigned",
+          // });
           return res
             .status(200)
             .json({ message: "Admin assigned successfully" });
         }
       }
+
     }
+
+    const finalCancelledCheck = await checkIfCancelled(emergencyAlertId);
+    if (finalCancelledCheck) {
+      return res.status(200).json({ message: "Emergency alert cancelled" });
+    }
+
 
     // If no admin was assigned after all proximity ranges
     const allAdminTokens = users.map((admin) => admin.FCMtoken);
@@ -248,9 +297,9 @@ exports.findAndNotifyAdmins = async (req, res) => {
       emergencyAlertId,
     });
 
-    //update the value of radiusBeingSearched in the emergency alert to -1 to indicate that all admins have been notified
+    //update the value of radiusBeingSearched in the emergency alert to 999 to indicate that all admins have been notified
     await Emergency.findByIdAndUpdate(emergencyAlertId, {
-      radiusBeingSearched: 999,
+      radiusBeingSearched: 999, //For client message "expanding search radius include everyone"
     });
 
     //send a notification to the client to notify them that the radius now includes everyone
@@ -264,16 +313,21 @@ exports.findAndNotifyAdmins = async (req, res) => {
     const finalAssignmentCheck = await checkIfAdminHasBeenAssigned(
       emergencyAlertId
     );
-    const status = finalAssignmentCheck ? "Assigned" : "No Admin Assigned";
-    await _sendNotification([user.FCMtoken], { emergencyAlertId, status });
+
+   
     //update the value of assignedTo in the db to "No Admin Assigned" if no admin has been assigned
     if (!finalAssignmentCheck) {
+
       await Emergency.findByIdAndUpdate(emergencyAlertId, {
         assignedTo: "No Admin Assigned",
       });
+
+      await _sendNotification([user.FCMtoken], { emergencyAlertId, status: "No Admin Assigned" }); //No admin assigned is for the client to know that no admin has been assigned and for it to show the last message "Please be patient"
+      
     }
 
-    return res.status(200).json({ message: "Process completed", status });
+    return res.status(200).json({ message: "Process completed" });
+
   } catch (error) {
     console.error("Error in findAndNotifyAdmins:", error);
     return res

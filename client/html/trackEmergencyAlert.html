@@ -327,7 +327,7 @@
           Test Error
         </div>
 
-        <!--Emergency Alert Details + Map-->
+        <!--Emergency Alert Details + Map // Big white card-->
         <div id="emergencyDetails" class="mb-5 bg-white rounded-lg shadow-md p-4">
           <h3 class="text-xl font-bold mb-3 text-[#015EB8]">
             Emergency Alert Details
@@ -341,7 +341,8 @@
           <div class="flex items-center mb-1">
             <div class="text-gray-900" id="alertDescription">Loading...</div>
           </div>
-
+           
+          <!--Status tracker-->
           <div class="w-full max-w-xl mx-auto py-4">
             <!-- Status Tracker -->
             <div class="flex items-center">
@@ -410,22 +411,179 @@
             </div>
           </div>
 
-          <p id="INFO"
-            class="text-base font-medium text-gray-700 bg-gray-100 border-l-4 border-[#015EB8] p-2 mb-2 rounded-lg">
-            Loading...
-          </p>
+          <!--Search phase content-->
+          <div id="searchPhase" class="hidden">
 
-          <!-- Loader and Map -->
-          <div class="mx-auto" id="mapLoader"></div>
-          <div class="mb-4" id="map"></div>
+              <!--Text that gets updated when proximity changes-->
+              <p id="INFO"
+              class="text-base font-medium text-gray-700 bg-gray-100 border-l-4 border-[#015EB8] p-2 mb-2 rounded-lg">
+              Loading...
+              </p>
 
-          <div class="flex justify-end">
-            <button id="cancelRequest"
-              class="bg-red-500 text-white px-4 py-2 text-sm rounded-lg hover:bg-red-700 transition-colors duration-200">
-              Cancel Request
-            </button>
+              <!-- Loader and Map -->
+              <div class="mx-auto" id="mapLoader"></div>
+              <div class="mb-4" id="map"></div>
+
+
+              <!-- Cancel Request Button -->
+              <div class="flex justify-end">
+              <button id="cancelRequest"
+                class="bg-red-500 text-white px-4 py-2 text-sm rounded-lg hover:bg-red-700 transition-colors duration-200">
+                Cancel Request
+              </button>
+              </div>
+              <!-- Cancel Request Button Error -->
+              <div class="alert-box my-3" id="cancelAlert" role="cancelAlert">Test Error</div>
+
           </div>
-          <div class="alert-box my-3" id="cancelAlert" role="cancelAlert">Test Error</div>
+
+          <!-- Assigned Phase Content -->
+        <div id="assignedPhase" class="bg-white rounded-lg shadow-md p-4 hidden">
+          <h3 class="text-xl font-bold mb-3 text-[#015EB8]">Admin Assigned</h3>
+      
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <!-- First Name -->
+        <div>
+          <p class="text-gray-700 font-semibold">First Name:</p>
+          <p id="adminFirstName" class="text-gray-900">Loading...</p>
+        </div>
+
+        <!-- Last Name -->
+        <div>
+          <p class="text-gray-700 font-semibold">Last Name:</p>
+          <p id="adminLastName" class="text-gray-900">Loading...</p>
+        </div>
+
+        <!-- Email -->
+        <div>
+          <p class="text-gray-700 font-semibold">Email:</p>
+          <p id="adminEmail" class="text-gray-900">Loading...</p>
+        </div>
+
+        <!-- Cellphone Number -->
+        <div>
+          <p class="text-gray-700 font-semibold">Cellphone:</p>
+          <a href="#" id="adminCellphone" class="text-blue-500">Loading...</a>
+        </div>
+      </div>
+
+      <!-- Chat to admin button -->
+      <div class="flex justify-end mt-4">
+        <button class="bg-blue-500 text-white px-4 py-2 text-sm rounded-lg hover:bg-blue-700 transition-colors duration-200" id="chatToAdminButton">
+          Chat to admin
+        </button>
+      </div>
+        </div>
+
+        <!--Chatbox feature-->
+      
+      <div id="chat-container" class="hidden fixed bottom-16 right-4 w-96 max-sm:bottom-20">
+          <div class="bg-white shadow-md rounded-lg max-w-lg w-full">
+              <div class="p-4 border-b bg-blue-500 text-white rounded-t-lg flex justify-between items-center">
+                  <p class="text-lg font-semibold">Admin Bot</p>
+                  <button id="close-chat" class="text-gray-300 hover:text-gray-400 focus:outline-none focus:text-gray-400">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                      </svg>
+                  </button>
+              </div>
+              <div id="chatbox" class="p-4 h-80 overflow-y-auto">
+                <!-- Chat messages will be displayed here -->
+                <div class="mb-2 text-right">
+                  <p class="bg-blue-500 text-white rounded-lg py-2 px-4 inline-block">hello</p>
+                </div>
+                <div class="mb-2">
+                  <p class="bg-gray-200 text-gray-700 rounded-lg py-2 px-4 inline-block">This is a response from the chatbot.</p>
+                </div>
+                <div class="mb-2 text-right">
+                  <p class="bg-blue-500 text-white rounded-lg py-2 px-4 inline-block">this example of chat</p>
+                </div>
+                <div class="mb-2">
+                  <p class="bg-gray-200 text-gray-700 rounded-lg py-2 px-4 inline-block">This is a response from the chatbot.</p>
+                </div>
+                <div class="mb-2 text-right">
+                  <p class="bg-blue-500 text-white rounded-lg py-2 px-4 inline-block">design with tailwind</p>
+                </div>
+                <div class="mb-2">
+                  <p class="bg-gray-200 text-gray-700 rounded-lg py-2 px-4 inline-block">This is a response from the chatbot.</p>
+                </div>
+              </div>
+              <div class="p-4 border-t flex">
+                  <input id="user-input" type="text" placeholder="Type a message" class="w-full px-3 py-2 border rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                  <button id="send-button" class="bg-blue-500 text-white px-4 py-2 rounded-r-md hover:bg-blue-600 transition duration-300">Send</button>
+              </div>
+          </div>
+      </div>
+      <script>
+  const chatbox = document.getElementById("chatbox");
+  const chatContainer = document.getElementById("chat-container");
+  const userInput = document.getElementById("user-input");
+  const sendButton = document.getElementById("send-button");
+  const openChatButton = document.getElementById("chatToAdminButton");
+  const closeChatButton = document.getElementById("close-chat");
+  
+  let isChatboxOpen = false; // Set the initial state to open
+  
+  // Function to toggle the chatbox visibility
+  function toggleChatbox() {
+      chatContainer.classList.toggle("hidden");
+      isChatboxOpen = !isChatboxOpen; // Toggle the state
+  }
+  
+  // Add an event listener to the open chat button
+  openChatButton.addEventListener("click", toggleChatbox);
+  
+  // Add an event listener to the close chat button
+  closeChatButton.addEventListener("click", toggleChatbox);
+  
+  // Add an event listener to the send button
+  sendButton.addEventListener("click", function () {
+      const userMessage = userInput.value;
+      if (userMessage.trim() !== "") {
+          addUserMessage(userMessage);
+          respondToUser(userMessage);
+          userInput.value = "";
+      }
+  });
+  
+  userInput.addEventListener("keyup", function (event) {
+      if (event.key === "Enter") {
+          const userMessage = userInput.value;
+          addUserMessage(userMessage);
+          respondToUser(userMessage);
+          userInput.value = "";
+      }
+  });
+  
+  function addUserMessage(message) {
+      const messageElement = document.createElement("div");
+      messageElement.classList.add("mb-2", "text-right");
+      messageElement.innerHTML = `<p class="bg-blue-500 text-white rounded-lg py-2 px-4 inline-block">${message}</p>`;
+      chatbox.appendChild(messageElement);
+      chatbox.scrollTop = chatbox.scrollHeight;
+  }
+  
+  function addBotMessage(message) {
+      const messageElement = document.createElement("div");
+      messageElement.classList.add("mb-2");
+      messageElement.innerHTML = `<p class="bg-gray-200 text-gray-700 rounded-lg py-2 px-4 inline-block">${message}</p>`;
+      chatbox.appendChild(messageElement);
+      chatbox.scrollTop = chatbox.scrollHeight;
+  }
+  
+  function respondToUser(userMessage) {
+      // Replace this with your chatbot logic
+      setTimeout(() => {
+          addBotMessage("This is a response from the chatbot.");
+      }, 500);
+  }
+  
+ 
+      </script>
+
+      <!--Chatbox feature END-->
+
+
 
 
         </div>

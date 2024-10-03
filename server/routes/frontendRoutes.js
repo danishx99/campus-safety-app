@@ -72,7 +72,7 @@ router.get("/user", isUser, (req, res) => {
 });
 
 //Incident Reporting
-router.get("/user/reportIncident", (req, res) => {
+router.get("/user/reportIncident", isUser, (req, res) => {
   res.sendFile(
     path.join(__dirname, "../../client/html", "userIncidentReporting.html")
   );
@@ -103,7 +103,7 @@ router.get("/admin/safetyResources", isAdmin, (req, res) => {
   );
 });
 
-router.get("/user/safetyResources", (req, res) => {
+router.get("/user/safetyResources", isUser,(req, res) => {
   res.sendFile(
     path.join(__dirname, "../../client/html", "userSafetyResources.html")
   );
@@ -144,27 +144,26 @@ router.get("/admin/transportationManagement", isAdmin, (req, res) => {
   );
 });
 
-router.get("/admin/profileManagement", isAdmin, authMiddleware, (req, res) => {
+router.get("/admin/profileManagement", isAdmin, (req, res) => {
   res.sendFile(
     path.join(__dirname, "../../client/html", "adminProfileManagement.html")
   );
 });
-router.get("/user/profileManagement", authMiddleware, (req, res) => {
+router.get("/user/profileManagement", isUser, (req, res) => {
   res.sendFile(
     path.join(__dirname, "../../client/html", "userProfileManagement.html")
   );
 });
 
-router.get("/panic", (req, res) => {
-  res.sendFile(path.join(__dirname, "../../client/html", "panicButton.html"));
-});
 
-router.get("/user/campusNavigation", (req, res) => {
+router.get("/user/campusNavigation", isUser,(req, res) => {
   res.sendFile(
     path.join(__dirname, "../../client/html", "userMapServices.html")
   );
 });
 
+router.get("/user/emergencyAlerts", isUser,(req, res) =>{
+  res.sendFile(path.join(__dirname, "../../client/html", "userEmergencyAlerts.html"));    
 router.get("/user/emergencyAlerts", (req, res) => {
   res.sendFile(
     path.join(__dirname, "../../client/html", "userEmergencyAlerts.html")

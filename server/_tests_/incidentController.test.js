@@ -5,7 +5,9 @@ const {
   getUserDetails,
   deleteAllIncidents,
   updateIncidentStatus,
-  getIncidentByUser
+  getIncidentByUser,
+  reportExternalIncident,
+  getIncidentsByGroup
 } = require('../controllers/incidentController');
 const Incident = require('../schemas/Incident');
 const User = require('../schemas/User');
@@ -47,6 +49,8 @@ describe('Incident Controller', () => {
       send: jest.fn(),
       cookie: jest.fn()
     };
+    process.env.EXTERNAL_GROUP_TOKEN = 'mockExternalToken';
+    process.env.JWT_SECRET = 'mockJwtSecret';
   });
 
   afterEach(() => {
@@ -159,6 +163,19 @@ describe('Incident Controller', () => {
       expect(res.status).toHaveBeenCalledWith(404);
       expect(res.send).toHaveBeenCalledWith('<h1>Incident not found</h1>');
     });
+
+    it('should handle image not found', async () => {
+      Incident.findById.mockReturnValue({
+        select: jest.fn().mockResolvedValue({ image: null })
+      });
+
+      req.params.incidentId = 'mockId';
+
+      await getIncidentImage(req, res);
+
+      expect(res.status).toHaveBeenCalledWith(404);
+      expect(res.send).toHaveBeenCalledWith('<h1>Image not found</h1>');
+    });
   });
 
   describe('getUserDetails', () => {
@@ -217,7 +234,7 @@ describe('Incident Controller', () => {
       const mockIncidents = [{ incidentId: '1', status: 'Resolved' }];
       jwt.verify.mockReturnValue({ userEmail: 'admin@example.com' });
       Incident.findById.mockResolvedValue({ reportedBy: 'user@example.com' });
-      User.findOne.mockResolvedValue({ FCMtoken: 'userToken' });
+      User.findOne.mockResolvedValue({ FCMtoken: 'userToken', email: 'user@example.com' });
       Incident.bulkWrite.mockResolvedValue({});
 
       req.body.incidents = mockIncidents;
@@ -280,6 +297,100 @@ describe('Incident Controller', () => {
 
       expect(res.status).toHaveBeenCalledWith(500);
       expect(res.json).toHaveBeenCalledWith({ error: 'Error fetching incidents' });
+    });
+  });
+
+  describe('reportExternalIncident', () => {
+    it('should report an external incident successfully', async () => {
+      const mockIncident = {
+        title: 'External Incident',
+        description: 'Test description',
+        location: 'Test location',
+        date: new Date(),
+        reportedBy: 'external@example.com',
+        firstName: 'External',
+        lastName: 'User',
+        group: 'ExternalGroup'
+      };
+
+      req.params.token = 'mockExternalToken';
+      req.body = mockIncident;
+
+      Incident.prototype.save = jest.fn();
+      notification.prototype.save = jest.fn();
+      User.find.mockResolvedValue([{ FCMtoken: 'adminToken' }]);
+
+      await reportExternalIncident(req, res);
+
+      expect(Incident.prototype.save).toHaveBeenCalled();
+      expect(notification.prototype.save).toHaveBeenCalled();
+      expect(_sendNotification).toHaveBeenCalled();
+      expect(res.status).toHaveBeenCalledWith(200);
+      expect(res.json).toHaveBeenCalledWith({ message: 'Incident reported successfully' });
+    });
+
+    it('should handle unauthorized access', async () => {
+      req.params.token = 'invalidToken';
+
+      await reportExternalIncident(req, res);
+
+      expect(res.status).toHaveBeenCalledWith(401);
+      expect(res.json).toHaveBeenCalledWith({ error: 'You are not authorized to report incidents. Please get a valid token' });
+    });
+
+    it('should handle errors when reporting an external incident', async () => {
+      req.params.token = 'mockExternalToken';
+      Incident.prototype.save = jest.fn().mockRejectedValue(new Error('Database error'));
+
+      await reportExternalIncident(req, res);
+
+      expect(res.status).toHaveBeenCalledWith(500);
+      expect(res.json).toHaveBeenCalledWith({ error: 'Internal server error while reporting incident' });
+    });
+  });
+
+  describe('getIncidentsByGroup', () => {
+    it('should fetch incidents by group successfully', async () => {
+      const mockIncidents = [
+        { _id: '1', group: 'TestGroup', title: 'Incident 1' },
+        { _id: '2', group: 'TestGroup', title: 'Incident 2' }
+      ];
+
+      req.params.token = 'mockExternalToken';
+      req.params.group = 'TestGroup';
+
+      Incident.find.mockResolvedValue(mockIncidents);
+
+      await getIncidentsByGroup(req, res);
+
+      expect(Incident.find).toHaveBeenCalledWith({ group: 'TestGroup' });
+      expect(res.status).toHaveBeenCalledWith(200);
+      expect(res.json).toHaveBeenCalledWith({
+        message: 'Incidents fetched successfully',
+        incidents: mockIncidents
+      });
+    });
+
+    it('should handle unauthorized access', async () => {
+      req.params.token = 'invalidToken';
+      req.params.group = 'TestGroup';
+
+      await getIncidentsByGroup(req, res);
+
+      expect(res.status).toHaveBeenCalledWith(401);
+      expect(res.json).toHaveBeenCalledWith({ error: 'You are not authorized to view incidents. Please get a valid token' });
+    });
+
+    it('should handle errors when fetching incidents by group', async () => {
+      req.params.token = 'mockExternalToken';
+      req.params.group = 'TestGroup';
+
+      Incident.find.mockRejectedValue(new Error('Database error'));
+
+      await getIncidentsByGroup(req, res);
+
+      expect(res.status).toHaveBeenCalledWith(500);
+      expect(res.json).toHaveBeenCalledWith({ error: 'Internal server error while fetching incidents' });
     });
   });
 });

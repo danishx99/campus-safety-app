@@ -66,6 +66,23 @@ describe("Notification Controller", () => {
       expect(res.status).toHaveBeenCalledWith(500);
       expect(res.json).toHaveBeenCalledWith({ error: "Error getting notification history." });
     });
+
+    it("should handle pagination correctly", async () => {
+      const mockNotifications = Array(25).fill().map((_, i) => ({ _id: i.toString(), message: `Test notification ${i}` }));
+      notification.aggregate.mockResolvedValue(mockNotifications);
+
+      req.query = { page: "2", limit: "10" };
+
+      await getNotificationHistory(req, res);
+
+      expect(res.status).toHaveBeenCalledWith(200);
+      expect(res.json).toHaveBeenCalledWith({
+        notifications: mockNotifications.slice(10, 20),
+        totalPages: 3,
+        currentPage: 2,
+        totalNotifications: 25
+      });
+    });
   });
 
   describe("sendNotification", () => {
@@ -114,6 +131,74 @@ describe("Notification Controller", () => {
       expect(res.status).toHaveBeenCalledWith(500);
       expect(res.json).toHaveBeenCalledWith({ error: expect.stringContaining("Error sending notification.") });
     });
+
+    it("should handle sending notifications to specific roles", async () => {
+      const mockToken = "mockToken";
+      const mockDecoded = { userEmail: "sender@example.com" };
+      jwt.verify.mockReturnValue(mockDecoded);
+      req.cookies.token = mockToken;
+      req.body = {
+        recipient: "staff",
+        message: "Test message",
+        title: "Test title",
+        notificationType: "test",
+        senderLocation: [0, 0]
+      };
+
+      const mockSavedNotification = {
+        _id: "1",
+        recipient: "staff",
+        sender: "sender@example.com",
+        message: "Test message",
+        title: "Test title",
+        notificationType: "test",
+        senderLocation: [0, 0]
+      };
+      notification.prototype.save.mockResolvedValue(mockSavedNotification);
+
+      const mockUsers = [{ FCMtoken: "token1" }, { FCMtoken: "token2" }];
+      User.find.mockResolvedValue(mockUsers);
+
+      await sendNotification(req, res);
+
+      expect(User.find).toHaveBeenCalledWith({ role: "staff" });
+      expect(_sendNotification).toHaveBeenCalled();
+      expect(res.status).toHaveBeenCalledWith(200);
+    });
+
+    it("should handle sending notifications to specific users", async () => {
+      const mockToken = "mockToken";
+      const mockDecoded = { userEmail: "sender@example.com" };
+      jwt.verify.mockReturnValue(mockDecoded);
+      req.cookies.token = mockToken;
+      req.body = {
+        recipient: "user@example.com",
+        message: "Test message",
+        title: "Test title",
+        notificationType: "test",
+        senderLocation: [0, 0]
+      };
+
+      const mockSavedNotification = {
+        _id: "1",
+        recipient: "user@example.com",
+        sender: "sender@example.com",
+        message: "Test message",
+        title: "Test title",
+        notificationType: "test",
+        senderLocation: [0, 0]
+      };
+      notification.prototype.save.mockResolvedValue(mockSavedNotification);
+
+      const mockUser = { FCMtoken: "userToken" };
+      User.findOne.mockResolvedValue(mockUser);
+
+      await sendNotification(req, res);
+
+      expect(User.findOne).toHaveBeenCalledWith({ email: "user@example.com" });
+      expect(_sendNotification).toHaveBeenCalledWith(["userToken"], expect.any(Object));
+      expect(res.status).toHaveBeenCalledWith(200);
+    });
   });
 
   describe("getUnreadNotifications", () => {
@@ -143,6 +228,46 @@ describe("Notification Controller", () => {
 
       expect(res.status).toHaveBeenCalledWith(500);
       expect(res.json).toHaveBeenCalledWith({ error: "Error getting unread notifications." });
+    });
+
+    it("should fetch unread notifications for admin", async () => {
+      req.role = "admin";
+      const mockNotifications = [{ _id: "1", message: "Admin notification" }];
+      notification.find.mockReturnValue({
+        sort: jest.fn().mockReturnValue({
+          limit: jest.fn().mockResolvedValue(mockNotifications)
+        })
+      });
+
+      await getUnreadNotifications(req, res);
+
+      expect(notification.find).toHaveBeenCalledWith({ recipient: "admin", read: false });
+      expect(res.status).toHaveBeenCalledWith(200);
+      expect(res.json).toHaveBeenCalledWith({ notifications: mockNotifications });
+    });
+
+    it("should fetch unread notifications for staff", async () => {
+      req.role = "staff";
+      req.userEmail = "staff@example.com";
+      const mockNotifications = [{ _id: "1", message: "Staff notification" }];
+      notification.find.mockReturnValue({
+        sort: jest.fn().mockReturnValue({
+          limit: jest.fn().mockResolvedValue(mockNotifications)
+        })
+      });
+
+      await getUnreadNotifications(req, res);
+
+      expect(notification.find).toHaveBeenCalledWith({
+        $or: [
+          { recipient: "everyone" },
+          { recipient: "staff" },
+          { recipient: "staff@example.com" },
+        ],
+        read: false,
+      });
+      expect(res.status).toHaveBeenCalledWith(200);
+      expect(res.json).toHaveBeenCalledWith({ notifications: mockNotifications });
     });
   });
 
@@ -185,6 +310,31 @@ describe("Notification Controller", () => {
       expect(res.status).toHaveBeenCalledWith(500);
       expect(res.json).toHaveBeenCalledWith({ error: "Error getting all notifications." });
     });
+
+    it("should handle pagination correctly", async () => {
+      req.query = { page: "2", limit: "5" };
+      const mockNotifications = Array(15).fill().map((_, i) => ({ _id: i.toString(), message: `Notification ${i}` }));
+      notification.countDocuments.mockResolvedValue(15);
+      notification.updateMany.mockResolvedValue({});
+      notification.find.mockReturnValue({
+        sort: jest.fn().mockReturnValue({
+          skip: jest.fn().mockReturnValue({
+            limit: jest.fn().mockResolvedValue(mockNotifications.slice(5, 10))
+          })
+        })
+      });
+
+      await getAllNotifications(req, res);
+
+      expect(notification.find).toHaveBeenCalled();
+      expect(res.status).toHaveBeenCalledWith(200);
+      expect(res.json).toHaveBeenCalledWith({
+        notifications: mockNotifications.slice(5, 10),
+        currentPage: 2,
+        totalPages: 3,
+        totalNotifications: 15
+      });
+    });
   });
 
   describe("redirectToNotificationPage", () => {
@@ -217,6 +367,15 @@ describe("Notification Controller", () => {
       jwt.verify.mockImplementation(() => {
         throw error;
       });
+
+      await redirectToNotificationPage(req, res);
+
+      expect(res.status).toHaveBeenCalledWith(500);
+      expect(res.json).toHaveBeenCalledWith({ error: "Error redirecting to notification page." });
+    });
+
+    it("should handle missing token", async () => {
+      req.cookies = {};
 
       await redirectToNotificationPage(req, res);
 

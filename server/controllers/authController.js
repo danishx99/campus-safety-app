@@ -112,7 +112,7 @@ exports.login = async (req, res) => {
     }
 
     // Use rememberMe to set different token expiration times
-    const tokenExpiration = rememberMe ? "7d" : "24h"; // 7 days or 24 hours
+    const tokenExpiration = rememberMe ? "28d" : "7d"; // 28 days or 7 days
 
     // check if user is verified
     if (!user.isVerified) {
@@ -142,11 +142,14 @@ exports.login = async (req, res) => {
       sameSite: "Strict",
     });
 
-    //Send the user's role, email address, name and surname to the client as a cookie
+    //Save the user's role, email address, name and surname, phone and join date to the client as a cookie
+    //profile picture not being stored - too large?
     res.cookie("role", user.role, { maxAge });
     res.cookie("email", user.email, { maxAge });
     res.cookie("firstname", user.firstName, { maxAge });
     res.cookie("lastname", user.lastName, { maxAge });
+    res.cookie("phone", user.phone, { maxAge });
+    res.cookie("joined", user.createdAt, { maxAge });
 
     // Return success
     res.json({ success: true, redirect: user.role });
@@ -343,7 +346,7 @@ exports.isVerified = async (req, res) => {
   try {
     const token = req.cookies.token;
     if (!token) {
-      return res.status(401).json({ error: 'No token provided' });
+      return res.status(401).json({ error: "No token provided" });
     }
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
@@ -353,14 +356,16 @@ exports.isVerified = async (req, res) => {
     const user = await User.findOne({ email });
 
     if (!user) {
-      return res.status(401).json({ error: "A user with this email address does not exist." });
+      return res
+        .status(401)
+        .json({ error: "A user with this email address does not exist." });
     }
 
     // Send the verification status
     res.json({ isVerified: user.isVerified });
   } catch (error) {
     console.log("Error checking user verification status:", error);
-    res.status(500).json({ error: 'Error checking verification status' });
+    res.status(500).json({ error: "Error checking verification status" });
   }
 };
 

@@ -23,6 +23,11 @@ router.get(
   emergencyAlertController.tempUpdateEmergency
 );
 
+//Get all emergency alerts(admins)
+router.get(
+  "/getAllEmergencyAlerts",
+  emergencyAlertController.getAllEmergencyAlerts
+);
 
 
 router.get(

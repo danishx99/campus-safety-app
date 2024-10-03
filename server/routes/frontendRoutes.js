@@ -122,6 +122,13 @@ router.get("/admin/viewSafetyResources", isAdmin, (req, res) => {
   );
 });
 
+router.get("/admin/emergencyalerts", isAdmin, (req, res) => {
+  res.sendFile(
+    path.join(__dirname, "../../client/html", "adminEmergencyAlerts.html")
+  );
+});
+
+
 router.get("/admin/updateSafetyResources", isAdmin, (req, res) => {
   res.sendFile(
     path.join(__dirname, "../../client/html", "editSafetyResources.html")

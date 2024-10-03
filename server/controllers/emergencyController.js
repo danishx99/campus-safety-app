@@ -361,6 +361,36 @@ exports.getEmergencyAlertsByUser = async (req, res) => {
   }
 };
 
+exports.getAllEmergencyAlerts = async (req, res) => {
+  try {
+
+    //Get current admin that is logged in
+    const token = req.cookies.token;
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const email = decoded.userEmail;
+
+    const user = await User.findOne({ email});
+    const reportedBy = User
+
+    //Find all emergency alerts and sort by date, assignedTo this admin first
+    const emergencies = await Emergency.find({}).sort({
+      assignedTo: { $eq: ["$assignedTo", email] } ? -1 : 1, 
+      createdAt: -1,
+    });
+    ;
+    
+
+    res.status(200).json({ emergencies });
+  } catch (error) {
+    console.log("Error in getAllEmergencyAlerts:", error);
+    return res
+      .status(500)
+      .json({ message: "Internal server error", error: error.message });
+  }
+}
+
+
+
 exports.cancelEmergency = async (req, res) => {
   try {
     const emergencyAlertId = req.params.emergencyAlertId;

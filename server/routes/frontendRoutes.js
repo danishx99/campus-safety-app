@@ -103,7 +103,7 @@ router.get("/admin/safetyResources", isAdmin, (req, res) => {
   );
 });
 
-router.get("/user/safetyResources", isUser,(req, res) => {
+router.get("/user/safetyResources", isUser, (req, res) => {
   res.sendFile(
     path.join(__dirname, "../../client/html", "userSafetyResources.html")
   );
@@ -155,16 +155,13 @@ router.get("/user/profileManagement", isUser, (req, res) => {
   );
 });
 
-
-router.get("/user/campusNavigation", isUser,(req, res) => {
+router.get("/user/campusNavigation", isUser, (req, res) => {
   res.sendFile(
     path.join(__dirname, "../../client/html", "userMapServices.html")
   );
 });
 
-router.get("/user/emergencyAlerts", isUser,(req, res) =>{
-  res.sendFile(path.join(__dirname, "../../client/html", "userEmergencyAlerts.html"));    
-router.get("/user/emergencyAlerts", (req, res) => {
+router.get("/user/emergencyAlerts", isUser, (req, res) => {
   res.sendFile(
     path.join(__dirname, "../../client/html", "userEmergencyAlerts.html")
   );

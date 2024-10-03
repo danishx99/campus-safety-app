@@ -12,6 +12,18 @@
     <!--Awsome notifications-->
     <script src="../javascript/index.var.js"></script>
     <link rel="stylesheet" href="../styles/style.css" />
+
+    <style>
+      .hide-scrollbar {
+        scrollbar-width: none; /* Firefox */
+        -ms-overflow-style: none; /* Internet Explorer 10+ */
+      }
+      .hide-scrollbar::-webkit-scrollbar {
+        width: 0;
+        height: 0;
+        display: none; /* Chrome, Safari, and Opera */
+      }
+    </style>
   </head>
 
   <body class="flex flex-col min-h-screen bg-gray-100">
@@ -272,16 +284,16 @@
       </div>
 
       <!-- Main Content -->
-      <main class="flex-1 p-6 overflow-auto max-sm:px-4 max-sm:py-4 bg-gray-200">
+      <main class="flex-1 p-6 overflow-auto bg-gray-200 max-sm:px-2 max-sm:py-4">
         <h2 class="text-center text-2xl font-bold mb-2 max-sm:text-xl text-gray-800">
           Upcoming Events
         </h2>
         <h3 class="text-center text-lg font-semibold mb-4 max-sm:text-sm text-gray-700">
           Here are all the upcoming events provided from Campus Events
         </h3>
-
-        <div class="alert-box" id="alert" role="alert"></div>
-
+      
+        <div class="alert-box mb-4" id="alert" role="alert"></div>
+      
         <svg
           aria-hidden="true"
           class="w-10 h-10 mx-auto text-gray-200 animate-spin dark:text-gray-600 fill-[#fbfbfb] hidden"
@@ -299,35 +311,9 @@
             fill="currentFill"
           />
         </svg>
-
-        <div id="allEvents" class="max-h-[420px] overflow-y-auto pr-5">
-          <div id="incident" class="mb-6">
-            <div class="rounded-lg p-4 bg-white shadow-md">
-              <div class="flex justify-between">
-                <div class="flex items-center text-sm max-sm:text-xs">
-                  <p>
-                    <span class="font-bold">Wits SRC</span>
-                    is hosting an event:
-                    <span class="font-bold"> Freshers Concert 2024 </span>
-                    (2023-09-30) at Sturrock Park
-                    <br />
-                    Time: 18:30
-                    <br />
-                    Max attendees: 300
-                  </p>
-                </div>
-              </div>
-              <p class="mt-2 text-sm max-sm:text-xs">${event.description}</p>
-            </div>
-            <div class="flex mt-3">
-              <button
-                id="send-announcement-btn"
-                class="bg-[#015EB8] text-white py-2 px-4 rounded-lg text-sm max-sm:text-xs hover:opacity-80 mr-3 max-sm:px-2"
-              >
-                Send announcement to all users
-              </button>
-            </div>
-          </div>
+      
+        <div id="allEvents" class="overflow-y-auto pr-5 space-y-4 hide-scrollbar" style="max-height: calc(100vh - 17rem);">
+          <!-- Event items will be dynamically added here -->
         </div>
       </main>
     </div>

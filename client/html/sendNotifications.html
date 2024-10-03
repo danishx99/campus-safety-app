@@ -85,12 +85,18 @@
 
         <div class="relative inline-flex" id="notificationContainer">
 
-          <button id="notificationButton"
-            class="flex rounded-md bg-[#FDB913] py-2 px-4 border border-transparent text-center text-sm text-white transition-all shadow-md hover:shadow-lg focus:bg-slate-700 focus:shadow-none active:bg-slate-700 hover:bg-slate-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
-            type="button">
-            Notifications
-            <img src="../assets/bell-ring.png" alt="Notifications" class="h-5 md:h-6 md:mr-2">
-          </button>
+          <button
+              id="notificationButton"
+              class="flex rounded-md bg-[#FDB913] py-2 px-4 border border-transparent text-center items-center text-sm text-white transition-all shadow-md hover:shadow-lg focus:bg-slate-700 focus:shadow-none active:bg-slate-700 hover:bg-slate-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+              type="button"
+            >
+              <span class="max-sm:hidden">Notifications</span>
+              <img
+                src="../assets/bell-ring.png"
+                alt="Notifications"
+                class="h-5 md:h-6 md:ml-1"
+              />
+            </button>
           <span id="notificationBadge"
             class="absolute top-0.5 right-0.5 grid min-h-[24px] min-w-[24px] translate-x-2/4 -translate-y-2/4 place-items-center rounded-full bg-[white] py-1 px-1 text-xs text-black">
 
@@ -141,7 +147,7 @@
             </a>
           </li>
           <li>
-            <a href="/admin/sendNotifications" class="flex items-center text-gray-700 hover:bg-gray-300 p-2 rounded-md">
+            <a href="/admin/sendNotifications" class="flex items-center text-gray-700 p-2 rounded-md bg-blue-200">
               <img src="../assets/alert.png" alt="Send Notifications" class="h-6 w-6 mr-3" />
               <span class="font-medium">Send Notifications</span>
             </a>
@@ -190,24 +196,24 @@
       <!-- Mobile Navigation -->
       <nav class="fixed inset-x-0 bottom-0 bg-[#015EB8] text-white p-4 flex justify-around items-center md:hidden z-50">
         <a href="/admin/viewIncidents" class="flex flex-col items-center">
-          <img src="../assets/report-mobile.png" alt="View Incidents" class="h-7 w-7" />
-          <span class="text-xs mt-1">Incidents</span>
+          <img src="../assets/current-report-mobile.png" alt="View Incidents" class="h-7 w-7" />
+          <span class="text-xs mt-1 text-[#8fbffc]">Incidents</span>
         </a>
         <a href="/admin/sendNotifications" class="flex flex-col items-center">
           <img src="../assets/alert-mobile.png" alt="Send Notifications" class="h-7 w-7" />
           <span class="text-xs mt-1">Notify</span>
         </a>
         <a href="/admin" class="flex flex-col items-center">
-          <img src="../assets/dashboard-mobile.png" alt="Dashboard" class="h-7 w-7" />
-          <span class="text-xs mt-1">Dashboard</span>
+          <img src="../assets/current-mobile-dashboard.png" alt="Dashboard" class="h-7 w-7" />
+          <span class="text-xs mt-1 text-[#8fbffc]">Dashboard</span>
         </a>
         <a href="/admin/emergencyAlerts" class="flex flex-col items-center">
-          <img src="../assets/caution-white.png" alt="Generate Code" class="h-7 w-7" />
-          <span class="text-xs mt-1">Emergencies</span>
+          <img src="../assets/current-caution-white.png" alt="Generate Code" class="h-7 w-7" />
+          <span class="text-xs mt-1 text-[#8fbffc]">Emergencies</span>
         </a>
         <button id="moreButton" class="flex flex-col items-center">
-          <img src="../assets/menu.png" alt="More" class="h-7 w-7" />
-          <span class="text-xs mt-1">More</span>
+          <img src="../assets/current-menu.png" alt="More" class="h-7 w-7" />
+          <span class="text-xs mt-1 text-[#8fbffc]">More</span>
         </button>
       </nav>
       <!-- More menu (hidden by default) -->

@@ -131,7 +131,6 @@ document.addEventListener("DOMContentLoaded", function () {
             hideLoader();
             return;
         }
-  
           //show loader while waiting for response
           // var loader = document.getElementById("loaderGoogle");
           // loader.style.display = "flex";

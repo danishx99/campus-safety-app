@@ -23,6 +23,17 @@
         animation: spin 1s linear infinite;
       }
 
+      .hide-scrollbar {
+        scrollbar-width: none; /* Firefox */
+        -ms-overflow-style: none; /* Internet Explorer 10+ */
+      }
+
+      .hide-scrollbar::-webkit-scrollbar {
+        width: 0;
+        height: 0;
+        display: none; /* Chrome, Safari, and Opera */
+      }
+      
       @keyframes spin {
         0% {
           transform: rotate(0deg);
@@ -101,7 +112,7 @@
             <button
               id="panicButton"
               class="flex rounded-md bg-red-600 py-2 px-4 border border-transparent items-center text-center text-sm text-white transition-all shadow-md hover:shadow-lg focus:bg-slate-700 focus:shadow-none active:bg-slate-700 hover:bg-slate-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
-              >
+            >
               <span class="max-sm:hidden">Panic</span>
               <img
                 src="../assets/danger.png"
@@ -404,7 +415,7 @@
 
         <div
           id="notificationsContainer"
-          class="max-h-[calc(100vh-300px)] overflow-y-auto pr-5 max-sm:pr-2"
+          class="max-h-[calc(100vh-300px)] overflow-y-auto pr-5 max-sm:pr-2 hide-scrollbar"
         ></div>
 
         <div class="flex justify-between items-center mt-4">

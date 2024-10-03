@@ -3,13 +3,34 @@ document.addEventListener("DOMContentLoaded", function () {
   var viewBtn = document.getElementById("viewResources");
   var alert = document.getElementById("alert");
 
+  let title = document.getElementById("title");
+  let type = document.getElementById("resource-type");
+  let desc = document.getElementById("description");
+  let link = document.getElementById("link");
+
+  if (type.value === "Emergency Contact") {
+    desc.placeholder = "Health Sciences Campus: 011 717 2222";
+  }
+
+  // Add event listener to check for 'resource-type' changes
+  type.addEventListener("change", function () {
+    const selectedType = type.value;
+
+    // If the type is 'emergency contact', set placeholder for description
+    if (selectedType === "Emergency Contact") {
+      desc.placeholder = "Health Sciences Campus: 011 717 2222";
+    } else {
+      desc.placeholder = ""; // Clear placeholder for other types
+    }
+  });
+
   resourceBtn.addEventListener("click", function (event) {
     console.log("Add resource button clicked");
 
-    title = document.getElementById("title").value;
-    type = document.getElementById("resource-type").value;
-    desc = document.getElementById("description").value;
-    link = document.getElementById("link").value;
+    title = title.value;
+    type = type.value;
+    desc = desc.value;
+    link = link.value;
 
     if (
       !title ||
@@ -86,31 +107,4 @@ document.addEventListener("DOMContentLoaded", function () {
     console.log("View resource button clicked");
     window.location.href = "/admin/viewSafetyResources";
   });
-
-  /*async function deleteAllResources() {
-        console.log("Delete resource button clicked");
-        if (confirm('Are you sure you want to delete all safety resources? This action cannot be undone.')) {
-          try {
-            const response = await fetch('http://localhost:3000/admin/deleteSafetyResources', {
-              method: 'DELETE'
-            });
-            const result = await response.json();
-            if (response.ok) {
-                alert.style.display = "block";
-                alert.style.color = 'green';
-                alert.style.backgroundColor = '#ddffdd';
-                alert.style.border='green';
-                alert.innerText = "Resource deleted successfully"
-              // Optionally, refresh the list of resources after deletion
-              // loadSafetyResources();
-            } else {
-              alert('Error: ' + result.error);
-            }
-          } catch (error) {
-            console.error('Error deleting resources:', error);
-          }
-        }
-      }
-      // Attach the delete function to the button
-      document.getElementById('deleteAll').addEventListener('click', deleteAllResources);*/
 });

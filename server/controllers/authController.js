@@ -142,17 +142,13 @@ exports.login = async (req, res) => {
       sameSite: "Strict",
     });
 
-    //Save the user's role, email address, name and surname, phone, profile picture, and join date to the client as a cookie
+    //Save the user's role, email address, name and surname, phone and join date to the client as a cookie
     //profile picture not being stored - too large?
     res.cookie("role", user.role, { maxAge });
     res.cookie("email", user.email, { maxAge });
     res.cookie("firstname", user.firstName, { maxAge });
     res.cookie("lastname", user.lastName, { maxAge });
     res.cookie("phone", user.phone, { maxAge });
-    res.cookie("profilePicture", encodeURIComponent(user.profilePicture), {
-      maxAge,
-    });
-
     res.cookie("joined", user.createdAt, { maxAge });
 
     // Return success

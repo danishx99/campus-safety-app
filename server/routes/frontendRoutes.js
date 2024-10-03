@@ -7,6 +7,7 @@ const { isAdmin } = require("../middlewares/isAdmin");
 const { isLoggedIn } = require("../middlewares/isLoggedIn");
 const { isUser } = require("../middlewares/isUser");
 const { authMiddleware } = require("../middlewares/authMiddleware");
+const { emergencyExists } = require("../middlewares/emergencyExists");
 
 // router.get('/', (req,res)=>{
 //     res.sendFile(path.join(__dirname,'../public/login.html'));
@@ -81,8 +82,7 @@ router.get("/user/viewPastIncidents", isUser, (req, res) => {
   res.sendFile(
     path.join(__dirname, "../../client/html", "userViewIncidents.html")
   );
-}
-);
+});
 
 router.get("/admin/viewIncidents", isAdmin, (req, res) => {
   res.sendFile(
@@ -128,7 +128,6 @@ router.get("/admin/emergencyalerts", isAdmin, (req, res) => {
   );
 });
 
-
 router.get("/admin/updateSafetyResources", isAdmin, (req, res) => {
   res.sendFile(
     path.join(__dirname, "../../client/html", "editSafetyResources.html")
@@ -136,9 +135,7 @@ router.get("/admin/updateSafetyResources", isAdmin, (req, res) => {
 });
 
 router.get("/admin/getUpcomingEvents", isAdmin, (req, res) => {
-  res.sendFile(
-    path.join(__dirname, "../../client/html", "adminEvents.html")
-  );
+  res.sendFile(path.join(__dirname, "../../client/html", "adminEvents.html"));
 });
 
 router.get("/admin/transportationManagement", isAdmin, (req, res) => {
@@ -146,7 +143,6 @@ router.get("/admin/transportationManagement", isAdmin, (req, res) => {
     path.join(__dirname, "../../client/html", "adminTransportation.html")
   );
 });
-
 
 router.get("/admin/profileManagement", isAdmin, authMiddleware, (req, res) => {
   res.sendFile(
@@ -164,16 +160,25 @@ router.get("/panic", (req, res) => {
 });
 
 router.get("/user/campusNavigation", (req, res) => {
-  res.sendFile(path.join(__dirname, "../../client/html", "userMapServices.html"));
+  res.sendFile(
+    path.join(__dirname, "../../client/html", "userMapServices.html")
+  );
 });
 
-router.get("/user/emergencyAlerts", (req, res) =>{
-  res.sendFile(path.join(__dirname, "../../client/html", "userEmergencyAlerts.html"));    
+router.get("/user/emergencyAlerts", (req, res) => {
+  res.sendFile(
+    path.join(__dirname, "../../client/html", "userEmergencyAlerts.html")
+  );
 });
 
-
-router.get("/user/emergencyalerts/track/:emergencyId", (req, res) =>{
-  res.sendFile(path.join(__dirname, "../../client/html", "trackEmergencyAlert.html"));    
-});
+router.get(
+  "/user/emergencyalerts/track/:emergencyId",
+  emergencyExists,
+  (req, res) => {
+    res.sendFile(
+      path.join(__dirname, "../../client/html", "trackEmergencyAlert.html")
+    );
+  }
+);
 
 module.exports = router;

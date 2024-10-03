@@ -250,7 +250,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     //update the proximity text of id INFO
     document.getElementById(
       "INFO"
-    ).textContent = `Searching for admins within radius : ${currentRadiusOfEmergencyAlert} km`;
+    ).textContent = `Searching for admins within radius: ${currentRadiusOfEmergencyAlert} km`;
     //Update the pulse animation
     baseRadius = currentRadiusOfEmergencyAlert * 1000;
     maxRadius = currentRadiusOfEmergencyAlert * 1000 + 10;

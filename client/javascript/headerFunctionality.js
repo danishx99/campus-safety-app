@@ -50,29 +50,16 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   /* Load the user's profile picture */
+  const profilePicture = localStorage.getItem("userProfilePicture");
   const headerProfilePic = document.getElementById("headerProfilePic");
-  const savedProfilePicture = localStorage.getItem("userProfilePicture");
 
-  if (savedProfilePicture) {
-    headerProfilePic.src = savedProfilePicture;
+  if (headerProfilePic) {
+    headerProfilePic.src = profilePicture;
   }
 
-  try {
-    const response = await fetch("/profile/getCurrentUser", {
-      method: "GET",
-      credentials: "include",
-    });
-    const data = await response.json();
 
-    if (data.user && data.user.profilePicture) {
-      headerProfilePic.src = data.user.profilePicture;
-
-      console.log("I found a profile picture", data.user.profilePicture);
-      localStorage.setItem("userProfilePicture", data.user.profilePicture);
-    }
-  } catch (error) {
-    console.error("Error fetching user details:", error);
-  }
+  
+ 
   /*Load the users profile picture */
 
   /* Notification dropdown */

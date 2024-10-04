@@ -150,9 +150,11 @@ exports.login = async (req, res) => {
     res.cookie("lastname", user.lastName, { maxAge });
     res.cookie("phone", user.phone, { maxAge });
     res.cookie("joined", user.createdAt, { maxAge });
+    res.cookie("googleLogin", false, { maxAge });
+    
 
     // Return success
-    res.json({ success: true, redirect: user.role });
+    res.json({ success: true, redirect: user.role, profilePicture: user.profilePicture });
   } catch (error) {
     console.log("Error logging in user:", error);
     res.status(500).json({ error: "Error logging in user" });
@@ -258,9 +260,12 @@ exports.googleLogin = async (req, res) => {
     res.cookie("email", user.email, { maxAge });
     res.cookie("firstname", user.firstName, { maxAge });
     res.cookie("lastname", user.lastName, { maxAge });
+    res.cookie("phone", user.phone, { maxAge });
+    res.cookie("joined", user.createdAt, { maxAge });
+    res.cookie("googleLogin", true, { maxAge });
 
     // Return success
-    res.json({ success: true, redirect: user.role });
+    res.json({ success: true, redirect: user.role, profilePicture: user.profilePicture });
   } catch (error) {
     console.log("Error logging in using Google", error);
     res.status(500).json({ error: "Error logging in using Google" });

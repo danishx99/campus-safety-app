@@ -219,6 +219,9 @@ loginBtn.addEventListener("click", async function (event) {
 
         window.scrollTo(0, 0);
 
+        // //Set the user's profile pic in localstorage in local storage
+        localStorage.setItem("userProfilePicture", data.profilePicture);
+        
         // Check for data.redirect and redirect
         // if (data.redirect) {
 

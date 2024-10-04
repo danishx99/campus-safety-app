@@ -38,12 +38,16 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!title || !incidentType || !description || !dateTime) {
       alert.textContent = "Please fill in all fields";
       alert.style.display = "block";
+      //scroll to top of page
+      window.scrollTo(0, 0);
       return;
     }
     // Validate the image file
     if (imageFile && !imageFile.type.startsWith("image")) {
       alert.textContent = "Please select a valid image file";
       alert.style.display = "block";
+      //scroll to top of page
+      window.scrollTo(0, 0);
       return;
     }
 
@@ -53,6 +57,8 @@ document.addEventListener("DOMContentLoaded", () => {
     if (incidentDateTime > now) {
       alert.textContent = "Please select a valid date and time";
       alert.style.display = "block";
+          //scroll to top of page
+    window.scrollTo(0, 0);
       return;
     }
 
@@ -98,7 +104,6 @@ document.addEventListener("DOMContentLoaded", () => {
       window.scrollTo(0, 0);
 
       if (response.status === 200) {
-        
         console.log("Incident submitted successfully");
         // Show success message
         alert.innerText = "Incident reported successfully";

@@ -144,6 +144,10 @@ document.addEventListener("DOMContentLoaded", function () {
   window.onload = function () {
     console.log("Window loaded");
     const checkbox = document.getElementById("locationSpecific");
+    if (checkbox) {
+      // wait 1s before initializing the map
+      setTimeout(initMap, 1000);
+    }
     checkbox.addEventListener("change", onCheckboxChange);
     updateMapVisibility();
     const selectedLocation = document.getElementById("selectedLocation");
@@ -177,9 +181,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
   sendButton.addEventListener("click", async function (event) {
     event.preventDefault();
-
-    //scroll to top of page
-    window.scrollTo(0, 0);
 
     let title = document.getElementById("notificationTitle").value;
 
@@ -216,8 +217,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (title === "" || message === "") {
       var alert = document.getElementById("alert");
-      alert.style.display = "block";
       alert.innerText = "Please fill in all fields";
+      alert.style.display = "block";
       window.scrollTo(0, 0);
       hideLoader();
       return;
@@ -239,6 +240,9 @@ document.addEventListener("DOMContentLoaded", function () {
       });
 
       const data = await response.json();
+
+      window.scrollTo(0, 0);
+
       if (response.status === 200) {
         var alert = document.getElementById("alert");
         alert.style.display = "block";
@@ -246,13 +250,11 @@ document.addEventListener("DOMContentLoaded", function () {
         alert.style.backgroundColor = "#ddffdd";
         alert.style.border = "green";
         alert.innerText = data.message;
-        window.scrollTo(0, 0);
         hideLoader();
       } else {
         var alert = document.getElementById("alert");
         alert.style.display = "block";
         alert.innerText = data.error;
-        window.scrollTo(0, 0);
         hideLoader();
       }
     } catch (error) {

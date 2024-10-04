@@ -169,7 +169,7 @@ router.get("/user/emergencyAlerts", isUser, (req, res) => {
 
 router.get(
   "/user/emergencyalerts/track/:emergencyId",
-  emergencyExists,
+  emergencyExists, isUser,
   (req, res) => {
     res.sendFile(
       path.join(__dirname, "../../client/html", "trackEmergencyAlert.html")

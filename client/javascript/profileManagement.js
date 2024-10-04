@@ -20,7 +20,7 @@ submitButton.addEventListener('click', () => {
 
 function toggleForm() {
     if (isEditing) {
-        submitButton.textContent = 'Save';
+        submitButton.textContent = 'Save';f
         let googleLogin = getCookie('googleLogin');
         if(googleLogin === 'false'){
            

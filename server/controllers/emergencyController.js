@@ -5,20 +5,19 @@ const jwt = require("jsonwebtoken");
 
 const _sendNotification = require("../utils/sendNotification");
 
-
 //placeholder logic for the handling the back end of the emergency alert system
 
 exports.tempUpdateEmergency = async (req, res) => {
   try {
     const emergencyAlertId = req.params.emergencyAlertId;
-    const assignedTo = "2544233@students.wits.ac.za";
+    const assignedTo = "2458487@students.wits.ac.za";
 
     const token = req.cookies.token;
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const sender = decoded.userEmail;
     const user = await User.findOne({ email: sender });
 
-    const findAdmindDetails = await User.findOne({ email:assignedTo });
+    const findAdmindDetails = await User.findOne({ email: assignedTo });
 
     _sendNotification([user.FCMtoken], {
       emergencyAlertId,
@@ -29,7 +28,6 @@ exports.tempUpdateEmergency = async (req, res) => {
       phone: findAdmindDetails.phone,
     });
 
-   
     //update the emergency alert with the assignedTo field and its status to "Assigned"
     await Emergency.findByIdAndUpdate(emergencyAlertId, {
       assignedTo,
@@ -119,12 +117,14 @@ exports.getEmergencyAlertDetails = async (req, res) => {
     //Check if this emergency alert has been assigned to an admin , if it has , append the admin details to the response so that the client can display the admin details
     //Maybe in the future(when we have time), when users go to "http://127.0.0.1:3000/user/emergencyalerts/track/66fdc83c1d5e9598640a19c6",
     //and the emergency alert has been resolved, show the admin details that resolved the emergency alert, or just say this emergency alert has been resolved already
-    if (emergency.status ==="Assigned") {
-      const assignedToAdmin = await User.findOne({ email: emergency.assignedTo });
-      return res.status(200).json({ emergencyAlert: emergency, adminData: assignedToAdmin });
+    if (emergency.status === "Assigned") {
+      const assignedToAdmin = await User.findOne({
+        email: emergency.assignedTo,
+      });
+      return res
+        .status(200)
+        .json({ emergencyAlert: emergency, adminData: assignedToAdmin });
     }
-
-
 
     res.status(200).json({ emergencyAlert: emergency });
   } catch (error) {
@@ -178,7 +178,6 @@ async function checkIfCancelled(emergencyAlertId) {
   return emergency.status === "Cancelled";
 }
 
-
 exports.findAndNotifyAdmins = async (req, res) => {
   try {
     const { emergencyAlertId, location } = req.body;
@@ -211,7 +210,6 @@ exports.findAndNotifyAdmins = async (req, res) => {
     const users = await User.find({ role: "admin" });
 
     for (const radius of proximities) {
-
       //Check if the emergency alert has been cancelled
       const cancelled = await checkIfCancelled(emergencyAlertId);
       if (cancelled) {
@@ -222,8 +220,6 @@ exports.findAndNotifyAdmins = async (req, res) => {
         // });
         return res.status(200).json({ message: "Emergency alert cancelled" });
       }
-
-
 
       //3 second delay
       await new Promise((resolve) => setTimeout(resolve, 3000));
@@ -258,8 +254,6 @@ exports.findAndNotifyAdmins = async (req, res) => {
 
         await new Promise((resolve) => setTimeout(resolve, 10000));
 
-        
-
         const assignedToAdmin = await checkIfAdminHasBeenAssigned(
           emergencyAlertId
         );
@@ -276,14 +270,12 @@ exports.findAndNotifyAdmins = async (req, res) => {
             .json({ message: "Admin assigned successfully" });
         }
       }
-
     }
 
     const finalCancelledCheck = await checkIfCancelled(emergencyAlertId);
     if (finalCancelledCheck) {
       return res.status(200).json({ message: "Emergency alert cancelled" });
     }
-
 
     // If no admin was assigned after all proximity ranges
     const allAdminTokens = users.map((admin) => admin.FCMtoken);
@@ -314,20 +306,19 @@ exports.findAndNotifyAdmins = async (req, res) => {
       emergencyAlertId
     );
 
-   
     //update the value of assignedTo in the db to "No Admin Assigned" if no admin has been assigned
     if (!finalAssignmentCheck) {
-
       await Emergency.findByIdAndUpdate(emergencyAlertId, {
         assignedTo: "No Admin Assigned",
       });
 
-      await _sendNotification([user.FCMtoken], { emergencyAlertId, status: "No Admin Assigned" }); //No admin assigned is for the client to know that no admin has been assigned and for it to show the last message "Please be patient"
-      
+      await _sendNotification([user.FCMtoken], {
+        emergencyAlertId,
+        status: "No Admin Assigned",
+      }); //No admin assigned is for the client to know that no admin has been assigned and for it to show the last message "Please be patient"
     }
 
     return res.status(200).json({ message: "Process completed" });
-
   } catch (error) {
     console.error("Error in findAndNotifyAdmins:", error);
     return res
@@ -363,32 +354,69 @@ exports.getEmergencyAlertsByUser = async (req, res) => {
 
 exports.getAllEmergencyAlerts = async (req, res) => {
   try {
-
-    //Get current admin that is logged in
+    // Get current admin that is logged in
     const token = req.cookies.token;
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const email = decoded.userEmail;
 
-    const user = await User.findOne({ email});
-    const reportedBy = User
+    const user = await User.findOne({ email });
 
-    //Find all emergency alerts and return them sorted by date created
-    const emergencies = await Emergency.find({}).sort({
-      createdAt: -1,
+    // Find all emergency alerts
+    const emergencies = await Emergency.find();
+
+    // Define custom order for statuses
+    const statusOrder = {
+      Searching: 1,
+      Assigned: 2,
+      Resolved: 3,
+      Cancelled: 4,
+    };
+
+    // Sort the emergencies by status (custom order) and then by createdAt
+    const sortedEmergencies = emergencies
+      .map((emergency) => emergency.toObject()) // Convert Mongoose documents to plain objects
+      .sort((a, b) => {
+        const statusDiff = statusOrder[a.status] - statusOrder[b.status];
+        if (statusDiff !== 0) {
+          return statusDiff; // Sort by status order if different
+        }
+        return new Date(b.createdAt) - new Date(a.createdAt); // Sort by date if status is the same
+      });
+
+    // Add the assignedToCurrentUser flag to each emergency
+    sortedEmergencies.forEach((emergency) => {
+      if (emergency.status === "Assigned") {
+        // Set assignedToCurrentUser to true if the emergency is assigned to the current user
+        emergency.assignedToCurrentUser = emergency.assignedTo === email;
+      } else {
+        // For other statuses, assignedToCurrentUser is false
+        emergency.assignedToCurrentUser = false;
+      }
     });
-    
-    
 
-    res.status(200).json({ emergencies });
+    // if the emergency.assignedToCurrentUser is true, and the status is "Assigned", put the emergency at the top of the list
+    sortedEmergencies.sort((a, b) => {
+      if (a.assignedToCurrentUser && b.assignedToCurrentUser) {
+        return 0;
+      } else if (a.assignedToCurrentUser) {
+        return -1;
+      } else if (b.assignedToCurrentUser) {
+        return 1;
+      }
+      return 0;
+    });
+
+    // Respond with the updated emergencies array
+    res.status(200).json({
+      emergencies: sortedEmergencies,
+    });
   } catch (error) {
     console.log("Error in getAllEmergencyAlerts:", error);
     return res
       .status(500)
       .json({ message: "Internal server error", error: error.message });
   }
-}
-
-
+};
 
 exports.cancelEmergency = async (req, res) => {
   try {

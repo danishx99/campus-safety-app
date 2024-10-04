@@ -4,6 +4,7 @@ const notification = require("../schemas/notification");
 const jwt = require("jsonwebtoken");
 
 const _sendNotification = require("../utils/sendNotification");
+const emergency = require("../schemas/Emergency");
 
 //placeholder logic for the handling the back end of the emergency alert system
 
@@ -412,6 +413,83 @@ exports.getAllEmergencyAlerts = async (req, res) => {
     });
   } catch (error) {
     console.log("Error in getAllEmergencyAlerts:", error);
+    return res
+      .status(500)
+      .json({ message: "Internal server error", error: error.message });
+  }
+};
+// try {
+//   const emergencyAlertId = req.params.emergencyAlertId;
+//   const assignedTo = "2458487@students.wits.ac.za";
+
+//   const token = req.cookies.token;
+//   const decoded = jwt.verify(token, process.env.JWT_SECRET);
+//   const sender = decoded.userEmail;
+//   const user = await User.findOne({ email: sender });
+
+//   const findAdmindDetails = await User.findOne({ email: assignedTo });
+
+//   _sendNotification([user.FCMtoken], {
+//     emergencyAlertId,
+//     status: "Assigned",
+//     firstName: findAdmindDetails.firstName,
+//     lastName: findAdmindDetails.lastName,
+//     email: findAdmindDetails.email,
+//     phone: findAdmindDetails.phone,
+//   });
+
+//   //update the emergency alert with the assignedTo field and its status to "Assigned"
+//   await Emergency.findByIdAndUpdate(emergencyAlertId, {
+//     assignedTo,
+//     status: "Assigned",
+//   });
+
+//   res.status(200).json({ message: "Emergency alert assigned successfully" });
+// } catch (error) {
+//   console.log(error);
+//   res.status(500).json({ error: "Error updating emergency alert" });
+// }
+// };
+exports.acceptEmergencyAlert = async (req, res) => {
+  try{
+    //Get current user(admin)
+    const token = req.cookies.token;
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const email = decoded.userEmail;
+
+    //Get the emergency alert id
+    const emergencyAlertId = req.params.alertId;
+
+    //Check if this emergency alert has been assigned to another admin by checking if status is still Searching
+    const emergency = await Emergency.findById(emergencyAlertId);
+    if(emergency.status !== "Searching"){
+      return res.status(400).json({error: "Emergency alert has already been assigned"});
+    }
+
+    //Update the emergency alert with the assignedTo field and its status to "Assigned"
+    await Emergency.findByIdAndUpdate(emergencyAlertId, {
+      assignedTo: email,
+      status: "Assigned",
+    });
+
+    //Find user that reported the emergency alert
+    const userThatReportedEmergency = await User.findOne({ email: emergency.reportedBy });
+
+    const findAdminDetails = await User.findOne({ email });
+
+    _sendNotification([userThatReportedEmergency.FCMtoken], {
+          emergencyAlertId,
+          status: "Assigned",
+          firstName: findAdminDetails.firstName,
+          lastName: findAdminDetails.lastName,
+          email: findAdminDetails.email,
+          phone: findAdminDetails.phone,
+    });
+
+    return res.status(200).json({ message: "Emergency alert assigned successfully" });
+
+  }catch(error){
+    console.log("Error in acceptEmergencyAlert:", error);
     return res
       .status(500)
       .json({ message: "Internal server error", error: error.message });

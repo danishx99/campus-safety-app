@@ -1,9 +1,13 @@
 const express = require("express");
 const router = express.Router();
 const emergencyAlertController = require("../controllers/emergencyController");
+const { isAdmin } = require("../middlewares/isAdmin");
 
 // User Incident Reporting
 router.post("/sendPanic", emergencyAlertController.sendPanic);
+
+// Admin accept emergency alert
+router.get("/acceptEmergencyAlert/:alertId", isAdmin ,emergencyAlertController.acceptEmergencyAlert);
 
 //Get the current emergency alert details
 router.get(

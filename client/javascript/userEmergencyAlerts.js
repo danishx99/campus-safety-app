@@ -2,6 +2,7 @@
 function generateEmergencyAlertHTML(alert) {
   const location = JSON.parse(alert.location);
   const statusColor = getStatusColor(alert.status);
+  
   const isSearching = alert.status.toLowerCase() === "searching";
   const isCancelled = alert.status.toLowerCase() === "cancelled";
   const isResolved = alert.status.toLowerCase() === "resolved";

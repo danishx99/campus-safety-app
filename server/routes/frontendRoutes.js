@@ -177,4 +177,16 @@ router.get(
   }
 );
 
+router.get(
+  "/admin/emergencyalerts/track/:emergencyId",
+  emergencyExists, isAdmin,
+  (req, res) => {
+    res.sendFile(
+      path.join(__dirname, "../../client/html", "AdminTrackEmergencyAlert.html")
+    );
+  }
+);
+
+// admin/emergencyalerts/track/670051783f09432525c3fc54
+
 module.exports = router;

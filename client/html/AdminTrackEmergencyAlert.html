@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Campus Safety App</title>
+  <link rel="icon" type="image/svg+xml" href="/assets/logo.png" />
+  <link href="/styles/output.css" rel="stylesheet" />
+  <link href="/styles/styles.css" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="/javascript/loadComponents.js" defer></script>
+  <!--Awsome notifications-->
+  <script src="/javascript/index.var.js"></script>
+  <link rel="stylesheet" href="/styles/style.css" />
+  <style>
+    /* Loader styles */
+    #mapLoader {
+      display: none;
+      border: 4px solid #f3f3f3;
+      border-radius: 50%;
+      border-top: 4px solid #3498db;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+     
+    #map {
+      border: 2px solid #015eb8;
+      height: 400px;
+      width: 100%;
+    }
+
+
+    .modal {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+    }
+
+    .modal-content {
+      background: white;
+      border-radius: 8px;
+      padding: 20px;
+      max-width: 500px;
+      width: 100%;
+      position: relative;
+    }
+
+    .close {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    .chat-container {
+      width: 800px;
+      height: 500px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      display: flex;
+      flex-direction: column;
+      background-color: #b2c0ce2c;
+    }
+
+    .chat-messages {
+      flex-grow: 1;
+      overflow-y: auto;
+      padding: 10px;
+    }
+
+    .message {
+      max-width: 80%;
+      margin-bottom: 10px;
+      padding: 8px 12px;
+      border-radius: 18px;
+      line-height: 1.4;
+    }
+
+    .user-message {
+      background-color: #015eb8;
+      color: white;
+      align-self: flex-end;
+      margin-left: auto;
+    }
+
+    .admin-message {
+      background-color: #ffffff;
+      color: black;
+      align-self: flex-start;
+    }
+
+    .chat-input {
+      display: flex;
+      padding: 10px;
+      background-color: #b2c0ce2c;
+      border-top: 1px solid #015eb8;
+    }
+
+    .chat-input input {
+      flex-grow: 1;
+      border: none;
+      padding: 10px;
+      border-radius: 20px;
+      margin-right: 10px;
+    }
+
+    .chat-input button {
+      background-color: #015eb8;
+      color: white;
+      border: none;
+      padding: 10px;
+      border-radius: 50%;
+      cursor: pointer;
+    }
+
+    .char-count {
+      color: #015eb8;
+      font-size: 12px;
+      margin-top: 5px;
+    }
+  </style>
+</head>
+
+<body class="flex flex-col min-h-screen bg-gray-100">
+  <script type="module">
+    import { handleIncomingMessages } from "/javascript/fireBaseMessageHandler.js";
+
+    // ADMINS ONLY
+    let notifier = new AWN();
+
+    // Call the handler to manage incoming messages
+    handleIncomingMessages(notifier);
+  </script>
+
+  <header class="bg-[#015EB8] text-white p-4 flex justify-between items-center">
+    <div class="flex items-center">
+      <a href="/admin"><img src="/assets/logo.png" alt="Campus Safety Logo" class="h-8 mr-2"></a>
+      <a href="/admin" class="text-xl font-semibold hidden sm:block">Campus Safety</a>
+    </div>
+    <div class="flex items-center space-x-4">
+
+      <div class="relative inline-flex" id="notificationContainer">
+
+        <button id="notificationButton"
+          class="flex rounded-md bg-[#FDB913] py-2 px-4 border border-transparent text-center items-center text-sm text-white transition-all shadow-md hover:shadow-lg focus:bg-slate-700 focus:shadow-none active:bg-slate-700 hover:bg-slate-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+          type="button">
+          <span class="max-sm:hidden">Notifications</span>
+          <img src="/assets/bell-ring.png" alt="Notifications" class="h-5 md:h-6 md:ml-1" />
+        </button>
+        <span id="notificationBadge"
+          class="absolute top-0.5 right-0.5 grid min-h-[24px] min-w-[24px] translate-x-2/4 -translate-y-2/4 place-items-center rounded-full bg-[white] py-1 px-1 text-xs text-black">
+
+        </span>
+        <div id="dropdownMenu"
+          class="absolute right-0 mt-2 w-64 bg-white rounded-md shadow-lg z-10 border border-gray-200 hidden">
+          <div class="py-2" id="notificationList">
+            <!-- Notifications will be inserted here -->
+          </div>
+        </div>
+      </div>
+
+      <a id="profileBtn" href="/admin/profileManagement" class="rounded-full flex items-center">
+        <div class="w-10 h-10 rounded-full overflow-hidden border-2 border-white">
+          <img src="/assets/user-profile.png" alt="User Profile" class="w-full h-full object-cover"
+            id="headerProfilePic">
+        </div>
+      </a>
+    </div>
+  </header>
+
+
+
+  <div class="flex flex-1">
+    <div id="">
+      <!-- Desktop Navigation -->
+      <nav class="hidden h-full md:flex bg-white w-64 p-4 flex-col shadow-md">
+        <ul class="flex-1 space-y-2">
+          <li>
+            <a href="/admin" class="flex items-center text-gray-700 hover:bg-gray-300 p-2 rounded-md">
+              <img src="/assets/dashboard.png" alt="Dashboard" class="h-6 w-6 mr-3" />
+              <span class="font-medium">Dashboard</span>
+            </a>
+          </li>
+          <li>
+            <a href="/admin/viewIncidents" class="flex items-center text-gray-700 hover:bg-gray-300 p-2 rounded-md">
+              <img src="/assets/report.png" alt="View Incidents" class="h-6 w-6 mr-3" />
+              <span class="font-medium">View Incidents</span>
+            </a>
+          </li>
+          <li>
+            <a href="/admin/sendNotifications" class="flex items-center text-gray-700 hover:bg-gray-300 p-2 rounded-md">
+              <img src="/assets/alert.png" alt="Send Notifications" class="h-6 w-6 mr-3" />
+              <span class="font-medium">Send Notifications</span>
+            </a>
+          </li>
+          <li>
+            <a href="/admin/safetyResources" class="flex items-center text-gray-700 hover:bg-gray-300 p-2 rounded-md">
+              <img src="/assets/resources.png" alt="Safety Resources" class="h-6 w-6 mr-3" />
+              <span class="font-medium">Safety Resources</span>
+            </a>
+          </li>
+          <li>
+            <a href="/admin/generateCode" class="flex items-center text-gray-700 p-2 rounded-md ">
+              <img src="/assets/password-entry.png" alt="Generate Code" class="h-6 w-6 mr-3" />
+              <span class="font-medium">Generate Code</span>
+            </a>
+          </li>
+          <li>
+            <a href="/admin/emergencyAlerts"
+              class="flex items-center text-gray-700 hover:bg-gray-300 p-2 rounded-md bg-blue-200">
+              <img src="/assets/caution.png" alt="Generate Code" class="h-6 w-6 mr-3" />
+              <span class="font-medium">Manage Emergencies</span>
+            </a>
+          </li>
+          <li>
+            <a href="/admin/getUpcomingEvents" class="flex items-center text-gray-700 hover:bg-gray-300 p-2 rounded-md">
+              <img src="/assets/calendar.png" alt="Get Upcoming Events" class="h-6 w-6 mr-3" />
+              <span class="font-medium">Get Upcoming Events</span>
+            </a>
+          </li>
+          <li>
+            <a href="/admin/transportationManagement"
+              class="flex items-center text-gray-700 hover:bg-gray-300 p-2 rounded-md">
+              <img src="/assets/location.png" alt="Transportation Management" class="h-6 w-6 mr-3" />
+              <span class="font-medium">Transportation Management</span>
+            </a>
+          </li>
+        </ul>
+        <div class="border-t border-gray-200 pt-4 mt-4">
+          <a href="/auth/logout" class="flex items-center text-gray-700 hover:bg-gray-300 p-2 rounded-md"
+            id="logoutButton">
+            <img src="/assets/logout-solid.png" alt="Logout" class="h-6 w-6 mr-3" />
+            <span class="font-medium">Logout</span>
+          </a>
+        </div>
+      </nav>
+
+      <!-- Mobile Navigation -->
+      <nav class="fixed inset-x-0 bottom-0 bg-[#015EB8] text-white p-4 flex justify-around items-center md:hidden z-50">
+        <a href="/admin/viewIncidents" class="flex flex-col items-center">
+          <img src="/assets/current-report-mobile.png" alt="View Incidents" class="h-7 w-7" />
+          <span class="text-xs mt-1 text-[#8fbffc]">Incidents</span>
+        </a>
+        <a href="/admin/sendNotifications" class="flex flex-col items-center">
+          <img src="/assets/current-alert-mobile.png" alt="Send Notifications" class="h-7 w-7" />
+          <span class="text-xs mt-1 text-[#8fbffc]">Notify</span>
+        </a>
+        <a href="/admin" class="flex flex-col items-center">
+          <img src="/assets/current-mobile-dashboard.png" alt="Dashboard" class="h-7 w-7" />
+          <span class="text-xs mt-1 text-[#8fbffc]">Dashboard</span>
+        </a>
+        <a href="/admin/emergencyAlerts" class="flex flex-col items-center">
+          <img src="/assets/caution-white.png" alt="Generate Code" class="h-7 w-7" />
+          <span class="text-xs mt-1">Emergencies</span>
+        </a>
+        <button id="moreButton" class="flex flex-col items-center">
+          <img src="/assets/current-menu.png" alt="More" class="h-7 w-7" />
+          <span class="text-xs mt-1 text-[#8fbffc]">More</span>
+        </button>
+      </nav>
+      <!-- More menu (hidden by default) -->
+      <div id="moreMenu"
+        class="fixed inset-0 bg-black bg-opacity-50 flex items-end justify-center md:hidden z-50 hidden transition-all duration-300 ease-in-out">
+        <div
+          class="bg-white w-full max-w-md rounded-t-xl shadow-lg transform translate-y-full transition-transform duration-300 ease-in-out">
+          <div class="py-2">
+            <a href="/admin/generateCode"
+              class="flex items-center px-4 py-3 hover:bg-gray-100 transition-colors duration-200">
+              <img src="/assets/password-entry.png" alt="Generate Code" class="h-7 w-7 mr-3" />
+              <span class="text-base font-medium text-gray-700">Generate Code</span>
+            </a>
+            <a href="/admin/safetyResources"
+              class="flex items-center px-4 py-3 hover:bg-gray-100 transition-colors duration-200">
+              <img src="/assets/resources.png" alt="Generate Code" class="h-7 w-7 mr-3" />
+              <span class="text-base font-medium text-gray-700">Safety Resources</span>
+            </a>
+            <a href="/admin/getUpcomingEvents"
+              class="flex items-center px-4 py-3 hover:bg-gray-100 transition-colors duration-200">
+              <img src="/assets/calendar.png" alt="Get Upcoming Events" class="h-7 w-7 mr-3" />
+              <span class="text-base font-medium text-gray-700">Get Upcoming Events</span>
+            </a>
+            <a href="/admin/transportationManagement"
+              class="flex items-center px-4 py-3 hover:bg-gray-100 transition-colors duration-200">
+              <img src="/assets/location.png" alt="Transportation Management" class="h-7 w-7 mr-3" />
+              <span class="text-base font-medium text-gray-700">Transportation Management</span>
+            </a>
+          </div>
+          <button id="closeMoreMenu"
+            class="w-full p-3 text-center text-white font-medium bg-[#015EB8] hover:bg-[#014c93] transition-colors duration-200">
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="flex-1 p-6 overflow-auto bg-gray-200">
+      <div class="max-w-4xl mx-auto">
+        <!-- <h2 class="text-center text-2xl font-bold mb-4 text-gray-800 sm:text-3xl">
+          Emergency Services
+        </h2> -->
+       
+        <div class="alert-box mb-4" id="incidentAlert" role="alert">
+          Test Error
+        </div>
+
+        <!--Emergency Alert Details + Map // Big white card-->
+        <div id="emergencyDetails" class="mb-5 bg-white rounded-lg shadow-md p-2">
+        
+
+        <!--User and alert details card-->
+          <div id="userAlertDetails" class="bg-white rounded-lg shadow-md p-4 mb-2">
+            <h3 class="text-xl mb-2 font-bold text-[#015EB8]">Emergency details</h3>
+          
+            
+          <!-- Example Emergency Detail -->
+          <div class="flex items-center mb-1">
+           
+            <div class="text-gray-900 max-sm:text-sm" id="alertTitle">Title: STOLEN CELLPHONE</div>
+          </div>
+
+          <div class="flex items-center mb-1">
+           
+            <div class="text-gray-900 max-sm:text-sm" id="alertDescription">Description: Some random dude ran past me and decided to steal my cellphone. I am in the great hall. Please help.</div>
+          </div>
+
+            <div class="grid gap-1 grid-cols-2 mb-2 max-sm:text-sm">
+              <!-- First Name -->
+              <div>
+                <p class="text-gray-700 font-semibold">First Name:</p>
+                <p id="adminFirstName" class="text-gray-900">Delano</p>
+              </div>
+
+              <!-- Last Name -->
+              <div>
+                <p class="text-gray-700 font-semibold">Last Name:</p>
+                <p id="adminLastName" class="text-gray-900">Martin</p>
+              </div>
+
+            </div>
+
+            <div class="grid gap-1 grid-cols-2 max-sm:grid-cols-1 max-sm:text-sm">
+              <!-- Email -->
+              <div>
+                <p class="text-gray-700 font-semibold">Email:</p>
+                <p id="adminEmail" class="text-gray-900">2615475@students.wits.ac.za</p>
+              </div>
+
+              <!-- Cellphone Number -->
+              <div>
+                <p class="text-gray-700 font-semibold">Cellphone:</p>
+                <a href="#" id="adminCellphone" class="text-blue-500">076 473 7275</a>
+              </div>
+            </div>
+
+
+            <!-- Chat to admin button -->
+            <div class="flex justify-end mt-4">
+              <button
+                class="bg-blue-500 text-white px-4 py-2 text-sm rounded-lg hover:bg-blue-700 transition-colors duration-200"
+                id="chatToAdminButton">
+                Chat to Delano
+              </button>
+            </div>
+          </div>
+       
+            <!-- Loader and Map -->
+            <div class="mx-auto" id="mapLoader"></div>
+            <div class="mb-4" id="map"></div>
+            
+            <div class="flex justify-end gap-3">
+              <!-- Cancel Request Button -->
+              <div class="flex justify-end">
+                <button id="cancelRequest"
+                  class="bg-red-500 text-white px-4 py-2 text-sm rounded-lg hover:bg-red-700 transition-colors duration-200">
+                  Cancel Request
+                </button>
+              </div>
+                <!-- Mark as resolved Button -->
+                <div class="flex justify-end">
+                  <button id="cancelRequest"
+                    class="bg-green-500 text-white px-4 py-2 text-sm rounded-lg hover:bg-green-700 transition-colors duration-200">
+                  Mark as resolved
+                  </button>
+                </div>
+            </div>
+            
+
+            <!-- Cancel Request Button Error -->
+            <div class="alert-box my-3" id="cancelAlert" role="cancelAlert">Test Error</div>
+
+
+          <!--Chatbox feature-->
+
+          <div id="chat-container" class="hidden fixed bottom-16 right-4 w-96 max-sm:bottom-20">
+            <div class="bg-white shadow-md rounded-lg max-w-lg w-full">
+              <div class="p-4 border-b bg-blue-500 text-white rounded-t-lg flex justify-between items-center">
+                <p class="text-lg font-semibold">Admin Bot</p>
+                <button id="close-chat"
+                  class="text-gray-300 hover:text-gray-400 focus:outline-none focus:text-gray-400">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                    </path>
+                  </svg>
+                </button>
+              </div>
+              <div id="chatbox" class="p-4 h-80 overflow-y-auto">
+                <!-- Chat messages will be displayed here -->
+                <div class="mb-2 text-right">
+                  <p class="bg-blue-500 text-white rounded-lg py-2 px-4 inline-block">hello</p>
+                </div>
+                <div class="mb-2">
+                  <p class="bg-gray-200 text-gray-700 rounded-lg py-2 px-4 inline-block">This is a response from the
+                    chatbot.</p>
+                </div>
+                <div class="mb-2 text-right">
+                  <p class="bg-blue-500 text-white rounded-lg py-2 px-4 inline-block">this example of chat</p>
+                </div>
+                <div class="mb-2">
+                  <p class="bg-gray-200 text-gray-700 rounded-lg py-2 px-4 inline-block">This is a response from the
+                    chatbot.</p>
+                </div>
+                <div class="mb-2 text-right">
+                  <p class="bg-blue-500 text-white rounded-lg py-2 px-4 inline-block">design with tailwind</p>
+                </div>
+                <div class="mb-2">
+                  <p class="bg-gray-200 text-gray-700 rounded-lg py-2 px-4 inline-block">This is a response from the
+                    chatbot.</p>
+                </div>
+              </div>
+              <div class="p-4 border-t flex">
+                <input id="user-input" type="text" placeholder="Type a message"
+                  class="w-full px-3 py-2 border rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <button id="send-button"
+                  class="bg-blue-500 text-white px-4 py-2 rounded-r-md hover:bg-blue-600 transition duration-300">Send</button>
+              </div>
+            </div>
+          </div>
+          
+          <script>
+            const chatbox = document.getElementById("chatbox");
+            const chatContainer = document.getElementById("chat-container");
+            const userInput = document.getElementById("user-input");
+            const sendButton = document.getElementById("send-button");
+            const openChatButton = document.getElementById("chatToAdminButton");
+            const closeChatButton = document.getElementById("close-chat");
+
+            let isChatboxOpen = false; // Set the initial state to open
+
+            // Function to toggle the chatbox visibility
+            function toggleChatbox() {
+              chatContainer.classList.toggle("hidden");
+              isChatboxOpen = !isChatboxOpen; // Toggle the state
+            }
+
+            // Add an event listener to the open chat button
+            openChatButton.addEventListener("click", toggleChatbox);
+
+            // Add an event listener to the close chat button
+            closeChatButton.addEventListener("click", toggleChatbox);
+
+            // Add an event listener to the send button
+            sendButton.addEventListener("click", function () {
+              const userMessage = userInput.value;
+              if (userMessage.trim() !== "") {
+                addUserMessage(userMessage);
+                respondToUser(userMessage);
+                userInput.value = "";
+              }
+            });
+
+            userInput.addEventListener("keyup", function (event) {
+              if (event.key === "Enter") {
+                const userMessage = userInput.value;
+                addUserMessage(userMessage);
+                respondToUser(userMessage);
+                userInput.value = "";
+              }
+            });
+
+            function addUserMessage(message) {
+              const messageElement = document.createElement("div");
+              messageElement.classList.add("mb-2", "text-right");
+              messageElement.innerHTML = `<p class="bg-blue-500 text-white rounded-lg py-2 px-4 inline-block">${message}</p>`;
+              chatbox.appendChild(messageElement);
+              chatbox.scrollTop = chatbox.scrollHeight;
+            }
+
+            function addBotMessage(message) {
+              const messageElement = document.createElement("div");
+              messageElement.classList.add("mb-2");
+              messageElement.innerHTML = `<p class="bg-gray-200 text-gray-700 rounded-lg py-2 px-4 inline-block">${message}</p>`;
+              chatbox.appendChild(messageElement);
+              chatbox.scrollTop = chatbox.scrollHeight;
+            }
+
+            function respondToUser(userMessage) {
+              // Replace this with your chatbot logic
+              setTimeout(() => {
+                addBotMessage("This is a response from the chatbot.");
+              }, 500);
+            }
+
+
+          </script>
+
+          <!--Chatbox feature END-->
+
+
+
+
+        </div>
+
+      
+      </div>
+    </main>
+
+  </div>
+
+
+
+  <footer class="bg-[#015EB8] text-white p-4 text-center">
+    <p>&copy; 2024 Campus Safety App. All rights reserved.</p>
+  </footer>
+
+  <script type="module" src="/javascript/headerFunctionality.js"></script>
+  <script src="/javascript/AdminTrackEmergencyAlert.js"></script>
+</body>
+
+</html>

@@ -372,12 +372,11 @@ exports.getAllEmergencyAlerts = async (req, res) => {
     const user = await User.findOne({ email});
     const reportedBy = User
 
-    //Find all emergency alerts and sort by date, assignedTo this admin first
+    //Find all emergency alerts and return them sorted by date created
     const emergencies = await Emergency.find({}).sort({
-      assignedTo: { $eq: ["$assignedTo", email] } ? -1 : 1, 
       createdAt: -1,
     });
-    ;
+    
     
 
     res.status(200).json({ emergencies });

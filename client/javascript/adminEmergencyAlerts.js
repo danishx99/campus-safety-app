@@ -101,7 +101,42 @@ function generateEmergencyAlertHTML(alert) {
       `;
     document.head.appendChild(style);
   }
+
   
+  
+
+
+let allEmergencyAlerts;
+
+  
+
+function filterEmergenciesByStatus() {
+  // Get the selected statuses from the checkboxes
+  const checkedStatuses = Array.from(
+    document.querySelectorAll(".status-filter:checked")
+  ).map((checkbox) => checkbox.value);
+
+  return checkedStatuses;
+}
+
+  
+function displayFilteredEmergencies() {
+
+  let currentCheckedStatuses = filterEmergenciesByStatus(); 
+
+  const alertsContainer = document.getElementById("allEmergencyAlerts");
+  alertsContainer.innerHTML = ""; // Clear existing content
+  
+  
+  let alertsToBeDisplayed = allEmergencyAlerts.filter((alert) => currentCheckedStatuses.includes(alert.status));
+
+
+  alertsToBeDisplayed.forEach((alert) => {
+    alertsContainer.innerHTML += generateEmergencyAlertHTML(alert);
+  });
+
+}
+ 
   // Function to fetch and display emergency alerts
   async function displayEmergencyAlerts() {
     const alertsContainer = document.getElementById("allEmergencyAlerts");
@@ -113,16 +148,19 @@ function generateEmergencyAlertHTML(alert) {
       alertsContainer.innerHTML = ""; // Clear existing content
   
       const response = await fetch("/emergency/getAllEmergencyAlerts");
-      let alerts = await response.json();
-      alerts = alerts.emergencies;
+      allEmergencyAlerts = await response.json();
+      allEmergencyAlerts = allEmergencyAlerts.emergencies;
+
+      console.log(allEmergencyAlerts);
+
+      // //Filtering to be done here
+      // let currentCheckedStatuses = filterEmergenciesByStatus(); // ["Searching, Assigned, Resolved"]
   
-      if (alerts.length === 0) {
+      if (allEmergencyAlerts.length === 0) {
         alertsContainer.innerHTML =
           '<p class="text-center text-gray-500">No emergency alerts found.</p>';
       } else {
-        alerts.forEach((alert) => {
-          alertsContainer.innerHTML += generateEmergencyAlertHTML(alert);
-        });
+        displayFilteredEmergencies();
       }
   
       alertBox.style.display = "none";
@@ -138,7 +176,18 @@ function generateEmergencyAlertHTML(alert) {
   
   // Call the function to display emergency alerts when the page loads
   document.addEventListener("DOMContentLoaded", () => {
-    displayEmergencyAlerts();
+     displayEmergencyAlerts();
+
+     // Add event listeners to status checkboxes for filtering
+     const statusFilters = document.querySelectorAll(".status-filter");
+     statusFilters.forEach((checkbox) => {
+       checkbox.addEventListener("change",  displayFilteredEmergencies);
+     });
+
+
+   
+  
+   
     // addSearchingAnimation();
   });
   

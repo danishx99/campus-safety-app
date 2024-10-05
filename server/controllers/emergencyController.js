@@ -134,6 +134,20 @@ exports.getEmergencyAlertDetails = async (req, res) => {
   }
 };
 
+exports.getEmergencyDetailsByEmergencyAlertId = async (req, res) => {
+  try {
+    const emergencyAlertId = req.params.emergencyAlertId;
+    const emergency = await Emergency.findById(emergencyAlertId);
+
+    const user = await User.findOne({ email: emergency.reportedBy });
+
+    res.status(200).json({ emergency, reportedBy: user });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "Error fetching emergency alert" });
+  }
+};
+
 function deg2rad(deg) {
   return deg * (Math.PI / 180);
 }
@@ -451,7 +465,7 @@ exports.getAllEmergencyAlerts = async (req, res) => {
 // }
 // };
 exports.acceptEmergencyAlert = async (req, res) => {
-  try{
+  try {
     //Get current user(admin)
     const token = req.cookies.token;
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
@@ -462,8 +476,10 @@ exports.acceptEmergencyAlert = async (req, res) => {
 
     //Check if this emergency alert has been assigned to another admin by checking if status is still Searching
     const emergency = await Emergency.findById(emergencyAlertId);
-    if(emergency.status !== "Searching"){
-      return res.status(400).json({error: "Emergency alert has already been assigned"});
+    if (emergency.status !== "Searching") {
+      return res
+        .status(400)
+        .json({ error: "Emergency alert has already been assigned" });
     }
 
     //Update the emergency alert with the assignedTo field and its status to "Assigned"
@@ -473,22 +489,25 @@ exports.acceptEmergencyAlert = async (req, res) => {
     });
 
     //Find user that reported the emergency alert
-    const userThatReportedEmergency = await User.findOne({ email: emergency.reportedBy });
+    const userThatReportedEmergency = await User.findOne({
+      email: emergency.reportedBy,
+    });
 
     const findAdminDetails = await User.findOne({ email });
 
     _sendNotification([userThatReportedEmergency.FCMtoken], {
-          emergencyAlertId,
-          status: "Assigned",
-          firstName: findAdminDetails.firstName,
-          lastName: findAdminDetails.lastName,
-          email: findAdminDetails.email,
-          phone: findAdminDetails.phone,
+      emergencyAlertId,
+      status: "Assigned",
+      firstName: findAdminDetails.firstName,
+      lastName: findAdminDetails.lastName,
+      email: findAdminDetails.email,
+      phone: findAdminDetails.phone,
     });
 
-    return res.status(200).json({ message: "Emergency alert assigned successfully" });
-
-  }catch(error){
+    return res
+      .status(200)
+      .json({ message: "Emergency alert assigned successfully" });
+  } catch (error) {
     console.log("Error in acceptEmergencyAlert:", error);
     return res
       .status(500)

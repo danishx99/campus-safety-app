@@ -7,7 +7,11 @@ const { isAdmin } = require("../middlewares/isAdmin");
 router.post("/sendPanic", emergencyAlertController.sendPanic);
 
 // Admin accept emergency alert
-router.get("/acceptEmergencyAlert/:alertId", isAdmin ,emergencyAlertController.acceptEmergencyAlert);
+router.get(
+  "/acceptEmergencyAlert/:alertId",
+  isAdmin,
+  emergencyAlertController.acceptEmergencyAlert
+);
 
 //Get the current emergency alert details
 router.get(
@@ -33,6 +37,11 @@ router.get(
   emergencyAlertController.getAllEmergencyAlerts
 );
 
+//Get emergency details and user details by emergency alert id (admin)
+router.get(
+  "/getEmergencyUserDetails/:emergencyAlertId",
+  emergencyAlertController.getEmergencyDetailsByEmergencyAlertId
+);
 
 router.get(
   "/getEmergencyAlertsByUser",

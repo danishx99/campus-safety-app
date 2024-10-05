@@ -34,7 +34,7 @@
         transform: rotate(360deg);
       }
     }
-     
+
     #map {
       border: 2px solid #015eb8;
       height: 400px;
@@ -333,42 +333,42 @@
         <!-- <h2 class="text-center text-2xl font-bold mb-4 text-gray-800 sm:text-3xl">
           Emergency Services
         </h2> -->
-       
+
         <div class="alert-box mb-4" id="incidentAlert" role="alert">
           Test Error
         </div>
 
         <!--Emergency Alert Details + Map // Big white card-->
         <div id="emergencyDetails" class="mb-5 bg-white rounded-lg shadow-md p-2">
-        
 
-        <!--User and alert details card-->
+
+          <!--User and alert details card-->
           <div id="userAlertDetails" class="bg-white rounded-lg shadow-md p-4 mb-2">
             <h3 class="text-xl mb-2 font-bold text-[#015EB8]">Emergency details</h3>
-          
-            
-          <!-- Example Emergency Detail -->
-          <div class="flex items-center mb-1">
-           
-            <div class="text-gray-900 max-sm:text-sm" id="alertTitle">Title: STOLEN CELLPHONE</div>
-          </div>
 
-          <div class="flex items-center mb-1">
-           
-            <div class="text-gray-900 max-sm:text-sm" id="alertDescription">Description: Some random dude ran past me and decided to steal my cellphone. I am in the great hall. Please help.</div>
-          </div>
 
-            <div class="grid gap-1 grid-cols-2 mb-2 max-sm:text-sm">
+            <!-- Example Emergency Detail -->
+            <div class="flex items-center mb-1">
+
+              <div class="text-gray-900 max-sm:text-sm" id="alertTitle"><b>Title: </b> Loading...</div>
+            </div>
+
+            <div class="flex items-center mb-2">
+
+              <div class="text-gray-900 max-sm:text-sm" id="alertDescription"><b>Description: </b> Loading...</div>
+            </div>
+
+            <div class="grid gap-1 grid-cols-2 mb-1 max-sm:text-sm">
               <!-- First Name -->
               <div>
-                <p class="text-gray-700 font-semibold">First Name:</p>
-                <p id="adminFirstName" class="text-gray-900">Delano</p>
+                <p class="text-gray-700 font-bold">First Name:</p>
+                <p id="adminFirstName" class="text-gray-900">Loading...</p>
               </div>
 
               <!-- Last Name -->
               <div>
-                <p class="text-gray-700 font-semibold">Last Name:</p>
-                <p id="adminLastName" class="text-gray-900">Martin</p>
+                <p class="text-gray-700 font-bold">Last Name:</p>
+                <p id="adminLastName" class="text-gray-900">Loading...</p>
               </div>
 
             </div>
@@ -376,14 +376,14 @@
             <div class="grid gap-1 grid-cols-2 max-sm:grid-cols-1 max-sm:text-sm">
               <!-- Email -->
               <div>
-                <p class="text-gray-700 font-semibold">Email:</p>
-                <p id="adminEmail" class="text-gray-900">2615475@students.wits.ac.za</p>
+                <p class="text-gray-700 font-bold">Email:</p>
+                <p id="adminEmail" class="text-gray-900">Loading...</p>
               </div>
 
               <!-- Cellphone Number -->
               <div>
-                <p class="text-gray-700 font-semibold">Cellphone:</p>
-                <a href="#" id="adminCellphone" class="text-blue-500">076 473 7275</a>
+                <p class="text-gray-700 font-bold">Cellphone:</p>
+                <a href="#" id="adminCellphone" class="text-blue-500">Loading...</a>
               </div>
             </div>
 
@@ -392,41 +392,41 @@
             <div class="flex justify-end mt-4">
               <button
                 class="bg-blue-500 text-white px-4 py-2 text-sm rounded-lg hover:bg-blue-700 transition-colors duration-200"
-                id="chatToAdminButton">
-                Chat to Delano
+                id="chat">
+                Chat
               </button>
             </div>
           </div>
-       
-            <!-- Loader and Map -->
-            <div class="mx-auto" id="mapLoader"></div>
-            <div class="mb-4" id="map"></div>
-            
-            <div class="flex justify-end gap-3">
-              <!-- Cancel Request Button -->
-              <div class="flex justify-end">
-                <button id="cancelRequest"
-                  class="bg-red-500 text-white px-4 py-2 text-sm rounded-lg hover:bg-red-700 transition-colors duration-200">
-                  Cancel Request
-                </button>
-              </div>
-                <!-- Mark as resolved Button -->
-                <div class="flex justify-end">
-                  <button id="cancelRequest"
-                    class="bg-green-500 text-white px-4 py-2 text-sm rounded-lg hover:bg-green-700 transition-colors duration-200">
-                  Mark as resolved
-                  </button>
-                </div>
-            </div>
-            
 
-            <!-- Cancel Request Button Error -->
-            <div class="alert-box my-3" id="cancelAlert" role="cancelAlert">Test Error</div>
+          <!-- Loader and Map -->
+          <div class="mx-auto" id="mapLoader"></div>
+          <div class="mb-4" id="map"></div>
+
+          <div class="flex justify-end gap-3">
+            <!-- Cancel Request Button -->
+            <div class="flex justify-end">
+              <button id="cancelRequest"
+                class="bg-red-500 text-white px-4 py-2 text-sm rounded-lg hover:bg-red-700 transition-colors duration-200">
+                Cancel Request
+              </button>
+            </div>
+            <!-- Mark as resolved Button -->
+            <div class="flex justify-end">
+              <button id="cancelRequest"
+                class="bg-green-500 text-white px-4 py-2 text-sm rounded-lg hover:bg-green-700 transition-colors duration-200">
+                Mark as resolved
+              </button>
+            </div>
+          </div>
+
+
+          <!-- Cancel Request Button Error -->
+          <div class="alert-box my-3" id="cancelAlert" role="cancelAlert">Test Error</div>
 
 
           <!--Chatbox feature-->
 
-          <div id="chat-container" class="hidden fixed bottom-16 right-4 w-96 max-sm:bottom-20">
+          <div id="chat-container" class="z-[100000000] hidden fixed bottom-4 right-4 w-96 max-sm:w-[80%]">
             <div class="bg-white shadow-md rounded-lg max-w-lg w-full">
               <div class="p-4 border-b bg-blue-500 text-white rounded-t-lg flex justify-between items-center">
                 <p class="text-lg font-semibold">Admin Bot</p>
@@ -471,13 +471,13 @@
               </div>
             </div>
           </div>
-          
+
           <script>
             const chatbox = document.getElementById("chatbox");
             const chatContainer = document.getElementById("chat-container");
             const userInput = document.getElementById("user-input");
             const sendButton = document.getElementById("send-button");
-            const openChatButton = document.getElementById("chatToAdminButton");
+            const openChatButton = document.getElementById("chat");
             const closeChatButton = document.getElementById("close-chat");
 
             let isChatboxOpen = false; // Set the initial state to open
@@ -546,7 +546,7 @@
 
         </div>
 
-      
+
       </div>
     </main>
 
@@ -558,6 +558,7 @@
     <p>&copy; 2024 Campus Safety App. All rights reserved.</p>
   </footer>
 
+  <script defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAmnz9yP1MewDeyOE-OV92JrAclq18JzZ4"></script>
   <script type="module" src="/javascript/headerFunctionality.js"></script>
   <script src="/javascript/AdminTrackEmergencyAlert.js"></script>
 </body>

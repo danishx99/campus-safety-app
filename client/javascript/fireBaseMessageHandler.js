@@ -32,6 +32,13 @@ function playSound() {
   });
 }
 
+function playEmergencySound() {
+  const audio = new Audio("../assets/emergencySound.mp3");
+  audio.play().catch((error) => {
+    console.log("Failed to play the emergency sound: ", error);
+  });
+}
+
 function playMessageSound() {
   const audio = new Audio("../assets/notification.mp3");
   audio.play().catch((error) => {
@@ -226,6 +233,7 @@ export function handleIncomingMessages(notifier) {
               durations: { alert: 20000 },
               labels: { alert: notificationTitle },
             });
+            playEmergencySound();
             break;
 
           case "announcement":
@@ -233,6 +241,7 @@ export function handleIncomingMessages(notifier) {
               durations: { success: 20000 },
               labels: { success: notificationTitle },
             });
+            playSound();
             break;
 
           case "incidentReported":
@@ -240,6 +249,7 @@ export function handleIncomingMessages(notifier) {
               durations: { success: 20000 },
               labels: { alert: notificationTitle },
             });
+            playSound();
             break;
 
           case "incidentUpdate":
@@ -247,6 +257,7 @@ export function handleIncomingMessages(notifier) {
               durations: { info: 20000 },
               labels: { info: notificationTitle },
             });
+            playSound();
             break;
 
           case "incidentMessage":
@@ -254,6 +265,7 @@ export function handleIncomingMessages(notifier) {
               durations: { info: 20000 },
               labels: { info: notificationTitle },
             });
+            playSound();
             break;
 
           default:
@@ -261,10 +273,9 @@ export function handleIncomingMessages(notifier) {
               durations: { info: 20000 },
               labels: { info: notificationTitle },
             });
+            playSound();
             break;
         }
-
-        playSound();
       } else if (role === "student" && recipient === "everyone") {
         // Customize message based on notificationType
         switch (notificationType) {
@@ -273,6 +284,7 @@ export function handleIncomingMessages(notifier) {
               durations: { alert: 20000 },
               labels: { alert: notificationTitle },
             });
+            playEmergencySound();
             break;
 
           case "announcement":
@@ -280,6 +292,7 @@ export function handleIncomingMessages(notifier) {
               durations: { success: 20000 },
               labels: { success: notificationTitle },
             });
+            playSound();
             break;
 
           case "incidentReported":
@@ -287,6 +300,7 @@ export function handleIncomingMessages(notifier) {
               durations: { success: 20000 },
               labels: { alert: notificationTitle },
             });
+            playSound();
             break;
 
           case "incidentUpdate":
@@ -294,6 +308,7 @@ export function handleIncomingMessages(notifier) {
               durations: { info: 20000 },
               labels: { info: notificationTitle },
             });
+            playSound();
             break;
 
           case "incidentMessage":
@@ -301,6 +316,7 @@ export function handleIncomingMessages(notifier) {
               durations: { info: 20000 },
               labels: { info: notificationTitle },
             });
+            playSound();
             break;
 
           default:
@@ -308,10 +324,9 @@ export function handleIncomingMessages(notifier) {
               durations: { info: 20000 },
               labels: { info: notificationTitle },
             });
+            playSound();
             break;
         }
-
-        playSound();
       } else if (role === "staff" && recipient === "everyone") {
         // Customize message based on notificationType
         switch (notificationType) {
@@ -320,6 +335,7 @@ export function handleIncomingMessages(notifier) {
               durations: { alert: 20000 },
               labels: { alert: notificationTitle },
             });
+            playEmergencySound();
             break;
 
           case "announcement":
@@ -327,6 +343,7 @@ export function handleIncomingMessages(notifier) {
               durations: { success: 20000 },
               labels: { success: notificationTitle },
             });
+            playSound();
             break;
 
           case "incidentReported":
@@ -334,6 +351,7 @@ export function handleIncomingMessages(notifier) {
               durations: { success: 20000 },
               labels: { alert: notificationTitle },
             });
+            playSound();
             break;
 
           case "incidentUpdate":
@@ -341,6 +359,7 @@ export function handleIncomingMessages(notifier) {
               durations: { info: 20000 },
               labels: { info: notificationTitle },
             });
+            playSound();
             break;
 
           case "incidentMessage":
@@ -348,6 +367,7 @@ export function handleIncomingMessages(notifier) {
               durations: { info: 20000 },
               labels: { info: notificationTitle },
             });
+            playSound();
             break;
 
           default:
@@ -355,10 +375,9 @@ export function handleIncomingMessages(notifier) {
               durations: { info: 20000 },
               labels: { info: notificationTitle },
             });
+            playSound();
             break;
         }
-
-        playSound();
       } else if (role === "student" && recipient === "student") {
         // Customize message based on notificationType
         switch (notificationType) {
@@ -367,6 +386,7 @@ export function handleIncomingMessages(notifier) {
               durations: { alert: 20000 },
               labels: { alert: notificationTitle },
             });
+            playEmergencySound();
             break;
 
           case "announcement":
@@ -374,6 +394,7 @@ export function handleIncomingMessages(notifier) {
               durations: { success: 20000 },
               labels: { success: notificationTitle },
             });
+            playSound();
             break;
 
           case "incidentReported":
@@ -381,6 +402,7 @@ export function handleIncomingMessages(notifier) {
               durations: { success: 20000 },
               labels: { alert: notificationTitle },
             });
+            playSound();
             break;
 
           case "incidentUpdate":
@@ -388,6 +410,7 @@ export function handleIncomingMessages(notifier) {
               durations: { info: 20000 },
               labels: { info: notificationTitle },
             });
+            playSound();
             break;
 
           case "incidentMessage":
@@ -395,6 +418,7 @@ export function handleIncomingMessages(notifier) {
               durations: { info: 20000 },
               labels: { info: notificationTitle },
             });
+            playSound();
             break;
 
           default:
@@ -402,10 +426,9 @@ export function handleIncomingMessages(notifier) {
               durations: { info: 20000 },
               labels: { info: notificationTitle },
             });
+            playSound();
             break;
         }
-
-        playSound();
       } else if (role === "staff" && recipient === "staff") {
         // Customize message based on notificationType
         switch (notificationType) {
@@ -414,6 +437,7 @@ export function handleIncomingMessages(notifier) {
               durations: { alert: 20000 },
               labels: { alert: notificationTitle },
             });
+            playEmergencySound();
             break;
 
           case "announcement":
@@ -421,6 +445,7 @@ export function handleIncomingMessages(notifier) {
               durations: { success: 20000 },
               labels: { success: notificationTitle },
             });
+            playSound();
             break;
 
           case "incidentReported":
@@ -428,6 +453,7 @@ export function handleIncomingMessages(notifier) {
               durations: { success: 20000 },
               labels: { alert: notificationTitle },
             });
+            playSound();
             break;
 
           case "incidentUpdate":
@@ -435,6 +461,7 @@ export function handleIncomingMessages(notifier) {
               durations: { info: 20000 },
               labels: { info: notificationTitle },
             });
+            playSound();
             break;
 
           case "incidentMessage":
@@ -442,6 +469,7 @@ export function handleIncomingMessages(notifier) {
               durations: { info: 20000 },
               labels: { info: notificationTitle },
             });
+            playSound();
             break;
 
           default:
@@ -449,10 +477,9 @@ export function handleIncomingMessages(notifier) {
               durations: { info: 20000 },
               labels: { info: notificationTitle },
             });
+            playSound();
             break;
         }
-
-        playSound();
       } else if (recipient === email) {
         // Customize message based on notificationType
         switch (notificationType) {
@@ -461,6 +488,7 @@ export function handleIncomingMessages(notifier) {
               durations: { alert: 20000 },
               labels: { alert: notificationTitle },
             });
+            playEmergencySound();
             break;
 
           case "announcement":
@@ -468,6 +496,7 @@ export function handleIncomingMessages(notifier) {
               durations: { success: 20000 },
               labels: { success: notificationTitle },
             });
+            playSound();
             break;
 
           case "incidentReported":
@@ -475,6 +504,7 @@ export function handleIncomingMessages(notifier) {
               durations: { success: 20000 },
               labels: { alert: notificationTitle },
             });
+            playSound();
             break;
 
           case "incidentUpdate":
@@ -482,6 +512,7 @@ export function handleIncomingMessages(notifier) {
               durations: { info: 20000 },
               labels: { info: notificationTitle },
             });
+            playSound();
             break;
 
           case "incidentMessage":
@@ -489,6 +520,7 @@ export function handleIncomingMessages(notifier) {
               durations: { info: 20000 },
               labels: { info: notificationTitle },
             });
+            playSound();
             break;
 
           default:
@@ -496,10 +528,9 @@ export function handleIncomingMessages(notifier) {
               durations: { info: 20000 },
               labels: { info: notificationTitle },
             });
+            playSound();
             break;
         }
-
-        playSound();
       }
       // Log custom data for debugging
       console.log(`Notification Type: ${notificationType}`);

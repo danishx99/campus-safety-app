@@ -7,6 +7,8 @@ document.addEventListener("DOMContentLoaded", function () {
   let mapInitialized = false;
   let initCheckInterval;
 
+  const selectLocation = document.getElementById("selectedLocation");
+
   function initMap() {
     const selectedLocation = document.getElementById("selectedLocation");
     const selectedLocationValue = selectedLocation.value;
@@ -118,6 +120,7 @@ document.addEventListener("DOMContentLoaded", function () {
         console.log("Map initialized, showing map and hiding loader");
         loader.style.display = "none";
         mapDiv.style.display = "block";
+        //pan map to marker position
       } else {
         console.log("Map not initialized, showing loader and hiding map");
         loader.style.display = "block";
@@ -139,6 +142,30 @@ document.addEventListener("DOMContentLoaded", function () {
     }
     updateMapVisibility();
   }
+
+  selectLocation.addEventListener("change", () => {
+    const selectedLocationValue = selectLocation.value;
+
+    // Split the [lat, lng] string into two values
+    const location = selectedLocationValue.split(",");
+    let lat = parseFloat(location[0].replace("[", ""));
+    let lng = parseFloat(location[1].replace("]", ""));
+    let locationObj = {
+      lat: lat,
+      lng: lng,
+    };
+
+    // Move map marker to new location
+    marker.setPosition(locationObj);
+
+    // Bind circle to new marker position
+    circle.bindTo("center", marker, "position");
+
+    // Pan the map to the new marker position
+    map.panTo(marker.getPosition());
+
+    console.log("Map panned to:", marker.getPosition().toString());
+  });
 
   // Initialize the map when the page loads, but keep it hidden
   window.onload = function () {

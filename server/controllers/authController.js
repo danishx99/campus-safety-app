@@ -89,7 +89,7 @@ exports.register = async (req, res) => {
     res.status(201).json({ message: "Registration successful!" });
   } catch (error) {
     console.log("Error registering user:", error);
-    res.status(500).json({ error: error });
+    res.status(500).json({ error: "Error registering user" });
   }
 };
 
@@ -428,14 +428,14 @@ exports.verifyEmail = async (req, res) => {
     user.verificationTokenExpires = undefined;
 
     await user.save();
-    console.log("Email verified succesfully");
+    console.log("Email verified successfully");
 
     res.status(200).json({
       message: "Email verified successfully!",
       redirect: user.role, // Include the user's role for redirection
     });
   } catch (error) {
-    res.status(500).json({ error: "Error verifying email", error });
+    res.status(500).json({ error: "Error verifying email"});
   }
 };
 
@@ -471,11 +471,11 @@ exports.resendVerificationEmail = async (req, res) => {
       .status(200)
       .json({ message: "Verification email resent successfully!" });
 
-    console.log(`Verification email sent succesfully to ${email}`);
+    console.log(`Verification email sent successfully to ${email}`);
   } catch (error) {
     res
       .status(500)
-      .json({ error: "Error resending verification email", error });
+      .json({ error: "Error resending verification email"});
   }
 };
 
@@ -486,6 +486,9 @@ exports.logout = async (req, res) => {
     res.clearCookie("email");
     res.clearCookie("firstname");
     res.clearCookie("lastname");
+    res.clearCookie("phone");
+    res.clearCookie("joined");
+    res.clearCookie("googleLogin");
 
     res.status(200).redirect("/login");
   } catch (error) {
@@ -520,12 +523,13 @@ exports.generateCode = async (req, res) => {
   try {
     console.log("Generate code endpoint reached");
     //Generate a random 5 digit code and prefix it with the role
-    const code = Math.floor(10000 + Math.random() * 90000);
+    let code;
+    let existingCode;
 
-    //const codeCheck = await Code.findOne({ userCode: code });
-    while (await Code.findOne({ userCode: code })) {
+    do {
       code = Math.floor(10000 + Math.random() * 90000);
-    }
+      existingCode = await Code.findOne({ userCode: code });
+    } while (existingCode);
 
     console.log("Generated code: ", code);
 

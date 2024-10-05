@@ -26,21 +26,21 @@ if (app && app.name) {
 }
 
 function playSound() {
-  const audio = new Audio("../assets/notification.mp3");
+  const audio = new Audio("/assets/notification.mp3");
   audio.play().catch((error) => {
     console.log("Failed to play the notification sound: ", error);
   });
 }
 
 function playEmergencySound() {
-  const audio = new Audio("../assets/emergencySound.mp3");
+  const audio = new Audio("/assets/emergencySound.mp3");
   audio.play().catch((error) => {
     console.log("Failed to play the emergency sound: ", error);
   });
 }
 
 function playMessageSound() {
-  const audio = new Audio("../assets/notification.mp3");
+  const audio = new Audio("/assets/notification.mp3");
   audio.play().catch((error) => {
     console.log("Failed to play the notification sound: ", error);
   });

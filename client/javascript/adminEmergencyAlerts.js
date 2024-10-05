@@ -260,7 +260,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (data.error) {
           console.log("Error accepting emergency alert:", data.error);
-        
         } else {
 
           //Redirect to the track page

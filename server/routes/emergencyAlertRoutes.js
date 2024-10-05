@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const emergencyAlertController = require("../controllers/emergencyController");
 const { isAdmin } = require("../middlewares/isAdmin");
+const { authMiddleware } = require("../middlewares/authMiddleware");
 
 // User Incident Reporting
 router.post("/sendPanic", emergencyAlertController.sendPanic);
@@ -62,5 +63,9 @@ router.get(
   "/clearEmergencyAlerts",
   emergencyAlertController.clearEmergencyAlerts
 );
+
+router.post("/sendChatMessage", authMiddleware ,emergencyAlertController.sendChatMessage);
+
+router.get("/getChatMessages/:emergencyAlertId", authMiddleware, emergencyAlertController.getChatMessages);
 
 module.exports = router;

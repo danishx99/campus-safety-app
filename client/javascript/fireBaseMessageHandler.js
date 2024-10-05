@@ -32,6 +32,14 @@ function playSound() {
   });
 }
 
+function playMessageSound() {
+  const audio = new Audio("../assets/notification.mp3");
+  audio.play().catch((error) => {
+    console.log("Failed to play the notification sound: ", error);
+  });
+}
+
+
 function getCookie(name) {
   const value = `; ${document.cookie}`;
   const parts = value.split(`; ${name}=`);
@@ -104,6 +112,13 @@ export function handleIncomingMessages(notifier) {
       const status = payload.data.status;
       const proximity = payload.data.proximity;
 
+      //Get the messaging information
+      const chatMessage = payload.data.chatMessage;
+      if(chatMessage){
+        addBotMessage(chatMessage);
+
+      }
+
       if (emergencyAlertIdPayload === emergencyAlertId) {
         if (status === "Assigned") {
           //Change the color of the assigned circle to blue
@@ -171,7 +186,7 @@ export function handleIncomingMessages(notifier) {
           //Hide the admin details after the emergency is resolved
           document.getElementById("assignedPhase").style.display = "none";
 
-          
+
         }
 
         if (status === "No Admin Assigned") {

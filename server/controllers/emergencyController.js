@@ -2,6 +2,7 @@ const Emergency = require("../schemas/Emergency");
 const User = require("../schemas/User.js");
 const notification = require("../schemas/notification");
 const jwt = require("jsonwebtoken");
+const Chat = require("../schemas/Chat");
 
 const _sendNotification = require("../utils/sendNotification");
 const emergency = require("../schemas/Emergency");
@@ -610,3 +611,67 @@ exports.clearEmergencyAlerts = async (req, res) => {
       .json({ message: "Internal server error", error: error.message });
   }
 };
+
+
+exports.sendChatMessage = async (req, res) => {
+  try {
+    const { messageTo, message, emergencyAlertId } = req.body;
+
+    const token = req.cookies.token; // Assuming you're still using cookies
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const role = decoded.role;
+
+    const recipient = await User.findOne({ email: messageTo });
+
+    if (!recipient) {
+      return res.status(404).json({ message: "Recipient not found" });
+    }
+
+    // Find chat by emergencyAlertId or create a new one if it doesn't exist
+    let chat = await Chat.findOne({ emergencyAlertId });
+
+    if (!chat) {
+      chat = new Chat({ emergencyAlertId, messages: [] });
+    }
+
+    // Add new message to the chat
+    chat.messages.push({
+      sender: role === "admin" ? 'admin' : 'user', // Determine if the sender is admin or user
+      text: message,
+    });
+
+    // Save the updated chat document
+    await chat.save();
+
+    // Send the notification (if you have FCM integration)
+    await _sendNotification([recipient.FCMtoken], {
+      chatMessage: message,
+    });
+
+    res.status(200).json({ message: "Chat message sent successfully" });
+    
+  } catch (error) {
+    console.log("Error in sendChatMessage:", error);
+    return res.status(500).json({ message: "Internal server error", error: error.message });
+  }
+};
+
+exports.getChatMessages = async (req, res) => {
+  try {
+    const { emergencyAlertId } = req.params;
+
+    // Find chat by emergencyAlertId
+    const chat = await Chat.findOne({ emergencyAlertId });
+
+    if (!chat) {
+      return res.status(404).json({ message: "Chat not found" });
+    }
+
+    res.status(200).json({ messages: chat.messages });
+  }
+  catch (error) {
+    console.log("Error in getChatMessages:", error);
+    return res.status(500).json({ message: "Internal server error", error: error.message });
+  }
+};
+ 

@@ -36,7 +36,7 @@
     }
 
     #map {
-      border: 2px solid #015eb8;
+    
       height: 400px;
       width: 100%;
     }
@@ -466,7 +466,7 @@
           <div id="chat-container" class="z-[100000000] hidden fixed bottom-4 right-4 w-96 max-sm:w-[80%]">
             <div class="bg-white shadow-md rounded-lg max-w-lg w-full">
               <div class="p-4 border-b bg-blue-500 text-white rounded-t-lg flex justify-between items-center">
-                <p class="text-lg font-semibold">Admin Bot</p>
+                <p class="text-lg font-semibold">Chat</p>
                 <button id="close-chat"
                   class="text-gray-300 hover:text-gray-400 focus:outline-none focus:text-gray-400">
                   <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24"
@@ -478,27 +478,7 @@
               </div>
               <div id="chatbox" class="p-4 h-80 overflow-y-auto">
                 <!-- Chat messages will be displayed here -->
-                <div class="mb-2 text-right">
-                  <p class="bg-blue-500 text-white rounded-lg py-2 px-4 inline-block">hello</p>
-                </div>
-                <div class="mb-2">
-                  <p class="bg-gray-200 text-gray-700 rounded-lg py-2 px-4 inline-block">This is a response from the
-                    chatbot.</p>
-                </div>
-                <div class="mb-2 text-right">
-                  <p class="bg-blue-500 text-white rounded-lg py-2 px-4 inline-block">this example of chat</p>
-                </div>
-                <div class="mb-2">
-                  <p class="bg-gray-200 text-gray-700 rounded-lg py-2 px-4 inline-block">This is a response from the
-                    chatbot.</p>
-                </div>
-                <div class="mb-2 text-right">
-                  <p class="bg-blue-500 text-white rounded-lg py-2 px-4 inline-block">design with tailwind</p>
-                </div>
-                <div class="mb-2">
-                  <p class="bg-gray-200 text-gray-700 rounded-lg py-2 px-4 inline-block">This is a response from the
-                    chatbot.</p>
-                </div>
+                
               </div>
               <div class="p-4 border-t flex">
                 <input id="user-input" type="text" placeholder="Type a message"
@@ -510,6 +490,40 @@
           </div>
 
           <script>
+
+            // Function to send the user message to the server
+            function sendMessageToServer(message) {
+              // alert("messageTo: "+ adminData.email + " message: "+ message + " emergencyAlertId: "+ emergencyAlertId);
+              try{
+                fetch("/emergency/sendChatMessage", {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify({
+                    messageTo: reportedBy.email,
+                    message: message,
+                    emergencyAlertId: gEmergency._id,
+                  }),
+                })
+                .then((response) => response.json())
+                .then((data) => {
+                  if(data.message === "Chat message sent successfully"){
+                    console.log("Chat message sent successfully");
+                  }else{
+                    console.log("There was an error sending the chat message : "+ data.message);
+                    addErrorMessage("There was an error sending the chat message. Please try again.");
+                  }
+                }).catch((error) => {
+                  console.log("There was an error sending the chat message : "+ error);
+                  addErrorMessage("There was an error sending the chat message. Please try again.");
+                }); 
+              } catch (error) {
+                console.log("There was an error sending the chat message : "+ error);
+                addErrorMessage("There was an error sending the chat message. Please try again.");
+              }
+            }
+
             const chatbox = document.getElementById("chatbox");
             const chatContainer = document.getElementById("chat-container");
             const userInput = document.getElementById("user-input");
@@ -521,6 +535,7 @@
 
             // Function to toggle the chatbox visibility
             function toggleChatbox() {
+            
               chatContainer.classList.toggle("hidden");
               isChatboxOpen = !isChatboxOpen; // Toggle the state
             }
@@ -535,8 +550,9 @@
             sendButton.addEventListener("click", function () {
               const userMessage = userInput.value;
               if (userMessage.trim() !== "") {
+                sendMessageToServer(userMessage);
                 addUserMessage(userMessage);
-                respondToUser(userMessage);
+                // respondToUser(userMessage);
                 userInput.value = "";
               }
             });
@@ -544,16 +560,25 @@
             userInput.addEventListener("keyup", function (event) {
               if (event.key === "Enter") {
                 const userMessage = userInput.value;
+                sendMessageToServer(userMessage);
                 addUserMessage(userMessage);
-                respondToUser(userMessage);
-                userInput.value = "";
+                // respondToUser(userMessage);
+                userInput.value = ""; //Clear chatbox
               }
             });
 
             function addUserMessage(message) {
               const messageElement = document.createElement("div");
               messageElement.classList.add("mb-2", "text-right");
-              messageElement.innerHTML = `<p class="bg-blue-500 text-white rounded-lg py-2 px-4 inline-block">${message}</p>`;
+              messageElement.innerHTML = `<p class="bg-blue-500 text-white rounded-lg py-2 px-4 inline-block ml-5">${message}</p>`;
+              chatbox.appendChild(messageElement);
+              chatbox.scrollTop = chatbox.scrollHeight;
+            }
+
+            function addErrorMessage(message) {
+              const messageElement = document.createElement("div");
+              messageElement.classList.add("mb-2");
+              messageElement.innerHTML = `<p class="bg-red-500 text-white rounded-lg py-2 px-4 inline-block mr-5">${message}</p>`;
               chatbox.appendChild(messageElement);
               chatbox.scrollTop = chatbox.scrollHeight;
             }
@@ -561,20 +586,16 @@
             function addBotMessage(message) {
               const messageElement = document.createElement("div");
               messageElement.classList.add("mb-2");
-              messageElement.innerHTML = `<p class="bg-gray-200 text-gray-700 rounded-lg py-2 px-4 inline-block">${message}</p>`;
+              messageElement.innerHTML = `<p class="bg-gray-200 text-gray-700 rounded-lg py-2 px-4 inline-block mr-5">${message}</p>`;
               chatbox.appendChild(messageElement);
               chatbox.scrollTop = chatbox.scrollHeight;
+              
+              playMessageSound();
             }
-
-            function respondToUser(userMessage) {
-              // Replace this with your chatbot logic
-              setTimeout(() => {
-                addBotMessage("This is a response from the chatbot.");
-              }, 500);
-            }
-
 
           </script>
+
+        
 
           <!--Chatbox feature END-->
 

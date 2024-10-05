@@ -428,8 +428,25 @@
             <!-- Cancel Request Button -->
             <div class="flex justify-end">
               <button id="cancelRequest"
-                class="bg-red-500 text-white px-4 py-2 text-sm rounded-lg hover:bg-red-700 transition-colors duration-200">
+                class="bg-red-500 text-white px-4 py-2 text-sm rounded-lg hover:bg-red-700 transition-colors duration-200 flex items-center">
                 Cancel Request
+                <svg
+                aria-hidden="true"
+                class="w-3 h-3 mx-auto text-gray-200 animate-spin dark:text-gray-600 ml-2 fill-[#fbfbfb] hidden"
+                viewBox="0 0 100 101"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                id="loaderCancelled"
+              >
+                <path
+                  d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
+                  fill="currentColor"
+                />
+                <path
+                  d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
+                  fill="currentFill"
+                />
+              </svg>
               </button>
             </div>
             <!-- Cancel Request Button Error -->
@@ -473,7 +490,7 @@
             <div class="flex justify-end mt-4">
               <button
                 class="bg-blue-500 text-white px-4 py-2 text-sm rounded-lg hover:bg-blue-700 transition-colors duration-200"
-                id="chatToAdminButton">
+                id="chat">
                 Chat to admin
               </button>
             </div>
@@ -481,7 +498,8 @@
 
           <!--Chatbox feature-->
 
-          <div id="chat-container" class="hidden fixed bottom-16 right-4 w-96 max-sm:bottom-20">
+         
+          <div id="chat-container" class="z-[100000000] hidden fixed bottom-4 right-4 w-96 max-sm:w-[80%]">
             <div class="bg-white shadow-md rounded-lg max-w-lg w-full">
               <div class="p-4 border-b bg-blue-500 text-white rounded-t-lg flex justify-between items-center">
                 <p class="text-lg font-semibold">Admin Bot</p>
@@ -496,27 +514,8 @@
               </div>
               <div id="chatbox" class="p-4 h-80 overflow-y-auto">
                 <!-- Chat messages will be displayed here -->
-                <div class="mb-2 text-right">
-                  <p class="bg-blue-500 text-white rounded-lg py-2 px-4 inline-block">hello</p>
-                </div>
-                <div class="mb-2">
-                  <p class="bg-gray-200 text-gray-700 rounded-lg py-2 px-4 inline-block">This is a response from the
-                    chatbot.</p>
-                </div>
-                <div class="mb-2 text-right">
-                  <p class="bg-blue-500 text-white rounded-lg py-2 px-4 inline-block">this example of chat</p>
-                </div>
-                <div class="mb-2">
-                  <p class="bg-gray-200 text-gray-700 rounded-lg py-2 px-4 inline-block">This is a response from the
-                    chatbot.</p>
-                </div>
-                <div class="mb-2 text-right">
-                  <p class="bg-blue-500 text-white rounded-lg py-2 px-4 inline-block">design with tailwind</p>
-                </div>
-                <div class="mb-2">
-                  <p class="bg-gray-200 text-gray-700 rounded-lg py-2 px-4 inline-block">This is a response from the
-                    chatbot.</p>
-                </div>
+
+                
               </div>
               <div class="p-4 border-t flex">
                 <input id="user-input" type="text" placeholder="Type a message"
@@ -526,18 +525,54 @@
               </div>
             </div>
           </div>
+
           <script>
+
+            // Function to send the user message to the server
+            function sendMessageToServer(message) {
+              // alert("messageTo: "+ adminData.email + " message: "+ message + " emergencyAlertId: "+ emergencyAlertId);
+              try{
+                fetch("/emergency/sendChatMessage", {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify({
+                    messageTo: adminData.email,
+                    message: message,
+                    emergencyAlertId: emergencyAlertId,
+                  }),
+                })
+                .then((response) => response.json())
+                .then((data) => {
+                  if(data.message === "Chat message sent successfully"){
+                    console.log("Chat message sent successfully");
+                  }else{
+                    console.log("There was an error sending the chat message : "+ data.message);
+                    addErrorMessage("There was an error sending the chat message. Please try again.");
+                  }
+                }).catch((error) => {
+                  console.log("There was an error sending the chat message : "+ error);
+                  addErrorMessage("There was an error sending the chat message. Please try again.");
+                }); 
+              } catch (error) {
+                console.log("There was an error sending the chat message : "+ error);
+                addErrorMessage("There was an error sending the chat message. Please try again.");
+              }
+            }
+
             const chatbox = document.getElementById("chatbox");
             const chatContainer = document.getElementById("chat-container");
             const userInput = document.getElementById("user-input");
             const sendButton = document.getElementById("send-button");
-            const openChatButton = document.getElementById("chatToAdminButton");
+            const openChatButton = document.getElementById("chat");
             const closeChatButton = document.getElementById("close-chat");
 
             let isChatboxOpen = false; // Set the initial state to open
 
             // Function to toggle the chatbox visibility
             function toggleChatbox() {
+            
               chatContainer.classList.toggle("hidden");
               isChatboxOpen = !isChatboxOpen; // Toggle the state
             }
@@ -552,8 +587,9 @@
             sendButton.addEventListener("click", function () {
               const userMessage = userInput.value;
               if (userMessage.trim() !== "") {
+                sendMessageToServer(userMessage);
                 addUserMessage(userMessage);
-                respondToUser(userMessage);
+                // respondToUser(userMessage);
                 userInput.value = "";
               }
             });
@@ -561,16 +597,25 @@
             userInput.addEventListener("keyup", function (event) {
               if (event.key === "Enter") {
                 const userMessage = userInput.value;
+                sendMessageToServer(userMessage);
                 addUserMessage(userMessage);
-                respondToUser(userMessage);
-                userInput.value = "";
+                // respondToUser(userMessage);
+                userInput.value = ""; //Clear chatbox
               }
             });
 
             function addUserMessage(message) {
               const messageElement = document.createElement("div");
               messageElement.classList.add("mb-2", "text-right");
-              messageElement.innerHTML = `<p class="bg-blue-500 text-white rounded-lg py-2 px-4 inline-block">${message}</p>`;
+              messageElement.innerHTML = `<p class="bg-blue-500 text-white rounded-lg py-2 px-4 inline-block ml-5">${message}</p>`;
+              chatbox.appendChild(messageElement);
+              chatbox.scrollTop = chatbox.scrollHeight;
+            }
+
+            function addErrorMessage(message) {
+              const messageElement = document.createElement("div");
+              messageElement.classList.add("mb-2");
+              messageElement.innerHTML = `<p class="bg-red-500 text-white rounded-lg py-2 px-4 inline-block mr-5">${message}</p>`;
               chatbox.appendChild(messageElement);
               chatbox.scrollTop = chatbox.scrollHeight;
             }
@@ -578,66 +623,21 @@
             function addBotMessage(message) {
               const messageElement = document.createElement("div");
               messageElement.classList.add("mb-2");
-              messageElement.innerHTML = `<p class="bg-gray-200 text-gray-700 rounded-lg py-2 px-4 inline-block">${message}</p>`;
+              messageElement.innerHTML = `<p class="bg-gray-200 text-gray-700 rounded-lg py-2 px-4 inline-block mr-5">${message}</p>`;
               chatbox.appendChild(messageElement);
               chatbox.scrollTop = chatbox.scrollHeight;
+              
+              playMessageSound();
             }
-
-            function respondToUser(userMessage) {
-              // Replace this with your chatbot logic
-              setTimeout(() => {
-                addBotMessage("This is a response from the chatbot.");
-              }, 500);
-            }
-
 
           </script>
 
+
           <!--Chatbox feature END-->
-
-
-
 
         </div>
 
-        <!-- Chat box
-          <div id="chatbox" class="hidden w-full max-w-full sm:max-w-md mx-auto">
-            <div class="chat-container bg-white rounded-lg shadow-md">
-              <div class="chat-messages p-2 sm:p-4 overflow-y-auto max-h-64 sm:max-h-80" id="chatMessages">
-                <div class="message admin-message mb-2 p-2 bg-gray-100 rounded-lg text-sm sm:text-base">
-                  Welcome to the Emergency Chat. How can I assist you?
-                </div>
-                <div class="message user-message mb-2 p-2 bg-blue-100 rounded-lg text-right text-sm sm:text-base">
-                  There's a fire in my building. What should I do?
-                </div>
-                <div class="message admin-message mb-2 p-2 bg-gray-100 rounded-lg text-sm sm:text-base">
-                  Stay calm. Evacuate immediately using the nearest exit. Do not use elevators. Call 911 if you haven't already.
-                </div>
-              </div>
-              <div class="chat-input p-2 sm:p-4 border-t border-gray-200">
-                <div class="flex items-center">
-                  <input
-                    type="text"
-                    id="messageInput"
-                    placeholder="Type a message..."
-                    aria-label="Type a message"
-                    class="flex-grow p-2 text-sm sm:text-base border rounded-l-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    maxlength="200"
-                  />
-                  <button 
-                    id="sendButton" 
-                    aria-label="Send message"
-                    class="bg-[#015EB8] text-white p-2 rounded-r-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                      <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd" />
-                    </svg>
-                  </button>
-                </div>
-                <div class="char-count text-xs sm:text-sm text-gray-600 mt-2" id="charCount">200 characters remaining</div>
-              </div>
-            </div>
-          </div> -->
+       
       </div>
     </main>
   </div>

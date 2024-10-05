@@ -145,6 +145,41 @@ async function getEmergencyAlertDetails(emergencyAlertId) {
   }
 }
 
+
+function showCancelledLoader() {
+  const cancelLoader = document.getElementById("loaderCancelled");
+  cancelLoader.style.display = "block";
+}
+
+function hideCancelledLoader() {
+  const cancelLoader = document.getElementById("loaderCancelled");
+  cancelLoader.style.display = "none";
+}
+
+/* Helper functions for the chat feature(Loading of messages) */
+
+
+function addUserMessagePageLoad(message) {
+  const messageElement = document.createElement("div");
+  messageElement.classList.add("mb-2", "text-right");
+  messageElement.innerHTML = `<p class="bg-blue-500 text-white rounded-lg py-2 px-4 inline-block ml-5">${message}</p>`;
+  chatbox.appendChild(messageElement);
+  chatbox.scrollTop = chatbox.scrollHeight;
+}
+
+function addBotMessagePageLoad(message) {
+  const messageElement = document.createElement("div");
+  messageElement.classList.add("mb-2");
+  messageElement.innerHTML = `<p class="bg-gray-200 text-gray-700 rounded-lg py-2 px-4 inline-block mr-5">${message}</p>`;
+  chatbox.appendChild(messageElement);
+  chatbox.scrollTop = chatbox.scrollHeight;
+}
+
+
+
+let adminData;
+let emergencyAlertId;
+
 //When dom loads
 document.addEventListener("DOMContentLoaded", async function () {
   // intializeFirebaseForUpdates();
@@ -160,17 +195,14 @@ document.addEventListener("DOMContentLoaded", async function () {
   // Get the current emergency alert details
   const url = window.location.href;
   const urlParts = url.split("/");
-  const emergencyAlertId = urlParts[urlParts.length - 1];
+  emergencyAlertId = urlParts[urlParts.length - 1];
 
   // Await the emergency alert data and handle null case
   let emergencyAlertData = await getEmergencyAlertDetails(emergencyAlertId);
-  let adminData = emergencyAlertData.adminData;
+  adminData = emergencyAlertData.adminData;
 
   emergencyAlertData = emergencyAlertData.emergencyAlert;
 
-
-  
-  
 
   const currentStatusOfEmergencyAlert = emergencyAlertData.status;
   const currentRadiusOfEmergencyAlert = emergencyAlertData.radiusBeingSearched;
@@ -222,6 +254,29 @@ document.addEventListener("DOMContentLoaded", async function () {
     adminPhoneId.textContent = adminPhone;
     adminPhoneId.href = `tel:${adminPhone}`; 
     adminEmailId.textContent = adminEmail;
+
+    //Since we had a page load and the page loaded with status assigned, we need to retrieve messages.
+    // /getChatMessages/:emergencyAlertId
+   
+
+    const response = await fetch(`/emergency/getChatMessages/${emergencyAlertId}`);
+
+    const data = await response.json();
+
+    if(data.message === "Chat not found"){
+      addBotMessagePageLoad("Welcome to the chat. Please feel free to ask any questions.");
+    }else if(data.messages){
+      data.messages.forEach((message) => {
+        if (message.sender === "user") {
+          addUserMessagePageLoad(message.text);
+        } else {
+          addBotMessagePageLoad(message.text);
+        }
+      });
+    }else{
+      addErrorMessage("Error loading chat messages. Please try again.");
+    }
+
   }
 
   if (currentStatusOfEmergencyAlert === "Resolved") {
@@ -243,7 +298,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     //Hide the map since its resolved
     document.getElementById("map").style.display = "none";
 
-    
+
   }
 
   if (currentRadiusOfEmergencyAlert && currentRadiusOfEmergencyAlert !== 999) {
@@ -281,18 +336,30 @@ document.addEventListener("DOMContentLoaded", async function () {
   // cancellation process
   const cancelButton = document.getElementById("cancelRequest");
   cancelButton.addEventListener("click", async function () {
-    const response = await fetch(
-      `/emergency/cancelEmergencyAlert/${emergencyAlertId}`
-    );
-    //const data = await response.json();
-    if (response.status === 200) {
-      window.location.href = "/user/emergencyAlerts";
-    } else {
+    try{
+      showCancelledLoader();
+      const response = await fetch(
+        `/emergency/cancelEmergencyAlert/${emergencyAlertId}`
+      );
+      //const data = await response.json();
+      if (response.status === 200) {
+        hideCancelledLoader();
+  
+        window.location.href = "/user/emergencyAlerts";
+      } else {
+        hideCancelledLoader();
+        let errorMessage = document.getElementById("cancelAlert");
+        errorMessage.textContent =
+          "Error cancelling the alert. Please try again.";
+        errorMessage.style.display = "block";
+      }
+    }catch (error) {
+      hideCancelledLoader();
+      console.log("Error cancelling the alert:", error);
       let errorMessage = document.getElementById("cancelAlert");
       errorMessage.textContent =
         "Error cancelling the alert. Please try again.";
       errorMessage.style.display = "block";
     }
   });
-
 });

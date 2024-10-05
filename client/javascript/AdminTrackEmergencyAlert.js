@@ -1,4 +1,5 @@
 let gEmergency = {};
+let reportedBy;
 let map;
 let myMarker;
 let rentalMarkers = []; // Array to store rental station markers
@@ -40,8 +41,24 @@ function hideCancelledLoader() {
 }
 
 
+function addUserMessagePageLoad(message) {
+  const messageElement = document.createElement("div");
+  messageElement.classList.add("mb-2", "text-right");
+  messageElement.innerHTML = `<p class="bg-blue-500 text-white rounded-lg py-2 px-4 inline-block ml-5">${message}</p>`;
+  chatbox.appendChild(messageElement);
+  chatbox.scrollTop = chatbox.scrollHeight;
+}
 
-document.addEventListener("DOMContentLoaded", function () {
+function addBotMessagePageLoad(message) {
+  const messageElement = document.createElement("div");
+  messageElement.classList.add("mb-2");
+  messageElement.innerHTML = `<p class="bg-gray-200 text-gray-700 rounded-lg py-2 px-4 inline-block mr-5">${message}</p>`;
+  chatbox.appendChild(messageElement);
+  chatbox.scrollTop = chatbox.scrollHeight;
+}
+
+
+document.addEventListener("DOMContentLoaded", async function () {
   fetchEmergencyDetails();
 
   const emergencyAlertId = getEmergencyAlertIdFromUrl();
@@ -96,6 +113,29 @@ document.addEventListener("DOMContentLoaded", function () {
       messageBox.style.display = "block";
     }
   });
+
+  //Messaging process
+  //Since we had a page load and the page loaded with status assigned, we need to retrieve messages.
+    // /getChatMessages/:emergencyAlertId
+   
+
+    const response = await fetch(`/emergency/getChatMessages/${emergencyAlertId}`);
+
+    const data = await response.json();
+
+    if(data.message === "Chat not found"){
+      addBotMessagePageLoad("Welcome to the chat. Get in touch with the user to assist them.");
+    }else if(data.messages){
+      data.messages.forEach((message) => {
+        if (message.sender === "admin") {
+          addUserMessagePageLoad(message.text);
+        } else {
+          addBotMessagePageLoad(message.text);
+        }
+      });
+    }else{
+      addErrorMessage("Error loading chat messages. Please try again.");
+    }
   
 });
 
@@ -109,7 +149,7 @@ function fetchEmergencyDetails() {
     .then((data) => {
       if (data.emergency) {
         gEmergency = data.emergency;
-        const reportedBy = data.reportedBy;
+        reportedBy = data.reportedBy;
         let emergencyLocation = JSON.parse(gEmergency.location);
 
         emergencyLocation = {

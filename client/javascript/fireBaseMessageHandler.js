@@ -167,6 +167,11 @@ export function handleIncomingMessages(notifier) {
 
           //Hide the map since its resolved
           document.getElementById("map").style.display = "none";
+
+          //Hide the admin details after the emergency is resolved
+          document.getElementById("assignedPhase").style.display = "none";
+
+          
         }
 
         if (status === "No Admin Assigned") {

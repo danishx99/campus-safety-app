@@ -242,6 +242,8 @@ document.addEventListener("DOMContentLoaded", async function () {
 
     //Hide the map since its resolved
     document.getElementById("map").style.display = "none";
+
+    
   }
 
   if (currentRadiusOfEmergencyAlert && currentRadiusOfEmergencyAlert !== 999) {
@@ -292,5 +294,5 @@ document.addEventListener("DOMContentLoaded", async function () {
       errorMessage.style.display = "block";
     }
   });
-  
+
 });

@@ -45,7 +45,7 @@ app.use("/location", locationRoutes);
 
 //catch all other routes
 app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "./client/html/error", "notFound404.html"));
+  res.status(404).sendFile(path.join(__dirname, "./client/html/error", "notFound404.html"));
 });
 
 //Route to clear user collection

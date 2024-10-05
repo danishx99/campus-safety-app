@@ -54,6 +54,11 @@ router.get(
 );
 
 router.get(
+  "/resolveEmergencyAlert/:emergencyAlertId",
+  emergencyAlertController.resolveEmergency
+);
+
+router.get(
   "/clearEmergencyAlerts",
   emergencyAlertController.clearEmergencyAlerts
 );

@@ -548,6 +548,46 @@ exports.cancelEmergency = async (req, res) => {
   }
 };
 
+exports.resolveEmergency = async (req, res) => {
+  try {
+    const emergencyAlertId = req.params.emergencyAlertId;
+    const token = req.cookies.token;
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const email = decoded.userEmail;
+
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const emergency = await Emergency.findById(emergencyAlertId);
+
+    if (!emergency) {
+      return res.status(404).json({ message: "Emergency alert not found" });
+    }
+
+    const userThatReportedEmergency = await User.findOne({ email: emergency.reportedBy });
+    
+
+    await Emergency.findByIdAndUpdate(emergencyAlertId, {
+      status: "Resolved",
+    });
+
+    await _sendNotification([userThatReportedEmergency.FCMtoken], {
+      emergencyAlertId,
+      status: "Resolved",
+    });
+    
+    res.status(200).json({ message: "Emergency alert resolved successfully" });
+  } catch (error) {
+    console.log("Error resolving emergency:", error);
+    return res
+      .status(500)
+      .json({ message: "Internal server error", error: error.message });
+  }
+};
+
 exports.clearEmergencyAlerts = async (req, res) => {
   try {
     const token = req.cookies.token;

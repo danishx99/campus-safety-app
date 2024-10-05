@@ -12,7 +12,7 @@ exports.emergencyExists = async (req, res, next) => {
     // Check if emergencyAlertId is a valid ObjectId
     if (!mongoose.Types.ObjectId.isValid(emergencyAlertId)) {
       console.error("Invalid Emergency Alert ID");
-      return res.sendFile(
+      return res.status(404).sendFile(
         path.join(
           __dirname,
           "../../client/html/error",
@@ -28,7 +28,7 @@ exports.emergencyExists = async (req, res, next) => {
 
     // If no emergency or if status is "Cancelled", return the 404 error page
     if (!emergency || emergency.status === "Cancelled") {
-      return res.sendFile(
+      return res.status(404).sendFile(
         path.join(
           __dirname,
           "../../client/html/error",

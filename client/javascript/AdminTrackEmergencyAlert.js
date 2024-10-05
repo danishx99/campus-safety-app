@@ -21,6 +21,26 @@ function getEmergencyAlertIdFromUrl() {
   return emergencyAlertId;
 }
 
+function showResolvedLoader() {
+  const resolvedLoader = document.getElementById("loaderResolved");
+  resolvedLoader.style.display = "block";
+}
+function hideResolvedLoader() {
+  const resolvedLoader = document.getElementById("loaderResolved");
+  resolvedLoader.style.display = "none";
+}
+
+function showCancelledLoader() {
+  const cancelLoader = document.getElementById("loaderCancelled");
+  cancelLoader.style.display = "block";
+}
+function hideCancelledLoader() {
+  const cancelLoader = document.getElementById("loaderCancelled");
+  cancelLoader.style.display = "none";
+}
+
+
+
 document.addEventListener("DOMContentLoaded", function () {
   fetchEmergencyDetails();
 
@@ -29,17 +49,51 @@ document.addEventListener("DOMContentLoaded", function () {
   // cancellation process
   const cancelButton = document.getElementById("cancelRequest");
   cancelButton.addEventListener("click", async function () {
+    showCancelledLoader();
     const response = await fetch(
       `/emergency/cancelEmergencyAlert/${emergencyAlertId}`
     );
     //const data = await response.json();
     if (response.status === 200) {
+      hideCancelledLoader();
       window.location.href = "/admin/emergencyAlerts";
     } else {
+      hideCancelledLoader();
       let errorMessage = document.getElementById("cancelAlert");
       errorMessage.textContent =
         "Error cancelling the alert. Please try again.";
       errorMessage.style.display = "block";
+    }
+  });
+
+  //Resolved process
+  const resolvedButton = document.getElementById("resolveRequest");
+  resolvedButton.addEventListener("click", async function () {
+    showResolvedLoader();
+    const response = await fetch(
+      `/emergency/resolveEmergencyAlert/${emergencyAlertId}`
+    );
+    //const data = await response.json();
+    if (response.status === 200) {
+      hideResolvedLoader();
+
+      //Console log response
+      console.log("Response: ", response);
+      
+
+      //Show "This emergency has been successfully resolved" message and redirect
+      const messageBox = document.getElementById("messageBox");
+      messageBox.style.display = "block";
+      messageBox.textContent = "This emergency has been successfully resolved. Redirecting...";
+      setTimeout(() => {
+        window.location.href = "/admin/emergencyAlerts";
+      }, 1500);
+     
+    } else {
+      hideResolvedLoader();
+      const messageBox = document.getElementById("messageBox");
+      messageBox.textContent ="Error marking the alert as resolved. Please try again.";
+      messageBox.style.display = "block";
     }
   });
   

@@ -260,14 +260,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (data.error) {
           console.log("Error accepting emergency alert:", data.error);
-          alert("Error accepting emergency alert. Please try again later.");
+        
         } else {
-          alert("Emergency alert accepted successfully");
-          displayEmergencyAlerts();
+
+          //Redirect to the track page
+          window.location.href = `/admin/emergencyalerts/track/${alertId}`;
+      
+          // displayEmergencyAlerts();//refreshes dom after
         }
       } catch (error) {
         console.error("Error accepting emergency alert:", error);
-        alert("Error accepting emergency alert. Please try again later.");
+       
       } finally {
         loader.classList.add("hidden");
       }

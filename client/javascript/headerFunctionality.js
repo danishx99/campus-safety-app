@@ -311,7 +311,7 @@ function UpdateUserLocation(latitude, longitude){
 
 // Function to get the current location
 function getCurrentLocation() {
-  console.log("2 seconds have passed")
+  console.log("10 seconds have passed")
   // Check if the Geolocation API is available
   if ("geolocation" in navigator) {
       navigator.geolocation.getCurrentPosition(
@@ -341,8 +341,8 @@ function getCurrentLocation() {
 }
 
 
-// Call getCurrentLocation every 2 seconds
-setInterval(getCurrentLocation, 2000);
+// Call getCurrentLocation every 10 seconds
+setInterval(getCurrentLocation, 10000);
 // Global variable to hold the geocoder
 // let geocoder;
 

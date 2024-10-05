@@ -3,20 +3,52 @@ let map;
 let myMarker;
 let rentalMarkers = []; // Array to store rental station markers
 const mockRentals = [
-  //   [-26.192788, 28.02673],
-  //   [-26.190573, 28.027724],
+  [-26.192788, 28.02673],
+  [-26.190573, 28.027724],
   [-26.189649, 28.030912],
   [-26.192499, 28.028636],
+  [-26.190543, 28.029708],
+[-26.190166, 28.031451],
+  [-26.191358, 28.031880],
+  [-26.192875, 28.028635],
+  [-26.193366, 28.030473]
 ];
 
-document.addEventListener("DOMContentLoaded", function () {
-  fetchEmergencyDetails();
-});
-
-function fetchEmergencyDetails() {
+function getEmergencyAlertIdFromUrl() {
   const url = window.location.href;
   const urlParts = url.split("/");
   const emergencyAlertId = urlParts[urlParts.length - 1];
+  return emergencyAlertId;
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+  fetchEmergencyDetails();
+
+  const emergencyAlertId = getEmergencyAlertIdFromUrl();
+
+  // cancellation process
+  const cancelButton = document.getElementById("cancelRequest");
+  cancelButton.addEventListener("click", async function () {
+    const response = await fetch(
+      `/emergency/cancelEmergencyAlert/${emergencyAlertId}`
+    );
+    //const data = await response.json();
+    if (response.status === 200) {
+      window.location.href = "/admin/emergencyAlerts";
+    } else {
+      let errorMessage = document.getElementById("cancelAlert");
+      errorMessage.textContent =
+        "Error cancelling the alert. Please try again.";
+      errorMessage.style.display = "block";
+    }
+  });
+  
+});
+
+function fetchEmergencyDetails() {
+
+  const emergencyAlertId = getEmergencyAlertIdFromUrl();
+ 
 
   fetch(`/emergency/getEmergencyUserDetails/${emergencyAlertId}`)
     .then((response) => response.json())
@@ -35,14 +67,12 @@ function fetchEmergencyDetails() {
 
         // Display emergency details (omitted for brevity)
         //display the emergency details
-        document.getElementById("alertTitle").innerHTML = `<b>Title: </b>${
-          gEmergency.title || "No title was provided"
-        }`;
+        document.getElementById("alertTitle").innerHTML = `<b>Title: </b>${gEmergency.title || "No title was provided"
+          }`;
         document.getElementById(
           "alertDescription"
-        ).innerHTML = `<b>Description: </b>${
-          gEmergency.description || "No description was provided"
-        }`;
+        ).innerHTML = `<b>Description: </b>${gEmergency.description || "No description was provided"
+          }`;
         document.getElementById("adminFirstName").innerText =
           reportedBy.firstName;
         document.getElementById("adminLastName").innerText =
@@ -151,7 +181,7 @@ function watchUserLocation() {
       };
 
       myMarker.setPosition(newLocation);
-      map.setCenter(newLocation);
+      // map.setCenter(newLocation);
 
       let emergencyLocation = JSON.parse(gEmergency.location);
 
@@ -224,14 +254,18 @@ function calculateBestRoute(currentLocation, emergencyLocation) {
                     walkingTime: walkingTime,
                     drivingTime: drivingTime,
                     rentalStation: rentalStation,
-                    description: `Walking to Rental ${
-                      index + 1
-                    } and driving to emergency`,
+                    description: `Walking to Rental ${index + 1
+                      } and driving to emergency`,
                   };
+                  
+
                 }
 
                 completedCalculations++;
                 if (completedCalculations === mockRentals.length) {
+                  console.log("Best route:", bestRoute);
+                  console.log("The time it will take to walk to the first rental station is: ", bestRoute.walkingTime/60+ " minutes");
+                  console.log("The time it will take to drive from the first rental station to the emergency location is: ", bestRoute.drivingTime/60+ " minutes");
                   displayBestRoute(
                     bestRoute,
                     currentLocation,
@@ -275,46 +309,114 @@ function displayBestRoute(route, currentLocation, emergencyLocation) {
     window.currentRoutePolyline.setMap(null);
   }
 
-  // Create a DirectionsService instance
   const directionsService = new google.maps.DirectionsService();
 
-  // Prepare the request based on the type of route
-  let request;
+  // Define the symbol for dots
+  const lineSymbol = {
+    path: google.maps.SymbolPath.CIRCLE,
+    fillOpacity: 1,
+    scale: 3
+  };
 
   if (route.type === "DIRECT") {
-    // Request walking directions from current location to emergency location
-    request = {
+    // Request walking directions directly to the emergency location
+    const request = {
       origin: currentLocation,
       destination: emergencyLocation,
       travelMode: google.maps.TravelMode.WALKING,
     };
+
+    directionsService.route(request, (response, status) => {
+      if (status === google.maps.DirectionsStatus.OK) {
+        // Display the walking route
+        const walkingRenderer = new google.maps.DirectionsRenderer({
+          map: map,
+          suppressMarkers: true,
+          polylineOptions: {
+            strokeColor: "#0000FF", // Blue for walking
+            strokeOpacity: 0,
+            strokeWeight: 2,
+            icons: [{
+              icon: lineSymbol,
+              offset: '0',
+              repeat: '15px',
+              scale: 2
+            }]
+          },
+          preserveViewport: true,
+        });
+        walkingRenderer.setDirections(response);
+      } else {
+        console.error("Error fetching walking directions:", status);
+      }
+    });
   } else {
-    // Request driving directions from current location to rental station, then to emergency location
-    request = {
+    // First request: walking directions from current location to the rental station
+    const walkingRequest = {
       origin: currentLocation,
-      destination: emergencyLocation,
-      waypoints: [{ location: route.rentalStation, stopover: true }],
-      travelMode: google.maps.TravelMode.DRIVING,
+      destination: route.rentalStation,
+      travelMode: google.maps.TravelMode.WALKING,
     };
+
+    directionsService.route(
+      walkingRequest,
+      (walkingResponse, walkingStatus) => {
+        if (walkingStatus === google.maps.DirectionsStatus.OK) {
+          // Display the walking route
+          const walkingRenderer = new google.maps.DirectionsRenderer({
+            map: map,
+            suppressMarkers: true,
+            polylineOptions: {
+              strokeColor: "#0000FF", // Blue for walking
+              strokeOpacity: 0,
+              strokeWeight: 2,
+              icons: [{
+                icon: lineSymbol,
+                offset: '0',
+                repeat: '15px',
+                scale: 2
+              }]
+            },
+            preserveViewport: true,
+          });
+          walkingRenderer.setDirections(walkingResponse);
+
+          // Second request: driving directions from rental station to emergency location
+          const drivingRequest = {
+            origin: route.rentalStation,
+            destination: emergencyLocation,
+            travelMode: google.maps.TravelMode.DRIVING,
+          };
+
+          directionsService.route(
+            drivingRequest,
+            (drivingResponse, drivingStatus) => {
+              if (drivingStatus === google.maps.DirectionsStatus.OK) {
+                // Display the driving route
+                const drivingRenderer = new google.maps.DirectionsRenderer({
+                  map: map,
+                  suppressMarkers: true,
+                  polylineOptions: {
+                    strokeColor: "#FF0000", // Red for driving
+                    strokeOpacity: 1.0,
+                    strokeWeight: 2,
+                
+                  },
+                  preserveViewport: true,
+                });
+                drivingRenderer.setDirections(drivingResponse);
+              } else {
+                console.error(
+                  "Error fetching driving directions:",
+                  drivingStatus
+                );
+              }
+            }
+          );
+        } else {
+          console.error("Error fetching walking directions:", walkingStatus);
+        }
+      }
+    );
   }
-
-  // Use the DirectionsService to calculate the route
-  directionsService.route(request, (response, status) => {
-    if (status === google.maps.DirectionsStatus.OK) {
-      // Create a DirectionsRenderer instance
-      const directionsRenderer = new google.maps.DirectionsRenderer({
-        map: map,
-        polylineOptions: {
-          strokeColor: route.type === "DIRECT" ? "#0000FF" : "#FF0000", // Blue for walking, red for combined
-          strokeOpacity: 1.0,
-          strokeWeight: 2,
-        },
-      });
-
-      // Set the directions result
-      directionsRenderer.setDirections(response);
-    } else {
-      console.error("Error fetching directions:", status);
-    }
-  });
 }

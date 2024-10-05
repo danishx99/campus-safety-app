@@ -39,7 +39,6 @@ function playMessageSound() {
   });
 }
 
-
 function getCookie(name) {
   const value = `; ${document.cookie}`;
   const parts = value.split(`; ${name}=`);
@@ -114,9 +113,10 @@ export function handleIncomingMessages(notifier) {
 
       //Get the messaging information
       const chatMessage = payload.data.chatMessage;
-      if(chatMessage){
+      if (chatMessage) {
         addBotMessage(chatMessage);
-
+        //play sound
+        playSound();
       }
 
       if (emergencyAlertIdPayload === emergencyAlertId) {
@@ -185,8 +185,6 @@ export function handleIncomingMessages(notifier) {
 
           //Hide the admin details after the emergency is resolved
           document.getElementById("assignedPhase").style.display = "none";
-
-
         }
 
         if (status === "No Admin Assigned") {

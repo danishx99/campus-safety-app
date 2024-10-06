@@ -11,6 +11,159 @@
     <!--Awsome notifications-->
     <script src="../javascript/index.var.js"></script>
     <link rel="stylesheet" href="../styles/style.css" />
+    <style>
+      .modal {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 1000;
+      }
+
+      .modal-content {
+        background: white;
+        border-radius: 8px;
+        padding: 20px;
+        max-width: 500px;
+        width: 100%;
+        position: relative;
+      }
+
+      .close {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        font-size: 1.5rem;
+        cursor: pointer;
+      }
+
+      .hidden {
+        display: none;
+      }
+
+      #map-container {
+        position: relative;
+      }
+
+      #map {
+        height: 500px;
+        width: 100%;
+        display: hidden;
+      }
+
+      #mapLoader {
+        display: block;
+        border: 4px solid #f3f3f3;
+        border-radius: 50%;
+        border-top: 4px solid #3498db;
+        width: 40px;
+        height: 40px;
+        animation: spin 1s linear infinite;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      .location-buttons {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .direction-step {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+        padding: 5px;
+        border-bottom: 1px solid #e5e5e5;
+      }
+
+      .direction-icon {
+        width: 24px;
+        height: 24px;
+        margin-right: 10px;
+        background-size: contain;
+        background-repeat: no-repeat;
+      }
+
+      .direction-text {
+        flex: 1;
+      }
+
+      .direction-distance {
+        color: #666;
+        font-size: 0.9em;
+      }
+
+      #directionsLoader {
+        display: none;
+        border: 4px solid #f3f3f3;
+        border-radius: 50%;
+        border-top: 4px solid #3498db;
+        width: 30px;
+        height: 30px;
+        animation: spin 1s linear infinite;
+        margin: 10px auto;
+      }
+
+      #directionsPanel {
+        max-height: 300px;
+        overflow-y: auto;
+      }
+
+      #directionsContent {
+        padding-right: 10px;
+      }
+
+      /* Styling for webkit browsers */
+      #directionsPanel::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      #directionsPanel::-webkit-scrollbar-track {
+        background: #f1f1f1;
+      }
+
+      #directionsPanel::-webkit-scrollbar-thumb {
+        background: #888;
+        border-radius: 4px;
+      }
+
+      #directionsPanel::-webkit-scrollbar-thumb:hover {
+        background: #555;
+      }
+
+      @media (max-width: 640px) {
+        #locationButtons {
+          display: none;
+        }
+
+        #locationDropdown {
+          display: block;
+        }
+      }
+
+      #locationButtons button {
+        @apply bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded text-sm;
+      }
+
+      @media (min-width: 640px) {
+        #locationButtons button {
+          @apply py-2 px-4 text-base;
+        }
+      }
+    </style>
   </head>
   <body class="flex flex-col min-h-screen bg-gray-100">
     <script type="module">
@@ -269,16 +422,282 @@
         </div>
       </div>
 
-      <main class="flex-1 p-6 overflow-auto">
-        <h1 class="text-2xl font-semibold mb-4">Transportation Management</h1>
-      </main>
+     <!-- Main Content -->
+     <main class="flex-1 p-6 overflow-auto bg-gray-200">
+      <h2
+        class="text-center text-2xl font-bold mb-6 text-gray-800 max-sm:text-xl "
+      >
+        Campus Navigation
+      </h2>
+
+      <!-- Location buttons -->
+      <div
+        id="locationButtons"
+        class="mb-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-2"
+      >
+        <!-- Buttons will be dynamically added here -->
+      </div>
+
+      <select
+        id="locationDropdown"
+        class="w-full p-2 rounded border border-gray-300 mb-4 hidden"
+      >
+        <option value="">Select a location</option>
+        <!-- Options will be dynamically added here -->
+      </select>
+
+      <!-- loader & map here -->
+      <div class="mx-auto" id="mapLoader"></div>
+      <div id="map" class="w-full h-64 sm:h-96 mb-4"></div>
+
+      <!-- Directions panel -->
+      <div id="directionsPanel" class="mt-4 p-4 bg-white rounded-lg shadow">
+        <h3 class="font-bold mb-2 text-gray-800">Directions:</h3>
+        <div id="directionsLoader"></div>
+        <div id="directionsContent" class="text-gray-700"></div>
+      </div>
+    </main>
+
     </div>
 
     <footer class="bg-[#015EB8] text-white p-4 text-center">
       <p>&copy; 2024 Campus Safety App. All rights reserved.</p>
     </footer>
 
-    <script src="../javascript/adminTransportation.js"></script>
+    <script>
+      let map, directionsService, directionsRenderer, currentLocationMarker;
+      let mapInitialized = false;
+
+      const witsLocations = [
+        {
+          name: "Wits Inter Campus Bus Service",
+          lat: -26.191170236653846,
+          lng: 28.02840292453766,
+        },
+        {
+          name: "The Great Hall",
+          lat: -26.192847775992607,
+          lng: 28.03059294819832,
+        },
+        {
+          name: "Counselling and Careers Development Unit",
+          lat: -26.190934368353346,
+          lng: 28.026815056800842,
+        },
+        {
+          name: "Old Mutual Sports Hall",
+          lat: -26.189605795127147,
+          lng: 28.029293417930603,
+        },
+        {
+          name: "The Matrix",
+          lat: -26.189779088146377,
+          lng: 28.030672073364258,
+        },
+        {
+          name: "Hall 29 (Wits - West Campus)",
+          lat: -26.18655387026529,
+          lng: 28.026176691055298,
+        },
+      ];
+
+      function createLocationButtons() {
+        const locationDropdown = document.getElementById("locationDropdown");
+
+        witsLocations.forEach((loc) => {
+          // Create dropdown option
+          const option = document.createElement("option");
+          option.value = loc.name;
+          option.textContent = loc.name;
+          locationDropdown.appendChild(option);
+        });
+
+        // Add event listener to dropdown
+        locationDropdown.addEventListener("change", (event) => {
+          const selectedLocation = witsLocations.find(
+            (loc) => loc.name === event.target.value
+          );
+          if (selectedLocation) {
+            showDirections(selectedLocation);
+          }
+        });
+      }
+      createLocationButtons();
+
+      function initMap() {
+        // Check if browser supports Geolocation API
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(
+            function (position) {
+              const userLocation = {
+                lat: position.coords.latitude,
+                lng: position.coords.longitude,
+              };
+              initializeMap(userLocation); // Initialize map to current location
+            },
+            function () {
+              const defaultLocation = { lat: -26.1929, lng: 28.0305 }; // Wits center
+              initializeMap(defaultLocation);
+            }
+          );
+        } else {
+          // If browser doesn't support Geolocation, use default location
+          const defaultLocation = { lat: -26.1929, lng: 28.0305 };
+          initializeMap(defaultLocation);
+        }
+      }
+
+      function initializeMap(location) {
+        if (mapInitialized) return;
+
+        directionsService = new google.maps.DirectionsService();
+        directionsRenderer = new google.maps.DirectionsRenderer();
+
+        map = new google.maps.Map(document.getElementById("map"), {
+          zoom: 16,
+          center: location,
+        });
+
+        directionsRenderer.setMap(map);
+
+        currentLocationMarker = new google.maps.Marker({
+          position: location,
+          map: map,
+          draggable: false,
+          title: "Your Location",
+        });
+
+        // Create location buttons
+        const locationButtonsContainer =
+          document.getElementById("locationButtons");
+        witsLocations.forEach((loc) => {
+          const button = document.createElement("button");
+          button.textContent = loc.name;
+          button.className =
+            "bg-[#015EB8] hover:bg-opacity-80 text-white font-bold py-2 px-4 rounded m-1";
+          button.onclick = () => showDirections(loc);
+          locationButtonsContainer.appendChild(button);
+        });
+
+        // Hide the loader after the map has finished loading
+        google.maps.event.addListenerOnce(map, "idle", function () {
+          var loader = document.getElementById("mapLoader");
+          loader.style.display = "none"; // Hide loader
+          document.getElementById("map").style.display = "block"; // Show map
+        });
+
+        mapInitialized = true;
+      }
+
+      function showDirections(destination) {
+        const start = currentLocationMarker.getPosition();
+        const end = new google.maps.LatLng(destination.lat, destination.lng);
+
+        // Show the directions loader
+        document.getElementById("directionsLoader").style.display = "block";
+        // Show the map loader
+        document.getElementById("mapLoader").style.display = "block";
+        //Hide map while routes are loading
+        document.getElementById("map").style.display = "none";
+        // Clear previous directions
+        document.getElementById("directionsContent").innerHTML = "";
+
+        directionsService.route(
+          {
+            origin: start,
+            destination: end,
+            travelMode: "WALKING",
+          },
+          function (response, status) {
+            // Hide the directions loader
+            document.getElementById("directionsLoader").style.display = "none";
+            // Hide the map loader
+            document.getElementById("mapLoader").style.display = "none";
+            // Show map now that routes are loaded
+            document.getElementById("map").style.display = "block";
+
+            if (status === "OK") {
+              directionsRenderer.setDirections(response);
+              displayDirections(response);
+            } else {
+              window.alert("Directions request failed due to " + status);
+            }
+          }
+        );
+      }
+
+      function displayDirections(response) {
+        const directionsPanel = document.getElementById("directionsContent");
+        directionsPanel.innerHTML = "";
+        const route = response.routes[0];
+        const legs = route.legs[0];
+
+        // Add summary
+        const summaryElement = document.createElement("div");
+        summaryElement.innerHTML = `<strong>Total distance:</strong> ${legs.distance.text}<br>
+                                <strong>Estimated time:</strong> ${legs.duration.text}`;
+        summaryElement.className = "mb-4 p-2 bg-gray-100 rounded";
+        directionsPanel.appendChild(summaryElement);
+
+        // Add steps
+        legs.steps.forEach((step, index) => {
+          const stepElement = document.createElement("div");
+          stepElement.className = "direction-step";
+
+          const iconElement = document.createElement("div");
+          iconElement.className = "direction-icon";
+          iconElement.style.backgroundImage = `url(${getDirectionIcon(
+            step.maneuver
+          )})`;
+
+          const textElement = document.createElement("div");
+          textElement.className = "direction-text";
+          textElement.innerHTML = step.instructions;
+
+          const distanceElement = document.createElement("div");
+          distanceElement.className = "direction-distance";
+          distanceElement.textContent = step.distance.text;
+
+          stepElement.appendChild(iconElement);
+          stepElement.appendChild(textElement);
+          stepElement.appendChild(distanceElement);
+
+          directionsPanel.appendChild(stepElement);
+        });
+
+        // Scroll to the top of the directions panel
+        document.getElementById("directionsPanel").scrollTop = 0;
+      }
+
+      function getDirectionIcon(maneuver) {
+        switch (maneuver) {
+          case "turn-right":
+            return "../assets/turn_right.png";
+          case "turn-left":
+            return "../assets/turn_left.png";
+          case "roundabout-left":
+            return "../assets/roundabout_left.png";
+          case "roundabout-right":
+            return "../assets/roundabout_right.png";
+          case "straight":
+            return "../assets/straight.png";
+          default:
+            return "../assets/directions_walk.png";
+        }
+      }
+
+      // Initialize the map on page load
+      window.onload = initMap;
+    </script>
+
+    <!-- Load Google Maps API -->
+    <script
+      async
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAmnz9yP1MewDeyOE-OV92JrAclq18JzZ4&loading=async&callback=initMap"
+    ></script>
+
+
+   
     <script type="module" src="../javascript/headerFunctionality.js"></script> 
     <script src="../javascript/navbarFunctionality.js"></script>
 

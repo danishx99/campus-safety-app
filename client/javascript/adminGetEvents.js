@@ -168,11 +168,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // send the announcement here
         try {
-          title = `${event.title}`;
+          title = `Safety reminder: ${event.title}`;
           notificationType = "announcement";
           recipient = "Everyone";
           recipient = recipient.toLowerCase();
-          message = `Hi Witsies, Just a quick note about the event: ${title}. Time: ${event.startTime}, Date: ${event.date}, Location: ${event.location}, Max Attendees: ${event.maxAttendees}, Details: ${event.description}`;
+          message = `Hi Witsies, Just a quick note about the event: ${event.title}. Time: ${event.startTime}, Date: ${event.date}, Location: ${event.location}. Please remember to stay safe and follow all safety guidelines. Refer to the website for safety resources and emergency contacts.`;
           // console.log(message);
           // return;
 

@@ -6,6 +6,12 @@ importScripts(
   "https://www.gstatic.com/firebasejs/9.22.0/firebase-messaging-compat.js"
 );
 
+self.addEventListener('install', (event) => {
+  console.log('Service Worker installing...');
+  self.skipWaiting(); // Force the waiting service worker to become active immediately
+});
+
+
 const firebaseConfig = {
   apiKey: "AIzaSyBA-red8RszDmGY3YGELrunZQxFmg7r04Y",
   authDomain: "campus-safety-fcm.firebaseapp.com",
@@ -94,7 +100,6 @@ messaging.onBackgroundMessage(async (payload) => {
   const userData = await getUserData();
   const role = userData?.role;
   const email = decodeURIComponent(userData?.email);
-  
 
   let showNotification = false;
 
@@ -113,32 +118,35 @@ messaging.onBackgroundMessage(async (payload) => {
   }
 
   if (showNotification) {
-    let icon = "/default-icon.png";
-    let tag = "default";
+    let icon;
+    let tag;
 
     // Customize notification based on notificationType
     switch (notificationType) {
       case "emergency-alert":
-        icon = "/emergency-icon.png";
+        icon = "/assets/notificationDashboard.png";
         tag = "emergency";
         break;
       case "announcement":
-        icon = "/announcement-icon.png";
+        icon = "/assets/current-alert-mobile.png";
+
         tag = "announcement";
         break;
       case "incidentReported":
-        icon = "/incident-icon.png";
+        icon = "/assets/current-alert-mobile.png";
         tag = "incident";
         break;
       case "incidentUpdate":
-        icon = "/update-icon.png";
+        icon = "/assets/current-alert-mobile.png";
         tag = "update";
         break;
       case "incidentMessage":
-        icon = "/update-icon.png";
+        icon = "/assets/current-alert-mobile.png";
         tag = "update";
         break;
       default:
+        icon = "/assets/notificationDashboard.png";
+        tag = "default";
         break;
     }
 
@@ -149,5 +157,6 @@ messaging.onBackgroundMessage(async (payload) => {
     };
 
     self.registration.showNotification(notificationTitle, notificationOptions);
+
   }
 });

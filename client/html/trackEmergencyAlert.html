@@ -495,7 +495,7 @@
           <div id="chat-container" class="z-[100000000] hidden fixed bottom-4 right-4 w-96 max-sm:w-[80%]">
             <div class="bg-white shadow-md rounded-lg max-w-lg w-full">
               <div class="p-4 border-b bg-blue-500 text-white rounded-t-lg flex justify-between items-center">
-                <p class="text-lg font-semibold">Admin Bot</p>
+                <p class="text-lg font-semibold">Chat</p>
                 <button id="close-chat"
                   class="text-gray-300 hover:text-gray-400 focus:outline-none focus:text-gray-400">
                   <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24"
@@ -523,6 +523,7 @@
 
             // Function to send the user message to the server
             function sendMessageToServer(message) {
+              const messageTo = document.getElementById("adminEmail").textContent;
               // alert("messageTo: "+ adminData.email + " message: "+ message + " emergencyAlertId: "+ emergencyAlertId);
               try {
                 fetch("/emergency/sendChatMessage", {
@@ -531,7 +532,7 @@
                     "Content-Type": "application/json",
                   },
                   body: JSON.stringify({
-                    messageTo: adminData.email,
+                    messageTo: messageTo,
                     message: message,
                     emergencyAlertId: emergencyAlertId,
                   }),

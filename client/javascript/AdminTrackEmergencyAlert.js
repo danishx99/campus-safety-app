@@ -101,6 +101,10 @@ document.addEventListener("DOMContentLoaded", async function () {
       //Show "This emergency has been successfully resolved" message and redirect
       const messageBox = document.getElementById("messageBox");
       messageBox.style.display = "block";
+      messageBox.style.color = "green";
+      messageBox.style.backgroundColor = "lightgreen";
+      messageBox.style.border = "1px solid green";
+
       messageBox.textContent = "This emergency has been successfully resolved. Redirecting...";
       setTimeout(() => {
         window.location.href = "/admin/emergencyAlerts";
@@ -231,10 +235,22 @@ function initializeMap(location, emergencyLocation) {
     },
     map: map,
     draggable: false,
-    icon: {
-      url: "http://maps.google.com/mapfiles/ms/icons/red-dot.png",
-    },
+    
   });
+
+  //add hover effect to emergency marker
+  const infoWindow = new google.maps.InfoWindow({
+    content: `<div style="color:red;font-weight:bold">Emergency Location</div>`,
+  });
+
+  emergencyMarker.addListener("mouseover", () => {
+    infoWindow.open(map, emergencyMarker);
+  });
+
+  emergencyMarker.addListener("mouseout", () => {
+    infoWindow.close();
+  });
+
 
   // Add rental station markers
   mockRentals.forEach((station, index) => {

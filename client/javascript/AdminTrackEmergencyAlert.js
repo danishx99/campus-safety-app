@@ -9,10 +9,10 @@ const mockRentals = [
   [-26.189649, 28.030912],
   [-26.192499, 28.028636],
   [-26.190543, 28.029708],
-[-26.190166, 28.031451],
-  [-26.191358, 28.031880],
+  [-26.190166, 28.031451],
+  [-26.191358, 28.03188],
   [-26.192875, 28.028635],
-  [-26.193366, 28.030473]
+  [-26.193366, 28.030473],
 ];
 
 function getEmergencyAlertIdFromUrl() {
@@ -40,7 +40,6 @@ function hideCancelledLoader() {
   cancelLoader.style.display = "none";
 }
 
-
 function addUserMessagePageLoad(message) {
   const messageElement = document.createElement("div");
   messageElement.classList.add("mb-2", "text-right");
@@ -56,7 +55,6 @@ function addBotMessagePageLoad(message) {
   chatbox.appendChild(messageElement);
   chatbox.scrollTop = chatbox.scrollHeight;
 }
-
 
 document.addEventListener("DOMContentLoaded", async function () {
   fetchEmergencyDetails();
@@ -96,57 +94,57 @@ document.addEventListener("DOMContentLoaded", async function () {
 
       //Console log response
       console.log("Response: ", response);
-      
 
       //Show "This emergency has been successfully resolved" message and redirect
       const messageBox = document.getElementById("messageBox");
       messageBox.style.display = "block";
-      messageBox.style.color = "green";
-      messageBox.style.backgroundColor = "lightgreen";
-      messageBox.style.border = "1px solid green";
+      messageBox.style.color = "#2d6a4f"; // A more muted green for text
+      messageBox.style.backgroundColor = "#d8f3dc"; // Very light green background
+      messageBox.style.border = "1px solid #95d5b2"; // Softer green for the border
 
-      messageBox.textContent = "This emergency has been successfully resolved. Redirecting...";
+      messageBox.textContent =
+        "This emergency has been successfully resolved. Redirecting...";
       setTimeout(() => {
         window.location.href = "/admin/emergencyAlerts";
       }, 1500);
-     
     } else {
       hideResolvedLoader();
       const messageBox = document.getElementById("messageBox");
-      messageBox.textContent ="Error marking the alert as resolved. Please try again.";
+      messageBox.textContent =
+        "Error marking the alert as resolved. Please try again.";
       messageBox.style.display = "block";
     }
   });
 
   //Messaging process
   //Since we had a page load and the page loaded with status assigned, we need to retrieve messages.
-    // /getChatMessages/:emergencyAlertId
-   
+  // /getChatMessages/:emergencyAlertId
 
-    const response = await fetch(`/emergency/getChatMessages/${emergencyAlertId}`);
+  const response = await fetch(
+    `/emergency/getChatMessages/${emergencyAlertId}`
+  );
 
-    const data = await response.json();
+  const data = await response.json();
 
-    if(data.message === "Chat not found"){
-      addBotMessagePageLoad("Welcome to the chat. Get in touch with the user to assist them.");
-    }else if(data.messages){
-      data.messages.forEach((message) => {
-        if (message.sender === "admin") {
-          addUserMessagePageLoad(message.text);
-        } else {
-          addBotMessagePageLoad(message.text);
-        }
-      });
-    }else{
-      addErrorMessage("Error loading chat messages. Please try again.");
-    }
-  
+  if (data.message === "Chat not found") {
+    addBotMessagePageLoad(
+      "Welcome to the chat. Get in touch with the user to assist them."
+    );
+  } else if (data.messages) {
+    data.messages.forEach((message) => {
+      if (message.sender === "admin") {
+        addUserMessagePageLoad(message.text);
+      } else {
+        addBotMessagePageLoad(message.text);
+      }
+    });
+  } else {
+    addErrorMessage("Error loading chat messages. Please try again.");
+  }
 });
 
 function fetchEmergencyDetails() {
-
   const emergencyAlertId = getEmergencyAlertIdFromUrl();
- 
 
   fetch(`/emergency/getEmergencyUserDetails/${emergencyAlertId}`)
     .then((response) => response.json())
@@ -165,12 +163,14 @@ function fetchEmergencyDetails() {
 
         // Display emergency details (omitted for brevity)
         //display the emergency details
-        document.getElementById("alertTitle").innerHTML = `<b>Title: </b>${gEmergency.title || "No title was provided"
-          }`;
+        document.getElementById("alertTitle").innerHTML = `<b>Title: </b>${
+          gEmergency.title || "No title was provided"
+        }`;
         document.getElementById(
           "alertDescription"
-        ).innerHTML = `<b>Description: </b>${gEmergency.description || "No description was provided"
-          }`;
+        ).innerHTML = `<b>Description: </b>${
+          gEmergency.description || "No description was provided"
+        }`;
         document.getElementById("adminFirstName").innerText =
           reportedBy.firstName;
         document.getElementById("adminLastName").innerText =
@@ -235,7 +235,6 @@ function initializeMap(location, emergencyLocation) {
     },
     map: map,
     draggable: false,
-    
   });
 
   //add hover effect to emergency marker
@@ -250,7 +249,6 @@ function initializeMap(location, emergencyLocation) {
   emergencyMarker.addListener("mouseout", () => {
     infoWindow.close();
   });
-
 
   // Add rental station markers
   mockRentals.forEach((station, index) => {
@@ -364,18 +362,23 @@ function calculateBestRoute(currentLocation, emergencyLocation) {
                     walkingTime: walkingTime,
                     drivingTime: drivingTime,
                     rentalStation: rentalStation,
-                    description: `Walking to Rental ${index + 1
-                      } and driving to emergency`,
+                    description: `Walking to Rental ${
+                      index + 1
+                    } and driving to emergency`,
                   };
-                  
-
                 }
 
                 completedCalculations++;
                 if (completedCalculations === mockRentals.length) {
                   console.log("Best route:", bestRoute);
-                  console.log("The time it will take to walk to the first rental station is: ", bestRoute.walkingTime/60+ " minutes");
-                  console.log("The time it will take to drive from the first rental station to the emergency location is: ", bestRoute.drivingTime/60+ " minutes");
+                  console.log(
+                    "The time it will take to walk to the first rental station is: ",
+                    bestRoute.walkingTime / 60 + " minutes"
+                  );
+                  console.log(
+                    "The time it will take to drive from the first rental station to the emergency location is: ",
+                    bestRoute.drivingTime / 60 + " minutes"
+                  );
                   displayBestRoute(
                     bestRoute,
                     currentLocation,
@@ -425,7 +428,7 @@ function displayBestRoute(route, currentLocation, emergencyLocation) {
   const lineSymbol = {
     path: google.maps.SymbolPath.CIRCLE,
     fillOpacity: 1,
-    scale: 3
+    scale: 3,
   };
 
   if (route.type === "DIRECT") {
@@ -446,12 +449,14 @@ function displayBestRoute(route, currentLocation, emergencyLocation) {
             strokeColor: "#0000FF", // Blue for walking
             strokeOpacity: 0,
             strokeWeight: 2,
-            icons: [{
-              icon: lineSymbol,
-              offset: '0',
-              repeat: '15px',
-              scale: 2
-            }]
+            icons: [
+              {
+                icon: lineSymbol,
+                offset: "0",
+                repeat: "15px",
+                scale: 2,
+              },
+            ],
           },
           preserveViewport: true,
         });
@@ -480,12 +485,14 @@ function displayBestRoute(route, currentLocation, emergencyLocation) {
               strokeColor: "#0000FF", // Blue for walking
               strokeOpacity: 0,
               strokeWeight: 2,
-              icons: [{
-                icon: lineSymbol,
-                offset: '0',
-                repeat: '15px',
-                scale: 2
-              }]
+              icons: [
+                {
+                  icon: lineSymbol,
+                  offset: "0",
+                  repeat: "15px",
+                  scale: 2,
+                },
+              ],
             },
             preserveViewport: true,
           });
@@ -510,7 +517,6 @@ function displayBestRoute(route, currentLocation, emergencyLocation) {
                     strokeColor: "#FF0000", // Red for driving
                     strokeOpacity: 1.0,
                     strokeWeight: 2,
-                
                   },
                   preserveViewport: true,
                 });

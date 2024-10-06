@@ -501,6 +501,19 @@
         },
       ];
 
+
+          const mockRentals = [
+      [-26.192788, 28.02673],
+      [-26.190573, 28.027724],
+      [-26.189649, 28.030912],
+      [-26.192499, 28.028636],
+      [-26.190543, 28.029708],
+    [-26.190166, 28.031451],
+      [-26.191358, 28.031880],
+      [-26.192875, 28.028635],
+      [-26.193366, 28.030473]
+    ];
+
       function createLocationButtons() {
         const locationDropdown = document.getElementById("locationDropdown");
 
@@ -566,6 +579,42 @@
           draggable: false,
           title: "Your Location",
         });
+
+        // Create markers for mock rentals
+       
+      // Add rental station markers
+  mockRentals.forEach((station, index) => {
+    const rentalMarker = new google.maps.Marker({
+      position: { lat: station[0], lng: station[1] },
+      map: map,
+      draggable: false,
+      icon: {
+        url: "http://maps.google.com/mapfiles/ms/icons/green-dot.png",
+      },
+    });
+
+    const infoWindow = new google.maps.InfoWindow({
+      content: `<div style="color:black;">Rental Station ${index + 1}</div>`,
+    });
+
+    rentalMarker.addListener("mouseover", () => {
+      infoWindow.open(map, rentalMarker);
+    });
+
+    rentalMarker.addListener("mouseout", () => {
+      infoWindow.close();
+    });
+
+    // Add click event to show directions to rental station
+    rentalMarker.addListener("click", () => {
+      showDirections({
+        lat: station[0],
+        lng: station[1],
+      });
+    });
+    
+
+  });
 
         // Create location buttons
         const locationButtonsContainer =

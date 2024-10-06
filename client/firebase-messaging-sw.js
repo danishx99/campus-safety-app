@@ -1,4 +1,4 @@
-// firebase-messaging-sw.js
+// Import Firebase scripts
 importScripts(
   "https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"
 );
@@ -11,7 +11,7 @@ self.addEventListener('install', (event) => {
   self.skipWaiting(); // Force the waiting service worker to become active immediately
 });
 
-
+// Initialize Firebase
 const firebaseConfig = {
   apiKey: "AIzaSyBA-red8RszDmGY3YGELrunZQxFmg7r04Y",
   authDomain: "campus-safety-fcm.firebaseapp.com",
@@ -22,7 +22,6 @@ const firebaseConfig = {
   measurementId: "G-8BZHJT3BRY",
 };
 
-// Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 
 const messaging = firebase.messaging();
@@ -77,86 +76,95 @@ async function getUserData() {
   }
 }
 
-messaging.onBackgroundMessage(async (payload) => {
-  console.log(
-    "[firebase-messaging-sw.js] Received background message ",
-    payload
-  );
+// Add a push event listener to handle background messages
+self.addEventListener('push', function(event) {
+  if (event && event.data) {
+    const payload = event.data.json();
 
-  // Access custom data
-  const notificationType =
-    payload.data?.notificationType || "General Notification";
-  const sender = payload.data?.sender || "Unknown Sender";
-  const recipient = payload.data?.recipient;
+    event.waitUntil((async () => {
+      // Process the payload and display the notification
+      console.log(
+        "[firebase-messaging-sw.js] Received background message ",
+        payload
+      );
 
-  // Access notification payload
-  const notificationTitle = payload.data?.title || "No Title";
-  const notificationBody = payload.data?.body || "No Message";
+      // Access custom data from the payload
+      const notificationType =
+        payload.data?.notificationType || "General Notification";
+      const sender = payload.data?.sender || "Unknown Sender";
+      const recipient = payload.data?.recipient;
 
-  // Base notification message format including notificationType
-  let detailedMessage = `From: ${sender}\nMessage: ${notificationBody}`;
+      // Access notification payload
+      const notificationTitle = payload.data?.title || "No Title";
+      const notificationBody = payload.data?.body || "No Message";
 
-  // Get the user's data from IndexedDB
-  const userData = await getUserData();
-  const role = userData?.role;
-  const email = decodeURIComponent(userData?.email);
+      // Base notification message format including notificationType
+      let detailedMessage = `From: ${sender}\nMessage: ${notificationBody}`;
 
-  let showNotification = false;
+      // Get the user's data from IndexedDB
+      const userData = await getUserData();
+      const role = userData?.role;
+      const email = decodeURIComponent(userData?.email);
 
-  if (role === "admin" && recipient === "admin") {
-    showNotification = true;
-  } else if (role === "student" && recipient === "student") {
-    showNotification = true;
-  } else if (role === "student" && recipient === "everyone") {
-    showNotification = true;
-  } else if (role === "staff" && recipient === "staff") {
-    showNotification = true;
-  } else if (role === "staff" && recipient === "everyone") {
-    showNotification = true;
-  } else if (recipient === email) {
-    showNotification = true;
-  }
+      let showNotification = false;
 
-  if (showNotification) {
-    let icon;
-    let tag;
+      // Logic to determine if the notification should be shown
+      if (role === "admin" && recipient === "admin") {
+        showNotification = true;
+      } else if (role === "student" && recipient === "student") {
+        showNotification = true;
+      } else if (role === "student" && recipient === "everyone") {
+        showNotification = true;
+      } else if (role === "staff" && recipient === "staff") {
+        showNotification = true;
+      } else if (role === "staff" && recipient === "everyone") {
+        showNotification = true;
+      } else if (recipient === email) {
+        showNotification = true;
+      }
 
-    // Customize notification based on notificationType
-    switch (notificationType) {
-      case "emergency-alert":
-        icon = "/assets/notificationDashboard.png";
-        tag = "emergency";
-        break;
-      case "announcement":
-        icon = "/assets/current-alert-mobile.png";
+      if (showNotification) {
+        let icon;
+        let tag;
 
-        tag = "announcement";
-        break;
-      case "incidentReported":
-        icon = "/assets/current-alert-mobile.png";
-        tag = "incident";
-        break;
-      case "incidentUpdate":
-        icon = "/assets/current-alert-mobile.png";
-        tag = "update";
-        break;
-      case "incidentMessage":
-        icon = "/assets/current-alert-mobile.png";
-        tag = "update";
-        break;
-      default:
-        icon = "/assets/notificationDashboard.png";
-        tag = "default";
-        break;
-    }
+        // Customize notification based on notificationType
+        switch (notificationType) {
+          case "emergency-alert":
+            icon = "/assets/notificationDashboard.png";
+            tag = "emergency";
+            break;
+          case "announcement":
+            icon = "/assets/current-alert-mobile.png";
+            tag = "announcement";
+            break;
+          case "incidentReported":
+            icon = "/assets/current-alert-mobile.png";
+            tag = "incident";
+            break;
+          case "incidentUpdate":
+            icon = "/assets/current-alert-mobile.png";
+            tag = "update";
+            break;
+          case "incidentMessage":
+            icon = "/assets/current-alert-mobile.png";
+            tag = "update";
+            break;
+          default:
+            icon = "/assets/notificationDashboard.png";
+            tag = "default";
+            break;
+        }
 
-    const notificationOptions = {
-      body: detailedMessage,
-      icon: icon,
-      tag: tag,
-    };
+        const notificationOptions = {
+          body: detailedMessage,
+          icon: icon,
+          tag: tag,
+        };
 
-    self.registration.showNotification(notificationTitle, notificationOptions);
-
+        await self.registration.showNotification(notificationTitle, notificationOptions);
+      }
+    })());
+  } else {
+    console.log('Push event but no data');
   }
 });

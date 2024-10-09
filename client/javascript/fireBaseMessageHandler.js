@@ -124,6 +124,8 @@ export function handleIncomingMessages(notifier) {
         addBotMessage(chatMessage);
         //play sound
         playSound();
+        //show red dot on the chat button
+        document.getElementById("newChat").style.display = "block";
       }
 
       if (emergencyAlertIdPayload === emergencyAlertId) {

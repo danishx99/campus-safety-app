@@ -480,12 +480,17 @@
             </div>
 
             <!-- Chat to admin button -->
-            <div class="flex justify-end mt-4">
+            <div class="flex justify-end mt-4 relative">
               <button
                 class="bg-blue-500 text-white px-4 py-2 text-sm rounded-lg hover:bg-blue-700 transition-colors duration-200"
                 id="chat">
-                Chat to admin
+                Chat
               </button>
+              <span
+                class="absolute top-0 right-0 transform translate-x-1/2 -translate-y-1/2 bg-red-500 text-white text-xs rounded-full w-4 h-4 hidden"
+                id="newChat">
+
+              </span>
             </div>
           </div>
 
@@ -569,6 +574,8 @@
 
               chatContainer.classList.toggle("hidden");
               isChatboxOpen = !isChatboxOpen; // Toggle the state
+              //hide the new chat indicator
+              document.getElementById("newChat").style.display = "none";
             }
 
             // Add an event listener to the open chat button

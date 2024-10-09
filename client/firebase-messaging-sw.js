@@ -6,8 +6,8 @@ importScripts(
   "https://www.gstatic.com/firebasejs/9.22.0/firebase-messaging-compat.js"
 );
 
-self.addEventListener('install', (event) => {
-  console.log('Service Worker installing...');
+self.addEventListener("install", (event) => {
+  console.log("Service Worker installing...");
   self.skipWaiting(); // Force the waiting service worker to become active immediately
 });
 
@@ -77,94 +77,115 @@ async function getUserData() {
 }
 
 // Add a push event listener to handle background messages
-self.addEventListener('push', function(event) {
+self.addEventListener("push", function (event) {
   if (event && event.data) {
     const payload = event.data.json();
 
-    event.waitUntil((async () => {
-      // Process the payload and display the notification
-      console.log(
-        "[firebase-messaging-sw.js] Received background message ",
-        payload
-      );
+    event.waitUntil(
+      (async () => {
+        // Process the payload and display the notification
+        console.log(
+          "[firebase-messaging-sw.js] Received background message ",
+          payload
+        );
 
-      // Access custom data from the payload
-      const notificationType =
-        payload.data?.notificationType || "General Notification";
-      const sender = payload.data?.sender || "Unknown Sender";
-      const recipient = payload.data?.recipient;
+        // Access custom data from the payload
+        const notificationType =
+          payload.data?.notificationType || "General Notification";
+        const sender = payload.data?.sender || "Unknown Sender";
+        const recipient = payload.data?.recipient;
 
-      // Access notification payload
-      const notificationTitle = payload.data?.title || "No Title";
-      const notificationBody = payload.data?.body || "No Message";
+        // Access notification payload
+        const notificationTitle = payload.data?.title || "No Title";
+        const notificationBody = payload.data?.body || "No Message";
 
-      // Base notification message format including notificationType
-      let detailedMessage = `From: ${sender}\nMessage: ${notificationBody}`;
+        //Get the messaging information
+        const chatMessage = payload.data.chatMessage;
+        if (chatMessage) {
+          let messageIcon = "/assets/chat.png";
 
-      // Get the user's data from IndexedDB
-      const userData = await getUserData();
-      const role = userData?.role;
-      const email = decodeURIComponent(userData?.email);
+          const messageOptions = {
+            body: "You have received a new message regarding your ongoing emergency.",
+            icon: messageIcon,
+          };
 
-      let showNotification = false;
-
-      // Logic to determine if the notification should be shown
-      if (role === "admin" && recipient === "admin") {
-        showNotification = true;
-      } else if (role === "student" && recipient === "student") {
-        showNotification = true;
-      } else if (role === "student" && recipient === "everyone") {
-        showNotification = true;
-      } else if (role === "staff" && recipient === "staff") {
-        showNotification = true;
-      } else if (role === "staff" && recipient === "everyone") {
-        showNotification = true;
-      } else if (recipient === email) {
-        showNotification = true;
-      }
-
-      if (showNotification) {
-        let icon;
-        let tag;
-
-        // Customize notification based on notificationType
-        switch (notificationType) {
-          case "emergency-alert":
-            icon = "/assets/notificationDashboard.png";
-            tag = "emergency";
-            break;
-          case "announcement":
-            icon = "/assets/current-alert-mobile.png";
-            tag = "announcement";
-            break;
-          case "incidentReported":
-            icon = "/assets/current-alert-mobile.png";
-            tag = "incident";
-            break;
-          case "incidentUpdate":
-            icon = "/assets/current-alert-mobile.png";
-            tag = "update";
-            break;
-          case "incidentMessage":
-            icon = "/assets/current-alert-mobile.png";
-            tag = "update";
-            break;
-          default:
-            icon = "/assets/notificationDashboard.png";
-            tag = "default";
-            break;
+          await self.registration.showNotification(
+            "New Chat Message",
+            messageOptions
+          );
         }
 
-        const notificationOptions = {
-          body: detailedMessage,
-          icon: icon,
-          tag: tag,
-        };
+        // Base notification message format including notificationType
+        let detailedMessage = `From: ${sender}\nMessage: ${notificationBody}`;
 
-        await self.registration.showNotification(notificationTitle, notificationOptions);
-      }
-    })());
+        // Get the user's data from IndexedDB
+        const userData = await getUserData();
+        const role = userData?.role;
+        const email = decodeURIComponent(userData?.email);
+
+        let showNotification = false;
+
+        // Logic to determine if the notification should be shown
+        if (role === "admin" && recipient === "admin") {
+          showNotification = true;
+        } else if (role === "student" && recipient === "student") {
+          showNotification = true;
+        } else if (role === "student" && recipient === "everyone") {
+          showNotification = true;
+        } else if (role === "staff" && recipient === "staff") {
+          showNotification = true;
+        } else if (role === "staff" && recipient === "everyone") {
+          showNotification = true;
+        } else if (recipient === email) {
+          showNotification = true;
+        }
+
+        if (showNotification) {
+          let icon;
+          let tag;
+
+          // Customize notification based on notificationType
+          switch (notificationType) {
+            case "emergency-alert":
+              icon = "/assets/notificationDashboard.png";
+              tag = "emergency";
+              break;
+            case "announcement":
+              icon = "/assets/current-alert-mobile.png";
+              tag = "announcement";
+              break;
+            case "incidentReported":
+              icon = "/assets/current-alert-mobile.png";
+              tag = "incident";
+              break;
+            case "incidentUpdate":
+              icon = "/assets/current-alert-mobile.png";
+              tag = "update";
+              break;
+            case "incidentMessage":
+              icon = "/assets/current-alert-mobile.png";
+              tag = "update";
+              break;
+            default:
+              icon = "/assets/notificationDashboard.png";
+              tag = "default";
+              break;
+          }
+
+          const notificationOptions = {
+            body: detailedMessage,
+            icon: icon,
+            tag: tag,
+          };
+
+          await self.registration.showNotification(
+            notificationTitle,
+            notificationOptions
+          );
+        }
+      })()
+    );
   } else {
-    console.log('Push event but no data');
+    console.log("Push event but no data");
   }
 });

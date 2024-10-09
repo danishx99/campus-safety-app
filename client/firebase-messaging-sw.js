@@ -30,11 +30,20 @@ const messaging = firebase.messaging();
 messaging.onBackgroundMessage(async function(payload) {
   console.log('[firebase-messaging-sw.js] Received background message ', payload);
 
+   // Check for chat message
+   if (payload.data.chatMessage) {
+    await self.registration.showNotification("New Chat Message", {
+      body: "You have received a new message regarding your ongoing emergency.",
+      icon: "/assets/chat.png",
+    });
+    return;
+  }
+  
+
   const notificationType = payload.data?.notificationType || "General Notification";
   const sender = payload.data?.sender || "Unknown Sender";
   const notificationTitle = payload.data?.title || "No Title";
   const notificationBody = payload.data?.body || "No Message";
-
   let detailedMessage = `From: ${sender}\nMessage: ${notificationBody}`;
   let icon;
   let tag;
@@ -54,6 +63,9 @@ messaging.onBackgroundMessage(async function(payload) {
       tag = "incident";
       break;
     case "incidentUpdate":
+      icon = "/assets/current-alert-mobile.png";
+      tag = "update";
+      break;
     case "incidentMessage":
       icon = "/assets/current-alert-mobile.png";
       tag = "update";
@@ -68,16 +80,24 @@ messaging.onBackgroundMessage(async function(payload) {
     body: detailedMessage,
     icon: icon,
     tag: tag,
+    data: {url:"https://chatgpt.com"},
   };
 
-  // Check for chat message
-  if (payload.data.chatMessage) {
-    await self.registration.showNotification("New Chat Message", {
-      body: "You have received a new message regarding your ongoing emergency.",
-      icon: "/assets/chat.png",
-    });
-  }
+ 
 
   // Show the main notification
   await self.registration.showNotification(notificationTitle, notificationOptions);
+});
+
+// Add click event listener for notifications
+self.addEventListener('notificationclick', function(event) {
+  event.notification.close(); // Close the notification
+
+  // Get the stored URL from the notification data
+  const clickAction = event.notification.data.url || '/';
+
+  // Open the URL
+  event.waitUntil(
+    clients.openWindow(clickAction)
+  );
 });

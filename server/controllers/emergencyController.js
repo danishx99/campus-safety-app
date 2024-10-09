@@ -214,6 +214,7 @@ exports.findAndNotifyAdmins = async (req, res) => {
     await _sendNotification([user.FCMtoken], {
       emergencyAlertId,
       redirect: true,
+      notificationType: "emergency-alert",
       userToBeRedirected: sender,
       currentSessionToken: token,
     });

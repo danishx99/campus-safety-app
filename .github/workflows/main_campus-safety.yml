@@ -72,12 +72,16 @@ jobs:
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_9C9EA06695C44B6DA6CDC08A26468C61 }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_437A39D0CDFB47E1B35E3C4D4AC9E86C }}
       
-      # Updated step: Clean deployment directory with correct resource group name
-      - name: Clean deployment directory
-        uses: azure/CLI@v2
+      - name: Clean existing files in Azure Web App
+        uses: azure/CLI@v1
         with:
           inlineScript: |
-            az webapp delete --resource-group sdp --name campus-safety --src-path "site/wwwroot/*"
+            echo "Cleaning existing files in wwwroot..."
+            az webapp ssh --name campus-safety --resource-group sdp --command "rm -rf /home/site/wwwroot/*"
+
+      # Remove the zip file before deployment
+      - name: Remove zip file
+        run: rm release.zip
 
       - name: "Deploy to Azure Web App"
         id: deploy-to-webapp

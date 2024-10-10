@@ -77,7 +77,7 @@ jobs:
         uses: azure/CLI@v2
         with:
           inlineScript: |
-            az webapp deploy --clean true --resource-group sdp --name campus-safety --src release.zip
+            az webapp deploy --clean true --resource-group sdp --name campus-safety --src-path release.zip --type zip
 
       - name: "Deploy to Azure Web App"
         id: deploy-to-webapp

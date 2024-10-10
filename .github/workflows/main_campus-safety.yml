@@ -71,9 +71,12 @@ jobs:
           client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_C1C417C658644087A4BFB018CD1A6378 }}
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_9C9EA06695C44B6DA6CDC08A26468C61 }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_437A39D0CDFB47E1B35E3C4D4AC9E86C }}
+          
+      - name: Check Azure CLI version
+        run: az --version
       
       - name: Clean existing files in Azure Web App
-        uses: azure/CLI@v1
+        uses: azure/cli@v1
         with:
           inlineScript: |
             echo "Cleaning existing files in wwwroot..."

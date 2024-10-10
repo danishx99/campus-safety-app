@@ -77,7 +77,8 @@ jobs:
         uses: azure/CLI@v2
         with:
           inlineScript: |
-            az webapp deploy --clean true --resource-group sdp --name campus-safety
+            az webapp deploy --clean true --resource-group sdp --name campus-safety --src-path .
+
       
       # Remove the zip file before deployment
       - name: Remove zip file

@@ -77,7 +77,7 @@ jobs:
         with:
           inlineScript: |
             echo "Cleaning existing files in wwwroot..."
-            az webapp ssh --name campus-safety --resource-group sdp --command "rm -rf /home/site/wwwroot/*"
+            az webapp run-command --name campus-safety --resource-group sdp --command-id 'bash' --script 'rm -rf /home/site/wwwroot/*'
 
       # Remove the zip file before deployment
       - name: Remove zip file

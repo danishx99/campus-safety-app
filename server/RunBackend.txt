@@ -1,3 +1,6 @@
 npm i express,bcrypt, bcryptjs, jsonwebtoken,dotenv  in the root directory
 
 cd server npm run startApp
+
+
+rm -rf ./*

@@ -108,6 +108,7 @@ export function handleIncomingMessages(notifier) {
 
       if (redirect && userToBeRedirected === currentUser) {
         window.location.href = `/user/emergencyalerts/track/${emergencyAlertIdPayload}`;
+        return;
       }
 
       //These are the listeners for updating the map and km of proximities

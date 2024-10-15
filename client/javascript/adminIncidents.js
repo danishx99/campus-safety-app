@@ -109,7 +109,7 @@ function sendNotificationUpdate(e) {
 
   //Get the values to be sent
   let title = document.getElementById("title").value;
-  title = "Incident Update: " + title;
+  title = "Incident Message: " + title;
   let message = document.getElementById("description").value;
   let email = document.getElementById("userEmail").value;
   email = email.split(":")[1].trim().toLowerCase();
@@ -135,7 +135,7 @@ function sendNotificationUpdate(e) {
       title: title,
       message: message,
       recipient: email,
-      notificationType: "incidentMessage",
+      notificationType: "Incident message",
     }),
   })
     .then((response) => response.json())

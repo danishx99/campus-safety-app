@@ -115,8 +115,8 @@ exports.reportIncident = async (req, res) => {
         "A new incident has been reported by " +
         email +
         " , please check the incident tab for more details",
-      title: "Incident Reported",
-      notificationType: "incidentReported",
+      title: "Incident Reported: " + title,
+      notificationType: "Incident reported",
     });
 
     const savedNotification = await newNotification.save();
@@ -127,12 +127,13 @@ exports.reportIncident = async (req, res) => {
 
     //Send notification
     await _sendNotification(fcmTokens, {
-      title: "Incident Reported",
-      body: "A new incident has been reported. Please check the incident tab for more details.",
+      title: "Incident Reported: " + title,
+      body: "A new incident has been reported. Please check the incidents page for more details.",
       notificationType: "Incident reported",
       sender: email,
       senderLocation: location,
       recipient: "admin",
+      url:"/admin/viewIncidents"
     });
 
     res.status(200).json({ message: "Incident reported successfully" });
@@ -210,6 +211,7 @@ exports.reportExternalIncident = async (req, res) => {
       sender: reportedBy,
       senderLocation: location,
       recipient: "admin",
+      url:"/admin/viewIncidents"
     });
 
 
@@ -360,9 +362,9 @@ exports.updateIncidentStatus = async (req, res) => {
           recipient: user.email,
           sender: adminEmail,
           read: false,
-          message: "The status of one or more incidents has been updated. Please check the incident tab for more details.",
+          message: "The status of one or more incidents has been updated. Please check the incidents page for more details.",
           title: "Incident Status Update",
-          notificationType: "incidentUpdate",
+          notificationType: "Incident update",
         });
 
         await newNotification.save();
@@ -370,10 +372,11 @@ exports.updateIncidentStatus = async (req, res) => {
         // Send notification
         await _sendNotification([user.FCMtoken], {
           title: "Incident Status Update",
-          body: "The status of one or more of your incidents has been updated. Please check the incident tab for more details.",
+          body: "The status of one or more of your incidents has been updated. Please check the incidents page for more details.",
           notificationType: "Incident status update",
           sender: adminEmail,
           recipient: user.email,
+          url:"/user/viewPastIncidents"
         });
 
         

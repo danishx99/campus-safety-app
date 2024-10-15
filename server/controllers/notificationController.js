@@ -213,6 +213,7 @@ function deg2rad(deg) {
       sender: savedNotification.sender,
       senderLocation: savedNotification.senderLocation,
       recipient: savedNotification.recipient,
+      url:"/user/viewNotifications"
     });
 
     //Console log the names of all the users it 

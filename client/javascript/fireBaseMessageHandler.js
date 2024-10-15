@@ -120,12 +120,31 @@ export function handleIncomingMessages(notifier) {
 
       //Get the messaging information
       const chatMessage = payload.data.chatMessage;
-      if (chatMessage) {
-        addBotMessage(chatMessage);
-        //play sound
+      //Check if current url contains {/admin/emergencyalerts/track}, if it does, then the user is on the emergency alert page
+      //and we can show the chat message
+      const isChatPage = window.location.href.includes("/emergencyalerts/track");
+
+
+
+
+      if (chatMessage && !isChatPage) {
         playSound();
+        notifier.alert("You have received a new message regarding your ongoing emergency.", {
+          durations: { alert: 20000 },
+          labels: { alert: "New Chat Message" },
+        });
+
+        // addBotMessage(chatMessage);
+        //show red dot on the chat button
+        // document.getElementById("newChat").style.display = "block";
+        return;
+      }else if(chatMessage && isChatPage){
+        playSound();
+
+        addBotMessage(chatMessage);
         //show red dot on the chat button
         document.getElementById("newChat").style.display = "block";
+        return;
       }
 
       if (emergencyAlertIdPayload === emergencyAlertId) {
@@ -168,6 +187,7 @@ export function handleIncomingMessages(notifier) {
 
           //Show the admin div
           adminDiv.style.display = "block";
+          
         }
 
         if (status === "Resolved") {
@@ -223,17 +243,17 @@ export function handleIncomingMessages(notifier) {
             "INFO"
           ).textContent = `Expanded search radius to include all admins`;
         }
+
+        return;
       }
 
-      //These are the listeners for updating the map and km of proximities ends
-
-      if (role === "admin" && recipient === "admin") {
+      
         // Customize message based on notificationType
         switch (notificationType) {
           case "emergency-alert":
             notifier.alert(detailedMessage, {
               durations: { alert: 20000 },
-              labels: { alert: notificationTitle },
+              labels: { alert: "Emergency: " + notificationTitle },
             });
             playEmergencySound();
             break;
@@ -241,20 +261,12 @@ export function handleIncomingMessages(notifier) {
           case "announcement":
             notifier.success(detailedMessage, {
               durations: { success: 20000 },
-              labels: { success: notificationTitle },
+              labels: { success: "Announcement: " + notificationTitle },
             });
             playSound();
             break;
 
-          case "incidentReported":
-            notifier.alert(detailedMessage, {
-              durations: { success: 20000 },
-              labels: { alert: notificationTitle },
-            });
-            playSound();
-            break;
-
-          case "incidentUpdate":
+          case "Incident reported":
             notifier.info(detailedMessage, {
               durations: { info: 20000 },
               labels: { info: notificationTitle },
@@ -262,7 +274,15 @@ export function handleIncomingMessages(notifier) {
             playSound();
             break;
 
-          case "incidentMessage":
+          case "Incident status update":
+            notifier.info(detailedMessage, {
+              durations: { info: 20000 },
+              labels: { info: notificationTitle },
+            });
+            playSound();
+            break;
+
+          case "Incident message":
             notifier.info(detailedMessage, {
               durations: { info: 20000 },
               labels: { info: notificationTitle },
@@ -278,262 +298,7 @@ export function handleIncomingMessages(notifier) {
             playSound();
             break;
         }
-      } else if (role === "student" && recipient === "everyone") {
-        // Customize message based on notificationType
-        switch (notificationType) {
-          case "emergency-alert":
-            notifier.alert(detailedMessage, {
-              durations: { alert: 20000 },
-              labels: { alert: notificationTitle },
-            });
-            playEmergencySound();
-            break;
-
-          case "announcement":
-            notifier.success(detailedMessage, {
-              durations: { success: 20000 },
-              labels: { success: notificationTitle },
-            });
-            playSound();
-            break;
-
-          case "incidentReported":
-            notifier.alert(detailedMessage, {
-              durations: { success: 20000 },
-              labels: { alert: notificationTitle },
-            });
-            playSound();
-            break;
-
-          case "incidentUpdate":
-            notifier.info(detailedMessage, {
-              durations: { info: 20000 },
-              labels: { info: notificationTitle },
-            });
-            playSound();
-            break;
-
-          case "incidentMessage":
-            notifier.info(detailedMessage, {
-              durations: { info: 20000 },
-              labels: { info: notificationTitle },
-            });
-            playSound();
-            break;
-
-          default:
-            notifier.info(detailedMessage, {
-              durations: { info: 20000 },
-              labels: { info: notificationTitle },
-            });
-            playSound();
-            break;
-        }
-      } else if (role === "staff" && recipient === "everyone") {
-        // Customize message based on notificationType
-        switch (notificationType) {
-          case "emergency-alert":
-            notifier.alert(detailedMessage, {
-              durations: { alert: 20000 },
-              labels: { alert: notificationTitle },
-            });
-            playEmergencySound();
-            break;
-
-          case "announcement":
-            notifier.success(detailedMessage, {
-              durations: { success: 20000 },
-              labels: { success: notificationTitle },
-            });
-            playSound();
-            break;
-
-          case "incidentReported":
-            notifier.alert(detailedMessage, {
-              durations: { success: 20000 },
-              labels: { alert: notificationTitle },
-            });
-            playSound();
-            break;
-
-          case "incidentUpdate":
-            notifier.info(detailedMessage, {
-              durations: { info: 20000 },
-              labels: { info: notificationTitle },
-            });
-            playSound();
-            break;
-
-          case "incidentMessage":
-            notifier.info(detailedMessage, {
-              durations: { info: 20000 },
-              labels: { info: notificationTitle },
-            });
-            playSound();
-            break;
-
-          default:
-            notifier.info(detailedMessage, {
-              durations: { info: 20000 },
-              labels: { info: notificationTitle },
-            });
-            playSound();
-            break;
-        }
-      } else if (role === "student" && recipient === "student") {
-        // Customize message based on notificationType
-        switch (notificationType) {
-          case "emergency-alert":
-            notifier.alert(detailedMessage, {
-              durations: { alert: 20000 },
-              labels: { alert: notificationTitle },
-            });
-            playEmergencySound();
-            break;
-
-          case "announcement":
-            notifier.success(detailedMessage, {
-              durations: { success: 20000 },
-              labels: { success: notificationTitle },
-            });
-            playSound();
-            break;
-
-          case "incidentReported":
-            notifier.alert(detailedMessage, {
-              durations: { success: 20000 },
-              labels: { alert: notificationTitle },
-            });
-            playSound();
-            break;
-
-          case "incidentUpdate":
-            notifier.info(detailedMessage, {
-              durations: { info: 20000 },
-              labels: { info: notificationTitle },
-            });
-            playSound();
-            break;
-
-          case "incidentMessage":
-            notifier.info(detailedMessage, {
-              durations: { info: 20000 },
-              labels: { info: notificationTitle },
-            });
-            playSound();
-            break;
-
-          default:
-            notifier.info(detailedMessage, {
-              durations: { info: 20000 },
-              labels: { info: notificationTitle },
-            });
-            playSound();
-            break;
-        }
-      } else if (role === "staff" && recipient === "staff") {
-        // Customize message based on notificationType
-        switch (notificationType) {
-          case "emergency-alert":
-            notifier.alert(detailedMessage, {
-              durations: { alert: 20000 },
-              labels: { alert: notificationTitle },
-            });
-            playEmergencySound();
-            break;
-
-          case "announcement":
-            notifier.success(detailedMessage, {
-              durations: { success: 20000 },
-              labels: { success: notificationTitle },
-            });
-            playSound();
-            break;
-
-          case "incidentReported":
-            notifier.alert(detailedMessage, {
-              durations: { success: 20000 },
-              labels: { alert: notificationTitle },
-            });
-            playSound();
-            break;
-
-          case "incidentUpdate":
-            notifier.info(detailedMessage, {
-              durations: { info: 20000 },
-              labels: { info: notificationTitle },
-            });
-            playSound();
-            break;
-
-          case "incidentMessage":
-            notifier.info(detailedMessage, {
-              durations: { info: 20000 },
-              labels: { info: notificationTitle },
-            });
-            playSound();
-            break;
-
-          default:
-            notifier.info(detailedMessage, {
-              durations: { info: 20000 },
-              labels: { info: notificationTitle },
-            });
-            playSound();
-            break;
-        }
-      } else if (recipient === email) {
-        // Customize message based on notificationType
-        switch (notificationType) {
-          case "emergency-alert":
-            notifier.alert(detailedMessage, {
-              durations: { alert: 20000 },
-              labels: { alert: notificationTitle },
-            });
-            playEmergencySound();
-            break;
-
-          case "announcement":
-            notifier.success(detailedMessage, {
-              durations: { success: 20000 },
-              labels: { success: notificationTitle },
-            });
-            playSound();
-            break;
-
-          case "incidentReported":
-            notifier.alert(detailedMessage, {
-              durations: { success: 20000 },
-              labels: { alert: notificationTitle },
-            });
-            playSound();
-            break;
-
-          case "incidentUpdate":
-            notifier.info(detailedMessage, {
-              durations: { info: 20000 },
-              labels: { info: notificationTitle },
-            });
-            playSound();
-            break;
-
-          case "incidentMessage":
-            notifier.info(detailedMessage, {
-              durations: { info: 20000 },
-              labels: { info: notificationTitle },
-            });
-            playSound();
-            break;
-
-          default:
-            notifier.info(detailedMessage, {
-              durations: { info: 20000 },
-              labels: { info: notificationTitle },
-            });
-            playSound();
-            break;
-        }
-      }
+     
       // Log custom data for debugging
       console.log(`Notification Type: ${notificationType}`);
       console.log(`Sender: ${sender}`);

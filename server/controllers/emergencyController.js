@@ -267,6 +267,7 @@ exports.findAndNotifyAdmins = async (req, res) => {
           senderLocation: parsedLocation,
           recipient: "admin",
           emergencyAlertId,
+          url:"/admin/emergencyAlerts"
         });
 
         await new Promise((resolve) => setTimeout(resolve, 10000));
@@ -304,6 +305,7 @@ exports.findAndNotifyAdmins = async (req, res) => {
       senderLocation: parsedLocation,
       recipient: "admin",
       emergencyAlertId,
+      url:"/admin/emergencyAlerts"
     });
 
     //update the value of radiusBeingSearched in the emergency alert to 999 to indicate that all admins have been notified
@@ -647,6 +649,7 @@ exports.sendChatMessage = async (req, res) => {
     // Send the notification (if you have FCM integration)
     await _sendNotification([recipient.FCMtoken], {
       chatMessage: message,
+      url: `/${role === "admin" ? 'user' : 'admin'}/emergencyalerts/track/${emergencyAlertId}`,
     });
 
     res.status(200).json({ message: "Chat message sent successfully" });

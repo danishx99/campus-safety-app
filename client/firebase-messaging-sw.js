@@ -30,63 +30,81 @@ const messaging = firebase.messaging();
 messaging.onBackgroundMessage(async function(payload) {
   console.log('[firebase-messaging-sw.js] Received background message ', payload);
 
+   //Get the current url of the client
+   const clientUrl = new URL(self.location.href);
+   const rootURL = `${clientUrl.protocol}//${clientUrl.host}`;
+
+
    // Check for chat message
    if (payload.data.chatMessage) {
     await self.registration.showNotification("New Chat Message", {
       body: "You have received a new message regarding your ongoing emergency.",
       icon: "/assets/chat.png",
+      data: { url: rootURL + payload.data.url },
     });
     return;
   }
-  
+
+ 
+
 
   const notificationType = payload.data?.notificationType || "General Notification";
   const sender = payload.data?.sender || "Unknown Sender";
   const notificationTitle = payload.data?.title || "No Title";
   const notificationBody = payload.data?.body || "No Message";
+  const url = rootURL + payload.data?.url || "/";
   let detailedMessage = `From: ${sender}\nMessage: ${notificationBody}`;
   let icon;
-  let tag;
+
+  let showNotification = true;
+
+  if(payload.data.status == "Resolved"){
+    let resolvedNotificationOptions = {
+      body: "Your latest emergency alert has been marked as resolved. If this is incorrect, please contact us.",
+      icon: "/assets/current-alert-mobile.png",
+    };
+    await self.registration.showNotification("Emergency Alert Resolved", resolvedNotificationOptions);
+
+    return;
+  }
+  
+
 
   // Customize notification based on notificationType
   switch (notificationType) {
     case "emergency-alert":
       icon = "/assets/notificationDashboard.png";
-      tag = "emergency";
       break;
     case "announcement":
       icon = "/assets/current-alert-mobile.png";
-      tag = "announcement";
       break;
-    case "incidentReported":
+    case "Incident reported":
       icon = "/assets/current-alert-mobile.png";
-      tag = "incident";
       break;
-    case "incidentUpdate":
+    case "Incident status update":
       icon = "/assets/current-alert-mobile.png";
-      tag = "update";
       break;
-    case "incidentMessage":
+    case "Incident message":
       icon = "/assets/current-alert-mobile.png";
-      tag = "update";
       break;
     default:
       icon = "/assets/notificationDashboard.png";
-      tag = "default";
+      showNotification = false;
       break;
   }
 
   const notificationOptions = {
     body: detailedMessage,
     icon: icon,
-    tag: tag,
-    data: {url:"https://chatgpt.com"},
+    data: {url:url},
   };
 
- 
-
+  if(showNotification){
   // Show the main notification
   await self.registration.showNotification(notificationTitle, notificationOptions);
+  }
+
+ 
 });
 
 // Add click event listener for notifications

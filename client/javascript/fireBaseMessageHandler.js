@@ -257,6 +257,10 @@ export function handleIncomingMessages(notifier) {
         return;
       }
 
+      if (emergencyAlertIdPayload) {
+        return;
+      }
+
       // Customize message based on notificationType
       switch (notificationType) {
         case "emergency-alert":

@@ -202,7 +202,6 @@
   position: fixed;
   right: 24px;
   z-index: 99998;
-  border: 5px solid red;
 }
 
 #awn-toast-container.awn-top-left,

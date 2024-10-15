@@ -31,9 +31,11 @@ jobs:
         working-directory: ./client
         run: |
           npm install -g html-minifier terser clean-css-cli
-          find . -name "*.html" -type f -exec html-minifier --collapse-whitespace --remove-comments --remove-optional-tags --remove-redundant-attributes --remove-script-type-attributes --remove-tag-whitespace --use-short-doctype --minify-css true --minify-js true {} -o {} \;
-          find . -name "*.css" -type f -exec cleancss -o {} {} \;
-          find . -name "*.js" -type f -exec terser {} -c -m -o {} \;
+          find . -name "*.html" -type f -exec sh -c 'html-minifier --collapse-whitespace --remove-comments --remove-optional-tags --remove-redundant-attributes --remove-script-type-attributes --remove-tag-whitespace --use-short-doctype --minify-css true --minify-js true "$1" -o "$1.min" || mv "$1" "$1.min"' _ {} \;
+          find . -name "*.css" -type f -exec sh -c 'cleancss -o "$1.min" "$1" || cp "$1" "$1.min"' _ {} \;
+          find . -name "*.js" -type f -exec sh -c 'terser "$1" -c -m -o "$1.min" || cp "$1" "$1.min"' _ {} \;
+          find . -name "*.min" -type f -exec sh -c 'mv "$1" "${1%.min}"' _ {} \;
+        continue-on-error: true
 
       # Run tests
       - name: Run tests

@@ -25,6 +25,15 @@ jobs:
       - name: Install Node.js dependencies
         working-directory: ./server
         run: npm install
+      
+      # Minify client-side files
+      - name: Minify client-side files
+        working-directory: ./client
+        run: |
+          npm install -g html-minifier terser clean-css-cli
+          find . -name "*.html" -type f -exec html-minifier --collapse-whitespace --remove-comments --remove-optional-tags --remove-redundant-attributes --remove-script-type-attributes --remove-tag-whitespace --use-short-doctype --minify-css true --minify-js true {} -o {} \;
+          find . -name "*.css" -type f -exec cleancss -o {} {} \;
+          find . -name "*.js" -type f -exec terser {} -c -m -o {} \;
 
       # Run tests
       - name: Run tests
@@ -32,10 +41,16 @@ jobs:
         run: npm test
         continue-on-error: true  # Continue even if tests have non-zero exit code
 
-      # Delete node_modules after tests
+      # Delete node_modules in server after tests
       - name: Clean up node_modules folder
         working-directory: ./server
         run: rm -rf node_modules
+
+      # Delete node_modules in client after tests
+      - name: Clean up node_modules folder
+        working-directory: ./client
+        run: rm -rf node_modules
+
 
       # Zip artifact for deployment
       - name: Zip artifact for deployment

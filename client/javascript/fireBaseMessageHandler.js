@@ -72,13 +72,13 @@ export function handleIncomingMessages(notifier) {
 
       // Access custom data
       const notificationType =
-        payload.data?.notificationType || "General Notification";
-      const sender = payload.data?.sender || "Unknown Sender";
+        payload.data?.notificationType;
+      const sender = payload.data?.sender;
       const recipient = payload.data?.recipient;
 
       // Access notification payload
-      const notificationTitle = payload.data?.title || "No Title";
-      const notificationBody = payload.data?.body || "No Message";
+      const notificationTitle = payload.data?.title;
+      const notificationBody = payload.data?.body;
 
       console.log("the title is", notificationTitle);
 
@@ -149,7 +149,10 @@ export function handleIncomingMessages(notifier) {
         //show red dot on the chat button
         // document.getElementById("newChat").style.display = "block";
         return;
-      } else if (chatMessage && isChatPage) {
+
+      }
+      
+      if (chatMessage && isChatPage) {
         playSound();
 
         addBotMessage(chatMessage);
@@ -158,8 +161,50 @@ export function handleIncomingMessages(notifier) {
         return;
       }
 
-      if (emergencyAlertIdPayload === emergencyAlertId) {
-        if (status === "Assigned") {
+
+      //Check if status is assigned, resolved and not on chat page, so that user is notified in foreground
+        if (status === "Assigned" && !isChatPage) {
+          playSound();
+          notifier.success(
+            "An admin has been assigned to your emergency alert. Please track your emergency alert to view their details.",
+            {
+              durations: { success: 20000 },
+              labels: { success: "Admin Assigned" },
+            }
+          );
+
+          allToasts = document.getElementsByClassName("awn-toast");
+          currentToast = allToasts[allToasts.length - 1];
+          currentToast.addEventListener("click", () => {
+           window.location.href = payload.data.url;
+          });
+
+          return;
+        }
+
+        if(status === "Resolved" && !isChatPage){
+          playSound();
+          notifier.success(
+            "Your latest emergency alert has been marked as resolved. If this is incorrect, please contact us.",
+            {
+              durations: { success: 20000 },
+              labels: { success: "Emergency Alert Resolved" },
+            }
+          );
+
+          allToasts = document.getElementsByClassName("awn-toast");
+          currentToast = allToasts[allToasts.length - 1];
+          currentToast.addEventListener("click", () => {
+
+            window.location.href = payload.data.url;
+
+          });
+
+          return;
+        }
+
+    
+        if (status === "Assigned" && isChatPage) {
           //Change the color of the assigned circle to blue
           assignedCircle.classList.remove("bg-gray-300");
           assignedCircle.classList.add("bg-blue-500");
@@ -198,9 +243,11 @@ export function handleIncomingMessages(notifier) {
 
           //Show the admin div
           adminDiv.style.display = "block";
+
+          return;
         }
 
-        if (status === "Resolved") {
+        if (status === "Resolved" && isChatPage) {
           //Remove animation from the searching circle
           searchingCircle.classList.remove("animationOn");
 
@@ -224,15 +271,38 @@ export function handleIncomingMessages(notifier) {
 
           //Hide the admin details after the emergency is resolved
           document.getElementById("assignedPhase").style.display = "none";
+
+          return;
         }
 
-        if (status === "No Admin Assigned") {
+        if (status === "No Admin Assigned" && isChatPage) {
           document.getElementById(
             "INFO"
           ).textContent = `All admins have been notified but none have accepted the alert yet. Please be patient.`;
+
+          return;
         }
 
-        if (proximity && proximity !== "999") {
+        if (status === "No Admin Assigned" && !isChatPage) {
+          playSound();
+          notifier.info(
+            "All admins have been notified but none have accepted the alert yet. Please be patient.",
+            {
+              durations: { info: 20000 },
+              labels: { info: "No Admin Assigned" },
+            }
+          );
+
+          allToasts = document.getElementsByClassName("awn-toast");
+          currentToast = allToasts[allToasts.length - 1];
+          currentToast.addEventListener("click", () => {
+            window.location.href = payload.data.url;
+          });
+
+          return;
+        }
+
+        if (proximity && proximity !== "999" && isChatPage) {
           document.getElementById(
             "INFO"
           ).textContent = `Searching for admins within radius: ${proximity} km`;
@@ -246,20 +316,62 @@ export function handleIncomingMessages(notifier) {
 
           //update the zoom based on the radius
           map.setZoom(getZoomLevelFromRadius(proximity * 1000));
+
+          return;
         }
 
-        if (proximity === "999") {
+        if(proximity && proximity !== "999" && !isChatPage){
+          playSound();
+          notifier.info(
+            `Searching for admins within radius: ${proximity} km`,
+            {
+              durations: { info: 20000 },
+              labels: { info: "Searching for Admins" },
+            }
+          );
+
+          allToasts = document.getElementsByClassName("awn-toast");
+          currentToast = allToasts[allToasts.length - 1];
+          currentToast.addEventListener("click", () => {
+            window.location.href = payload.data.url;
+          });
+
+          return;
+        }
+
+        if (proximity === "999" && isChatPage) {
           document.getElementById(
             "INFO"
           ).textContent = `Expanded search radius to include all admins`;
+
+          return;
         }
 
-        return;
-      }
+        if(proximity === "999" && !isChatPage){
+          playSound();
+          notifier.info(
+            `Expanded search radius to include all admins`,
+            {
+              durations: { info: 20000 },
+              labels: { info: "Expanded Search Radius" },
+            }
+          );
 
-      if (emergencyAlertIdPayload) {
-        return;
-      }
+          allToasts = document.getElementsByClassName("awn-toast");
+          currentToast = allToasts[allToasts.length - 1];
+          currentToast.addEventListener("click", () => {
+            window.location.href = payload.data.url;
+          });
+
+          return;
+        }
+
+
+
+       
+      
+
+      
 
       // Customize message based on notificationType
       switch (notificationType) {

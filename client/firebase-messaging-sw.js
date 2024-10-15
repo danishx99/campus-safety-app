@@ -35,39 +35,109 @@ messaging.onBackgroundMessage(async function(payload) {
    const rootURL = `${clientUrl.protocol}//${clientUrl.host}`;
 
 
-   // Check for chat message
-   if (payload.data.chatMessage) {
-    await self.registration.showNotification("New Chat Message", {
-      body: "You have received a new message regarding your ongoing emergency.",
-      icon: "/assets/chat.png",
-      data: { url: rootURL + payload.data.url },
-    });
-    return;
-  }
+   
 
  
 
 
-  const notificationType = payload.data?.notificationType || "General Notification";
-  const sender = payload.data?.sender || "Unknown Sender";
-  const notificationTitle = payload.data?.title || "No Title";
-  const notificationBody = payload.data?.body || "No Message";
+  const notificationType = payload.data?.notificationType;
+  const sender = payload.data?.sender;
+  const notificationTitle = payload.data?.title;
+  const notificationBody = payload.data?.body;
   const url = rootURL + payload.data?.url || "/";
   let detailedMessage = `From: ${sender}\nMessage: ${notificationBody}`;
   let icon;
 
-  let showNotification = true;
-
+  // Check for chat message
+  if (payload.data.chatMessage) {
+    await self.registration.showNotification("New Chat Message", {
+      body: "You have received a new message regarding your ongoing emergency.",
+      icon: "/assets/chat.png",
+      data: { url:url },
+    });
+    return;
+  }
+  
+  //Handle the case where the user is tabbed out and alert is resolved, notify them.
   if(payload.data.status == "Resolved"){
     let resolvedNotificationOptions = {
       body: "Your latest emergency alert has been marked as resolved. If this is incorrect, please contact us.",
       icon: "/assets/current-alert-mobile.png",
+      data: { url:url },
     };
     await self.registration.showNotification("Emergency Alert Resolved", resolvedNotificationOptions);
 
     return;
   }
-  
+
+  //Handle the case where a user is tabbed out and an admin has been assigned
+  if(payload.data.status == "Assigned"){
+    let title = "Update regarding your ongoing search.";
+    let message = `An admin has been assigned to your emergency alert. Please track your emergency alert to view their details.`;
+
+    let options = {
+      body: message,
+      icon: "/assets/current-alert-mobile.png",
+      data: { url:url },
+    };
+
+    await self.registration.showNotification(title, options);
+
+    return;
+
+  }
+
+
+  //Handle the updates that happen when proximity changes from time to time
+  if(payload.data.proximity && payload.data.proximity != "999"){
+    let title = "Update regarding your ongoing search.";
+    let message = `Proximity range changed to ${payload.data.proximity} km. Please track your emergency alert for more details.`;
+
+    let options = {
+      body: message,
+      icon: "/assets/current-alert-mobile.png",
+      data: { url:url },
+    };
+
+    await self.registration.showNotification(title, options);
+
+    return;
+
+  }
+
+  //Handle the case where no admin is assigned but everyone has been notified
+  if(payload.data.status === "No Admin Assigned"){
+    let title = "Update regarding your ongoing search.";
+    let message = `All admins have been notified but none have accepted the alert yet. Please be patient.`;
+
+    let options = {
+      body: message,
+      icon: "/assets/current-alert-mobile.png",
+      data: { url:url },
+    };
+
+    await self.registration.showNotification(title, options);
+
+    return;
+
+  }
+
+   //Handle the case where the search radius is expanded to include everyone
+  if(payload.data.proximity === "999"){
+    let title = "Update regarding your ongoing search.";
+    let message = `Proximity range expanded to include everyone. Please track your emergency alert for more details.`;
+
+    let options = {
+      body: message,
+      icon: "/assets/current-alert-mobile.png",
+      data: { url:url },
+    };
+
+    await self.registration.showNotification(title, options);
+
+    return;
+  }
+
 
 
   // Customize notification based on notificationType
@@ -89,7 +159,6 @@ messaging.onBackgroundMessage(async function(payload) {
       break;
     default:
       icon = "/assets/notificationDashboard.png";
-      showNotification = false;
       break;
   }
 
@@ -98,12 +167,10 @@ messaging.onBackgroundMessage(async function(payload) {
     icon: icon,
     data: {url:url},
   };
-
-  if(showNotification){
+ 
   // Show the main notification
   await self.registration.showNotification(notificationTitle, notificationOptions);
-  }
-
+  
  
 });
 

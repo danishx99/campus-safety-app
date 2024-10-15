@@ -249,6 +249,7 @@ exports.findAndNotifyAdmins = async (req, res) => {
       await _sendNotification([user.FCMtoken], {
         emergencyAlertId,
         proximity: radius,
+        url: `/user/emergencyalerts/track/${emergencyAlertId}`,
       });
 
       const nearbyAdmins = getUsersWithinRadius(users, parsedLocation, radius);
@@ -317,6 +318,7 @@ exports.findAndNotifyAdmins = async (req, res) => {
     await _sendNotification([user.FCMtoken], {
       emergencyAlertId,
       proximity: 999,
+      url: `/user/emergencyalerts/track/${emergencyAlertId}`,
     });
 
     await new Promise((resolve) => setTimeout(resolve, 10000));
@@ -334,6 +336,7 @@ exports.findAndNotifyAdmins = async (req, res) => {
       await _sendNotification([user.FCMtoken], {
         emergencyAlertId,
         status: "No Admin Assigned",
+        url: `/user/emergencyalerts/track/${emergencyAlertId}`,
       }); //No admin assigned is for the client to know that no admin has been assigned and for it to show the last message "Please be patient"
     }
 
@@ -499,13 +502,14 @@ exports.acceptEmergencyAlert = async (req, res) => {
 
     const findAdminDetails = await User.findOne({ email });
 
-    _sendNotification([userThatReportedEmergency.FCMtoken], {
+    await _sendNotification([userThatReportedEmergency.FCMtoken], {
       emergencyAlertId,
       status: "Assigned",
       firstName: findAdminDetails.firstName,
       lastName: findAdminDetails.lastName,
       email: findAdminDetails.email,
       phone: findAdminDetails.phone,
+      url: `/user/emergencyalerts/track/${emergencyAlertId}`,
     });
 
     return res
@@ -581,6 +585,7 @@ exports.resolveEmergency = async (req, res) => {
     await _sendNotification([userThatReportedEmergency.FCMtoken], {
       emergencyAlertId,
       status: "Resolved",
+      url: `/user/emergencyAlerts`,
     });
     
     res.status(200).json({ message: "Emergency alert resolved successfully" });

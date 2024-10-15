@@ -98,6 +98,9 @@ export function handleIncomingMessages(notifier) {
       const userToBeRedirected = payload.data.userToBeRedirected;
       const currentUser = decodeURIComponent(getCookie("email"));
 
+      let allToasts;
+      let currentToast;
+
       //If im logged in as a student on both browsers(phone and PC), if i send an emergency alert(panic) on the phone
       // for example, then the PC cant send panic alerts anymore and vice versa.
       //I figured out the ISSUE, FCM TOKEN IS BEING UPDATED WHEN LOGGING INTO ANOTHER DEVICE, THIS IMMEDIALTELY STOPS THE OTHER DEVICE FROM RECEIVING FCM PAYLOADS, SINCE TECHNICALLY
@@ -122,23 +125,31 @@ export function handleIncomingMessages(notifier) {
       const chatMessage = payload.data.chatMessage;
       //Check if current url contains {/admin/emergencyalerts/track}, if it does, then the user is on the emergency alert page
       //and we can show the chat message
-      const isChatPage = window.location.href.includes("/emergencyalerts/track");
-
-
-
+      const isChatPage = window.location.href.includes(
+        "/emergencyalerts/track"
+      );
 
       if (chatMessage && !isChatPage) {
         playSound();
-        notifier.alert("You have received a new message regarding your ongoing emergency.", {
-          durations: { alert: 20000 },
-          labels: { alert: "New Chat Message" },
+        notifier.alert(
+          "You have received a new message regarding your ongoing emergency.",
+          {
+            durations: { alert: 20000 },
+            labels: { alert: "New Chat Message" },
+          }
+        );
+
+        allToasts = document.getElementsByClassName("awn-toast");
+        currentToast = allToasts[allToasts.length - 1];
+        currentToast.addEventListener("click", () => {
+          window.location.href = payload.data.url;
         });
 
         // addBotMessage(chatMessage);
         //show red dot on the chat button
         // document.getElementById("newChat").style.display = "block";
         return;
-      }else if(chatMessage && isChatPage){
+      } else if (chatMessage && isChatPage) {
         playSound();
 
         addBotMessage(chatMessage);
@@ -187,7 +198,6 @@ export function handleIncomingMessages(notifier) {
 
           //Show the admin div
           adminDiv.style.display = "block";
-          
         }
 
         if (status === "Resolved") {
@@ -247,58 +257,91 @@ export function handleIncomingMessages(notifier) {
         return;
       }
 
-      
-        // Customize message based on notificationType
-        switch (notificationType) {
-          case "emergency-alert":
-            notifier.alert(detailedMessage, {
-              durations: { alert: 20000 },
-              labels: { alert: "Emergency: " + notificationTitle },
-            });
-            playEmergencySound();
-            break;
+      // Customize message based on notificationType
+      switch (notificationType) {
+        case "emergency-alert":
+          notifier.alert(detailedMessage, {
+            durations: { alert: 20000 },
+            labels: { alert: "Emergency: " + notificationTitle },
+          });
 
-          case "announcement":
-            notifier.success(detailedMessage, {
-              durations: { success: 20000 },
-              labels: { success: "Announcement: " + notificationTitle },
-            });
-            playSound();
-            break;
+          allToasts = document.getElementsByClassName("awn-toast");
+          currentToast = allToasts[allToasts.length - 1];
+          currentToast.addEventListener("click", () => {
+            window.location.href = payload.data.url;
+          });
 
-          case "Incident reported":
-            notifier.info(detailedMessage, {
-              durations: { info: 20000 },
-              labels: { info: notificationTitle },
-            });
-            playSound();
-            break;
+          // add an event listener to the alert
+          playEmergencySound();
+          break;
 
-          case "Incident status update":
-            notifier.info(detailedMessage, {
-              durations: { info: 20000 },
-              labels: { info: notificationTitle },
-            });
-            playSound();
-            break;
+        case "announcement":
+          notifier.success(detailedMessage, {
+            durations: { success: 20000 },
+            labels: { success: "Announcement: " + notificationTitle },
+          });
+          allToasts = document.getElementsByClassName("awn-toast");
+          currentToast = allToasts[allToasts.length - 1];
+          currentToast.addEventListener("click", () => {
+            window.location.href = payload.data.url;
+          });
 
-          case "Incident message":
-            notifier.info(detailedMessage, {
-              durations: { info: 20000 },
-              labels: { info: notificationTitle },
-            });
-            playSound();
-            break;
+          playSound();
+          break;
 
-          default:
-            notifier.info(detailedMessage, {
-              durations: { info: 20000 },
-              labels: { info: notificationTitle },
-            });
-            playSound();
-            break;
-        }
-     
+        case "Incident reported":
+          notifier.info(detailedMessage, {
+            durations: { info: 20000 },
+            labels: { info: notificationTitle },
+          });
+          allToasts = document.getElementsByClassName("awn-toast");
+          currentToast = allToasts[allToasts.length - 1];
+          currentToast.addEventListener("click", () => {
+            window.location.href = payload.data.url;
+          });
+          playSound();
+          break;
+
+        case "Incident status update":
+          notifier.info(detailedMessage, {
+            durations: { info: 20000 },
+            labels: { info: notificationTitle },
+          });
+          allToasts = document.getElementsByClassName("awn-toast");
+          currentToast = allToasts[allToasts.length - 1];
+          currentToast.addEventListener("click", () => {
+            window.location.href = payload.data.url;
+          });
+          playSound();
+          break;
+
+        case "Incident message":
+          notifier.info(detailedMessage, {
+            durations: { info: 20000 },
+            labels: { info: notificationTitle },
+          });
+          allToasts = document.getElementsByClassName("awn-toast");
+          currentToast = allToasts[allToasts.length - 1];
+          currentToast.addEventListener("click", () => {
+            window.location.href = payload.data.url;
+          });
+          playSound();
+          break;
+
+        default:
+          notifier.info(detailedMessage, {
+            durations: { info: 20000 },
+            labels: { info: notificationTitle },
+          });
+          allToasts = document.getElementsByClassName("awn-toast");
+          currentToast = allToasts[allToasts.length - 1];
+          currentToast.addEventListener("click", () => {
+            window.location.href = payload.data.url;
+          });
+          playSound();
+          break;
+      }
+
       // Log custom data for debugging
       console.log(`Notification Type: ${notificationType}`);
       console.log(`Sender: ${sender}`);

@@ -49,7 +49,7 @@ jobs:
         run: rm -rf node_modules
 
       # Delete node_modules in client after tests
-      - name: Clean up node_modules folder
+      - name: Clean up node_modules folder client
         working-directory: ./client
         run: rm -rf node_modules
 

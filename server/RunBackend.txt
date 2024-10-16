@@ -2,5 +2,7 @@ npm i express,bcrypt, bcryptjs, jsonwebtoken,dotenv  in the root directory
 
 cd server npm run startApp
 
-
+##IGNORE BELOW##
 rm -rf ./*
+
+find . -type f -name "*.png" -exec bash -c 'cwebp -q 80 "$0" -o "${0%.png}.webp"' {} \;

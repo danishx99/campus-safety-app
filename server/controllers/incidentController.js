@@ -39,7 +39,7 @@ exports.getIncidents = async (req, res) => {
           email: user.email || "Not provided", // Accessing email
           phone: user.phone || "Not provided", // Accessing phone
           role: user.role || "Not specified", // Accessing role
-          profilePicture: user.profilePicture || "../assets/user-profile.png", // Accessing profile picture
+          profilePicture: user.profilePicture || "../assets/user-profile.webp", // Accessing profile picture
         },
       };
     });
@@ -442,7 +442,7 @@ exports.getIncidentByUser = async (req, res) => {
           email: user.email || "Not provided", // Accessing email
           phone: user.phone || "Not provided", // Accessing phone
           role: user.role || "Not specified", // Accessing role
-          profilePicture: user.profilePicture || "../assets/user-profile.png", // Accessing profile picture
+          profilePicture: user.profilePicture || "../assets/user-profile.webp", // Accessing profile picture
         },
       };
     });

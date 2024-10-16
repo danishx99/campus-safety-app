@@ -139,7 +139,7 @@ function addIncidentToDOM(incident, index) {
   <div class="border border-black rounded-lg p-4 flex flex-col bg-white shadow-md">
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center">
       <div class="flex items-center text-sm w-full sm:w-auto mb-2 sm:mb-0">
-        <img src="${incident.userDetails.profilePicture ? incident.userDetails.profilePicture : '../assets/user-profile.png'}" 
+        <img src="${incident.userDetails.profilePicture ? incident.userDetails.profilePicture : '../assets/user-profile.webp'}" 
              class="mr-2 h-8 w-8 rounded-full flex-shrink-0" alt="Profile">
         <div class="flex-grow min-w-0">
           <p class="font-bold truncate">
@@ -154,10 +154,10 @@ function addIncidentToDOM(incident, index) {
       <div class="flex items-center mt-2 sm:mt-0">
        ${
           incident.location
-            ? `<a href='https://www.google.com/maps?q=${latitude},${longitude}' target='_blank' class="mr-2"><img src="../assets/locationPick.png" alt="Location" class="h-5 w-5 mr-2 cursor-pointer locationPick" data-lat="${latitude}" data-lng="${longitude}"></a>`
+            ? `<a href='https://www.google.com/maps?q=${latitude},${longitude}' target='_blank' class="mr-2"><img src="../assets/locationPick.webp" alt="Location" class="h-5 w-5 mr-2 cursor-pointer locationPick" data-lat="${latitude}" data-lng="${longitude}"></a>`
             : ""
         }
-        ${incident.imageTrue ? `<a href='/incidentReporting/getIncidentImage/${incident._id}' target='_blank' class="mr-2"><img src="../assets/image.png" alt="Image" class="h-5 w-5 cursor-pointer show-image"></a>` : ""}
+        ${incident.imageTrue ? `<a href='/incidentReporting/getIncidentImage/${incident._id}' target='_blank' class="mr-2"><img src="../assets/image.webp" alt="Image" class="h-5 w-5 cursor-pointer show-image"></a>` : ""}
         <p class="bg-[#E3E5E9] rounded-full flex items-center justify-center font-bold ${statusColor} px-3 py-1 text-xs">
           ${incident.status}
         </p>

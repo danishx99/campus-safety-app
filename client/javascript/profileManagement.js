@@ -307,8 +307,8 @@ document.addEventListener("DOMContentLoaded", function () {
     inputField.setAttribute("type", type);
     toggleButton.querySelector("img").src =
       type === "password"
-        ? "../assets/eye-close.png"
-        : "../assets/eye-open.png";
+        ? "../assets/eye-close.webp"
+        : "../assets/eye-open.webp";
   }
 
   togglePassword.addEventListener("click", () =>

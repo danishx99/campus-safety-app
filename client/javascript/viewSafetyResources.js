@@ -100,7 +100,7 @@ function createAdminButtons(resource, resourceDiv) {
     );
     
     const deleteIcon = document.createElement('img');
-    deleteIcon.src = '../assets/delete.png';
+    deleteIcon.src = '../assets/delete.webp';
     deleteIcon.alt = 'Delete';
     deleteIcon.classList.add('w-4', 'h-4');
     
@@ -131,9 +131,9 @@ function createAdminButtons(resource, resourceDiv) {
 // Helper function to get image source based on resource type
 function getImageSource(type) {
     const imageMap = {
-        'Emergency Contact': "../assets/phoneS.png",
-        'Safety Tip': "../assets/safetyTipS.png",
-        'Campus Safety Policy': "../assets/safetyPolicy.png"
+        'Emergency Contact': "../assets/phoneS.webp",
+        'Safety Tip': "../assets/safetyTipS.webp",
+        'Campus Safety Policy': "../assets/safetyPolicy.webp"
     };
     return imageMap[type] || "";
 }

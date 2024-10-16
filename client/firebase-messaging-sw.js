@@ -52,7 +52,7 @@ messaging.onBackgroundMessage(async function(payload) {
   if (payload.data.chatMessage) {
     await self.registration.showNotification("New Chat Message", {
       body: "You have received a new message regarding your ongoing emergency.",
-      icon: "/assets/chat.png",
+      icon: "/assets/chat.webp",
       data: { url:url },
     });
     return;
@@ -62,7 +62,7 @@ messaging.onBackgroundMessage(async function(payload) {
   if(payload.data.status == "Resolved"){
     let resolvedNotificationOptions = {
       body: "Your latest emergency alert has been marked as resolved. If this is incorrect, please contact us.",
-      icon: "/assets/current-alert-mobile.png",
+      icon: "/assets/current-alert-mobile.webp",
       data: { url:url },
     };
     await self.registration.showNotification("Emergency Alert Resolved", resolvedNotificationOptions);
@@ -77,7 +77,7 @@ messaging.onBackgroundMessage(async function(payload) {
 
     let options = {
       body: message,
-      icon: "/assets/current-alert-mobile.png",
+      icon: "/assets/current-alert-mobile.webp",
       data: { url:url },
     };
 
@@ -95,7 +95,7 @@ messaging.onBackgroundMessage(async function(payload) {
 
     let options = {
       body: message,
-      icon: "/assets/current-alert-mobile.png",
+      icon: "/assets/current-alert-mobile.webp",
       data: { url:url },
     };
 
@@ -112,7 +112,7 @@ messaging.onBackgroundMessage(async function(payload) {
 
     let options = {
       body: message,
-      icon: "/assets/current-alert-mobile.png",
+      icon: "/assets/current-alert-mobile.webp",
       data: { url:url },
     };
 
@@ -129,7 +129,7 @@ messaging.onBackgroundMessage(async function(payload) {
 
     let options = {
       body: message,
-      icon: "/assets/current-alert-mobile.png",
+      icon: "/assets/current-alert-mobile.webp",
       data: { url:url },
     };
 
@@ -143,22 +143,22 @@ messaging.onBackgroundMessage(async function(payload) {
   // Customize notification based on notificationType
   switch (notificationType) {
     case "emergency-alert":
-      icon = "/assets/notificationDashboard.png";
+      icon = "/assets/notificationDashboard.webp";
       break;
     case "announcement":
-      icon = "/assets/current-alert-mobile.png";
+      icon = "/assets/current-alert-mobile.webp";
       break;
     case "Incident reported":
-      icon = "/assets/current-alert-mobile.png";
+      icon = "/assets/current-alert-mobile.webp";
       break;
     case "Incident status update":
-      icon = "/assets/current-alert-mobile.png";
+      icon = "/assets/current-alert-mobile.webp";
       break;
     case "Incident message":
-      icon = "/assets/current-alert-mobile.png";
+      icon = "/assets/current-alert-mobile.webp";
       break;
     default:
-      icon = "/assets/notificationDashboard.png";
+      icon = "/assets/notificationDashboard.webp";
       break;
   }
 

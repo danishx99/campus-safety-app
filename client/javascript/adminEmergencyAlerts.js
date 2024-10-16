@@ -24,7 +24,7 @@ function generateEmergencyAlertHTML(alert) {
               <a href='https://www.google.com/maps?q=${location.latitude},${
     location.longitude
   }' target='_blank' class="mr-2">
-                <img src="../assets/locationPick.png" alt="Location" class="h-5 w-5 mr-2 cursor-pointer locationPick">
+                <img src="../assets/locationPick.webp" alt="Location" class="h-5 w-5 mr-2 cursor-pointer locationPick">
               </a>
               <p class="bg-[#E3E5E9] rounded-full flex items-center justify-center font-bold ${statusColor} px-3 py-1 text-xs">
               ${

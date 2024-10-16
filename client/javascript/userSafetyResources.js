@@ -94,11 +94,11 @@ function extractPhoneNumber(description) {
 function getImageSource(type) {
   switch (type) {
       case 'Emergency Contact':
-          return "../assets/phoneS.png";
+          return "../assets/phoneS.webp";
       case 'Safety Tip':
-          return "../assets/safetyTipS.png";
+          return "../assets/safetyTipS.webp";
       case 'Campus Safety Policy':
-          return "../assets/safetyPolicy.png";
+          return "../assets/safetyPolicy.webp";
       default:
           return "";
   }

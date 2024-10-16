@@ -257,7 +257,7 @@ function initializeMap(location, emergencyLocation) {
       map: map,
       draggable: false,
       icon: {
-        url: "http://maps.google.com/mapfiles/ms/icons/green-dot.png",
+        url: "http://maps.google.com/mapfiles/ms/icons/green-dot.webp",
       },
     });
 

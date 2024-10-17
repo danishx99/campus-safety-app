@@ -446,7 +446,7 @@ function displayBestRoute(route, currentLocation, emergencyLocation) {
     directionsService.route(request, (response, status) => {
       if (status === google.maps.DirectionsStatus.OK) {
         // Display the walking route
-        const walkingRenderer = new google.maps.DirectionsRenderer({
+         walkingRenderer = new google.maps.DirectionsRenderer({
           map: map,
           suppressMarkers: true,
           polylineOptions: {
@@ -483,7 +483,7 @@ function displayBestRoute(route, currentLocation, emergencyLocation) {
       (walkingResponse, walkingStatus) => {
         if (walkingStatus === google.maps.DirectionsStatus.OK) {
           // Display the walking route
-          const walkingRenderer = new google.maps.DirectionsRenderer({
+           walkingRenderer = new google.maps.DirectionsRenderer({
             map: map,
             suppressMarkers: true,
             polylineOptions: {
@@ -516,7 +516,7 @@ function displayBestRoute(route, currentLocation, emergencyLocation) {
             (drivingResponse, drivingStatus) => {
               if (drivingStatus === google.maps.DirectionsStatus.OK) {
                 // Display the driving route
-                const drivingRenderer = new google.maps.DirectionsRenderer({
+                 drivingRenderer = new google.maps.DirectionsRenderer({
                   map: map,
                   suppressMarkers: true,
                   polylineOptions: {

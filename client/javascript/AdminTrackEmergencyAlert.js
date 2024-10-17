@@ -177,6 +177,7 @@ function fetchEmergencyDetails() {
           reportedBy.lastName;
         document.getElementById("adminEmail").innerText = reportedBy.email;
         document.getElementById("adminCellphone").innerText = reportedBy.phone;
+        document.getElementById("adminCellphone").href = `tel:${reportedBy.phone}`; 
         document.getElementById(
           "chat"
         ).innerText = `Chat to ${reportedBy.firstName}`;
@@ -257,7 +258,7 @@ function initializeMap(location, emergencyLocation) {
       map: map,
       draggable: false,
       icon: {
-        url: "http://maps.google.com/mapfiles/ms/icons/green-dot.webp",
+        url: "http://maps.google.com/mapfiles/ms/icons/green-dot.png",
       },
     });
 
@@ -276,7 +277,7 @@ function initializeMap(location, emergencyLocation) {
     });
   });
 
-  // Calculate the best route
+  // Calculate the best route, this actually renders the route between the user and the emergency after the calculations are done
   calculateBestRoute(location, emergencyLocation);
 }
 
@@ -416,11 +417,24 @@ function calculateDistance(origin, destination, mode, callback) {
   );
 }
 
-function displayBestRoute(route, currentLocation, emergencyLocation) {
-  // Remove existing route polylines
-  if (window.currentRoutePolyline) {
-    window.currentRoutePolyline.setMap(null);
+if (!window.activeRenderers) {
+  window.activeRenderers = [];
+}
+
+// Helper function to clear all existing routes
+function clearExistingRoutes() {
+  if (window.activeRenderers) {
+    window.activeRenderers.forEach(renderer => {
+      renderer.setMap(null);
+    });
+    window.activeRenderers = [];
   }
+}
+
+function displayBestRoute(route, currentLocation, emergencyLocation) {
+  //This function actually renders the route on the map between the user and the emergency
+  // Clear all existing renderers
+  clearExistingRoutes();
 
   const directionsService = new google.maps.DirectionsService();
 
@@ -461,6 +475,7 @@ function displayBestRoute(route, currentLocation, emergencyLocation) {
           preserveViewport: true,
         });
         walkingRenderer.setDirections(response);
+        window.activeRenderers.push(walkingRenderer);
       } else {
         console.error("Error fetching walking directions:", status);
       }
@@ -497,6 +512,7 @@ function displayBestRoute(route, currentLocation, emergencyLocation) {
             preserveViewport: true,
           });
           walkingRenderer.setDirections(walkingResponse);
+          window.activeRenderers.push(walkingRenderer);
 
           // Second request: driving directions from rental station to emergency location
           const drivingRequest = {
@@ -521,6 +537,7 @@ function displayBestRoute(route, currentLocation, emergencyLocation) {
                   preserveViewport: true,
                 });
                 drivingRenderer.setDirections(drivingResponse);
+                window.activeRenderers.push(drivingRenderer);
               } else {
                 console.error(
                   "Error fetching driving directions:",

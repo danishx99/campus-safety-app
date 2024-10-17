@@ -538,6 +538,13 @@ exports.cancelEmergency = async (req, res) => {
 
     const emergency = await Emergency.findById(emergencyAlertId);
 
+    //Find the user that reported emergency
+    const userThatReportedEmergency = await User.findOne({
+      email: emergency.reportedBy,
+    });
+
+
+
     console.log(emergencyAlertId);
 
     if (!emergency) {
@@ -546,6 +553,14 @@ exports.cancelEmergency = async (req, res) => {
     await Emergency.findByIdAndUpdate(emergencyAlertId, {
       status: "Cancelled",
     });
+
+    await _sendNotification([userThatReportedEmergency.FCMtoken], {
+      emergencyAlertId,
+      status: "Cancelled",
+      url: `/user/emergencyAlerts`,
+    });
+
+
 
     res.status(200).json({ message: "Emergency alert cancelled successfully" });
   } catch (error) {

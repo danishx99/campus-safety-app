@@ -43,10 +43,12 @@
   // Set a larger limit for JSON bodies
 
   // Serve frontend static files from the 'client' directory, add cache control so that the browser caches the files for 1 day
-  app.use(express.static('client', {
-    maxAge: '1d', // Cache for 1 day
-    etag: false
-  }));
+  // app.use(express.static('client', {
+  //   maxAge: '7d', // Cache for 7 days
+  //   etag: false
+  // }));
+
+  app.use(express.static('client'));
   
   // Middleware to add lazy loading to all <img> tags
 app.use((req, res, next) => {
@@ -70,6 +72,7 @@ app.use((req, res, next) => {
   };
 
   next();
+ 
 });
 
   // Route middleware

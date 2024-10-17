@@ -276,6 +276,37 @@ export function handleIncomingMessages(notifier) {
           return;
         }
 
+        if (status === "Cancelled" && isChatPage) {
+          //refresh the current page
+          window.location.reload();
+          return;
+        }
+
+        if (status === "Cancelled" && !isChatPage) {
+
+          playSound();
+          notifier.success(
+            "Your latest emergency alert has been cancelled by an admin. If this is incorrect, please contact us.",
+            {
+              durations: { success: 20000 },
+              labels: { success: "Emergency Alert Cancelled." },
+            }
+          );
+
+          allToasts = document.getElementsByClassName("awn-toast");
+          currentToast = allToasts[allToasts.length - 1];
+          currentToast.addEventListener("click", () => {
+
+            window.location.href = payload.data.url;
+
+          });
+
+          return;
+
+        }
+
+
+
         if (status === "No Admin Assigned" && isChatPage) {
           document.getElementById(
             "INFO"

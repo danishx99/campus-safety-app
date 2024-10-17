@@ -27,7 +27,7 @@ exports.emergencyExists = async (req, res, next) => {
     console.log("Emergency alert:", emergency);
 
     // If no emergency or if status is "Cancelled", return the 404 error page
-    if (!emergency || emergency.status === "Cancelled") {
+    if (!emergency || emergency.status === "Cancelled" || emergency.status === "Resolved") {
       return res.status(404).sendFile(
         path.join(
           __dirname,

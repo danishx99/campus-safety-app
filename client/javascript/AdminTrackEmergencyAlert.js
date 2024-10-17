@@ -417,24 +417,14 @@ function calculateDistance(origin, destination, mode, callback) {
   );
 }
 
-if (!window.activeRenderers) {
-  window.activeRenderers = [];
-}
-
-// Helper function to clear all existing routes
-function clearExistingRoutes() {
-  if (window.activeRenderers) {
-    window.activeRenderers.forEach(renderer => {
-      renderer.setMap(null);
-    });
-    window.activeRenderers = [];
-  }
-}
+let walkingRenderer;
+let drivingRenderer;
 
 function displayBestRoute(route, currentLocation, emergencyLocation) {
   //This function actually renders the route on the map between the user and the emergency
-  // Clear all existing renderers
-  clearExistingRoutes();
+  // Remove existing route polylines
+  walkingRenderer?.setMap(null);
+  drivingRenderer?.setMap(null);
 
   const directionsService = new google.maps.DirectionsService();
 
@@ -474,8 +464,8 @@ function displayBestRoute(route, currentLocation, emergencyLocation) {
           },
           preserveViewport: true,
         });
+        walkingRenderer.setMap(map);
         walkingRenderer.setDirections(response);
-        window.activeRenderers.push(walkingRenderer);
       } else {
         console.error("Error fetching walking directions:", status);
       }
@@ -511,8 +501,8 @@ function displayBestRoute(route, currentLocation, emergencyLocation) {
             },
             preserveViewport: true,
           });
+          walkingRenderer.setMap(map);
           walkingRenderer.setDirections(walkingResponse);
-          window.activeRenderers.push(walkingRenderer);
 
           // Second request: driving directions from rental station to emergency location
           const drivingRequest = {
@@ -536,8 +526,8 @@ function displayBestRoute(route, currentLocation, emergencyLocation) {
                   },
                   preserveViewport: true,
                 });
+                drivingRenderer.setMap(map);
                 drivingRenderer.setDirections(drivingResponse);
-                window.activeRenderers.push(drivingRenderer);
               } else {
                 console.error(
                   "Error fetching driving directions:",

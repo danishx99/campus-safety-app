@@ -9,7 +9,7 @@ const incidentSchema = new Schema(
     },
     type: {
       type: String, //e.g Theft, Assualt, Harassment, Vandalism, Other
-      required: true,
+      required: false,
     },
     image: { //BASE64 string (optional)
       type: String,

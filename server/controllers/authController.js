@@ -150,13 +150,13 @@ exports.login = async (req, res) => {
 
     //Save the user's role, email address, name and surname, phone and join date to the client as a cookie
     //profile picture not being stored - too large?
-    res.cookie("role", user.role);
-    res.cookie("email", user.email);
-    res.cookie("firstname", user.firstName);
-    res.cookie("lastname", user.lastName);
-    res.cookie("phone", user.phone);
-    res.cookie("joined", user.createdAt);
-    res.cookie("googleLogin", false);
+    res.cookie("role", user.role, { maxAge});
+    res.cookie("email", user.email, { maxAge });
+    res.cookie("firstname", user.firstName, { maxAge });
+    res.cookie("lastname", user.lastName, { maxAge });
+    res.cookie("phone", user.phone, { maxAge });
+    res.cookie("joined", user.createdAt, { maxAge });
+    res.cookie("googleLogin", false, { maxAge });
     
 
     // Return success
@@ -264,18 +264,18 @@ exports.googleLogin = async (req, res) => {
     
 
     //Send the user's role, email address, name and surname to the client as a cookie
-    res.cookie("role", user.role);
-    res.cookie("email", user.email);
-    res.cookie("firstname", user.firstName);
-    res.cookie("lastname", user.lastName);
+    res.cookie("role", user.role, { maxAge });
+    res.cookie("email", user.email, { maxAge });
+    res.cookie("firstname", user.firstName, { maxAge });
+    res.cookie("lastname", user.lastName, { maxAge });
     //If user phone is not null, send it to the client as a cookie, else send "No phone number"
     if (user.phone) {
-      res.cookie("phone", user.phone);
+      res.cookie("phone", user.phone, { maxAge });
     }else{
-      res.cookie("phone", "No phone number");
+      res.cookie("phone", "No phone number", { maxAge });
     }
-    res.cookie("joined", user.createdAt);
-    res.cookie("googleLogin", true);
+    res.cookie("joined", user.createdAt, { maxAge });
+    res.cookie("googleLogin", true, { maxAge });
 
     // Return success
     res.json({ success: true, redirect: user.role, profilePicture: user.profilePicture });

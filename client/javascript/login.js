@@ -200,15 +200,23 @@ loginBtn.addEventListener("click", async function (event) {
 
         window.scrollTo(0, 0);
       }else if(data.error && data.error === "User registered with Google"){
-        console.log("This was caledddddddddddddddddd")
-        console.log("Error logging in:", "You registered with Google. Please use google to sign in, or contact us if you want to create a password.");
+        console.log("Error logging in:", "You registered with Google. Please use google to sign in, or click on forgot password to create a password.");
         alert.style.display = "block";
         alert.style.color = "red";
         alert.style.backgroundColor = "#ffdddd";
         alert.style.border = "red";
-        alert.innerText = "You registered with Google. Please use google to sign in, or contact us if you want to create a password.";
+        alert.innerText = "You registered with Google. Please use google to sign in, or click on forgot password to create a password.";
         window.scrollTo(0,0);
-      } else if (data.success) {
+      }else if (data.error && (data.error === "Invalid credentials" || data.error === "A user with this email address does not exist.")) {
+        console.log("Error logging in:", data.error);
+        alert.style.display = "block";
+        alert.style.color = "red";
+        alert.style.backgroundColor = "#ffdddd";
+        alert.style.border = "red";
+        alert.innerText = "Invalid email or password. Please try again.";
+        window.scrollTo(0, 0);
+      }
+      else if (data.success) {
         console.log(data);
         alert.style.display = "block";
         alert.style.color = "green";
@@ -238,8 +246,18 @@ loginBtn.addEventListener("click", async function (event) {
           }, 1000);
         }
       } else {
-        // Handle case when login fails but no exception was thrown
-        console.error("Login failed:", data);
+        console.log("Error logging in:", "An error occurred while logging in. Please try again.");
+        alert.style.display = "block";
+        alert.style.color = "red";
+        alert.style.backgroundColor = "#ffdddd";
+        alert.style.border = "red";
+        alert.innerText = `An error occurred while logging in. Please try again.`;
+
+        hideLoader();
+
+        window.scrollTo(0, 0);
+
+        
       }
     })
     .catch((error) => {

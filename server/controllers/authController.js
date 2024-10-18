@@ -105,6 +105,12 @@ exports.login = async (req, res) => {
         .json({ error: "A user with this email address does not exist." });
     }
 
+    //Check if a user password actuallye exists since the person could have registered with Google, and if so, they should be redirected to the Google login endpoint
+    if (!user.password) {
+      return res.status(401).json({ error: "User registered with Google" });
+    }
+
+
     // check password
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
@@ -144,13 +150,13 @@ exports.login = async (req, res) => {
 
     //Save the user's role, email address, name and surname, phone and join date to the client as a cookie
     //profile picture not being stored - too large?
-    res.cookie("role", user.role, { maxAge });
-    res.cookie("email", user.email, { maxAge });
-    res.cookie("firstname", user.firstName, { maxAge });
-    res.cookie("lastname", user.lastName, { maxAge });
-    res.cookie("phone", user.phone, { maxAge });
-    res.cookie("joined", user.createdAt, { maxAge });
-    res.cookie("googleLogin", false, { maxAge });
+    res.cookie("role", user.role);
+    res.cookie("email", user.email);
+    res.cookie("firstname", user.firstName);
+    res.cookie("lastname", user.lastName);
+    res.cookie("phone", user.phone);
+    res.cookie("joined", user.createdAt);
+    res.cookie("googleLogin", false);
     
 
     // Return success
@@ -255,14 +261,21 @@ exports.googleLogin = async (req, res) => {
       sameSite: "Strict",
     });
 
+    
+
     //Send the user's role, email address, name and surname to the client as a cookie
-    res.cookie("role", user.role, { maxAge });
-    res.cookie("email", user.email, { maxAge });
-    res.cookie("firstname", user.firstName, { maxAge });
-    res.cookie("lastname", user.lastName, { maxAge });
-    res.cookie("phone", user.phone, { maxAge });
-    res.cookie("joined", user.createdAt, { maxAge });
-    res.cookie("googleLogin", true, { maxAge });
+    res.cookie("role", user.role);
+    res.cookie("email", user.email);
+    res.cookie("firstname", user.firstName);
+    res.cookie("lastname", user.lastName);
+    //If user phone is not null, send it to the client as a cookie, else send "No phone number"
+    if (user.phone) {
+      res.cookie("phone", user.phone);
+    }else{
+      res.cookie("phone", "No phone number");
+    }
+    res.cookie("joined", user.createdAt);
+    res.cookie("googleLogin", true);
 
     // Return success
     res.json({ success: true, redirect: user.role, profilePicture: user.profilePicture });

@@ -199,18 +199,17 @@ loginBtn.addEventListener("click", async function (event) {
         });
 
         window.scrollTo(0, 0);
-      } else if (data.error && data.error != "Your email is not verified") {
-        console.log("Error logging in:", data.error);
+      }else if(data.error && data.error === "User registered with Google"){
+        console.log("This was caledddddddddddddddddd")
+        console.log("Error logging in:", "You registered with Google. Please use google to sign in, or contact us if you want to create a password.");
         alert.style.display = "block";
         alert.style.color = "red";
         alert.style.backgroundColor = "#ffdddd";
         alert.style.border = "red";
-        alert.innerText = data.error;
-
-        window.scrollTo(0, 0);
+        alert.innerText = "You registered with Google. Please use google to sign in, or contact us if you want to create a password.";
+        window.scrollTo(0,0);
       } else if (data.success) {
         console.log(data);
-
         alert.style.display = "block";
         alert.style.color = "green";
         alert.style.backgroundColor = "#ddffdd";

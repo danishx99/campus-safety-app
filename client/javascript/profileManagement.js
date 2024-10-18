@@ -288,7 +288,7 @@ document.addEventListener("DOMContentLoaded", function () {
     firstName + " " + lastName;
   document.getElementById("profileRole").textContent =
     role.charAt(0).toUpperCase() + role.slice(1).toLowerCase();
-  document.getElementById("cellphone").value = cellphone;
+  document.getElementById("cellphone").value = decodeURIComponent(cellphone);
   document.getElementById("dateJoined").value = getDatePart(
     decodeURIComponent(dateJoined)
   );

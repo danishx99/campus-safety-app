@@ -238,8 +238,6 @@ exports.findAndNotifyAdmins = async (req, res) => {
         return res.status(200).json({ message: "Emergency alert cancelled" });
       }
 
-      //3 second delay
-      await new Promise((resolve) => setTimeout(resolve, 3000));
 
       await Emergency.findByIdAndUpdate(emergencyAlertId, {
         radiusBeingSearched: radius,
@@ -259,6 +257,7 @@ exports.findAndNotifyAdmins = async (req, res) => {
 
       if (nearbyAdmins.length > 0) {
         const fcmTokens = nearbyAdmins.map((admin) => admin.FCMtoken);
+        
 
         await _sendNotification(fcmTokens, {
           title: "Emergency Alert",
@@ -279,11 +278,6 @@ exports.findAndNotifyAdmins = async (req, res) => {
         console.log(`Assigned to admin: ${assignedToAdmin}`);
 
         if (assignedToAdmin) {
-          //This will eventually be removed beacause when an admin is assigned, we will notify the client from the admin side controller
-          // await _sendNotification([user.FCMtoken], {
-          //   emergencyAlertId,
-          //   status: "Assigned",
-          // });
           return res
             .status(200)
             .json({ message: "Admin assigned successfully" });
@@ -295,6 +289,7 @@ exports.findAndNotifyAdmins = async (req, res) => {
     if (finalCancelledCheck) {
       return res.status(200).json({ message: "Emergency alert cancelled" });
     }
+    
 
     // If no admin was assigned after all proximity ranges
     const allAdminTokens = users.map((admin) => admin.FCMtoken);
@@ -322,6 +317,11 @@ exports.findAndNotifyAdmins = async (req, res) => {
     });
 
     await new Promise((resolve) => setTimeout(resolve, 10000));
+
+    const cancelledCheck = await checkIfCancelled(emergencyAlertId);
+    if (cancelledCheck) {
+      return res.status(200).json({ message: "Emergency alert cancelled" });
+    }
 
     const finalAssignmentCheck = await checkIfAdminHasBeenAssigned(
       emergencyAlertId

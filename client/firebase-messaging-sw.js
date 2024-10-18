@@ -70,6 +70,18 @@ messaging.onBackgroundMessage(async function(payload) {
     return;
   }
 
+   //Handle the case where the user is tabbed out and alert is resolved, notify them.
+   if(payload.data.status == "Cancelled"){
+    let resolvedNotificationOptions = {
+      body: "Your latest emergency alert has been cancelled by an admin. If this is incorrect, please contact us.",
+      icon: "/assets/current-alert-mobile.webp",
+      data: { url:url },
+    };
+    await self.registration.showNotification("Emergency Alert Cancelled", resolvedNotificationOptions);
+
+    return;
+  }
+
   //Handle the case where a user is tabbed out and an admin has been assigned
   if(payload.data.status == "Assigned"){
     let title = "Update regarding your ongoing search.";

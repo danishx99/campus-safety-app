@@ -48,32 +48,38 @@
   //   etag: false
   // }));
 
+// const fs = require('fs');
+
+// // Serve static HTML files and intercept them to apply lazy loading
+// app.use((req, res, next) => {
+//   const filePath = path.join(__dirname, 'client', req.path);
+
+//   if (fs.existsSync(filePath) && filePath.endsWith('.html')) {
+//     fs.readFile(filePath, 'utf8', (err, data) => {
+//       if (err) {
+//         return next();
+//       }
+
+//       // Load the HTML into Cheerio
+//       const $ = cheerio.load(data);
+
+//       // Add lazy loading to <img> tags
+//       const imgTagsModified = $('img:not([loading])').attr('loading', 'lazy').length;
+
+//       // Send the modified HTML
+//       res.send($.html());
+
+//       // Log success message
+//       console.log(`Lazy loading added to ${imgTagsModified} image(s) for ${filePath}`);
+//     });
+//   } else {
+//     next();
+//   }
+// });
+
+
   app.use(express.static('client'));
   
-  // Middleware to add lazy loading to all <img> tags
-app.use((req, res, next) => {
-  const originalSend = res.send;
-
-  res.send = function (body) {
-    // Check if the body is a string and the response is HTML
-    if (typeof body === 'string' && this.get('Content-Type')?.includes('text/html')) {
-      // Load the body into Cheerio
-      const $ = cheerio.load(body);
-      
-      // Add 'loading="lazy"' to all <img> tags that don't already have a 'loading' attribute
-      $('img:not([loading])').attr('loading', 'lazy');
-
-      // Serialize the modified HTML
-      body = $.html();
-    }
-
-    // Send the modified body
-    originalSend.call(this, body);
-  };
-
-  next();
- 
-});
 
   // Route middleware
   app.use("", frontendRoutes);

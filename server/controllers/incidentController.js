@@ -194,7 +194,7 @@ exports.reportExternalIncident = async (req, res) => {
         reportedBy +
         " , please check the incident tab for more details",
       title: "External Incident Reported",
-      notificationType: "incidentReported",
+      notificationType: "Incident reported",
     });
 
     await newNotification.save();

@@ -106,16 +106,25 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
+  let slider = document.getElementById("labels-range-input");
+  slider.addEventListener("input", function () {
+    let rangeValue = document.getElementById("current-value");
+    rangeValue.innerText = slider.value + " m ";
+    circle.setRadius(parseInt(slider.value));
+  });
+
   function updateMapVisibility() {
     console.log("Updating map visibility");
     const checkbox = document.getElementById("locationSpecific");
     const mapDiv = document.getElementById("map");
     const loader = document.getElementById("mapLoader");
     const selectedLocation = document.getElementById("selectedLocation");
+    const slider = document.getElementById("slider");
 
     if (checkbox.checked) {
       //show checkbox
       selectedLocation.style.display = "block";
+      slider.style.display = "block";
       if (mapInitialized) {
         console.log("Map initialized, showing map and hiding loader");
         loader.style.display = "none";
@@ -131,6 +140,7 @@ document.addEventListener("DOMContentLoaded", function () {
       mapDiv.style.display = "none";
       loader.style.display = "none";
       selectedLocation.style.display = "none";
+      slider.style.display = "none";
     }
   }
 
@@ -223,6 +233,7 @@ document.addEventListener("DOMContentLoaded", function () {
     let locationSpecificCheckBox = document.getElementById("locationSpecific");
 
     let targetLocation = null;
+    let radius = null;
 
     if (locationSpecificCheckBox.checked) {
       let markerPosition = marker.getPosition();
@@ -236,6 +247,8 @@ document.addEventListener("DOMContentLoaded", function () {
       targetLocation = [markerPosition.lat(), markerPosition.lng()];
 
       targetLocation = JSON.stringify(targetLocation);
+
+      radius = slider.value;
     }
 
     showLoader();
@@ -263,6 +276,7 @@ document.addEventListener("DOMContentLoaded", function () {
           notificationType,
           recipient,
           targetLocation,
+          radius,
         }),
       });
 

@@ -168,6 +168,9 @@ exports.sendNotification = async (req, res) => {
     }
 
     let targetLocation = req.body.targetLocation;
+    let radius = req.body.radius;
+
+    console.log("radius", radius);
 
     console.log("targetLocation", targetLocation);
 
@@ -175,7 +178,7 @@ exports.sendNotification = async (req, res) => {
       return deg * (Math.PI / 180);
     }
 
-    if (targetLocation) {
+    if (targetLocation && radius) {
       console.log("Because target location is non null, this line got called");
 
       //Change targetLocation to array
@@ -201,7 +204,7 @@ exports.sendNotification = async (req, res) => {
               Math.sin(dLon / 2);
           const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
           const d = R * c; // Distance in km
-          return d <= 0.25; // Return locations within certain radius(in km)
+          return d <= radius / 1000; // Return locations within certain radius(in km)
         }
       });
 

@@ -86,7 +86,7 @@ const sendIncidentUpdateEmail = (
   const mailOptions = {
     from: "noreply@campus-safety.com",
     to,
-    subject: `Incident Update: ${title} `,
+    subject: `${title} `,
     html: `
       <div style="font-family: Arial, sans-serif; line-height: 1.5; padding: 20px;">
         <h2>Incident Update</h2>

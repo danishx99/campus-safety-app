@@ -110,7 +110,6 @@ exports.login = async (req, res) => {
       return res.status(401).json({ error: "User registered with Google" });
     }
 
-
     // check password
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
@@ -150,22 +149,33 @@ exports.login = async (req, res) => {
 
     //Save the user's role, email address, name and surname, phone and join date to the client as a cookie
     //profile picture not being stored - too large?
-    res.cookie("role", user.role, { maxAge});
+    res.cookie("role", user.role, { maxAge });
     res.cookie("email", user.email, { maxAge });
     res.cookie("firstname", user.firstName, { maxAge });
     res.cookie("lastname", user.lastName, { maxAge });
     res.cookie("phone", user.phone, { maxAge });
     res.cookie("joined", user.createdAt, { maxAge });
     res.cookie("googleLogin", false, { maxAge });
-    
 
     // Return success
-    res.json({ success: true, redirect: user.role, profilePicture: user.profilePicture });
+    res.json({
+      success: true,
+      redirect: user.role,
+      profilePicture: user.profilePicture,
+    });
   } catch (error) {
     console.log("Error logging in user:", error);
     res.status(500).json({ error: "Error logging in user" });
   }
 };
+
+async function urlToBase64(photoURL) {
+  const response = await fetch(photoURL);
+  const buffer = await response.buffer();
+  return `data:${response.headers.get("content-type")};base64,${buffer.toString(
+    "base64"
+  )}`;
+}
 
 exports.googleRegister = async (req, res) => {
   const { name, surname, email, phone, account, code, photoURL } = req.body;
@@ -203,6 +213,9 @@ exports.googleRegister = async (req, res) => {
         .status(400)
         .json({ error: "A user with this email address already exists." });
     }
+
+    //convert the photo url to base 64 string
+    const photoURL = await urlToBase64(photoURL);
 
     // Create a new user
     const newUser = new User({
@@ -261,8 +274,6 @@ exports.googleLogin = async (req, res) => {
       sameSite: "Strict",
     });
 
-    
-
     //Send the user's role, email address, name and surname to the client as a cookie
     res.cookie("role", user.role, { maxAge });
     res.cookie("email", user.email, { maxAge });
@@ -271,14 +282,18 @@ exports.googleLogin = async (req, res) => {
     //If user phone is not null, send it to the client as a cookie, else send "No phone number"
     if (user.phone) {
       res.cookie("phone", user.phone, { maxAge });
-    }else{
+    } else {
       res.cookie("phone", "No phone number", { maxAge });
     }
     res.cookie("joined", user.createdAt, { maxAge });
     res.cookie("googleLogin", true, { maxAge });
 
     // Return success
-    res.json({ success: true, redirect: user.role, profilePicture: user.profilePicture });
+    res.json({
+      success: true,
+      redirect: user.role,
+      profilePicture: user.profilePicture,
+    });
   } catch (error) {
     console.log("Error logging in using Google", error);
     res.status(500).json({ error: "Error logging in using Google" });
@@ -448,7 +463,7 @@ exports.verifyEmail = async (req, res) => {
       redirect: user.role, // Include the user's role for redirection
     });
   } catch (error) {
-    res.status(500).json({ error: "Error verifying email"});
+    res.status(500).json({ error: "Error verifying email" });
   }
 };
 
@@ -486,9 +501,7 @@ exports.resendVerificationEmail = async (req, res) => {
 
     console.log(`Verification email sent successfully to ${email}`);
   } catch (error) {
-    res
-      .status(500)
-      .json({ error: "Error resending verification email"});
+    res.status(500).json({ error: "Error resending verification email" });
   }
 };
 

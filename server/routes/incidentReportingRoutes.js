@@ -1,54 +1,41 @@
 const express = require("express");
 const router = express.Router();
-const authMiddleware = require("../middlewares/authMiddleware");
+const { authMiddleware } = require("../middlewares/authMiddleware");
 const incidentController = require("../controllers/incidentController");
+const { isAdmin } = require("../middlewares/isAdmin");
+const { isUser } = require("../middlewares/isUser");
 
 // User Incident Reporting
-router.post(
-  "/reportIncident",
-
-  incidentController.reportIncident
-);
+router.post("/reportIncident", isUser, incidentController.reportIncident);
 
 //Report incident external group
-router.post("/reportExternalIncident/:token", incidentController.reportExternalIncident);
+router.post(
+  "/reportExternalIncident/:token",
+  incidentController.reportExternalIncident
+);
 
 //Get all incidents by group
-router.get("/getIncidentsByGroup/:group/:token", incidentController.getIncidentsByGroup);
-
-
 router.get(
-  "/getIncidents",
-  //authMiddleware.verifyToken,
-  incidentController.getIncidents
+  "/getIncidentsByGroup/:group/:token",
+  incidentController.getIncidentsByGroup
 );
 
-router.get(
-  "/getUserDetails",
-  //authMiddleware.verifyToken,
-  incidentController.getUserDetails
-);
+router.get("/getIncidents", isAdmin, incidentController.getIncidents);
 
-router.get("/getIncidentByUser",
-  //authMiddleware.verifyToken,
-  incidentController.getIncidentByUser
-);  
-router.put(
-  "/updateIncident",
-  //authMiddleware.verifyToken,
-  incidentController.updateIncidentStatus
-);
+router.get("/getIncidentByUser", isUser, incidentController.getIncidentByUser);
 
-router.delete(
-  "/deleteAllIncidents",
-  //authMiddleware.verifyToken,
-  incidentController.deleteAllIncidents
-);
+router.put("/updateIncident", isAdmin, incidentController.updateIncidentStatus);
 
 router.get(
   "/getIncidentImage/:incidentId",
-  //authMiddleware.verifyToken,
- incidentController.getIncidentImage
+  authMiddleware,
+  incidentController.getIncidentImage
+);
+
+router.get(
+  "/getUserProfilePicture/:userEmail",
+  authMiddleware,
+  incidentController.getUserProfilePicture
 );
 
 module.exports = router;

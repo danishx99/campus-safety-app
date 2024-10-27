@@ -8,25 +8,41 @@ const _sendNotification = require("../utils/sendNotification");
 
 exports.getIncidents = async (req, res) => {
   try {
+    //Start timing
+    console.time("getIncidents");
     // Fetch all incidents exlcuding the image field
     const incidents = await Incident.find().select("-image").sort({
       status: 1,
       date: -1,
     });
 
+    //End timing
+    console.timeEnd("getIncidents");
+
+    console.time("findUniqueReporters");
     // Extract all unique reportedBy emails from the incidents
     const reportedByEmails = [
       ...new Set(incidents.map((incident) => incident.reportedBy)),
     ];
+    //End timing
+    console.timeEnd("findUniqueReporters");
 
+    console.time("getUsersDeatils");
     // Fetch user details for the reportedBy emails
-    const users = await User.find({ email: { $in: reportedByEmails } });
+    const users = await User.find({ email: { $in: reportedByEmails } }).select(
+      "-profilePicture"
+    );
+    console.timeEnd("getUsersDeatils");
 
+    console.time("lookupMap");
     // Create a lookup map for users by email for efficient merging
     const userMap = users.reduce((acc, user) => {
       acc[user.email] = user;
       return acc;
     }, {});
+    console.timeEnd("lookupMap");
+
+    console.time("attachUserDetails");
 
     // Attach user details to each incident
     const incidentsWithUserDetails = incidents.map((incident) => {
@@ -34,17 +50,24 @@ exports.getIncidents = async (req, res) => {
       return {
         ...incident._doc, // Spread incident data
         userDetails: {
-          firstName: user.firstName || "Unknown", // Accessing firstName
-          lastName: user.lastName || "User", // Accessing lastName
-          email: user.email || "Not provided", // Accessing email
+          firstName: user.firstName || incident.firstName || "Unknown", // Accessing firstName
+          lastName: user.lastName || incident.lastName || "Unknown", // Accessing lastName
+          email: incident.reportedBy || "Not provided", // Accessing email
           phone: user.phone || "Not provided", // Accessing phone
           role: user.role || "Not specified", // Accessing role
-          profilePicture: user.profilePicture || "../assets/user-profile.webp", // Accessing profile picture
+          // profilePicture: user.profilePicture || "../assets/user-profile.webp", // Accessing profile picture
+          externalUser: incident.group ? true : false,
         },
       };
     });
 
+    console.timeEnd("attachUserDetails");
+
     // console.log("bruhhhhhhhh", incidentsWithUserDetails.length); // Start timing
+
+    // for (let incident of incidentsWithUserDetails) {
+    //   console.log(incident.date);
+    // }
 
     res.status(200).json({
       message: "Incidents fetched successfully",
@@ -86,8 +109,6 @@ exports.reportIncident = async (req, res) => {
       imageTrue = true;
       imageBase64 = image;
     }
-
-   
 
     //console.log("Image: ", imageBase64);
 
@@ -133,7 +154,7 @@ exports.reportIncident = async (req, res) => {
       sender: email,
       senderLocation: location,
       recipient: "admin",
-      url:"/admin/viewIncidents"
+      url: "/admin/viewIncidents",
     });
 
     res.status(200).json({ message: "Incident reported successfully" });
@@ -147,16 +168,26 @@ exports.reportIncident = async (req, res) => {
 
 exports.reportExternalIncident = async (req, res) => {
   try {
-
     const token = req.params.token;
 
     if (token !== process.env.EXTERNAL_GROUP_TOKEN) {
-      return res.status(401).json({ error: "You are not authorized to report incidents. Please get a valid token" });
+      return res.status(401).json({
+        error:
+          "You are not authorized to report incidents. Please get a valid token",
+      });
     }
 
-
-
-    const { title, description, location, image, date, reportedBy, firstName, lastName, group } = req.body;
+    const {
+      title,
+      description,
+      location,
+      image,
+      date,
+      reportedBy,
+      firstName,
+      lastName,
+      group,
+    } = req.body;
 
     let imageTrue = false;
 
@@ -211,15 +242,15 @@ exports.reportExternalIncident = async (req, res) => {
       sender: reportedBy,
       senderLocation: location,
       recipient: "admin",
-      url:"/admin/viewIncidents"
+      url: "/admin/viewIncidents",
     });
-
 
     //Send success response
     res.status(200).json({ message: "Incident reported successfully" });
-
   } catch (error) {
-    res.status(500).json({ error: "Internal server error while reporting incident" });
+    res
+      .status(500)
+      .json({ error: "Internal server error while reporting incident" });
     console.log(error);
   }
 };
@@ -234,7 +265,10 @@ exports.getIncidentsByGroup = async (req, res) => {
     console.log("Received group:", group);
 
     if (token.trim() !== process.env.EXTERNAL_GROUP_TOKEN.trim()) {
-      return res.status(401).json({ error: "You are not authorized to view incidents. Please get a valid token" });
+      return res.status(401).json({
+        error:
+          "You are not authorized to view incidents. Please get a valid token",
+      });
     }
 
     // Fetch incidents by group
@@ -243,10 +277,13 @@ exports.getIncidentsByGroup = async (req, res) => {
     // Debugging: log the incidents fetched
     console.log("Incidents fetched:", incidents);
 
-    res.status(200).json({ message: "Incidents fetched successfully", incidents });
-
+    res
+      .status(200)
+      .json({ message: "Incidents fetched successfully", incidents });
   } catch (error) {
-    res.status(500).json({ error: "Internal server error while fetching incidents" });
+    res
+      .status(500)
+      .json({ error: "Internal server error while fetching incidents" });
     console.log(error);
   }
 };
@@ -266,8 +303,13 @@ exports.getIncidentImage = async (req, res) => {
     if (!incident.image) {
       return res.status(404).send("<h1>Image not found</h1>");
     }
-
-    let imageSrc = `data:image/png;base64,${incident.image}`;
+    let imageSrc;
+    //check if the image already has the data URI prefix before adding it
+    if (incident.image.includes("data:image")) {
+      imageSrc = incident.image;
+    } else {
+      imageSrc = `data:image/png;base64,${incident.image}`;
+    }
 
     // Return HTML page with the base64 image taking up the entire page
     const html = `
@@ -304,6 +346,98 @@ exports.getIncidentImage = async (req, res) => {
   } catch (error) {
     console.log(error);
     res.status(500).send("<h1>Error fetching image</h1>");
+  }
+};
+
+// exports.getUserProfilePicture = async (req, res) => {
+//   const { userEmail } = req.params;
+
+//   try {
+//     const user = await User.findOne({ email: userEmail }).select(
+//       "profilePicture"
+//     );
+
+//     if (!user) {
+//       return res.status(404).send("<h1>User not found</h1>");
+//     }
+
+//     if (!user.profilePicture) {
+//       return res.status(404).send("<h1>Profile picture not found</h1>");
+//     }
+
+//     // let imageSrc = `data:image/png;base64,${user.profilePicture}`;
+//     // Convert base64 to buffer
+//     const imageBuffer = Buffer.from(user.profilePicture, "base64");
+
+//     console.log("Image buffer:", imageBuffer);
+
+//     // Set headers for image response
+//     res.set({
+//       "Content-Type": "image/png", // Adjust if you support other image types
+//       "Content-Length": imageBuffer.length,
+//       "Cache-Control": "public, max-age=86400", // Cache for 24 hours
+//     });
+
+//     // Send the image buffer directly
+//     return res.status(200).send(imageBuffer);
+
+//     // //Return the base64 image as a string
+
+//     // res.status(200).json({ image: imageSrc });
+//   } catch (error) {
+//     console.log(error);
+//     res.status(500).send("<h1>Error fetching image</h1>");
+//   }
+// };
+
+exports.getUserProfilePicture = async (req, res) => {
+  const { userEmail } = req.params;
+
+  try {
+    const user = await User.findOne({ email: userEmail }).select(
+      "profilePicture"
+    );
+
+    if (!user) {
+      return res.status(404).send("User not found");
+    }
+
+    // Get the base64 string
+    let base64String = user.profilePicture;
+
+    // If the string already contains the data URI prefix, remove it
+    if (base64String.includes("data:image")) {
+      base64String = base64String.split(";base64,")[1];
+    }
+
+    try {
+      // Convert base64 to buffer
+      const imageBuffer = Buffer.from(base64String, "base64");
+
+      // Detect content type (you can make this more sophisticated if needed)
+      let contentType = "image/jpeg"; // default
+      if (base64String.startsWith("/9j/")) {
+        contentType = "image/jpeg";
+      } else if (base64String.startsWith("iVBORw0KGgo")) {
+        contentType = "image/png";
+      }
+
+      // Set the appropriate headers
+      res.set({
+        "Content-Type": contentType,
+        "Content-Length": imageBuffer.length,
+        "Cache-Control": "no-cache",
+      });
+
+      // Send the buffer
+      return res.send(imageBuffer);
+    } catch (bufferError) {
+      console.error("Buffer conversion error:", bufferError);
+      return res.status(500).send("Error processing image data");
+    }
+  } catch (error) {
+    console.error("Database error:", error);
+    return res.status(500).send("Error fetching image");
   }
 };
 
@@ -362,7 +496,8 @@ exports.updateIncidentStatus = async (req, res) => {
           recipient: user.email,
           sender: adminEmail,
           read: false,
-          message: "The status of one or more incidents has been updated. Please check the incidents page for more details.",
+          message:
+            "The status of one or more incidents has been updated. Please check the incidents page for more details.",
           title: "Incident Status Update",
           notificationType: "Incident update",
         });
@@ -376,10 +511,8 @@ exports.updateIncidentStatus = async (req, res) => {
           notificationType: "Incident status update",
           sender: adminEmail,
           recipient: user.email,
-          url:"/user/viewPastIncidents"
+          url: "/user/viewPastIncidents",
         });
-
-        
       }
     } catch (error) {
       console.error("Error processing incident:", error);
@@ -398,8 +531,6 @@ exports.updateIncidentStatus = async (req, res) => {
     // Execute the bulk update
     await Incident.bulkWrite(bulkOps);
 
-    
-  
     res.status(200).json({ message: "Incident statuses updated successfully" });
   } catch (error) {
     console.error(error);

@@ -143,6 +143,10 @@ function sendNotificationUpdate(e) {
       hideLoader();
       if (data.message === "Notification sent successfully") {
         showSuccessMessage("Incident update sent successfully.");
+      } else if (data.message === "User successfully notified via email") {
+        showSuccessMessage(
+          "Incident update sent successfully. External user notified via email."
+        );
       } else {
         showErrorMessage(
           "An error occurred while sending out your incident update."
@@ -194,8 +198,6 @@ async function fetchAndDisplayIncidents() {
 
     const response = await fetch("/incidentReporting/getIncidents");
 
-
-
     // Ensure the response is JSON and not HTML or other content
     const contentType = response.headers.get("content-type");
     if (!contentType || !contentType.includes("application/json")) {
@@ -217,7 +219,6 @@ async function fetchAndDisplayIncidents() {
 
     //store the fetched incidents so that we can use them later for comparison when sending updates
     fetchedIncidents = incidents;
-
 
     // Clear existing content
     incidentsContainer.innerHTML = "";
@@ -264,11 +265,20 @@ function addIncidentToDOM(incident, index) {
     .split(", ")
     .map((coord) => parseFloat(coord));
 
-  // format the date of this format (2024-09-26T21:17)
   const date = new Date(incident.date);
-  incident.date = `${date.getFullYear()}-${
-    date.getMonth() + 1
-  }-${date.getDate()} ${date.getHours()}:${date.getMinutes()}`;
+
+  if (!isNaN(date.getTime())) {
+    // Checks if the date is valid
+    incident.date = `${date.getFullYear()}-${(date.getMonth() + 1)
+      .toString()
+      .padStart(2, "0")}-${date.getDate().toString().padStart(2, "0")} ${date
+      .getHours()
+      .toString()
+      .padStart(2, "0")}:${date.getMinutes().toString().padStart(2, "0")}`;
+  } else {
+    // If date is invalid, keep it as it is, but remove the "T" characters
+    incident.date = incident.date.replace("T", " ");
+  }
 
   const options = ["Pending", "In Progress", "Resolved"];
   const optionsHTML = options
@@ -288,12 +298,24 @@ function addIncidentToDOM(incident, index) {
   <div class="border border-black rounded-lg p-4 flex flex-col bg-white shadow-md">
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center">
       <div class="flex items-center text-sm w-full sm:w-auto mb-2 sm:mb-0">
-        ${incident.userDetails.profilePicture
-          ? `<img src="${incident.userDetails.profilePicture}" class="mr-2 h-8 w-8 rounded-full flex-shrink-0" alt="Profile">`
-          : `<img src="../assets/profileIcon.webp" class="mr-2 h-8 w-8 rounded-full flex-shrink-0" alt="Profile">`}
+      
+    ${
+      incident.userDetails.externalUser
+        ? `<img src="/assets/profileIcon.webp" alt="Profile Picture" class="h-10 w-10 rounded-full mr-2">`
+        : `<img src="/incidentReporting/getUserProfilePicture/${incident.userDetails.email}" alt="Profile Picture" class="h-10 w-10 rounded-full mr-2">`
+    }
+          
         <div class="flex-grow min-w-0">
           <p class="font-bold truncate">
             ${incident.userDetails.firstName} ${incident.userDetails.lastName}
+            ${
+              incident.userDetails.externalUser
+                ? `<span class="inline-flex items-center rounded-md bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-700/10">${
+                    JSON.stringify(incident.group).charAt(1).toUpperCase() +
+                    JSON.stringify(incident.group).slice(2).replaceAll('"', "")
+                  }</span>`
+                : ""
+            }
           </p>
           <p class="truncate">
             Reported: <span class="font-bold">${incident.title}</span>
@@ -303,24 +325,36 @@ function addIncidentToDOM(incident, index) {
       </div>
       <div class="flex items-center mt-2 sm:mt-0">
        ${
-          incident.location
-            ? `<a href='https://www.google.com/maps?q=${latitude},${longitude}' target='_blank' class="mr-2"><img src="../assets/locationPick.webp" alt="Location" class="h-5 w-5 mr-2 cursor-pointer locationPick" data-lat="${latitude}" data-lng="${longitude}"></a>`
-            : ""
+         incident.location
+           ? `<a href='https://www.google.com/maps?q=${latitude},${longitude}' target='_blank' class="mr-2"><img src="../assets/locationPick.webp" alt="Location" class="h-5 w-5 mr-2 cursor-pointer locationPick" data-lat="${latitude}" data-lng="${longitude}"></a>`
+           : ""
        }
-        ${incident.imageTrue ? `<a href='/incidentReporting/getIncidentImage/${incident._id}' target='_blank' class="mr-2"><img src="../assets/image.webp" alt="Image" class="h-5 w-5 cursor-pointer show-image"></a>` : ""}
-        <select class="status-select bg-gray-300 rounded-lg px-2 py-1 text-sm" data-incident-id="${incident._id}">
+        ${
+          incident.imageTrue
+            ? `<a href='/incidentReporting/getIncidentImage/${incident._id}' target='_blank' class="mr-2"><img src="../assets/image.webp" alt="Image" class="h-5 w-5 cursor-pointer show-image"></a>`
+            : ""
+        }
+        <select class="status-select bg-gray-300 rounded-lg px-2 py-1 text-sm" data-incident-id="${
+          incident._id
+        }">
           ${optionsHTML}
         </select>
       </div>
     </div>
     <p class="mt-2 text-sm">${incident.description}</p>
     <div class="flex mt-3 text-sm">
-  <button onclick="populateEmailField('${incident.userDetails.email}', '${incident.userDetails.firstName}')" class="bg-[#015EB8] text-white py-1 px-2 rounded-lg hover:opacity-80 mx-3 text-xs sm:py-2 sm:px-4 sm:text-sm">
+  <button onclick="populateEmailField('${incident.userDetails.email}', '${
+    incident.userDetails.firstName
+  }')" class="bg-[#015EB8] text-white py-1 px-2 rounded-lg hover:opacity-80 mx-3 text-xs sm:py-2 sm:px-4 sm:text-sm">
     Send an update to <span>${incident.userDetails.firstName}</span>
   </button>
-  <button onclick="populateEmailField('Everyone','everyone')" class="bg-[#015EB8] text-white py-1 px-2 rounded-lg hover:opacity-80 mr-3 text-xs sm:py-2 sm:px-4 sm:text-sm">
+  ${
+    incident.userDetails.externalUser
+      ? ""
+      : `<button onclick="populateEmailField('Everyone','everyone')" class="bg-[#015EB8] text-white py-1 px-2 rounded-lg hover:opacity-80 mr-3 text-xs sm:py-2 sm:px-4 sm:text-sm">
     Send update to all users
-  </button>
+  </button>`
+  }
 </div>
   </div>
 </div>
@@ -367,10 +401,7 @@ function filterIncidentsByStatus() {
     .forEach((incident, index) => {
       addIncidentToDOM(incident, index);
     });
-  
 }
-
-
 
 // Update incidents' statuses and re-filter based on current filters
 async function updateIncidentsStatus() {

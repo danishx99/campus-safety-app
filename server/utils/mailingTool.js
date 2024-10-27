@@ -1,13 +1,13 @@
-const nodemailer = require('nodemailer');
+const nodemailer = require("nodemailer");
 const dotenv = require("dotenv");
 dotenv.config();
 
 const transporter = nodemailer.createTransport({
-  service: 'gmail',
+  service: "gmail",
   auth: {
     user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS
-  }
+    pass: process.env.EMAIL_PASS,
+  },
 });
 
 // check if transporter was created successfully
@@ -76,6 +76,36 @@ const sendSuccess = (to) => {
   return transporter.sendMail(mailOptions);
 };
 
+const sendIncidentUpdateEmail = (
+  title,
+  description,
+  to,
+  firstName,
+  LastName
+) => {
+  const mailOptions = {
+    from: "noreply@campus-safety.com",
+    to,
+    subject: `Incident Update: ${title} `,
+    html: `
+      <div style="font-family: Arial, sans-serif; line-height: 1.5; padding: 20px;">
+        <h2>Incident Update</h2>
+        <p>Hello ${firstName} ${LastName},</p>
+        <p>${description}</p>
+        <p>Best regards,</p>
+        <p>Campus Safety Admin Team</p>
+        <hr>
+        <div style="text-align: center;">
+          <img src="https://campus-safety.azurewebsites.net/assets/logo.webp" alt="Campus Safety Logo" style="max-width: 100px;"/>
+        </div>
+        <p>Contact us: 0764737275 | mycampussafety@gmail.com</p>
+      </div>
+    `,
+  };
+
+  return transporter.sendMail(mailOptions);
+};
+
 const sendVerificationEmail = (to, url, token) => {
   const mailOptions = {
     from: "noreply@campus-safety.com",
@@ -126,4 +156,10 @@ const resendVerificationEmail = (to, url, token) => {
   return transporter.sendMail(mailOptions);
 };
 
-module.exports = { sendRequest, sendSuccess, sendVerificationEmail, resendVerificationEmail };
+module.exports = {
+  sendRequest,
+  sendSuccess,
+  sendVerificationEmail,
+  resendVerificationEmail,
+  sendIncidentUpdateEmail,
+};

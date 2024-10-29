@@ -552,7 +552,10 @@ exports.logout = async (req, res) => {
         if (user) {
           user.FCMtoken = null;
           await user.save();
-          console.log("User that just logged out FCM token: ", user.FCMtoken);
+          console.log(
+            `${email} that just logged out had their FCM token set to null: `,
+            user.FCMtoken
+          );
         }
       } catch (jwtError) {
         console.log("JWT decoding failed during logout:", jwtError);

@@ -111,6 +111,54 @@ exports.sendPanic = async (req, res) => {
   }
 };
 
+exports.externalPanic = async (req, res) => {
+  let secureToken =
+    "eUVIYir4daJCIheDkj4p7Xwt8i5idhTRw6sSZlUTbIJtJHwgOc4xDqjubTkAPmPdoeK4cHoGXYsO15RvtR0ajiOscwuQzMoMmhCxjOlElvq0KiLVYyFzTtdKXo1EtPq1qjRdpMotdzw5VlKGO3m";
+
+  if (req.params.token !== secureToken) {
+    return res.status(401).json({
+      error:
+        "Unauthorized access. Please ensure you have the correct access token",
+    });
+  }
+
+  try {
+    const { latitude, longitude, email } = req.body;
+
+    const newNotification = new notification({
+      recipient: "admin",
+      sender: email,
+      read: false,
+      message: "Emergency Alert received from transportation group user.",
+      title: "Emergency Alert",
+      notificationType: "emergency-alert",
+    });
+
+    await newNotification.save();
+
+    // //Send out notification to all admins
+    // const users = await User.find({ role: "admin" });
+    // fcmTokens = users.map((user) => user.FCMtoken);
+
+    // //Send notification
+    // await _sendNotification(fcmTokens, {
+    //   title: "Emergency Alert",
+    //   body: "Emergency Alert received, click for more details",
+    //   notificationType: "emergency-alert",
+    //   sender: email,
+    //   senderLocation: [longitude, latitude],
+    //   recipient: "admin",
+    // });
+
+    res.status(200).json({
+      message: "Emergency alert sent successfully",
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "Error sending emergency alert" });
+  }
+};
+
 exports.getEmergencyAlertDetails = async (req, res) => {
   try {
     const emergencyAlertId = req.params.emergencyAlertId;
@@ -238,7 +286,6 @@ exports.findAndNotifyAdmins = async (req, res) => {
         return res.status(200).json({ message: "Emergency alert cancelled" });
       }
 
-
       await Emergency.findByIdAndUpdate(emergencyAlertId, {
         radiusBeingSearched: radius,
       });
@@ -257,7 +304,6 @@ exports.findAndNotifyAdmins = async (req, res) => {
 
       if (nearbyAdmins.length > 0) {
         const fcmTokens = nearbyAdmins.map((admin) => admin.FCMtoken);
-        
 
         await _sendNotification(fcmTokens, {
           title: "Emergency Alert",
@@ -267,7 +313,7 @@ exports.findAndNotifyAdmins = async (req, res) => {
           senderLocation: parsedLocation,
           recipient: "admin",
           emergencyAlertId,
-          url:"/admin/emergencyAlerts"
+          url: "/admin/emergencyAlerts",
         });
 
         await new Promise((resolve) => setTimeout(resolve, 10000));
@@ -289,7 +335,6 @@ exports.findAndNotifyAdmins = async (req, res) => {
     if (finalCancelledCheck) {
       return res.status(200).json({ message: "Emergency alert cancelled" });
     }
-    
 
     // If no admin was assigned after all proximity ranges
     const allAdminTokens = users.map((admin) => admin.FCMtoken);
@@ -301,7 +346,7 @@ exports.findAndNotifyAdmins = async (req, res) => {
       senderLocation: parsedLocation,
       recipient: "admin",
       emergencyAlertId,
-      url:"/admin/emergencyAlerts"
+      url: "/admin/emergencyAlerts",
     });
 
     //update the value of radiusBeingSearched in the emergency alert to 999 to indicate that all admins have been notified
@@ -543,8 +588,6 @@ exports.cancelEmergency = async (req, res) => {
       email: emergency.reportedBy,
     });
 
-
-
     console.log(emergencyAlertId);
 
     if (!emergency) {
@@ -559,8 +602,6 @@ exports.cancelEmergency = async (req, res) => {
       status: "Cancelled",
       url: `/user/emergencyAlerts`,
     });
-
-
 
     res.status(200).json({ message: "Emergency alert cancelled successfully" });
   } catch (error) {
@@ -590,8 +631,9 @@ exports.resolveEmergency = async (req, res) => {
       return res.status(404).json({ message: "Emergency alert not found" });
     }
 
-    const userThatReportedEmergency = await User.findOne({ email: emergency.reportedBy });
-    
+    const userThatReportedEmergency = await User.findOne({
+      email: emergency.reportedBy,
+    });
 
     await Emergency.findByIdAndUpdate(emergencyAlertId, {
       status: "Resolved",
@@ -602,7 +644,7 @@ exports.resolveEmergency = async (req, res) => {
       status: "Resolved",
       url: `/user/emergencyAlerts`,
     });
-    
+
     res.status(200).json({ message: "Emergency alert resolved successfully" });
   } catch (error) {
     console.log("Error resolving emergency:", error);
@@ -635,7 +677,6 @@ exports.clearEmergencyAlerts = async (req, res) => {
   }
 };
 
-
 exports.sendChatMessage = async (req, res) => {
   try {
     const { messageTo, message, emergencyAlertId } = req.body;
@@ -659,7 +700,7 @@ exports.sendChatMessage = async (req, res) => {
 
     // Add new message to the chat
     chat.messages.push({
-      sender: role === "admin" ? 'admin' : 'user', // Determine if the sender is admin or user
+      sender: role === "admin" ? "admin" : "user", // Determine if the sender is admin or user
       text: message,
     });
 
@@ -669,14 +710,17 @@ exports.sendChatMessage = async (req, res) => {
     // Send the notification (if you have FCM integration)
     await _sendNotification([recipient.FCMtoken], {
       chatMessage: message,
-      url: `/${role === "admin" ? 'user' : 'admin'}/emergencyalerts/track/${emergencyAlertId}`,
+      url: `/${
+        role === "admin" ? "user" : "admin"
+      }/emergencyalerts/track/${emergencyAlertId}`,
     });
 
     res.status(200).json({ message: "Chat message sent successfully" });
-    
   } catch (error) {
     console.log("Error in sendChatMessage:", error);
-    return res.status(500).json({ message: "Internal server error", error: error.message });
+    return res
+      .status(500)
+      .json({ message: "Internal server error", error: error.message });
   }
 };
 
@@ -692,10 +736,10 @@ exports.getChatMessages = async (req, res) => {
     }
 
     res.status(200).json({ messages: chat.messages });
-  }
-  catch (error) {
+  } catch (error) {
     console.log("Error in getChatMessages:", error);
-    return res.status(500).json({ message: "Internal server error", error: error.message });
+    return res
+      .status(500)
+      .json({ message: "Internal server error", error: error.message });
   }
 };
- 

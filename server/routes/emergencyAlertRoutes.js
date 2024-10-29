@@ -64,8 +64,19 @@ router.get(
   emergencyAlertController.clearEmergencyAlerts
 );
 
-router.post("/sendChatMessage", authMiddleware ,emergencyAlertController.sendChatMessage);
+//Mock route for transportation group
+router.post("/panic/external/:token", emergencyAlertController.externalPanic);
 
-router.get("/getChatMessages/:emergencyAlertId", authMiddleware, emergencyAlertController.getChatMessages);
+router.post(
+  "/sendChatMessage",
+  authMiddleware,
+  emergencyAlertController.sendChatMessage
+);
+
+router.get(
+  "/getChatMessages/:emergencyAlertId",
+  authMiddleware,
+  emergencyAlertController.getChatMessages
+);
 
 module.exports = router;

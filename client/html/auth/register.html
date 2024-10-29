@@ -136,7 +136,7 @@ window.initFireBaseFCM = function() {
                                 })
                                 .catch((err) => {
                                     console.error('An error occurred while retrieving token. ', err);
-                                    reject('An error occurred while retrieving token.');
+                                    reject('An error occurred while retrieving token.'+ err);
                                 });
                             } else {
                                 console.log('Notification permission denied.');

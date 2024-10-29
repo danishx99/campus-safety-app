@@ -71,8 +71,7 @@ export function handleIncomingMessages(notifier) {
       console.log("the payload data object is", payload.data);
 
       // Access custom data
-      const notificationType =
-        payload.data?.notificationType;
+      const notificationType = payload.data?.notificationType;
       const sender = payload.data?.sender;
       const recipient = payload.data?.recipient;
 
@@ -150,9 +149,8 @@ export function handleIncomingMessages(notifier) {
         //show red dot on the chat button
         // document.getElementById("newChat").style.display = "block";
         return;
-
       }
-      
+
       if (chatMessage && isChatPage) {
         playSound();
 
@@ -162,248 +160,225 @@ export function handleIncomingMessages(notifier) {
         return;
       }
 
-
       //Check if status is assigned, resolved and not on chat page, so that user is notified in foreground
-        if (status === "Assigned" && !isChatPage) {
-          playSound();
-          notifier.success(
-            "An admin has been assigned to your emergency alert. Please track your emergency alert to view their details.",
-            {
-              durations: { success: 20000 },
-              labels: { success: "Admin Assigned" },
-            }
-          );
+      if (status === "Assigned" && !isChatPage) {
+        playSound();
+        notifier.success(
+          "An admin has been assigned to your emergency alert. Please track your emergency alert to view their details.",
+          {
+            durations: { success: 20000 },
+            labels: { success: "Admin Assigned" },
+          }
+        );
 
-          allToasts = document.getElementsByClassName("awn-toast");
-          currentToast = allToasts[allToasts.length - 1];
-          currentToast.addEventListener("click", () => {
-           window.location.href = payload.data.url;
-          });
+        allToasts = document.getElementsByClassName("awn-toast");
+        currentToast = allToasts[allToasts.length - 1];
+        currentToast.addEventListener("click", () => {
+          window.location.href = payload.data.url;
+        });
 
-          return;
-        }
+        return;
+      }
 
-        if(status === "Resolved" && !isChatPage){
-          playSound();
-          notifier.success(
-            "Your latest emergency alert has been marked as resolved. If this is incorrect, please contact us.",
-            {
-              durations: { success: 20000 },
-              labels: { success: "Emergency Alert Resolved" },
-            }
-          );
+      if (status === "Resolved" && !isChatPage) {
+        playSound();
+        notifier.success(
+          "Your latest emergency alert has been marked as resolved. If this is incorrect, please contact us.",
+          {
+            durations: { success: 20000 },
+            labels: { success: "Emergency Alert Resolved" },
+          }
+        );
 
-          allToasts = document.getElementsByClassName("awn-toast");
-          currentToast = allToasts[allToasts.length - 1];
-          currentToast.addEventListener("click", () => {
+        allToasts = document.getElementsByClassName("awn-toast");
+        currentToast = allToasts[allToasts.length - 1];
+        currentToast.addEventListener("click", () => {
+          window.location.href = payload.data.url;
+        });
 
-            window.location.href = payload.data.url;
+        return;
+      }
 
-          });
+      if (status === "Assigned" && isChatPage) {
+        //Change the color of the assigned circle to blue
+        assignedCircle.classList.remove("bg-gray-300");
+        assignedCircle.classList.add("bg-blue-500");
+        assignedText.classList.remove("text-gray-300");
+        assignedText.classList.add("text-blue-500");
 
-          return;
-        }
+        //Remove animation from the searching circle
+        searchingCircle.classList.remove("animationOn");
 
-    
-        if (status === "Assigned" && isChatPage) {
-          //Change the color of the assigned circle to blue
-          assignedCircle.classList.remove("bg-gray-300");
-          assignedCircle.classList.add("bg-blue-500");
-          assignedText.classList.remove("text-gray-300");
-          assignedText.classList.add("text-blue-500");
+        //Add animation to the assigned circle
+        assignedCircle.classList.add("animationOn");
 
-          //Remove animation from the searching circle
-          searchingCircle.classList.remove("animationOn");
+        //Hide the map + statusBox + Cancel button (SearchPhase Div)
+        document.getElementById("searchPhase").style.display = "none";
 
-          //Add animation to the assigned circle
-          assignedCircle.classList.add("animationOn");
+        //Show the adminDiv with the assigned admin details
+        const adminDiv = document.getElementById("assignedPhase");
 
-          //Hide the map + statusBox + Cancel button (SearchPhase Div)
-          document.getElementById("searchPhase").style.display = "none";
+        //Extract the admin details from the payload
+        const adminFirstName = payload.data.firstName;
+        const adminLastName = payload.data.lastName;
+        const adminPhone = payload.data.phone;
+        const adminEmail = payload.data.email;
 
-          //Show the adminDiv with the assigned admin details
-          const adminDiv = document.getElementById("assignedPhase");
+        //Populate the admin details
+        let adminFirstNameId = document.getElementById("adminFirstName");
+        let adminLastNameId = document.getElementById("adminLastName");
+        let adminPhoneId = document.getElementById("adminCellphone");
+        let adminEmailId = document.getElementById("adminEmail");
 
-          //Extract the admin details from the payload
-          const adminFirstName = payload.data.firstName;
-          const adminLastName = payload.data.lastName;
-          const adminPhone = payload.data.phone;
-          const adminEmail = payload.data.email;
+        adminFirstNameId.textContent = adminFirstName;
+        adminLastNameId.textContent = adminLastName;
+        adminPhoneId.textContent = adminPhone;
+        adminPhoneId.href = `tel:${adminPhone}`;
+        adminEmailId.textContent = adminEmail;
 
-          //Populate the admin details
-          let adminFirstNameId = document.getElementById("adminFirstName");
-          let adminLastNameId = document.getElementById("adminLastName");
-          let adminPhoneId = document.getElementById("adminCellphone");
-          let adminEmailId = document.getElementById("adminEmail");
+        //Show the admin div
+        adminDiv.style.display = "block";
 
-          adminFirstNameId.textContent = adminFirstName;
-          adminLastNameId.textContent = adminLastName;
-          adminPhoneId.textContent = adminPhone;
-          adminPhoneId.href = `tel:${adminPhone}`;
-          adminEmailId.textContent = adminEmail;
+        return;
+      }
 
-          //Show the admin div
-          adminDiv.style.display = "block";
+      if (status === "Resolved" && isChatPage) {
+        //Remove animation from the searching circle
+        searchingCircle.classList.remove("animationOn");
 
-          return;
-        }
+        //Remove animation from the assigned circle
+        assignedCircle.classList.remove("animationOn");
 
-        if (status === "Resolved" && isChatPage) {
-          //Remove animation from the searching circle
-          searchingCircle.classList.remove("animationOn");
+        //Make the assigned text and circle blue
+        assignedCircle.classList.remove("bg-gray-300");
+        assignedCircle.classList.add("bg-blue-500");
+        assignedText.classList.remove("text-gray-300");
+        assignedText.classList.add("text-blue-500");
 
-          //Remove animation from the assigned circle
-          assignedCircle.classList.remove("animationOn");
+        //Make resvolved text and circle green
+        resolvedCircle.classList.remove("bg-gray-300");
+        resolvedCircle.classList.add("bg-green-500");
+        resolvedText.classList.remove("text-gray-300");
+        resolvedText.classList.add("text-green-500");
 
-          //Make the assigned text and circle blue
-          assignedCircle.classList.remove("bg-gray-300");
-          assignedCircle.classList.add("bg-blue-500");
-          assignedText.classList.remove("text-gray-300");
-          assignedText.classList.add("text-blue-500");
+        //Hide the map since its resolved
+        document.getElementById("map").style.display = "none";
 
-          //Make resvolved text and circle green
-          resolvedCircle.classList.remove("bg-gray-300");
-          resolvedCircle.classList.add("bg-green-500");
-          resolvedText.classList.remove("text-gray-300");
-          resolvedText.classList.add("text-green-500");
+        //Hide the admin details after the emergency is resolved
+        document.getElementById("assignedPhase").style.display = "none";
 
-          //Hide the map since its resolved
-          document.getElementById("map").style.display = "none";
+        return;
+      }
 
-          //Hide the admin details after the emergency is resolved
-          document.getElementById("assignedPhase").style.display = "none";
+      if (status === "Cancelled" && isChatPage) {
+        //refresh the current page
+        window.location.reload();
+        return;
+      }
 
-          return;
-        }
+      if (status === "Cancelled" && !isChatPage) {
+        playSound();
+        notifier.success(
+          "Your latest emergency alert has been cancelled. If this is incorrect, please contact us.",
+          {
+            durations: { success: 20000 },
+            labels: { success: "Emergency Alert Cancelled." },
+          }
+        );
 
-        if (status === "Cancelled" && isChatPage) {
-          //refresh the current page
-          window.location.reload();
-          return;
-        }
+        allToasts = document.getElementsByClassName("awn-toast");
+        currentToast = allToasts[allToasts.length - 1];
+        currentToast.addEventListener("click", () => {
+          window.location.href = payload.data.url;
+        });
 
-        if (status === "Cancelled" && !isChatPage) {
+        return;
+      }
 
-          playSound();
-          notifier.success(
-            "Your latest emergency alert has been cancelled by an admin. If this is incorrect, please contact us.",
-            {
-              durations: { success: 20000 },
-              labels: { success: "Emergency Alert Cancelled." },
-            }
-          );
+      if (status === "No Admin Assigned" && isChatPage) {
+        document.getElementById(
+          "INFO"
+        ).textContent = `All admins have been notified but none have accepted the alert yet. Please be patient.`;
 
-          allToasts = document.getElementsByClassName("awn-toast");
-          currentToast = allToasts[allToasts.length - 1];
-          currentToast.addEventListener("click", () => {
+        return;
+      }
 
-            window.location.href = payload.data.url;
+      if (status === "No Admin Assigned" && !isChatPage) {
+        playSound();
+        notifier.info(
+          "All admins have been notified but none have accepted the alert yet. Please be patient.",
+          {
+            durations: { info: 20000 },
+            labels: { info: "No Admin Assigned" },
+          }
+        );
 
-          });
+        allToasts = document.getElementsByClassName("awn-toast");
+        currentToast = allToasts[allToasts.length - 1];
+        currentToast.addEventListener("click", () => {
+          window.location.href = payload.data.url;
+        });
 
-          return;
+        return;
+      }
 
-        }
+      if (proximity && proximity !== "999" && isChatPage) {
+        document.getElementById(
+          "INFO"
+        ).textContent = `Searching for admins within radius: ${proximity} km`;
+        //Update the radius of the circle
+        circle.setRadius(proximity * 1000);
 
+        //Update the pulse animation
+        baseRadius = proximity * 1000;
+        maxRadius = proximity * 1000 + 10;
+        minRadius = proximity * 1000 - 10;
 
+        //update the zoom based on the radius
+        map.setZoom(getZoomLevelFromRadius(proximity * 1000));
 
-        if (status === "No Admin Assigned" && isChatPage) {
-          document.getElementById(
-            "INFO"
-          ).textContent = `All admins have been notified but none have accepted the alert yet. Please be patient.`;
+        return;
+      }
 
-          return;
-        }
+      if (proximity && proximity !== "999" && !isChatPage) {
+        playSound();
+        notifier.info(`Searching for admins within radius: ${proximity} km`, {
+          durations: { info: 20000 },
+          labels: { info: "Searching for Admins" },
+        });
 
-        if (status === "No Admin Assigned" && !isChatPage) {
-          playSound();
-          notifier.info(
-            "All admins have been notified but none have accepted the alert yet. Please be patient.",
-            {
-              durations: { info: 20000 },
-              labels: { info: "No Admin Assigned" },
-            }
-          );
+        allToasts = document.getElementsByClassName("awn-toast");
+        currentToast = allToasts[allToasts.length - 1];
+        currentToast.addEventListener("click", () => {
+          window.location.href = payload.data.url;
+        });
 
-          allToasts = document.getElementsByClassName("awn-toast");
-          currentToast = allToasts[allToasts.length - 1];
-          currentToast.addEventListener("click", () => {
-            window.location.href = payload.data.url;
-          });
+        return;
+      }
 
-          return;
-        }
+      if (proximity === "999" && isChatPage) {
+        document.getElementById(
+          "INFO"
+        ).textContent = `Expanded search radius to include all admins`;
 
-        if (proximity && proximity !== "999" && isChatPage) {
-          document.getElementById(
-            "INFO"
-          ).textContent = `Searching for admins within radius: ${proximity} km`;
-          //Update the radius of the circle
-          circle.setRadius(proximity * 1000);
+        return;
+      }
 
-          //Update the pulse animation
-          baseRadius = proximity * 1000;
-          maxRadius = proximity * 1000 + 10;
-          minRadius = proximity * 1000 - 10;
+      if (proximity === "999" && !isChatPage) {
+        playSound();
+        notifier.info(`Expanded search radius to include all admins`, {
+          durations: { info: 20000 },
+          labels: { info: "Expanded Search Radius" },
+        });
 
-          //update the zoom based on the radius
-          map.setZoom(getZoomLevelFromRadius(proximity * 1000));
+        allToasts = document.getElementsByClassName("awn-toast");
+        currentToast = allToasts[allToasts.length - 1];
+        currentToast.addEventListener("click", () => {
+          window.location.href = payload.data.url;
+        });
 
-          return;
-        }
-
-        if(proximity && proximity !== "999" && !isChatPage){
-          playSound();
-          notifier.info(
-            `Searching for admins within radius: ${proximity} km`,
-            {
-              durations: { info: 20000 },
-              labels: { info: "Searching for Admins" },
-            }
-          );
-
-          allToasts = document.getElementsByClassName("awn-toast");
-          currentToast = allToasts[allToasts.length - 1];
-          currentToast.addEventListener("click", () => {
-            window.location.href = payload.data.url;
-          });
-
-          return;
-        }
-
-        if (proximity === "999" && isChatPage) {
-          document.getElementById(
-            "INFO"
-          ).textContent = `Expanded search radius to include all admins`;
-
-          return;
-        }
-
-        if(proximity === "999" && !isChatPage){
-          playSound();
-          notifier.info(
-            `Expanded search radius to include all admins`,
-            {
-              durations: { info: 20000 },
-              labels: { info: "Expanded Search Radius" },
-            }
-          );
-
-          allToasts = document.getElementsByClassName("awn-toast");
-          currentToast = allToasts[allToasts.length - 1];
-          currentToast.addEventListener("click", () => {
-            window.location.href = payload.data.url;
-          });
-
-          return;
-        }
-
-
-
-       
-      
-
-      
+        return;
+      }
 
       // Customize message based on notificationType
       switch (notificationType) {

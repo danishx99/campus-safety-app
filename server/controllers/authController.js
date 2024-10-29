@@ -25,6 +25,14 @@ exports.register = async (req, res) => {
 
     console.log("Register endpoint reached");
 
+    //Check if this FCM token is already in use, if so, remove it from the user who has it
+    const existingFCMUser = await User.findOne({ FCMtoken });
+
+    if (existingFCMUser) {
+      existingFCMUser.FCMtoken = null;
+      await existingFCMUser.save();
+    }
+
     if (account == 0) {
       role = "admin";
       //Check if the user has a valid code
@@ -96,6 +104,19 @@ exports.register = async (req, res) => {
 exports.login = async (req, res) => {
   try {
     const { email, password, rememberMe, FCMtoken } = req.body;
+
+    //Check if this FCM token is already in use, if so, remove it from the user who has it
+    //This works because if a user logs in on same device to another account, that user will have "control" over that token in
+    //the context of that service worker registration. So e.g the admin account of the user now has a null token, so if
+    //notifications are sent out to the admin account, since the user isnt logged in with the admin account there will be no
+    // need for the admin account to receive the notification, hence the token is null. if the token wasnt null, as in initially, the admin account
+    // will be notified and the user account will also receive the notification, since they share the same token
+    const existingFCMUser = await User.findOne({ FCMtoken });
+
+    if (existingFCMUser) {
+      existingFCMUser.FCMtoken = null;
+      await existingFCMUser.save();
+    }
 
     // find user by email
     const user = await User.findOne({ email });
@@ -246,7 +267,7 @@ exports.googleRegister = async (req, res) => {
 };
 
 exports.googleLogin = async (req, res) => {
-  const { email } = req.body;
+  const { email, FCMtoken } = req.body;
 
   try {
     // find user by email
@@ -256,6 +277,17 @@ exports.googleLogin = async (req, res) => {
         .status(401)
         .json({ error: "A user with this email address does not exist." });
     }
+
+    const existingFCMUser = await User.findOne({ FCMtoken });
+
+    if (existingFCMUser) {
+      existingFCMUser.FCMtoken = null;
+      await existingFCMUser.save();
+    }
+
+    // Update the user's FCM token
+    user.FCMtoken = FCMtoken;
+    await user.save();
 
     // Use rememberMe to set different token expiration times
     let rememberMe = false;
@@ -510,6 +542,21 @@ exports.resendVerificationEmail = async (req, res) => {
 
 exports.logout = async (req, res) => {
   try {
+    //Get the current user's email address
+    const token = req.cookies.token;
+    if (token) {
+      //Find the user by email
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      const email = decoded.userEmail;
+      const user = await User.findOne({ email });
+
+      //Remove the user's FCM token
+      user.FCMtoken = null;
+      await user.save();
+
+      console.log("User that just logged out FCM token: ", user.FCMtoken);
+    }
+
     res.clearCookie("token");
     res.clearCookie("role");
     res.clearCookie("email");

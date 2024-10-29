@@ -464,16 +464,8 @@ function displayBestRoute(route, currentLocation, emergencyLocation) {
           suppressMarkers: true,
           polylineOptions: {
             strokeColor: "#0000FF", // Blue for walking
-            strokeOpacity: 0,
+            strokeOpacity: 1.0,
             strokeWeight: 2,
-            icons: [
-              {
-                icon: lineSymbol,
-                offset: "0",
-                repeat: "15px",
-                scale: 2,
-              },
-            ],
           },
           preserveViewport: true,
         });
@@ -501,16 +493,8 @@ function displayBestRoute(route, currentLocation, emergencyLocation) {
             suppressMarkers: true,
             polylineOptions: {
               strokeColor: "#0000FF", // Blue for walking
-              strokeOpacity: 0,
+              strokeOpacity: 1.0,
               strokeWeight: 2,
-              icons: [
-                {
-                  icon: lineSymbol,
-                  offset: "0",
-                  repeat: "15px",
-                  scale: 2,
-                },
-              ],
             },
             preserveViewport: true,
           });

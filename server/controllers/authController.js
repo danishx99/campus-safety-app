@@ -550,9 +550,11 @@ exports.logout = async (req, res) => {
       const email = decoded.userEmail;
       const user = await User.findOne({ email });
 
-      //Remove the user's FCM token
-      user.FCMtoken = null;
-      await user.save();
+      if (user) {
+        //Remove the user's FCM token
+        user.FCMtoken = null;
+        await user.save();
+      }
 
       console.log("User that just logged out FCM token: ", user.FCMtoken);
     }

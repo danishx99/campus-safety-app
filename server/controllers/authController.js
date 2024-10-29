@@ -542,25 +542,25 @@ exports.resendVerificationEmail = async (req, res) => {
 
 exports.logout = async (req, res) => {
   try {
-    const token = req.cookies.token;
-    if (token) {
-      try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        const email = decoded.userEmail;
-        const user = await User.findOne({ email });
+    // const token = req.cookies.token;
+    // if (token) {
+    //   try {
+    //     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    //     const email = decoded.userEmail;
+    //     const user = await User.findOne({ email });
 
-        if (user) {
-          user.FCMtoken = null;
-          await user.save();
-          console.log(
-            `${email} that just logged out had their FCM token set to null: `,
-            user.FCMtoken
-          );
-        }
-      } catch (jwtError) {
-        console.log("JWT decoding failed during logout:", jwtError);
-      }
-    }
+    //     if (user) {
+    //       user.FCMtoken = null;
+    //       await user.save();
+    //       console.log(
+    //         `${email} that just logged out had their FCM token set to null: `,
+    //         user.FCMtoken
+    //       );
+    //     }
+    //   } catch (jwtError) {
+    //     console.log("JWT decoding failed during logout:", jwtError);
+    //   }
+    // }
 
     // Clear cookies regardless of errors
     res.clearCookie("token");

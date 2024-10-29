@@ -123,7 +123,7 @@ exports.externalPanic = async (req, res) => {
   }
 
   try {
-    const { latitude, longitude, email } = req.body;
+    const { lat, long, email } = req.body;
 
     const newNotification = new notification({
       recipient: "admin",

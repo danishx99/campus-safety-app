@@ -542,23 +542,28 @@ exports.resendVerificationEmail = async (req, res) => {
 
 exports.logout = async (req, res) => {
   try {
-    //Get the current user's email address
     const token = req.cookies.token;
     if (token) {
-      //Find the user by email
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      const email = decoded.userEmail;
-      const user = await User.findOne({ email });
+      try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const email = decoded.userEmail;
+        const user = await User.findOne({ email });
 
-      if (user) {
-        //Remove the user's FCM token
-        user.FCMtoken = null;
-        await user.save();
+        if (user) {
+          user.FCMtoken = null;
+          await user.save();
+        }
+
+        console.log(
+          "User that just logged out FCM token:",
+          user ? user.FCMtoken : "No user found"
+        );
+      } catch (jwtError) {
+        console.log("JWT decoding failed during logout:", jwtError);
       }
-
-      console.log("User that just logged out FCM token: ", user.FCMtoken);
     }
 
+    // Clear cookies regardless of errors
     res.clearCookie("token");
     res.clearCookie("role");
     res.clearCookie("email");
@@ -570,8 +575,8 @@ exports.logout = async (req, res) => {
 
     res.status(200).redirect("/login");
   } catch (error) {
-    console.log("Error logging out user:", error);
-    res.status(500).json({ error: "Error logging out user" });
+    console.log("Unexpected error during logout:", error);
+    res.status(200).redirect("/login"); // Still redirect to ensure logout is "successful"
   }
 };
 

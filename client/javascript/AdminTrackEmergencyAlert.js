@@ -177,7 +177,9 @@ function fetchEmergencyDetails() {
           reportedBy.lastName;
         document.getElementById("adminEmail").innerText = reportedBy.email;
         document.getElementById("adminCellphone").innerText = reportedBy.phone;
-        document.getElementById("adminCellphone").href = `tel:${reportedBy.phone}`; 
+        document.getElementById(
+          "adminCellphone"
+        ).href = `tel:${reportedBy.phone}`;
         document.getElementById(
           "chat"
         ).innerText = `Chat to ${reportedBy.firstName}`;
@@ -281,6 +283,20 @@ function initializeMap(location, emergencyLocation) {
   calculateBestRoute(location, emergencyLocation);
 }
 
+let walkingRenderer = null;
+let drivingRenderer = null;
+
+function clearAllRoutes() {
+  if (walkingRenderer) {
+    walkingRenderer.setMap(null);
+    walkingRenderer = null;
+  }
+  if (drivingRenderer) {
+    drivingRenderer.setMap(null);
+    drivingRenderer = null;
+  }
+}
+
 function watchUserLocation() {
   navigator.geolocation.watchPosition(
     (position) => {
@@ -291,6 +307,8 @@ function watchUserLocation() {
 
       myMarker.setPosition(newLocation);
       // map.setCenter(newLocation);
+
+      clearAllRoutes();
 
       let emergencyLocation = JSON.parse(gEmergency.location);
 
@@ -417,14 +435,9 @@ function calculateDistance(origin, destination, mode, callback) {
   );
 }
 
-let walkingRenderer;
-let drivingRenderer;
-
 function displayBestRoute(route, currentLocation, emergencyLocation) {
   //This function actually renders the route on the map between the user and the emergency
-  // Remove existing route polylines
-  walkingRenderer?.setMap(null);
-  drivingRenderer?.setMap(null);
+  clearAllRoutes();
 
   const directionsService = new google.maps.DirectionsService();
 
@@ -446,7 +459,7 @@ function displayBestRoute(route, currentLocation, emergencyLocation) {
     directionsService.route(request, (response, status) => {
       if (status === google.maps.DirectionsStatus.OK) {
         // Display the walking route
-         walkingRenderer = new google.maps.DirectionsRenderer({
+        walkingRenderer = new google.maps.DirectionsRenderer({
           map: map,
           suppressMarkers: true,
           polylineOptions: {
@@ -483,7 +496,7 @@ function displayBestRoute(route, currentLocation, emergencyLocation) {
       (walkingResponse, walkingStatus) => {
         if (walkingStatus === google.maps.DirectionsStatus.OK) {
           // Display the walking route
-           walkingRenderer = new google.maps.DirectionsRenderer({
+          walkingRenderer = new google.maps.DirectionsRenderer({
             map: map,
             suppressMarkers: true,
             polylineOptions: {
@@ -516,7 +529,7 @@ function displayBestRoute(route, currentLocation, emergencyLocation) {
             (drivingResponse, drivingStatus) => {
               if (drivingStatus === google.maps.DirectionsStatus.OK) {
                 // Display the driving route
-                 drivingRenderer = new google.maps.DirectionsRenderer({
+                drivingRenderer = new google.maps.DirectionsRenderer({
                   map: map,
                   suppressMarkers: true,
                   polylineOptions: {

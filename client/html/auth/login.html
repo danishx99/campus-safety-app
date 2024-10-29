@@ -105,9 +105,9 @@ window.initFireBaseFCM = function() {
             }); 
         }
 
-        // First, unregister existing service workers
-        unregisterServiceWorkers().then(() => {
-            // Then, register the new service worker
+        // // First, unregister existing service workers
+        // unregisterServiceWorkers().then(() => {
+        //     // Then, register the new service worker
             if ('serviceWorker' in navigator) {
                 registerReady("/firebase-messaging-sw.js", { scope: "/" })
                     .then(function (registration) {
@@ -151,10 +151,11 @@ window.initFireBaseFCM = function() {
             } else {
                 reject('Service worker not supported in this browser.');
             }
-        }).catch((err) => {
-            console.error('Error unregistering service workers:', err);
-            reject('Error unregistering service workers.');
-        });
+        // })
+        // .catch((err) => {
+        //     console.error('Error unregistering service workers:', err);
+        //     reject('Error unregistering service workers.');
+        // });
 
         // Handle incoming messages when the app is in the foreground
         onMessage(messaging, (payload) => {

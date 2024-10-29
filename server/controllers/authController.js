@@ -171,10 +171,9 @@ exports.login = async (req, res) => {
 
 async function urlToBase64(photoURL) {
   const response = await fetch(photoURL);
-  const buffer = await response.buffer();
-  return `data:${response.headers.get("content-type")};base64,${buffer.toString(
-    "base64"
-  )}`;
+  const arrayBuffer = await response.arrayBuffer();
+  const base64 = Buffer.from(arrayBuffer).toString("base64");
+  return `data:${response.headers.get("content-type")};base64,${base64}`;
 }
 
 exports.googleRegister = async (req, res) => {
@@ -214,8 +213,12 @@ exports.googleRegister = async (req, res) => {
         .json({ error: "A user with this email address already exists." });
     }
 
+    console.log("Photo URL: ", photoURL);
+
     //convert the photo url to base 64 string
-    const photoURL = await urlToBase64(photoURL);
+    let base64 = await urlToBase64(photoURL);
+
+    console.log("Photo base 64: ", photoURL);
 
     // Create a new user
     const newUser = new User({
@@ -223,7 +226,7 @@ exports.googleRegister = async (req, res) => {
       lastName: surname,
       email,
       phone,
-      profilePicture: photoURL,
+      profilePicture: base64,
       role,
       // FCMtoken,
       isVerified: true,

@@ -199,15 +199,23 @@ loginBtn.addEventListener("click", async function (event) {
         });
 
         window.scrollTo(0, 0);
-      }else if(data.error && data.error === "User registered with Google"){
-        console.log("Error logging in:", "You registered with Google. Please use google to sign in, or click on forgot password to create a password.");
+      } else if (data.error && data.error === "User registered with Google") {
+        console.log(
+          "Error logging in:",
+          "You registered with Google. Please use google to sign in, or click on forgot password to create a password."
+        );
         alert.style.display = "block";
         alert.style.color = "red";
         alert.style.backgroundColor = "#ffdddd";
         alert.style.border = "red";
-        alert.innerText = "You registered with Google. Please use google to sign in, or click on forgot password to create a password.";
-        window.scrollTo(0,0);
-      }else if (data.error && (data.error === "Invalid credentials" || data.error === "A user with this email address does not exist.")) {
+        alert.innerText =
+          "You registered with Google. Please use Google to sign in.";
+        window.scrollTo(0, 0);
+      } else if (
+        data.error &&
+        (data.error === "Invalid credentials" ||
+          data.error === "A user with this email address does not exist.")
+      ) {
         console.log("Error logging in:", data.error);
         alert.style.display = "block";
         alert.style.color = "red";
@@ -215,8 +223,7 @@ loginBtn.addEventListener("click", async function (event) {
         alert.style.border = "red";
         alert.innerText = "Invalid email or password. Please try again.";
         window.scrollTo(0, 0);
-      }
-      else if (data.success) {
+      } else if (data.success) {
         console.log(data);
         alert.style.display = "block";
         alert.style.color = "green";
@@ -228,7 +235,7 @@ loginBtn.addEventListener("click", async function (event) {
 
         // //Set the user's profile pic in localstorage in local storage
         localStorage.setItem("userProfilePicture", data.profilePicture);
-        
+
         // Check for data.redirect and redirect
         // if (data.redirect) {
 
@@ -246,7 +253,10 @@ loginBtn.addEventListener("click", async function (event) {
           }, 1000);
         }
       } else {
-        console.log("Error logging in:", "An error occurred while logging in. Please try again.");
+        console.log(
+          "Error logging in:",
+          "An error occurred while logging in. Please try again."
+        );
         alert.style.display = "block";
         alert.style.color = "red";
         alert.style.backgroundColor = "#ffdddd";
@@ -256,8 +266,6 @@ loginBtn.addEventListener("click", async function (event) {
         hideLoader();
 
         window.scrollTo(0, 0);
-
-        
       }
     })
     .catch((error) => {

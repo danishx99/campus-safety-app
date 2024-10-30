@@ -271,7 +271,7 @@ exports.findAndNotifyAdmins = async (req, res) => {
 
     count++;
 
-    const proximities = [0.2, 0.5, 1, 1.5];
+    const proximities = [0.2, 0.45, 0.7, 1];
     const users = await User.find({ role: "admin" });
 
     for (const radius of proximities) {

@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campus Safety</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+    </style>
+</head>
+<body class="flex min-h-screen flex-col bg-gradient-to-b from-blue-500 to-blue-700">
+    <header class="fixed top-0 w-full z-50 bg-[#015EB8] backdrop-blur supports-[backdrop-filter]:bg-blue-600/75">
+        <div class="container mx-auto flex h-16 items-center justify-between px-4">
+            <a href="/" class="flex items-center space-x-2">
+                <img src="../assets/logo.png" alt="Logo" width="32" height="32">
+                <span class="text-lg font-bold text-white">Campus Safety</span>
+            </a>
+            <button id="loginBtn" class="bg-white text-blue-600 px-4 py-2 rounded-md hover:bg-blue-50 transition-colors">Login</button>
+        </div>
+    </header>
+    
+    <section class="flex-1 pt-32 pb-16">
+        <div class="container mx-auto flex flex-col items-center text-center px-4">
+            <!-- <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-16 w-16 text-white mb-8">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+            </svg> -->
+            <img src="../assets/shield.png" alt="" width="128" height="128" class="mb-8">
+            <h1 class="text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl lg:text-7xl text-white">
+                Stay Safe, Stay Connected
+            </h1>
+            <p class="mx-auto mt-6 max-w-[700px] text-lg text-blue-100 md:text-xl">
+                Campus Safety is your go-to app for real-time emergency alerts, 
+                live incident updates, and direct reporting. Tailored for the University of the Witswatersrand, 
+                it ensures swift responses and seamless communication, keeping you informed and secure anytime, anywhere.
+            </p>
+            <div class="mt-8 flex flex-col gap-4 sm:flex-row">
+            <button id="getStartedBtn" class="mt-8 bg-white text-blue-600 px-6 py-3 rounded-md text-lg font-semibold hover:bg-blue-200 transition-colors">
+                Get Started
+            </button>
+            <button id="learnMoreBtn" class="mt-8 bg-blue-600 border border-blue-400 text-white px-6 py-3 rounded-md text-lg font-semibold hover:bg-blue-200 transition-colors">
+                Learn More
+            </button>
+            </div>
+        </div>
+    </section>
+
+    <section id="learnMore" class="bg-white py-16 md:py-24">
+        <div class="container mx-auto px-4">
+            <h2 class="text-center text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">
+                Enhancing Campus Safety
+            </h2>
+            <p class="mx-auto mt-4 max-w-[700px] text-center text-gray-500">
+                Leveraging the power of technology to provide a comprehensive safety net for all. 
+                Our goal is to empower you with the tools and information you need to proactively protect yourself and those around you.
+            </p>
+            <div class="mt-16 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+                <div class="feature-card group relative rounded-lg border p-6 hover:border-blue-600">
+                    <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-blue-100 text-blue-600 group-hover:bg-blue-600 group-hover:text-white">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6">
+                            <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                            <line x1="16" y1="13" x2="8" y2="13"></line>
+                            <line x1="16" y1="17" x2="8" y2="17"></line>
+                            <line x1="10" y1="9" x2="8" y2="9"></line>
+                        </svg>
+                    </div>
+                    <div class="mt-4">
+                        <h3 class="text-lg font-semibold">Incident Reporting</h3>
+                        <p class="mt-2 text-gray-500">Easily report safety concerns or incidents through our user-friendly interface, ensuring quick response and resolution.</p>
+                    </div>
+                </div>
+                <div class="feature-card group relative rounded-lg border p-6 hover:border-blue-600">
+                    <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-blue-100 text-blue-600 group-hover:bg-blue-600 group-hover:text-white">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6">
+                            <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+                            <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+                        </svg>
+                    </div>
+                    <div class="mt-4">
+                        <h3 class="text-lg font-semibold">Safety Resources</h3>
+                        <p class="mt-2 text-gray-500">Access a comprehensive library of safety guidelines, emergency procedures, and educational materials at your fingertips.</p>
+                    </div>
+                </div>
+                <div class="feature-card group relative rounded-lg border p-6 hover:border-blue-600">
+                    <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-blue-100 text-blue-600 group-hover:bg-blue-600 group-hover:text-white">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6">
+                            <path d="M12 8v5"></path>
+                            <line x1="12" y1="16" x2="12" y2="16"></line>
+                            <circle cx="12" cy="12" r="10"></circle>
+                        </svg>
+                    </div>
+                    <div class="mt-4">
+                        <h3 class="text-lg font-semibold">Emergency Alerts</h3>
+                        <p class="mt-2 text-gray-500">Send critical alerts to campus security with the push of a button, 
+                            ensuring you recieve assistance in real-time.</p>
+                            </p>
+                    </div>
+                </div>
+                
+            </div>
+            <div class="mt-16 grid gap-8 md:grid-cols-2 lg:grid-cols-2">
+                <div class="feature-card group relative rounded-lg border p-6 hover:border-blue-600">
+                    <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-blue-100 text-blue-600 group-hover:bg-blue-600 group-hover:text-white">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6">
+                            <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path>
+                            <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"></path>
+                        </svg>
+                    </div>
+                    <div class="mt-4">
+                        <h3 class="text-lg font-semibold">Real-time Notifications</h3>
+                        <p class="mt-2 text-gray-500">Stay updated with instant alerts about safety-related events, incident reports and general important campus announcements.</p>
+                    </div>
+                </div>
+                <div class="feature-card group relative rounded-lg border p-6 hover:border-blue-600">
+                    <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-blue-100 text-blue-600 group-hover:bg-blue-600 group-hover:text-white">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6">
+                            <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"></path>
+                            <circle cx="12" cy="10" r="3"></circle>
+                        </svg>
+                    </div>
+                    <div class="mt-4">
+                        <h3 class="text-lg font-semibold">Live Tracking</h3>
+                        <p class="mt-2 text-gray-500">Enable location sharing during emergencies, allowing campus security to provide immediate assistance when needed and an interactive map of the university campus.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <section class="border-t bg-gray-50 py-16">
+        <div class="container mx-auto flex flex-col items-center text-center px-4">
+            <h3 class="text-2xl font-bold tracking-tighter sm:text-3xl">
+                Ready to enhance your campus safety?
+            </h3>
+            <p class="mx-auto mt-4 max-w-[600px] text-gray-500">
+                Join thousands of students and faculty members who trust Campus Safety for their personal security.
+            </p>
+            <div class="mt-8 flex flex-col gap-4 sm:flex-row">
+                <button id="getStartedBtn2" class="bg-blue-600 text-white px-6 py-3 rounded-md text-lg font-semibold hover:bg-blue-700 transition-colors">
+                    Get Started
+                </button>
+                
+            </div>
+        </div>
+    </section>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const featureCards = document.querySelectorAll('.feature-card');
+            
+            const observerOptions = {
+                threshold: 0.1
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('fade-in');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+
+            featureCards.forEach(card => {
+                observer.observe(card);
+            });
+        });
+    </script>
+</body>
+<script src="../../javascript/landingPage.js"></script>
+</html>

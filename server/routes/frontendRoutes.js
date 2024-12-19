@@ -14,7 +14,10 @@ const { emergencyExists } = require("../middlewares/emergencyExists");
 // });
 
 router.get("/", (req, res) => {
-  homeRedirect(req, res);
+  //homeRedirect(req, res);
+  res.sendFile(
+    path.join(__dirname, "../../client/html/", "landingPage.html")
+  );
 });
 
 router.get("/register", isLoggedIn("register"), (req, res) => {});
@@ -32,6 +35,7 @@ router.get("/resetPassword", (req, res) => {
     path.join(__dirname, "../../client/html/auth", "resetPassword.html")
   );
 });
+
 
 router.get("/verifyEmail", (req, res) => {
   res.sendFile(
